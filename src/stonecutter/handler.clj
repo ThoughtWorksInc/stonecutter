@@ -1,11 +1,25 @@
 (ns stonecutter.handler
-  (:require [compojure.core :refer :all]
-            [compojure.route :as route]
-            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]))
+  (:require [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
+            [ring.util.response :as r]
+            [ring.adapter.jetty :refer [run-jetty]]
+            [bidi.ring :refer [make-handler]]
+            [stonecutter.view :as view]
+            ))
 
-(defroutes app-routes
-  (GET "/" [] "Hello World")
-  (route/not-found "Not Found"))
+(defn html-response [s]
+  (-> s
+      r/response
+      (r/content-type "text/html")))
+
+(defn show-registration-form [r]
+  (html-response (view/registration-form)))
+
+(def routes 
+  (make-handler ["/" {"register" show-registration-form}]))
 
 (def app
-  (wrap-defaults app-routes site-defaults))
+  (wrap-defaults routes site-defaults))
+
+(defn -main [& args]   
+  (run-jetty app {:port 6000})) 
+
