@@ -1,0 +1,42 @@
+$white: #fff;
+$black: #000;
+
+
+$light_grey: #e9e9e9;
+$light_blue: #38b1e3;
+$medium_blue: #1576c0;
+
+$orange: #FFA000;
+
+
+$text_grey: #333;
+
+$default_text_color: rgba(black,0.8);
+$background_color: $white;
+
+$link_colour: $default_text_color;
+$link_hover_colour: $link_colour;
+$link_visited_colour: $link_colour;
+$link_active_colour: $link_colour;
+
+//
+
+$small_device: 320px;
+$medium_device: 640px;
+$large_device: 768px;
+$extra_large_device: 960px;
+$monster_large_device: 1220px;
+
+//
+
+$grid_gutter: 15px;
+
+//
+
+$max_site_width: 960px;
+$main_nav_height: 50px;
+
+//
+
+$heading_title_font_family: sans-serif;
+$para_font_family: sans-serif;

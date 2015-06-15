@@ -1,0 +1,39 @@
+@mixin triangle($direction:"up", $size:5px, $color:red) {
+  
+  width: 0; 
+  height: 0; 
+
+  @if $direction == "up" {
+    border-left: $size solid transparent;
+    border-right: $size solid transparent;
+    border-bottom: $size solid $color;
+  }
+  @if $direction == "down" {
+    border-top: $size solid $color;
+    border-left: $size solid transparent;
+    border-right: $size solid transparent;
+  }
+  @if $direction == "right" {
+    border-top: $size solid transparent;
+    border-bottom: $size solid transparent;
+    border-left: $size solid $color;
+  }
+  @if $direction == "left" {
+    border-top: $size solid transparent;
+    border-right: $size solid $color; 
+    border-bottom: $size solid transparent; 
+  }
+
+}
+
+@mixin rounded_rectangle($width: 1px, $height: $width, $radius: 1px) {
+  width: $width;
+  height: $height;
+  border-radius: $radius;
+}
+
+@mixin circle($size) {
+  height: $size;
+  width: $size;
+  border-radius: $size/2;
+}
