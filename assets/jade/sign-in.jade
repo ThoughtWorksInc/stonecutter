@@ -1,0 +1,35 @@
+extends layout/layout
+
+block vars
+  - bodyClass = ""
+
+block title
+  | Demo
+
+block headerScripts
+
+block content
+
+  .middle-container
+    nav.tabs
+      li.tabs__item.tabs__item--on: a.tabs__item__link(href="/sign-in") Sign in
+      li.tabs__item: a.tabs__item__link(href="/register") Register
+
+    form.login-form(action="", method="")
+      h1.page-title Sign in
+      //-p.form-row.form-row--validation-error
+      p.form-row
+        label.form-row__label(for="email")
+          span.form-row__label__title
+            | Email address
+          span.form-row__label__validation
+            | Enter a valid email address
+        input.form-row__input(type="email", id="email", name="email")
+      p.form-row
+        label.form-row__label(for="password")
+          span.form-row__label__title
+            | Password
+          //-span.form-row__label__validation
+            | Cannot be blank
+        input.form-row__input(type="password", id="password", name="password")
+      button.button(type="submit") Sign in

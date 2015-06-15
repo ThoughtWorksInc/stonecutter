@@ -1,0 +1,38 @@
+.tabs {
+  @include clearfix;
+  list-style: none;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid $light_grey;
+  //text-align: center;
+  &__item {
+    display: inline-block;
+    position: relative;
+    margin-right: -1px;
+    border-top: 1px solid transparent;
+    border-right: 1px solid transparent;
+    border-left: 1px solid transparent;
+    &--on {
+      border-top-color: $light_grey;
+      border-right-color: $light_grey;
+      border-left-color: $light_grey;
+      &:after {
+        content: '';
+        display: block;
+        position: absolute;
+        bottom: -1px;
+        left: 0;
+        z-index: 1;
+        width: 100%;
+        height: 1px;
+        background-color: $white;
+      }
+    }
+    &__link {
+      display: block;
+      text-align: center;
+      padding: 20px 30px;
+      text-decoration: none;
+      color: $light_blue
+    }
+  }
+}

@@ -1,41 +1,54 @@
 .form-row {
+  margin-bottom: 2rem;
+  &--validation-error {
+    background-color: lighten($error_color,48%);
+    padding: 1.5rem;
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+  }
   &__label {
+
   }
   &__label__title {
     display: block;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
+    color: #5d5d5d;
   }
   &__label__validation {
-    display: block;
     font-size: 80%;
+    color: $error_color;
+    padding: 0.5rem 0;
     margin-bottom: 0.25rem;
-    &:empty {
+    &:empty, & {
       display: none;
+    }
+    .form-row--validation-error & {
+      display: block;
     }
   }
   &__input {
     width: 100%;
     @include font-size(18px);
-    padding: 0.5rem 0;
+    padding: 0 0 0.5rem 0;
+    background: transparent;
     border: none;
     border-bottom: 2px solid $light_grey;
+    .form-row--validation-error & {
+      border-color: $error_color;
+    }
+    &:focus {
+      outline: 0;
+      color: $light_blue;
+      border-color: $light_blue;
+    }
   }
+}
+
+
+label {
+  cursor: pointer;
 }
 
 input {
   border-radius: 0;
-}
-
-.button {
-  appearance: none;
-  width: 100%;
-  border: none;
-  padding: 1rem;
-  @include font-size(18px);
-  display: block;
-  text-align: left;
-}
-
-.login-form {
-
 }

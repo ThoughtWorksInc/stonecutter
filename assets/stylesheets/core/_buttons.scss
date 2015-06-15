@@ -1,0 +1,18 @@
+.button {
+  appearance: none;
+  width: 100%;
+  border: none;
+  padding: 1.5rem;
+  @include font-size(18px);
+  display: block;
+  text-align: left;
+  background-color: $light_blue;
+  color: $white;
+  font-weight: bold;
+  &:hover {
+    background-color: darken($light_blue,7.5%);
+  }
+  &:focus {
+    outline: 3px solid #ffbf47;
+  }
+}
