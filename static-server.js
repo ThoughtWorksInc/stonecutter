@@ -9,7 +9,7 @@ var pageData = {
   "imagesBase": "/assets/images"
 };
 
-app.use('/assets', express.static(__dirname + '/public'));
+app.use('/assets', express.static(__dirname + '/resources/public'));
 
 app.set('view engine', 'jade');
 app.set('views', './assets/jade');
