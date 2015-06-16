@@ -1,8 +1,13 @@
+.header {
+  padding-top: 35px;
+  border-bottom: 1px solid $light_grey;
+  margin-bottom: 2rem;
+}
 .tabs {
   @include clearfix;
+  max-width: $medium_device;
+  margin: 0 auto;
   list-style: none;
-  margin-bottom: 2rem;
-  border-bottom: 1px solid $light_grey;
   //text-align: center;
   &__item {
     display: inline-block;
@@ -11,10 +16,12 @@
     border-top: 1px solid transparent;
     border-right: 1px solid transparent;
     border-left: 1px solid transparent;
+    color: $medium_cyan;
     &--on {
       border-top-color: $light_grey;
       border-right-color: $light_grey;
       border-left-color: $light_grey;
+      color: $dark_cyan;
       &:after {
         content: '';
         display: block;
@@ -26,13 +33,19 @@
         height: 1px;
         background-color: $white;
       }
+      a {
+        pointer-events: none;
+      }
     }
     &__link {
       display: block;
       text-align: center;
       padding: 20px 30px;
       text-decoration: none;
-      color: $light_blue
+      color: inherit;
+      &:hover {
+        cursor: pointer;
+      }
     }
   }
 }

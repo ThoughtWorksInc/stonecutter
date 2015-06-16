@@ -42,9 +42,11 @@
 .visuallyhidden {
   @include visuallyhidden;
 }
-
+@function strip-units($number) {
+  @return $number / ($number * 0 + 1);
+}
 @function calc-rem($size, $base-font-size: 16) {
-  $remSize: $size / $base-font-size;
+  $remSize: strip-units($size) / $base-font-size;
   @return #{$remSize}rem;
 }
 @mixin font-size($size: 16px) {

@@ -6,11 +6,11 @@
   @include font-size(18px);
   display: block;
   text-align: left;
-  background-color: $light_blue;
+  background-color: $medium_cyan;
   color: $white;
   font-weight: bold;
   &:hover {
-    background-color: darken($light_blue,7.5%);
+    background-color: darken($medium_cyan,3%);
   }
   &:focus {
     outline: 3px solid #ffbf47;
