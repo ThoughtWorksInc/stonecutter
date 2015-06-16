@@ -10,24 +10,25 @@ block headerScripts
 
 block content
 
-  .middle-container
+  .header
     nav.tabs
-      li.tabs__item.tabs__item--on: a.tabs__item__link(href="/sign-in") Sign in
-      li.tabs__item: a.tabs__item__link(href="/register") Register
+      li.tabs__item.tabs__item--on: a.tabs__link(href="/sign-in") Sign in
+      li.tabs__item: a.tabs__link(href="/register") Register
 
+  .middle-container
     form.login-form(action="", method="")
       h1.page-title Sign in
       //-p.form-row.form-row--validation-error
       p.form-row
         label.form-row__label(for="email")
-          span.form-row__label__title
+          span.form-row__title
             | Email address
-          span.form-row__label__validation
+          span.form-row__validation
             | Enter a valid email address
         input.form-row__input(type="email", id="email", name="email")
       p.form-row
         label.form-row__label(for="password")
-          span.form-row__label__title
+          span.form-row__title
             | Password
           //-span.form-row__label__validation
             | Cannot be blank

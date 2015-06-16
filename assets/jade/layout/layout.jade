@@ -16,12 +16,10 @@ html
     link(rel="icon" type="image/png" href="favicon.png")
     block headerMeta
 
-    link(rel="stylesheet", href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css")
     +stylesheetLinkTag("application","screen")
 
     block headerScripts
 
   body(class="#{bodyClass}")
-    .header
     block content
     block footerScripts

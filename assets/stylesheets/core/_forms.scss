@@ -9,12 +9,13 @@
   &__label {
 
   }
-  &__label__title {
+  &__title {
     display: block;
     margin-bottom: 0.5rem;
+    @include font-size(18px);
     color: #5d5d5d;
   }
-  &__label__validation {
+  &__validation {
     font-size: 80%;
     color: $error_color;
     padding: 0.5rem 0;
@@ -28,8 +29,8 @@
   }
   &__input {
     width: 100%;
-    @include font-size(18px);
-    padding: 0 0 0.5rem 0;
+    @include font-size(20px);
+    padding: 0 0 0.75rem 0;
     background: transparent;
     color: $dark_cyan;
     border: none;
