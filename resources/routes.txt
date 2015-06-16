@@ -1,0 +1,3 @@
+GET	/		home
+GET 	/register	show-registration-form
+POST    /register	register-user
