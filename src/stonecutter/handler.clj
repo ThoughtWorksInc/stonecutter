@@ -21,5 +21,5 @@
   (wrap-defaults routes site-defaults))
 
 (defn -main [& args]   
-  (run-jetty app {:port 6000})) 
+  (run-jetty app {:port 3000})) 
 
