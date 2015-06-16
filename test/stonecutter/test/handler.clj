@@ -16,7 +16,7 @@
                                     :name nil
                                     :url nil}]
         (-> (mock/request :post "/register") 
-            (assoc :params {:username "valid@email" :password "password"}) 
+            (assoc :params {:email "valid@email" :password "password"}) 
             register-user 
             :status) => 200 
 

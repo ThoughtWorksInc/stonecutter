@@ -22,7 +22,7 @@
        password (get-in r [:params :password])
        new-user-map (user-store/new-user email password)]
   (user-store/store-user new-user-map)
-   
+    "Something happened TODO add a display page for user created" 
    )))
 
 (defn not-found [r]

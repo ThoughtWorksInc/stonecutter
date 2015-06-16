@@ -14,8 +14,18 @@
                   (form/password-field "password")
                   (form/submit-button "Submit")))) 
 
+(defn anti-forgery-snippet []
+  (html/html-snippet (anti-forgery-field)))
+
+(defn add-anti-forgery [enlive-m]
+  (html/at enlive-m
+           [:form] (html/prepend (anti-forgery-snippet))
+           )
+  )
+
 (defn registration-form []
-  (->> (html/html-resource "public/register.html" {:parser jsoup/parser})
+  (->> (html/html-resource "public/register.html")
+       add-anti-forgery
        (html/emit*)
        (apply str)))
 
