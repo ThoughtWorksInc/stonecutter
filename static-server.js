@@ -38,6 +38,10 @@ app.get('/register', function(req, res){
   res.render('register', pageData);
 });
 
+app.get('/authorise', function(req, res){
+  res.render('authorise', pageData);
+});
+
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });

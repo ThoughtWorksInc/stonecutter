@@ -72,3 +72,9 @@
     -moz-osx-font-smoothing: auto;
   }
 }
+
+
+@mixin reset-list() {
+  list-style-type: none;
+  padding-left: 0;
+}
