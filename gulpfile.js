@@ -24,7 +24,7 @@ var dev_path = {
   js: ['assets/javascripts/**/*.js'],
   images: ['assets/images/**/*', '!assets/images/dev-*'],
   favicons: ['assets/icons/favicon.*'],
-  fonts: ['assets/stylesheets/fonts/*','/bower_components/font-awesome/fonts/*'],
+  fonts: ['assets/stylesheets/fonts/*','node_modules/font-awesome/fonts/fontawesome-webfont.*'],
   port: 7777
 };
 var build_path = {
@@ -32,7 +32,7 @@ var build_path = {
   html: output_path + '/',
   js: output_path + '/javascripts/',
   images: output_path + '/images',
-  fonts: output_path + '/stylesheets/fonts/',
+  fonts: output_path + '/fonts/',
   library: output_path + '/library/'
 };
 
