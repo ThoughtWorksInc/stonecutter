@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Demo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link href="stylesheets/application.css" media="screen" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <div class="header">
+      <nav class="tabs">
+        <li class="tabs__item tabs__item--on"><a href="/sign-in" class="tabs__link">Sign in</a></li>
+        <li class="tabs__item"><a href="/register" class="tabs__link">Register</a></li>
+      </nav>
+    </div>
+    <div class="middle-container">
+      <form action="/authorise" method="" class="login-form">
+        <h1 class="page-title">Sign in</h1>
+        <p class="form-row">
+          <label for="email" class="form-row__label"><span class="form-row__title">Email address</span><span class="form-row__validation">Enter a valid email address</span></label>
+          <input type="email" id="email" name="email" class="form-row__input">
+        </p>
+        <p class="form-row">
+          <label for="password" class="form-row__label"><span class="form-row__title">Password</span>
+          </label>
+          <input type="password" id="password" name="password" class="form-row__input">
+        </p>
+        <button type="submit" class="button">Sign in</button>
+      </form>
+    </div>
+  </body>
+</html>
