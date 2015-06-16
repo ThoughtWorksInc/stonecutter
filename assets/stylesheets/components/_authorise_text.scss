@@ -1,6 +1,10 @@
 .authorise-text {
+  margin-bottom: 30px;
   &__description {
     @include font-size(18px);
+    &:last-child {
+      margin-bottom: 0;
+    }
     &--allowed {
       color: $dark_cyan;
       font-weight: bold;
@@ -29,4 +33,12 @@
       color: $dark_pink;
     }
   }
+}
+
+.authorise-terms {
+  //border-top: 1px solid $light_grey;
+  padding-top: 30px;
+}
+.authorise-terms__link {
+  color: $dark_cyan;
 }
