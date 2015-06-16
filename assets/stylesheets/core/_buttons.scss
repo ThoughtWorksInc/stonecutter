@@ -12,18 +12,31 @@
   color: $white;
   font-weight: bold;
   text-decoration: none;
-  transition: background 250ms ease, color 250ms ease;
+  transition: background 250ms ease, color 250ms ease, box-shadow 250ms ease;
+  outline: 0;
   &:hover {
     background-color: darken($medium_cyan,3%);
   }
   &:focus {
-    outline: 3px solid #ffbf47;
+    //outline: 3px solid #ffbf47;
   }
+  &:focus, &:hover {
+    background-color: darken($medium_cyan,3%);
+    box-shadow: 0 5px 12px rgba(#000,0.3);
+  }
+  &:active {
+    background-color: darken($medium_cyan,5%);
+    outline: 0;
+  }
+
   &--grey {
     background-color: $light_grey;
     color: $dark_grey;
     &:hover {
       background-color: darken($light_grey,5%);
+    }
+    &:focus {
+      background-color: darken($light_grey,8%);
     }
   }
   &--pink {
@@ -31,6 +44,9 @@
     color: $white;
     &:hover {
       background-color: darken($dark_pink,5%);
+    }
+    &:focus {
+      background-color: darken($light_pink,8%);
     }
   }
 }
