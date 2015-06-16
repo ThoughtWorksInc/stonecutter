@@ -1,0 +1,29 @@
+.authorised-apps {
+
+}
+.app__list {
+  @include reset-list;
+}
+.app__item {
+  display: table;
+  width: 100%;
+  margin-bottom: 10px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+.app__title {
+  display: table-cell;
+  width: 65%;
+  min-height: 70px;
+  margin-left: 0;
+  margin-right: 0;
+  padding-left: 24px;
+  padding-right: 24px;
+  background-color: $light_grey;
+  @include font-size(20px);
+}
+.app__remove {
+  display: table-cell;
+  width: 35%;
+}
