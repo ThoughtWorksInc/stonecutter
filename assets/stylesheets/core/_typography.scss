@@ -1,5 +1,6 @@
 .page-title {
   @include font-size(34px);
+  line-height: 1.2;
   letter-spacing: -0.025em;
   margin-bottom: 2rem;
   color: $dark_cyan;
