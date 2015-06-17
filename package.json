@@ -30,6 +30,8 @@
   "author": "Chris Cheshire",
   "license": "ISC",
   "scripts": {
-    "build": ""
+    "postinstall": "gulp build",
+    "start": "",
+    "node": ""
   }
 }
