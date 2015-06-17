@@ -22,9 +22,7 @@
     "gulp-util": "^3.0.1",
     "jade": "*",
     "requestify": "^0.1.17",
-    "run-sequence": "^1.0.1"
-  },
-  "devDependencies": {
+    "run-sequence": "^1.0.1",
     "browser-sync": "^1.6.2",
     "font-awesome": "^4.3.0",
     "gulp-gh-pages": "^0.5.0",
