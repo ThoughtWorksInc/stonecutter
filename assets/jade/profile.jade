@@ -8,6 +8,28 @@ block title
 
 block headerScripts
 
+mixin button(buttonClass, iconClass)
+  button.button(type="submit", class=buttonClass)
+    if iconClass != null
+      i.fa.button__icon(class=iconClass)
+    span.button__text
+      block
+
+
+mixin removeButton(buttonClass, iconClass)
+  +button("button--remove", "fa-remove")
+    block
+
+
+mixin authorisedAppItem(appName)
+  li.app__item
+    .app__title #{appName}
+    .app__remove
+      form(action="/remove-app", method="post")
+        // hidden inputs here
+        +removeButton() Revoke card
+
+
 block content
 
   .header
@@ -16,15 +38,19 @@ block content
     h1.page-title
       | Profile
 
+    .card-preview
+      h2 Your profile card
+      p These are the details you choose to share.
+      .card
+        .card__heading
+          .card__name Peter Thomas Cheshire
+          .card__email peter-thomas-cheshire@random.com
+        .card__photo
 
     .authorised-apps
+      h2.authorised-apps__title Applications
       p Manage the apps that have access to your profile card.
       ul.app__list
-        li.app__item
-          span.app__title Stubapp
-          .app__remove
-            a.button.button--pink(href="#") Revoke card
-        li.app__item
-          span.app__title Anotherapp
-          .app__remove
-            a.button.button--pink(href="#") Revoke card
+        +authorisedAppItem("Stubapp")
+        +authorisedAppItem("A really long name that will break this")
+        +authorisedAppItem("Anotherapp")

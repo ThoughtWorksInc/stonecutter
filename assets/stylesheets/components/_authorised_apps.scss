@@ -1,30 +1,37 @@
 .authorised-apps {
-
+  &__title {
+    //@include h2;
+  }
 }
+
 .app__list {
   @include reset-list;
 }
+
 .app__item {
+  margin-bottom: 10px;
+  background-color: $light_grey;
   display: table;
   width: 100%;
-  margin-bottom: 10px;
   &:last-child {
     margin-bottom: 0;
   }
 }
+
 .app__title {
-  display: table-cell;
   width: 65%;
-  min-height: 70px;
-  margin-left: 0;
-  margin-right: 0;
-  padding-left: 24px;
-  padding-right: 24px;
-  background-color: $light_grey;
-  @include font-size(20px);
-}
-.app__remove {
+  padding: 18px;
+  @include font-size(18px);
+  color: #444;
+  line-height: 1.2;
   display: table-cell;
-  width: 35%;
+  min-height: 70px;
+  vertical-align: middle;
+}
+
+.app__remove {
+  height: 100%;
+  display: table-cell;
   text-align: right;
+  vertical-align: middle;
 }

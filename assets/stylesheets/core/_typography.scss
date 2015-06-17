@@ -1,9 +1,28 @@
-.page-title {
+@mixin h1 {
   @include font-size(34px);
   line-height: 1.2;
   letter-spacing: -0.025em;
-  margin-bottom: 2rem;
   color: $dark_cyan;
+}
+@mixin h2 {
+  @include font-size(28px);
+  font-weight: 500;
+  line-height: 1.2;
+  color: $dark_cyan;
+}
+
+.page-title {
+  @include h1;
+  margin-bottom: 2rem;
+}
+
+h2 {
+  @include h2;
+}
+
+p {
+  @include font-size(18px);
+  line-height: 1.3;
 }
 
 .no-bullet {
