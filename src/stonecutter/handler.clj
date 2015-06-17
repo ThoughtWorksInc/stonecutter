@@ -18,7 +18,7 @@
 
 (defn register-user [r]
 (html-response 
- (let [email (get-in r [:params :username])
+ (let [email (get-in r [:params :email])
        password (get-in r [:params :password])
        new-user-map (user-store/new-user email password)]
   (user-store/store-user new-user-map)
