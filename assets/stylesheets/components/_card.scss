@@ -13,9 +13,11 @@
 }
 
 .card {
+  $card_guttering: 25px;
   background-color: $white;
   max-width: 480px;
-  padding: 30px;
+  min-height: 270px;
+  padding: $card_guttering;
   border: 1px solid $light_grey;
   transition: box-shadow 200ms linear, border 200ms linear;
   &:hover {
@@ -27,32 +29,42 @@
   &__row {
     @include clearfix;
     &:not(:last-child) {
-      padding-bottom: 30px;
+      padding-bottom: $card_guttering;
     }
     &--bottom-border {
-      margin-bottom: 30px;
-      border-bottom: 1px solid $light_grey;
+      &:not(:last-child) {
+        margin-bottom: $card_guttering;
+        border-bottom: 1px solid $light_grey;
+      }
     }
   }
   &__heading {
     margin-top: 0;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
   }
   &__name {
-    @include font-size(20px);
+    margin-bottom: 2px;
+    @include font-size(18px);
     color: $dark_cyan;
     font-weight: bold;
-    line-height: 1.3;
+    line-height: 1.2;
+    @include width-from($smallish_device) {
+      @include font-size(20px);
+    }
   }
   &__display-name {
-    @include font-size(18px);
+    @include font-size(16px);
     color: rgba($dark_cyan, 0.75);
     font-weight: normal;
     line-height: 1.3;
+    @include width-from($smallish_device) {
+      @include font-size(18px);
+    }
   }
   &__description {
+    font-family: $serif_font_family;
     p {
-      @include font-size(15px);
+      @include font-size(16px);
       line-height: 1.35;
       &:last-child {
         margin-bottom: 0;
@@ -60,6 +72,7 @@
     }
   }
   &__details {
+    margin-right: 100px;
     @include width-from($smallish_device) {
       margin-right: 180px;
     }
@@ -69,16 +82,15 @@
 
   &__photo {
     position: relative;
-    margin-bottom: 20px;
-    @include width-from($smallish_device) {
-      margin-bottom: 0;
-      float: right;
-    }
+    float: right;
   }
   &__image {
-    @include size(150px);
+    @include size(75px);
     background: lighten($light_grey, 5%);
     border: 1px solid $light_grey;
+    @include width-from($smallish_device) {
+      @include size(150px);
+    }
     img {
       display: block;
       width: 100%;
