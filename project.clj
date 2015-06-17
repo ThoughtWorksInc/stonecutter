@@ -11,6 +11,7 @@
                            [clauth "1.0.0-rc17"]
                            ;[traduki "0.1.0"]
                            [clj-yaml "0.4.0"]
+                           [environ "1.0.0"]
                            ]
             :plugins [[lein-ring "0.8.13"]
                       [lein-midje "3.1.3"]]

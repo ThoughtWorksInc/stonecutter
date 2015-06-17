@@ -6,6 +6,7 @@
             [scenic.routes :refer [scenic-handler load-routes-from-file]]
             [stonecutter.view :as view]
             [clauth.user :as user-store]
+            [environ.core :refer [env]]
             ))
 
 (defn html-response [s]
@@ -39,6 +40,9 @@
 (def app
   (wrap-defaults routes site-defaults))
 
+(defn port []
+  (get env :port 3000))
+
 (defn -main [& args]   
-  (run-jetty app {:port 3000})) 
+  (run-jetty app {:port ()}))
 
