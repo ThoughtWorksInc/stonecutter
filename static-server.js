@@ -42,6 +42,10 @@ app.get('/authorise', function(req, res){
   res.render('authorise', pageData);
 });
 
+app.get('/forgot-password', function(req, res){
+  res.render('forgot-password', pageData);
+});
+
 app.get('/profile', function(req, res){
   res.render('profile', pageData);
 });

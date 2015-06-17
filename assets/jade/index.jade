@@ -11,9 +11,21 @@ block headerScripts
     .demo {
       padding-top: 40px;
     }
-    .demo-item {
-      margin
+    .demo-nav {
+      list-style: none;
     }
+    .demo-item {
+      margin: 0 0 20px 0;
+    }
+    .demo-item a {
+      color: #007E84;
+      font-size: 20px;
+      text-decoration: none;
+    }
+    .demo-item a:hover {
+      text-decoration: underline;
+    }
+
 
 
 
@@ -21,9 +33,11 @@ block content
 
   .demo
     .middle-container
-      nav
-        li: a(href="library") Library
-        li: a(href="sign-in") Sign in
-        li: a(href="register") Register
-        li: a(href="profile") Profile
+      nav.demo-nav
+        li.demo-item: a(href="library") Library
+        li.demo-item: a(href="sign-in") Sign in
+        li.demo-item: a(href="register") Register
+        li.demo-item: a(href="forgot-password") Forgot password
+        li.demo-item: a(href="authorise") Authorise
+        li.demo-item: a(href="profile") Profile
 
