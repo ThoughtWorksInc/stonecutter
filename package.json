@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "kick starter",
   "main": "server.js",
-  "engine": "0.12.4",
+  "engines": {
+	"node": "0.10.28"
+		},
   "dependencies": {
     "express": "^4.10.1",
     "gulp": "^3.8.10",
