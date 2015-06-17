@@ -137,6 +137,14 @@ gulp.task('watch', function () {
   gulp.watch(dev_path.js, ['js']);
 });
 
+gulp.task('clj', function () {
+  gulp.watch('assets/jade/**/*.jade', ['jade']);
+  gulp.watch('assets/stylesheets/**/*.scss', ['sass']);
+  gulp.watch(dev_path.images, ['images']);
+  gulp.watch(dev_path.favicons, ['favicons']);
+  gulp.watch(dev_path.js, ['js']);
+});
+
 gulp.task('server', function (callback) {
   isDev = true;
   runSequence('clean-build',
