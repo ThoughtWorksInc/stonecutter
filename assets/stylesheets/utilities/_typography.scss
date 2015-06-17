@@ -15,6 +15,11 @@
   }
 }
 
+@mixin no-select() {
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
 @mixin ellipsis() {
   white-space: nowrap;
   overflow: hidden;

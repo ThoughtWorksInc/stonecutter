@@ -14,40 +14,43 @@
   transition: background 250ms ease, color 250ms ease, box-shadow 250ms ease, transform 250ms ease;
   outline: 0;
   white-space: nowrap;
-  &:hover {
-  }
-  &:focus {
-  }
+  @include no-select;
   &:focus, &:hover {
-    background-color: lighten($medium_cyan,1%);
-    box-shadow: 0 5px 12px rgba(#000,0.3);
+    background-color: lighten($medium_cyan, 1%);
+    box-shadow: 0 5px 12px rgba(#000, 0.3);
     transform: translateY(-2px);
   }
   &:active {
-    background-color: darken($medium_cyan,5%);
+    background-color: darken($medium_cyan, 5%);
     outline: 0;
   }
+
+  // make it so
   &--full-width {
     width: 100%;
   }
+
+  // secondary action
   &--grey {
     background-color: $light_grey;
     color: $dark_grey;
     &:hover {
-      background-color: lighten($light_grey,2%);
+      background-color: lighten($light_grey, 2%);
     }
     &:focus {
-      background-color: darken($light_grey,5%);
+      background-color: darken($light_grey, 5%);
     }
   }
+
+  // used for delete buttons
   &--remove {
     background-color: $dark_pink;
     color: $white;
     &:hover {
-      background-color: lighten($dark_pink,2%);
+      background-color: lighten($dark_pink, 2%);
     }
     &:focus {
-      background-color: darken($dark_pink,5%);
+      background-color: darken($dark_pink, 5%);
     }
   }
 }
@@ -58,6 +61,7 @@
     display: none;
   }
 }
+
 .button__text {
   display: none;
   @include width-from($smallish_device) {

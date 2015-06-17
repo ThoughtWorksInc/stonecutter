@@ -22,4 +22,6 @@ html
 
   body(class="#{bodyClass}")
     block content
+    script.
+      document.addEventListener("touchstart", function(){}, true);
     block footerScripts
