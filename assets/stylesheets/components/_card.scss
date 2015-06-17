@@ -1,0 +1,116 @@
+@keyframes wobble {
+  0%, 100% {
+    transform: translateZ(0);
+  }
+  50% {
+    transform: translateZ(5px);
+  }
+}
+
+.card-preview {
+  margin-bottom: 45px;
+  perspective: 500px;
+}
+
+.card {
+  background-color: $white;
+  max-width: 480px;
+  padding: 30px;
+  border: 1px solid $light_grey;
+  transition: box-shadow 200ms linear, border 200ms linear;
+  &:hover {
+    animation: wobble 2s ease-in-out infinite;
+    box-shadow: 0 5px 12px rgba(#000, 0.3);
+    border-color: transparent;
+  }
+
+  &__row {
+    @include clearfix;
+    &:not(:last-child) {
+      padding-bottom: 30px;
+    }
+    &--bottom-border {
+      margin-bottom: 30px;
+      border-bottom: 1px solid $light_grey;
+    }
+  }
+  &__heading {
+    margin-top: 0;
+    margin-bottom: 10px;
+  }
+  &__name {
+    @include font-size(20px);
+    color: $dark_cyan;
+    font-weight: bold;
+    line-height: 1.3;
+  }
+  &__display-name {
+    @include font-size(18px);
+    color: rgba($dark_cyan, 0.75);
+    font-weight: normal;
+    line-height: 1.3;
+  }
+  &__description {
+    p {
+      @include font-size(15px);
+      line-height: 1.35;
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+  &__details {
+    @include width-from($smallish_device) {
+      margin-right: 180px;
+    }
+  }
+
+  // photo area
+
+  &__photo {
+    position: relative;
+    margin-bottom: 20px;
+    @include width-from($smallish_device) {
+      margin-bottom: 0;
+      float: right;
+    }
+  }
+  &__image {
+    @include size(150px);
+    background: lighten($light_grey, 5%);
+    border: 1px solid $light_grey;
+    img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+  }
+  &__photo-button {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+  }
+
+  // Items for list values
+
+  &__items {
+    margin-top: 0;
+    margin-bottom: 0;
+    &-key {
+      margin-bottom: 2px;
+      color: $dark_cyan;
+      text-transform: uppercase;
+      line-height: 1.2;
+      @include font-size(12px);
+    }
+    &-value {
+      margin-left: 0;
+      margin-bottom: 16px;
+      @include font-size(14px);
+      line-height: 1.2;
+      &:last-child {
+        margin-bottom: 0;
+      }
+    }
+  }
+}
