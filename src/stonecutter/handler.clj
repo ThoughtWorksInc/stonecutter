@@ -40,9 +40,8 @@
 (def app
   (wrap-defaults routes site-defaults))
 
-(defn port []
-  (get env :port 3000))
+(def port (Integer. (get env :port "3000")))
 
 (defn -main [& args]   
-  (run-jetty app {:port ()}))
+  (run-jetty app {:port port}))
 
