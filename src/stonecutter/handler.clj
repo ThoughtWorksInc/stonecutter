@@ -3,11 +3,11 @@
             [ring.util.response :as r]
             [ring.adapter.jetty :refer [run-jetty]]
             [bidi.ring :refer [make-handler]]
+            [environ.core :refer [env]]
             [scenic.routes :refer [scenic-handler load-routes-from-file]]
             [stonecutter.view :as view]
             [stonecutter.translation :refer [load-translations-from-file]]
-            [clauth.user :as user-store]
-            ))
+            [clauth.user :as user-store]))
 
 
 (def translation-map
