@@ -9,7 +9,12 @@
 
 .card-preview {
   margin-bottom: 45px;
+}
+
+.wrapper__card {
   perspective: 1000px;
+  padding: 20px;
+  background-color: darken($white,2%);
 }
 
 .card {
@@ -17,13 +22,14 @@
   background-color: $white;
   max-width: 480px;
   min-height: 270px;
+  margin: 0 auto;
   padding: $card_guttering;
   border: 1px solid $light_grey;
+  box-shadow: 0 0 4px 0 rgba(#000, 0.15);
   transition: box-shadow 200ms linear, transform 200ms linear;
   &:hover {
-    transform: rotateX(-5deg) translateZ(30px);
+    transform: rotateX(-10deg) translateZ(30px);
     box-shadow: 0 -6px 20px 0 rgba(#000, 0.15);
-    //animation: wobble 2s ease-in-out infinite;
   }
 
   &__row {
