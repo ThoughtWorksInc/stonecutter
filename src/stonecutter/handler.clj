@@ -7,8 +7,8 @@
             [scenic.routes :refer [scenic-handler load-routes-from-file]]
             [stonecutter.view :as view]
             [stonecutter.translation :refer [load-translations-from-file]]
-            [clauth.user :as user-store]))
-
+            [clauth.user :as user-store])
+  (:gen-class))
 
 (def translation-map
   (load-translations-from-file "en.yml"))

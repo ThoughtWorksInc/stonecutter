@@ -24,11 +24,6 @@
            )
   )
 
-(defn print [something]
-  (prn something)
-  something
-  )
-
 (defn registration-form [translator]
   (->> (html/html-resource "public/register.html")
        add-anti-forgery
