@@ -27,3 +27,11 @@
        (fact "invalid email returns nil"
              (v/validate-registration {:email "valid@email.com"}) => nil))
 
+(tabular
+  (fact "testing password validation"
+        (v/is-password-valid? ?password) => ?is-valid?)
+
+  ?password                     ?is-valid? 
+  nil                           falsey
+  ""                            falsey
+  "valid-password"              truthy)

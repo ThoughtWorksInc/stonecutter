@@ -26,20 +26,24 @@
       (r/content-type "text/html")))
 
 (defn show-registration-form [r]
-  (html-response (view/registration-form (translations-fn translation-map) nil)))
+  (let [context {:translator (translations-fn translation-map)}]
+    (html-response (view/registration-form context))))
 
 (defn register-user [r]
-    (let [params (:params r)
-          email (:email params)
-          password (:password params)
-          err (v/validate-registration params)]
-      (if-not err
-        (do 
-          (-> (user-store/new-user email password)
-              user-store/store-user)
-          (html-response "You saved the user")) 
-        (html-response (view/registration-form (translations-fn translation-map) err))) 
-      ))
+  (let [params (:params r)
+        email (:email params)
+        password (:password params)
+        err (v/validate-registration params)
+        context {:translator (translations-fn translation-map)
+                 :errors err
+                 :params params}]
+    (if-not err
+      (do 
+        (-> (user-store/new-user email password)
+            user-store/store-user)
+        (html-response "You saved the user")) 
+      (html-response (view/registration-form context))) 
+    ))
 
 (defn not-found [r]
   (html-response "These are not the droids you are looking for.."))

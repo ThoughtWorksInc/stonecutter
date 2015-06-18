@@ -30,13 +30,24 @@
           (user-store/new-user "valid@email.com" "password") => user-registration-data
           (user-store/store-user user-registration-data) => anything)))
 
-(fact "error class is added to the page if there are errors, and user is not added to database"
-      (-> (create-request :post "/register" {:email "invalid"})
-          register-user 
-          :body
-          html/html-snippet
-          (html/select [:.form-row--validation-error]) ) =not=> empty?  
 
-      (provided
-        (user-store/new-user anything anything) => anything :times 0
-        (user-store/store-user anything) => anything :times 0))
+(facts "about validation errors"
+       (fact "user isn't saved to the database if email is invalid"
+             (-> (create-request :post "/register" {:email "invalid"}) register-user) => anything
+             (provided
+                 (user-store/new-user anything anything) => anything :times 0
+                 (user-store/store-user anything) => anything :times 0))
+       (facts "registration page is rendered with errors" 
+             (let [html-response ( -> (create-request :post "/register" {:email "invalid"}) 
+                                      register-user 
+                                      :body 
+                                      html/html-snippet)
+                   _ (prn html-response)
+                   ]
+               (fact "email field should have validation error class" 
+                     (html/select html-response [:.form-row--validation-error]) =not=> empty?)  
+               (fact "invalid email value should be preserved"
+               (-> (html/select html-response [:.registration-email-input])
+                   first
+                   :attrs
+                   :value) => "invalid"))))

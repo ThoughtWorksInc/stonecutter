@@ -28,14 +28,23 @@
              [:.registration-email] (html/add-class "form-row--validation-error")) 
     enlive-m))
 
+(defn add-params [params enlive-m]
+      (html/at enlive-m
+               [:.registration-email-input] (html/set-attr :value (:email params))))
+
 (defn p [v] (prn v) v)
 
-(defn registration-form [translator err]
-  (->> (html/html-resource "public/register.html")
-       add-anti-forgery
-       (add-registration-errors err) 
-       (t/translate translator)
-       html/emit*
-       (apply str)
-       ))
+(defn registration-form [context]
+  (let [err (:errors context)
+        translator (:translator context)
+        params (:params context)
+        ]
+    (->> (html/html-resource "public/register.html")
+         add-anti-forgery
+         (add-registration-errors err) 
+         (add-params params)
+         (t/translate translator)
+         html/emit*
+         (apply str)
+         )))
 

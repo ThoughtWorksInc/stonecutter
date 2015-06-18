@@ -1,5 +1,7 @@
-- server side validation of the email
+- (DONE) server side validation of the email
+- validate that passwords are not blank
 - validation that passwords match
 - Welcome screen view
 - check if email exists
 - integration test
+- malidate max length of fields
