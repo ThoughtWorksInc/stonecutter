@@ -3,7 +3,7 @@
             [stonecutter.validation :as v]))
 
 (tabular
-  (fact "Testing email validation"
+  (fact "testing email validation"
         (v/is-email-valid? ?email) => ?is-valid?)
 
   ?email                        ?is-valid? 
@@ -18,4 +18,11 @@
   "valid@email.averylongdsn"    truthy
 
   ) 
+
+(facts "about registration validation"
+       (fact "invalid email returns error message"
+             (v/validate-registration {:email "invalid"}) => "Email address is invalid"
+             )
+       (fact "invalid email returns nil"
+             (v/validate-registration {:email "valid@email.com"}) => nil))
 
