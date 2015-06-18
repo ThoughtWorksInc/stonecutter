@@ -9,7 +9,7 @@
 
 .card-preview {
   margin-bottom: 45px;
-  perspective: 500px;
+  perspective: 1000px;
 }
 
 .card {
@@ -19,11 +19,11 @@
   min-height: 270px;
   padding: $card_guttering;
   border: 1px solid $light_grey;
-  transition: box-shadow 200ms linear, border 200ms linear;
+  transition: box-shadow 200ms linear, transform 200ms linear;
   &:hover {
-    animation: wobble 2s ease-in-out infinite;
-    box-shadow: 0 5px 12px rgba(#000, 0.3);
-    border-color: transparent;
+    transform: rotateX(-5deg) translateZ(30px);
+    box-shadow: 0 -6px 20px 0 rgba(#000, 0.15);
+    //animation: wobble 2s ease-in-out infinite;
   }
 
   &__row {
@@ -85,16 +85,17 @@
     float: right;
   }
   &__image {
-    @include size(75px);
+    @include circle(75px);
     background: lighten($light_grey, 5%);
     border: 1px solid $light_grey;
     @include width-from($smallish_device) {
-      @include size(150px);
+      @include circle(150px);
     }
     img {
       display: block;
       width: 100%;
       height: auto;
+      border-radius: inherit;
     }
   }
   &__photo-button {
