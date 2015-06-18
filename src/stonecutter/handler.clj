@@ -5,9 +5,19 @@
             [bidi.ring :refer [make-handler]]
             [scenic.routes :refer [scenic-handler load-routes-from-file]]
             [stonecutter.view :as view]
+            [stonecutter.translation :refer [load-translations-from-file]]
             [clauth.user :as user-store]
-            [environ.core :refer [env]]
             ))
+
+
+(def translation-map
+  (load-translations-from-file "en.yml"))
+
+(defn translations-fn [translation-map]
+  (fn [translation-key]
+    (let [key1 (keyword (namespace translation-key))
+          key2 (keyword (name translation-key))]
+      (get-in translation-map [key1 key2]))))
 
 (defn html-response [s]
   (-> s
@@ -15,7 +25,7 @@
       (r/content-type "text/html")))
 
 (defn show-registration-form [r]
-  (html-response (view/registration-form)))
+  (html-response (view/registration-form (translations-fn translation-map))))
 
 (defn register-user [r]
 (html-response 
@@ -44,4 +54,3 @@
 
 (defn -main [& args]   
   (run-jetty app {:port port}))
-

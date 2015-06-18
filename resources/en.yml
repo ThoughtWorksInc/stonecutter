@@ -1,0 +1,5 @@
+registration-form:
+  email-address: Email address
+  email-address-invalid-validation-message: Enter a valid email address
+  password: Password
+  confirm-password: Confirm Password

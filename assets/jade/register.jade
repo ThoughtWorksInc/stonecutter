@@ -20,20 +20,16 @@ block content
     form.register-form(action="register", method="post")
       p.form-row
         label.form-row__label(for="email")
-          span.form-row__title
-            | Email address
-          span.form-row__validation
-            | Enter a valid email address
+          span.form-row__title(data-l8n="content:registration-form/email-address") !Email address
+          span.form-row__validation(data-l8n="content:registration-form/email-address-invalid-validation-message") !Enter a valid email address
         input.form-row__input(type="email", id="email", name="email")
       p.form-row
         label.form-row__label(for="password")
-          span.form-row__title
-            | Password
+          span.form-row__title(data-l8n="content:registration-form/password") !Password
         input.form-row__input(type="password", id="password", name="password")
       p.form-row
         label.form-row__label(for="confirm-password")
-          span.form-row__title
-            | Confirm Password
+          span.form-row__title(data-l8n="content:registration-form/confirm-password") !Confirm Password
         input.form-row__input(type="password", id="confirm-password", name="confirm-password")
       button.button.button--full-width(type="submit") Create account
 

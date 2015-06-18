@@ -5,7 +5,8 @@
             ))
 
 (fact "registration-form should return some html"
-      (let [page (-> (registration-form) 
+      (let [page (-> {} 
+                     (registration-form) 
                      html/html-snippet)]
         (-> page 
             (html/select [:form])) =not=> empty?))

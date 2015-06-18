@@ -1,0 +1,5 @@
+- server side validation of the email
+- validation that passwords match
+- Welcome screen view
+- check if email exists
+- integration test
