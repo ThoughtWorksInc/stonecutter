@@ -1,1 +1,1 @@
-web: source heroku.env.sh && lein trampoline run
+web: lein trampoline run
