@@ -19,16 +19,25 @@
   (html/html-snippet (anti-forgery-field)))
 
 (defn add-anti-forgery [enlive-m]
-  (html/at enlive-m
-           [:form] (html/prepend (anti-forgery-snippet))
-           )
-  )
+  (html/at enlive-m 
+           [:form] (html/prepend (anti-forgery-snippet))))
 
-(defn registration-form [translator]
+(defn add-registration-errors [err enlive-m]
+  (if err
+    (html/at enlive-m 
+             [:.registration-email] (html/add-class "form-row--validation-error")) 
+    enlive-m))
+
+(defn p [v] (prn v) v)
+
+(defn registration-form [translator err]
   (->> (html/html-resource "public/register.html")
        add-anti-forgery
+       p
+       (add-registration-errors err) 
        (t/translate translator)
        html/emit*
        (apply str)
+       p
        ))
 

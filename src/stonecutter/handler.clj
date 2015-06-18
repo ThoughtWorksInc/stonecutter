@@ -7,8 +7,8 @@
             [scenic.routes :refer [scenic-handler load-routes-from-file]]
             [stonecutter.view :as view]
             [stonecutter.translation :refer [load-translations-from-file]]
-            [clauth.user :as user-store])
-  (:gen-class))
+            [clauth.user :as user-store]))
+
 
 (def translation-map
   (load-translations-from-file "en.yml"))
@@ -25,7 +25,7 @@
       (r/content-type "text/html")))
 
 (defn show-registration-form [r]
-  (html-response (view/registration-form (translations-fn translation-map))))
+  (html-response (view/registration-form (translations-fn translation-map) nil)))
 
 (defn register-user [r]
 (html-response 
