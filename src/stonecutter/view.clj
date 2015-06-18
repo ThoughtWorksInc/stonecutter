@@ -33,11 +33,9 @@
 (defn registration-form [translator err]
   (->> (html/html-resource "public/register.html")
        add-anti-forgery
-       p
        (add-registration-errors err) 
        (t/translate translator)
        html/emit*
        (apply str)
-       p
        ))
 

@@ -7,6 +7,7 @@
             [scenic.routes :refer [scenic-handler load-routes-from-file]]
             [stonecutter.view :as view]
             [stonecutter.translation :refer [load-translations-from-file]]
+            [stonecutter.validation :as v]
             [clauth.user :as user-store]))
 
 
@@ -28,13 +29,17 @@
   (html-response (view/registration-form (translations-fn translation-map) nil)))
 
 (defn register-user [r]
-(html-response 
- (let [email (get-in r [:params :email])
-       password (get-in r [:params :password])
-       new-user-map (user-store/new-user email password)]
-  (user-store/store-user new-user-map)
-    "Something happened TODO add a display page for user created" 
-   )))
+    (let [params (:params r)
+          email (:email params)
+          password (:password params)
+          err (v/validate-registration params)]
+      (if-not err
+        (do 
+          (-> (user-store/new-user email password)
+              user-store/store-user)
+          (html-response "You saved the user")) 
+        (html-response (view/registration-form (translations-fn translation-map) err))) 
+      ))
 
 (defn not-found [r]
   (html-response "These are not the droids you are looking for.."))

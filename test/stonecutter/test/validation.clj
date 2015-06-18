@@ -7,6 +7,7 @@
         (v/is-email-valid? ?email) => ?is-valid?)
 
   ?email                        ?is-valid? 
+  nil                           falsey
   ""                            falsey
   "invalid"                     falsey
   "invalid@email"               falsey 
