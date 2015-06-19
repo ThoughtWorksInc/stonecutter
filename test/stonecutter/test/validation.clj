@@ -2,6 +2,9 @@
   (:require [midje.sweet :refer :all]
             [stonecutter.validation :as v]))
 
+(def long-email-address
+  (apply str (repeat 255 "x")))
+
 (tabular
   (fact "testing email validation"
         (v/is-email-valid? {:email ?email}) => ?is-valid?)
@@ -51,4 +54,7 @@
        (fact "if a duplicate user is found then an error is returned"
              (let [duplicate-user-fn (fn [email] true)]
                (v/validate-registration (create-params "valid@email.com" "password" "password") duplicate-user-fn)
-               => {:email :duplicate})))
+               => {:email :duplicate}))
+       (fact "email address longer than 254 characters returns email error key"
+             (v/validate-registration (create-params long-email-address "valid-password" "valid-password") default-duplicate-user-fn) => {:email :too-long})
+       )

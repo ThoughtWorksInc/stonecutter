@@ -5,8 +5,13 @@
   (when email
     (re-matches #"\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+\b" email)))
 
+(defn exceeds-limit? [email]
+  (when (> (count email) 253) :too-long))
+
+
 (defn validate-email [is-duplicate-user-fn params]
-  (cond (not (is-email-valid? params)) :invalid
+  (cond (exceeds-limit? (:email params)) :too-long
+        (not (is-email-valid? params)) :invalid
         (is-duplicate-user-fn (:email params)) :duplicate
         :default nil))
 

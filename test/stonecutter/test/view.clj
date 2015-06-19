@@ -11,6 +11,9 @@
    } 
   )
 
+(def long-email-address
+  (apply str (repeat 255 "x")))
+
 (fact "registration-form should return some html"
       (let [page (-> (create-context nil {}) 
                      registration-form 
@@ -58,6 +61,12 @@
                    page (-> (create-context errors params) registration-form html/html-snippet)]
                (-> page (html/select [:.clj--registration-email [:.form-row__validation (html/attr= :data-l8n "content:registration-form/email-address-duplicate-validation-message")]])) =not=> empty?))
 
+       (fact "email is too long"
+             (let [errors {:email :too-long}
+                   params {:email long-email-address}
+                   page (-> (create-context errors params) registration-form html/html-snippet)]
+               (-> page (html/select [:.clj--registration-email [:.form-row__validation (html/attr= :data-l8n "content:registration-form/email-address-too-long-validation-message")]])) =not=> empty?))
+
        (fact "password invalid"
              (let [errors {:password :invalid} 
                    params {:password ""}
@@ -73,7 +82,4 @@
                    page (-> (create-context errors params)
                             registration-form 
                             html/html-snippet)]
-               (-> page 
-                   (html/select [[:.clj--registration-confirm-password :.form-row--validation-error]])) =not=> empty?))
-
-       )
+               (-> page (html/select [[:.validation-summary__item (html/attr= :data-l8n "content:registration-form/confirm-password-invalid-validation-message")]])) =not=> empty?)))

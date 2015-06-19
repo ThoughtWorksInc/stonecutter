@@ -2,7 +2,8 @@ registration-form:
   email-address: Email address
   email-address-invalid-validation-message: Enter a valid email address
   email-address-duplicate-validation-message: User already exists
+  email-address-too-long-validation-message: Email address is too long
   password: Password
   password-invalid-validation-message: Enter a password
   confirm-password: Confirm Password
-  confirm-password-invalid-validation-message: "Passwords don't match"
+  confirm-password-invalid-validation-message: Ensure your passwords match
