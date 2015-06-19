@@ -47,7 +47,8 @@
 
         (-> (create-request :post "/register" {:email "valid@email.com" :password "password" :confirm-password "password"}) 
             register-user 
-            :body) => (contains "User already exists")))
+            :body) => (contains "User already exists"))
+      (user-store/reset-user-store!))
 
 (facts "about validation errors"
        (fact "user isn't saved to the database if email is invalid"

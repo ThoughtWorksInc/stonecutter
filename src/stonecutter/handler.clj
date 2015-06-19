@@ -2,7 +2,7 @@
   (:require [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [ring.util.response :as r]
             [ring.adapter.jetty :refer [run-jetty]]
-            [bidi.ring :refer [make-handler]]
+            [bidi.bidi :refer [path-for]]
             [environ.core :refer [env]]
             [scenic.routes :refer [scenic-handler load-routes-from-file]]
             [stonecutter.view :as view]
@@ -10,13 +10,13 @@
             [stonecutter.validation :as v]
             [stonecutter.storage :as s]))
 
+(def routes (load-routes-from-file "routes.txt"))
 
 (def translation-map
   (load-translations-from-file "en.yml"))
 
 (defn translations-fn [translation-map]
   (fn [translation-key]
-    (prn "TRANSLATION_KEY: " translation-key)
     (let [key1 (keyword (namespace translation-key))
           key2 (keyword (name translation-key))]
       (get-in translation-map [key1 key2]))))
@@ -49,15 +49,17 @@
   (html-response "These are not the droids you are looking for.."))
 
 (def handlers 
-  {:home (fn [r] (html-response "Hello World"))
+  {:home (fn [r] (r/redirect (path-for routes :show-registration-form)))
    :show-registration-form show-registration-form
    :register-user register-user})
 
-(def routes 
-  (scenic-handler (load-routes-from-file "routes.txt") handlers not-found))
+
+
+(def app-handler
+  (scenic-handler routes handlers not-found))
 
 (def app
-  (wrap-defaults routes site-defaults))
+  (wrap-defaults app-handler site-defaults))
 
 (def port (Integer. (get env :port "3000")))
 
