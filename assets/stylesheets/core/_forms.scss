@@ -1,10 +1,39 @@
+.validation-summary {
+  margin-bottom: 2rem;
+  &__list {
+    @include reset-list;
+    background-color: lighten($light_pink,2%);
+    margin-left: -1rem;
+    margin-right: -1rem;
+    margin-bottom: 0;
+    padding: 1rem;
+    border-bottom: 4px solid $error_color;
+  }
+  &__item {
+    position: relative;
+    padding-left: 30px;
+    color: $error_color;
+    &:last-child {
+      margin-bottom: 0;
+    }
+    &:before {
+      content: "\f06a";
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      font-family: FontAwesome;
+    }
+  }
+}
+
 .form-row {
   margin-bottom: 2rem;
   &--validation-error {
     background-color: lighten($light_pink,2%);
-    padding: 1.5rem;
-    margin-left: -1.5rem;
-    margin-right: -1.5rem;
+    padding: 1rem;
+    margin-left: -1rem;
+    margin-right: -1rem;
   }
   &__label {
 

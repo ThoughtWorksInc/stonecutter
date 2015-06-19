@@ -18,6 +18,11 @@ block content
   .middle-container
     h1.page-title Register an account
     form.register-form(action="authorise", method="post")
+      //.validation-summary
+      //  .validation-summary__title
+      //  ul.validation-summary__list
+      //    li.validation-summary__item
+      //      | Ensure your passwords match
       p.form-row.registration-email
         label.form-row__label(for="email")
           span.form-row__title(data-l8n="content:registration-form/email-address") !Email address
