@@ -2,4 +2,6 @@ registration-form:
   email-address: Email address
   email-address-invalid-validation-message: Enter a valid email address
   password: Password
+  password-invalid-validation-message: Enter a password
   confirm-password: Confirm Password
+  confirm-password-validation-message: "Passwords don't match"

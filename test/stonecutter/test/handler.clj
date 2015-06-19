@@ -21,8 +21,7 @@
                                     :password "encrypted-password" 
                                     :name nil
                                     :url nil}]
-        (-> (mock/request :post "/register") 
-            (assoc :params {:email "valid@email.com" :password "password"}) 
+        (-> (create-request :post "/register" {:email "valid@email.com" :password "password" :confirm-password "password"}) 
             register-user 
             :status) => 200 
 
@@ -41,9 +40,7 @@
              (let [html-response ( -> (create-request :post "/register" {:email "invalid"}) 
                                       register-user 
                                       :body 
-                                      html/html-snippet)
-                   _ (prn html-response)
-                   ]
+                                      html/html-snippet)]
                (fact "email field should have validation error class" 
                      (html/select html-response [:.form-row--validation-error]) =not=> empty?)  
                (fact "invalid email value should be preserved"

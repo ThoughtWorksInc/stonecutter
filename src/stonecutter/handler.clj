@@ -37,7 +37,7 @@
         context {:translator (translations-fn translation-map)
                  :errors err
                  :params params}]
-    (if-not err
+    (if (empty? err) 
       (do 
         (-> (user-store/new-user email password)
             user-store/store-user)

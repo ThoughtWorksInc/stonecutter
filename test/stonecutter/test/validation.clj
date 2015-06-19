@@ -4,7 +4,7 @@
 
 (tabular
   (fact "testing email validation"
-        (v/is-email-valid? ?email) => ?is-valid?)
+        (v/is-email-valid? {:email ?email}) => ?is-valid?)
 
   ?email                        ?is-valid? 
   nil                           falsey
@@ -20,18 +20,23 @@
 
   ) 
 
-(facts "about registration validation"
-       (fact "invalid email returns error message"
-             (v/validate-registration {:email "invalid"}) => "Email address is invalid"
-             )
-       (fact "invalid email returns nil"
-             (v/validate-registration {:email "valid@email.com"}) => nil))
-
 (tabular
   (fact "testing password validation"
-        (v/is-password-valid? ?password) => ?is-valid?)
+        (v/is-password-valid? {:password ?password}) => ?is-valid?)
 
   ?password                     ?is-valid? 
   nil                           falsey
   ""                            falsey
   "valid-password"              truthy)
+
+(facts "about registration validation"
+       (fact "invalid email returns email error key"
+             (v/validate-registration {:email "invalid" :password "valid-password" :confirm-password "valid-password"}) => [:email])
+       (fact "there are no errors"
+             (v/validate-registration {:email "valid@email.com" :password "valid-password" :confirm-password "valid-password"}) => [])
+       (fact "invalid password returns error message"
+             (v/validate-registration {:email "valid@email.com" :password "" :confirm-password ""}) => [:password])
+       (fact "blank password and non-blank confirm password returns error message"
+             (v/validate-registration {:email "valid@email.com" :password "" :confirm-password "password"}) => [:password :confirm-password])
+       (fact "invalid password confirmation returns an error"
+             (v/validate-registration {:email "valid@email.com" :password "password" :confirm-password "invalid-password"}) => [:confirm-password]))
