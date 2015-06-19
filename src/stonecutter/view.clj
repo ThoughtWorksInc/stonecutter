@@ -1,19 +1,7 @@
 (ns stonecutter.view
-  (:require [hiccup.core :as hiccup]
-            [hiccup.form :as form]
-            [traduki.core :as t]
+  (:require [traduki.core :as t]
             [ring.util.anti-forgery :refer [anti-forgery-field]]
-            [net.cgrand.enlive-html :as html]
-            [net.cgrand.jsoup :as jsoup]
-            ))
-
-#_(defn registration-form [] 
-  (hiccup/html  
-    (form/form-to  [:post "/register"]
-                  (anti-forgery-field)
-                  (form/text-field "username")
-                  (form/password-field "password")
-                  (form/submit-button "Submit"))))
+            [net.cgrand.enlive-html :as html]))
 
 (defn anti-forgery-snippet []
   (html/html-snippet (anti-forgery-field)))
@@ -34,15 +22,15 @@
 (defn add-email-error [enlive-m err]
   (let [error-translation (get-in error-translations [:email (:email err)])]
     (-> enlive-m
-        (add-error-class err :email [:.registration-email])
-        (html/at [:.registration-email :.form-row__validation] (html/set-attr :data-l8n (or error-translation "content:registration-form/unknown-error")))
+        (add-error-class err :email [:.clj--registration-email])
+        (html/at [:.clj--registration-email :.form-row__validation] (html/set-attr :data-l8n (or error-translation "content:registration-form/unknown-error")))
         )))
 
 (defn add-password-error [enlive-m err]
-  (add-error-class enlive-m err :password [:.registration-password]))
+  (add-error-class enlive-m err :password [:.clj--registration-password]))
 
 (defn add-confirm-password-error [enlive-m err]
-  (add-error-class enlive-m err :confirm-password [:.registration-confirm-password]))
+  (add-error-class enlive-m err :confirm-password [:.clj--registration-confirm-password]))
 
 (defn add-registration-errors [err enlive-m]
   (-> enlive-m

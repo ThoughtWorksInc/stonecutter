@@ -44,7 +44,7 @@
                         registration-form 
                         html/html-snippet)]
            (-> page 
-               (html/select [[:.registration-email :.form-row--validation-error]])) =not=> empty?
+               (html/select [[:.clj--registration-email :.form-row--validation-error]])) =not=> empty?
            (fact "invalid value is preserved in input field"
                  (-> page (html/select [:.registration-email-input]) first :attrs :value) => "invalid")))
 
@@ -52,7 +52,7 @@
              (let [errors {:email :duplicate}
                    params {:email "valid@email.com"}
                    page (-> (create-context errors params) registration-form html/html-snippet)]
-               (-> page (html/select [:.registration-email [:.form-row__validation (html/attr= :data-l8n "content:registration-form/email-address-duplicate-validation-message")]])) =not=> empty?))
+               (-> page (html/select [:.clj--registration-email [:.form-row__validation (html/attr= :data-l8n "content:registration-form/email-address-duplicate-validation-message")]])) =not=> empty?))
 
        (fact "password invalid"
              (let [errors {:password :invalid} 
@@ -61,7 +61,7 @@
                             registration-form 
                             html/html-snippet)]
                (-> page 
-                   (html/select [[:.registration-password :.form-row--validation-error]])) =not=> empty?))
+                   (html/select [[:.clj--registration-password :.form-row--validation-error]])) =not=> empty?))
 
        (fact "confirm password invalid"
              (let [errors {:confirm-password :invalid} 
@@ -70,6 +70,6 @@
                             registration-form 
                             html/html-snippet)]
                (-> page 
-                   (html/select [[:.registration-confirm-password :.form-row--validation-error]])) =not=> empty?))
+                   (html/select [[:.clj--registration-confirm-password :.form-row--validation-error]])) =not=> empty?))
 
        )
