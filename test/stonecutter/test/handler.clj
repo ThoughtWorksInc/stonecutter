@@ -4,7 +4,7 @@
             [stonecutter.handler :refer [app register-user]]
             [clauth.user :as user-store]
             [net.cgrand.enlive-html :as html]
-            ))
+            [stonecutter.storage :as s]))
 
 (defn p [v] (prn v) v)
 
@@ -12,39 +12,58 @@
   (-> (mock/request method url)
       (assoc :params params)))
 
+(defn create-user [login password]
+  {:login login
+   :password password
+   :name nil
+   :url nil})
+
+
 (fact "registration url returns a 200 response"
       (-> (mock/request :get "/register") app :status) => 200 
       )
 
 (fact "user data is saved"
-      (let [user-registration-data {:login "valid@email.com" 
-                                    :password "encrypted-password" 
-                                    :name nil
-                                    :url nil}]
+      (let [user-registration-data (create-user "valid@email.com" "password")] 
         (-> (create-request :post "/register" {:email "valid@email.com" :password "password" :confirm-password "password"}) 
             register-user 
             :status) => 200 
 
         (provided
-          (user-store/new-user "valid@email.com" "password") => user-registration-data
-          (user-store/store-user user-registration-data) => anything)))
+          (s/store-user! "valid@email.com" "password") => user-registration-data)))
 
+;
+; create a valid user 
+; test that success message is received in response
+; create another user with same name
+; test that error message is received in response (i.e. correct error is shown in email field)
+
+(fact "same user cannot be created twice"
+      (let [user-registration-data (create-user "valid@email.com" "password")]
+        (-> (create-request :post "/register" {:email "valid@email.com" :password "password" :confirm-password "password"}) 
+            register-user 
+            :body
+            ) => (contains "You saved the user") 
+
+        (-> (create-request :post "/register" {:email "valid@email.com" :password "password" :confirm-password "password"}) 
+            register-user 
+            :body) => (contains "User already exists")))
 
 (facts "about validation errors"
        (fact "user isn't saved to the database if email is invalid"
              (-> (create-request :post "/register" {:email "invalid"}) register-user) => anything
              (provided
-                 (user-store/new-user anything anything) => anything :times 0
-                 (user-store/store-user anything) => anything :times 0))
+               (user-store/new-user anything anything) => anything :times 0
+               (user-store/store-user anything) => anything :times 0))
        (facts "registration page is rendered with errors" 
-             (let [html-response ( -> (create-request :post "/register" {:email "invalid"}) 
-                                      register-user 
-                                      :body 
-                                      html/html-snippet)]
-               (fact "email field should have validation error class" 
-                     (html/select html-response [:.form-row--validation-error]) =not=> empty?)  
-               (fact "invalid email value should be preserved"
-               (-> (html/select html-response [:.registration-email-input])
-                   first
-                   :attrs
-                   :value) => "invalid"))))
+              (let [html-response ( -> (create-request :post "/register" {:email "invalid"}) 
+                                       register-user 
+                                       :body 
+                                       html/html-snippet)]
+                (fact "email field should have validation error class" 
+                      (html/select html-response [:.form-row--validation-error]) =not=> empty?)  
+                (fact "invalid email value should be preserved"
+                      (-> (html/select html-response [:.registration-email-input])
+                          first
+                          :attrs
+                          :value) => "invalid"))))

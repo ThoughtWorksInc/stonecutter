@@ -8,7 +8,7 @@
             [stonecutter.view :as view]
             [stonecutter.translation :refer [load-translations-from-file]]
             [stonecutter.validation :as v]
-            [clauth.user :as user-store]))
+            [stonecutter.storage :as s]))
 
 
 (def translation-map
@@ -16,6 +16,7 @@
 
 (defn translations-fn [translation-map]
   (fn [translation-key]
+    (prn "TRANSLATION_KEY: " translation-key)
     (let [key1 (keyword (namespace translation-key))
           key2 (keyword (name translation-key))]
       (get-in translation-map [key1 key2]))))
@@ -33,14 +34,13 @@
   (let [params (:params r)
         email (:email params)
         password (:password params)
-        err (v/validate-registration params)
+        err (v/validate-registration params s/is-duplicate-user?)
         context {:translator (translations-fn translation-map)
                  :errors err
                  :params params}]
     (if (empty? err) 
       (do 
-        (-> (user-store/new-user email password)
-            user-store/store-user)
+        (s/store-user! email password)
         (html-response "You saved the user")) 
       (html-response (view/registration-form context))) 
     ))

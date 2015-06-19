@@ -4,10 +4,8 @@
             [stonecutter.view :refer [registration-form add-anti-forgery]]
             ))
 
-(def default-translator {})
-
 (defn create-context [err params]
-  {:translator default-translator
+  {:translator {}
    :errors err
    :params params
    } 
@@ -46,10 +44,15 @@
                         registration-form 
                         html/html-snippet)]
            (-> page 
-               p
                (html/select [[:.registration-email :.form-row--validation-error]])) =not=> empty?
            (fact "invalid value is preserved in input field"
                  (-> page (html/select [:.registration-email-input]) first :attrs :value) => "invalid")))
+
+       (fact "email is a duplicate"
+             (let [errors {:email :duplicate}
+                   params {:email "valid@email.com"}
+                   page (-> (create-context errors params) registration-form html/html-snippet)]
+               (-> page (html/select [:.registration-email [:.form-row__validation (html/attr= :data-l8n "content:registration-form/email-address-duplicate-validation-message")]])) =not=> empty?))
 
        (fact "password invalid"
              (let [errors {:password :invalid} 
@@ -69,4 +72,4 @@
                (-> page 
                    (html/select [[:.registration-confirm-password :.form-row--validation-error]])) =not=> empty?))
 
-       ) 
+       )
