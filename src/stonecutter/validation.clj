@@ -5,23 +5,34 @@
   (when email
     (re-matches #"\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+\b" email)))
 
+(defn validate-email [params]
+  (cond (not (is-email-valid? params)) :invalid
+        :default nil))
+
 (defn is-password-valid? [{password :password}]
   (not (s/blank? password)))
+
+(defn validate-password [params]
+  (cond (not (is-password-valid? params)) :invalid
+        :default nil))
 
 (defn do-passwords-match? [{:keys [password confirm-password]}]
   (= confirm-password password))
 
+(defn validate-if-passwords-match [params]
+  (cond (not (do-passwords-match? params)) :invalid
+        :default nil))
+
 (def registration-validations 
-  {:email is-email-valid?
-   :password is-password-valid?
-   :confirm-password do-passwords-match?})
+  {:email validate-email
+   :password validate-password
+   :confirm-password validate-if-passwords-match})
 
 (defn run-validation [params [validation-key validation-fn]]
-  (if-not (validation-fn params) 
-    validation-key
-    nil))
+  [validation-key (validation-fn params)])
 
 (defn validate-registration [params]
   (->> registration-validations 
     (map (partial run-validation params))
-    (remove nil?)) )
+    (remove (comp nil? second))
+    (into {})))

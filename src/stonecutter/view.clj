@@ -23,7 +23,7 @@
            [:form] (html/prepend (anti-forgery-snippet))))
 
 (defn add-error-class [errors err-key field-row-selector enlive-m]
-  (if (some #{err-key} errors)
+  (if (contains? errors err-key)
     (html/at enlive-m field-row-selector (html/add-class "form-row--validation-error"))
     enlive-m))
 

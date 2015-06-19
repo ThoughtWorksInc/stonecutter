@@ -31,12 +31,23 @@
 
 (facts "about registration validation"
        (fact "invalid email returns email error key"
-             (v/validate-registration {:email "invalid" :password "valid-password" :confirm-password "valid-password"}) => [:email])
+             (v/validate-registration {:email "invalid" 
+                                       :password "valid-password" 
+                                       :confirm-password "valid-password"}) => {:email :invalid})
        (fact "there are no errors"
-             (v/validate-registration {:email "valid@email.com" :password "valid-password" :confirm-password "valid-password"}) => [])
+             (v/validate-registration {:email "valid@email.com" 
+                                       :password "valid-password" 
+                                       :confirm-password "valid-password"}) => {})
        (fact "invalid password returns error message"
-             (v/validate-registration {:email "valid@email.com" :password "" :confirm-password ""}) => [:password])
+             (v/validate-registration {:email "valid@email.com" 
+                                       :password "" 
+                                       :confirm-password ""}) => {:password :invalid})
        (fact "blank password and non-blank confirm password returns error message"
-             (v/validate-registration {:email "valid@email.com" :password "" :confirm-password "password"}) => [:password :confirm-password])
+             (v/validate-registration {:email "valid@email.com" 
+                                       :password "" 
+                                       :confirm-password "password"}) => {:password :invalid 
+                                                                          :confirm-password :invalid})
        (fact "invalid password confirmation returns an error"
-             (v/validate-registration {:email "valid@email.com" :password "password" :confirm-password "invalid-password"}) => [:confirm-password]))
+             (v/validate-registration {:email "valid@email.com" 
+                                       :password "password" 
+                                       :confirm-password "invalid-password"}) => {:confirm-password :invalid}))

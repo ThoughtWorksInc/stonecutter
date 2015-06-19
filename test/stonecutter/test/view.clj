@@ -40,7 +40,7 @@
 
 (facts "there is an error message class if an error is passed"
        (fact "email invalid"
-         (let [errors [:email]
+         (let [errors {:email :invalid} 
                params {:email "invalid"}
                page (-> (create-context errors params)
                         registration-form 
@@ -52,7 +52,7 @@
                  (-> page (html/select [:.registration-email-input]) first :attrs :value) => "invalid")))
 
        (fact "password invalid"
-             (let [errors [:password]
+             (let [errors {:password :invalid} 
                    params {:password ""}
                    page (-> (create-context errors params)
                             registration-form 
@@ -61,7 +61,7 @@
                    (html/select [[:.registration-password :.form-row--validation-error]])) =not=> empty?))
 
        (fact "confirm password invalid"
-             (let [errors [:confirm-password]
+             (let [errors {:confirm-password :invalid} 
                    params {:password "password" :confirm-password "invalid-password"}
                    page (-> (create-context errors params)
                             registration-form 
