@@ -18,6 +18,10 @@
         (-> page 
             (html/select [:form])) =not=> empty?))
 
+(fact "form should have correct action"
+      (let [page (-> (create-context nil {}) registration-form html/html-snippet)]
+        (-> page (html/select [:form]) first :attrs :action) => "/register"))
+
 (fact "can inject anti-forgery token"
       (let [page (-> "<html><form></form></html>"
                      html/html-snippet)]

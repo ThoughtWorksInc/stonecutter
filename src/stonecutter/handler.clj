@@ -8,9 +8,8 @@
             [stonecutter.view :as view]
             [stonecutter.translation :refer [load-translations-from-file]]
             [stonecutter.validation :as v]
-            [stonecutter.storage :as s]))
-
-(def routes (load-routes-from-file "routes.txt"))
+            [stonecutter.storage :as s]
+            [stonecutter.routes :refer [routes path]]))
 
 (def translation-map
   (load-translations-from-file "en.yml"))
@@ -49,7 +48,7 @@
   (html-response "These are not the droids you are looking for.."))
 
 (def handlers 
-  {:home (fn [r] (r/redirect (path-for routes :show-registration-form)))
+  {:home (fn [r] (r/redirect (path :show-registration-form)))
    :show-registration-form show-registration-form
    :register-user register-user})
 

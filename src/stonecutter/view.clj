@@ -1,7 +1,8 @@
 (ns stonecutter.view
   (:require [traduki.core :as t]
             [ring.util.anti-forgery :refer [anti-forgery-field]]
-            [net.cgrand.enlive-html :as html]))
+            [net.cgrand.enlive-html :as html]
+            [stonecutter.routes :as r]))
 
 (defn anti-forgery-snippet []
   (html/html-snippet (anti-forgery-field)))
@@ -42,6 +43,9 @@
   (html/at enlive-m
            [:.registration-email-input] (html/set-attr :value (:email params))))
 
+(defn set-form-action [enlive-m]
+  (html/at enlive-m [:form] (html/set-attr :action (r/path :register-user))))
+
 (defn p [v] (prn v) v)
 
 (defn registration-form [context]
@@ -50,6 +54,7 @@
         params (:params context)
         ]
     (->> (html/html-resource "public/register.html")
+         set-form-action
          add-anti-forgery
          (add-registration-errors err)
          (add-params params)
