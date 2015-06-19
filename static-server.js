@@ -38,7 +38,7 @@ app.get('/register', function(req, res){
   res.render('register', pageData);
 });
 
-app.get('/authorise', function(req, res){
+app.all('/authorise', function(req, res){
   res.render('authorise', pageData);
 });
 
