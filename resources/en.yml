@@ -5,5 +5,5 @@ registration-form:
   email-address-too-long-validation-message: Email address is too long
   password: Password
   password-invalid-validation-message: Enter a password
-  confirm-password: Confirm Password
+  confirm-password: Confirm password
   confirm-password-invalid-validation-message: Ensure your passwords match

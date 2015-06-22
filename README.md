@@ -1,6 +1,6 @@
 # stonecutter
 
-FIXME
+A D-CENT project: an easily deployable oauth server for small organisations.
 
 ## Prerequisites
 
@@ -44,7 +44,3 @@ sudo npm install -g gulp
 ```
 gulp server
 ```
-
-## License
-
-Copyright © 2015 FIXME
