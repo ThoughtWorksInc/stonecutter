@@ -1,0 +1,13 @@
+---
+ - name: import mongo key
+   apt_key: keyserver=keyserver.ubuntu.com id=7F0CEB10
+
+ - shell:
+    echo "deb http://repo.mongodb.org/apt/ubuntu "$(lsb_release -sc)"/mongodb-org/3.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-3.0.list
+    creates=/etc/apt/sources.list.d/mongodb-org-3.0.list
+
+ - name: install mongo
+   apt: name=mongodb-org update_cache=yes
+
+ - name: start mongo
+   service: name=mongod state=started
