@@ -39,4 +39,26 @@
          (c/insert @db coll {:login "userA" :password "passwordA"})
          (s/fetch store "userA") => {:login "userA" :password "passwordA"}))
 
+(facts "about viewing entries"
+       (let [store (new-mongo-store @db)]
+         (c/insert @db coll {:login "userA" :password "passwordA"})
+         (c/insert @db coll {:login "userB" :password "passwordB"})
+         (s/entries store) => (contains [{:login "userA" :password "passwordA"}
+                                         {:login "userB" :password "passwordB"}]
+                                        :in-any-order)))
 
+(facts "about resetting the store"
+       (let [store (new-mongo-store @db)]
+         (c/insert @db coll {:login "userA" :password "passwordA"})
+         (c/insert @db coll {:login "userB" :password "passwordB"})
+         (s/reset-store! store)
+         (c/find-maps @db coll) => empty?))
+
+(facts "about revoking a user"
+       (let [store (new-mongo-store @db)]
+         (c/insert @db coll {:login "userA" :password "passwordA"})
+         (c/insert @db coll {:login "userB" :password "passwordB"})
+         (s/revoke! store "userA")
+         (let [records (c/find-maps @db coll)]
+           (count records) => 1
+           (first records) => (contains {:login "userB" :password "passwordB"}))))
