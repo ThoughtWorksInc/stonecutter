@@ -1,7 +1,15 @@
 .header {
-  height: 95px;
+  @include clearfix;
+  //min-height: 95px;
   padding-top: 35px;
   margin-bottom: 40px;
   background-color: $light_grey;
 }
 
+.header__logo {
+  max-width: $max_site_width;
+  height: 50px;
+  margin: 0 auto 30px auto;
+  background: image-url('logo.svg') no-repeat 0 0;
+  background-size: 220px auto;
+}
