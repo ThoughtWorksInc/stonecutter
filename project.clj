@@ -12,6 +12,7 @@
                            [traduki "0.1.1-SNAPSHOT"]
                            [clj-yaml "0.4.0"]
                            [environ "1.0.0"]
+                           [com.novemberain/monger "2.0.0"]
                            ]
             :plugins [[lein-ring "0.8.13"]
                       [lein-midje "3.1.3"]]
@@ -20,4 +21,6 @@
             :aot :all
             :profiles {:dev {:dependencies   [[ring-mock "0.1.5"]
                                               [midje "1.6.3"]]
-                             :resource-paths ["resources" "test-resources"]}})
+                             :resource-paths ["resources" "test-resources"]
+                             :aliases        {"unittest"    ["midje" "stonecutter.test.*"]
+                                              "integration" ["midje" "stonecutter.integration.*"]}}})
