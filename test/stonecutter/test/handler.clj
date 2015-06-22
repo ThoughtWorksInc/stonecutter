@@ -18,6 +18,7 @@
    :name nil
    :url nil})
 
+(background (before :facts (user-store/reset-user-store!)))
 
 (fact "registration url returns a 200 response"
       (-> (mock/request :get "/register") app :status) => 200)
@@ -39,8 +40,7 @@
 
         (-> (create-request :post "/register" {:email "valid@email.com" :password "password" :confirm-password "password"})
             register-user
-            :body) => (contains "User already exists"))
-      (user-store/reset-user-store!))
+            :body) => (contains "User already exists")))
 
 (facts "about validation errors"
        (fact "user isn't saved to the database if email is invalid"

@@ -5,6 +5,8 @@
 (defn is-duplicate-user? [username]
   (not (nil? (user-store/fetch-user (s/lower-case username)))))
 
+(defn p [v] (prn v) v)
+
 (defn store-user! [email password]
   (-> email
       s/lower-case
