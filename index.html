@@ -12,9 +12,21 @@
       .demo {
         padding-top: 40px;
       }
-      .demo-item {
-        margin
+      .demo-nav {
+        list-style: none;
       }
+      .demo-item {
+        margin: 0 0 20px 0;
+      }
+      .demo-item a {
+        color: #007E84;
+        font-size: 20px;
+        text-decoration: none;
+      }
+      .demo-item a:hover {
+        text-decoration: underline;
+      }
+      
       
       
       
@@ -23,13 +35,16 @@
   <body>
     <div class="demo">
       <div class="middle-container">
-        <nav>
-          <li><a href="library">Library</a></li>
-          <li><a href="sign-in">Sign in</a></li>
-          <li><a href="register">Register</a></li>
-          <li><a href="profile">Profile</a></li>
+        <nav class="demo-nav">
+          <li class="demo-item"><a href="library">Library</a></li>
+          <li class="demo-item"><a href="sign-in">Sign in</a></li>
+          <li class="demo-item"><a href="register">Register</a></li>
+          <li class="demo-item"><a href="forgot-password">Forgot password</a></li>
+          <li class="demo-item"><a href="authorise">Authorise</a></li>
+          <li class="demo-item"><a href="profile">Profile</a></li>
         </nav>
       </div>
     </div>
+    <script>document.addEventListener("touchstart", function(){}, true);</script>
   </body>
 </html>

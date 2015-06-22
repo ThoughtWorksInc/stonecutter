@@ -10,20 +10,81 @@
     <link href="stylesheets/application.css" media="screen" rel="stylesheet" type="text/css"/>
   </head>
   <body>
-    <div class="header"></div>
+    <div class="header">
+      <div class="header__logo"><span class="visuallyhidden">Stonecutter</span></div>
+    </div>
     <div class="middle-container">
       <h1 class="page-title">Profile</h1>
+      <div class="card-preview">
+        <h2>Your profile card</h2>
+        <p>Manage the details your allowed apps can read.</p>
+        <div class="wrapper__card">
+          <div class="card">
+            <div class="card__row card__row--bottom-border">
+              <div class="card__photo">
+                <!--a.button.button--full-width.card__photo-button(href="#") Update-->
+                <div class="card__image"><img src="images/temp-avatar-300x300.jpg"/>
+                  <!--img(src="http://placekitten.com/g/302/302")-->
+                </div>
+              </div>
+              <div class="card__details">
+                <div class="card__heading">
+                  <div class="card__name">Peter Thomas Cheshire</div>
+                  <div class="card__display-name">PTC</div>
+                </div>
+                <div class="card__description">
+                  <p>Hoodie bespoke Tumblr, Pitchfork Etsy dreamcatcher cronut sartorial flexitarian vinyl synth PBR&B Neutra single-origin coffee.</p>
+                </div>
+              </div>
+            </div>
+            <div class="card__row">
+              <dl class="card__items">
+                <dt class="card__items-key">PGP KeyID</dt>
+                <dd class="card__items-value">E97A7A5D</dd>
+                <dt class="card__items-key">Fingerprint</dt>
+                <dd class="card__items-value">1D42 0588 F6E7 4029 F312  9FAE 8378 C285 E97A 7A5F</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
       <div class="authorised-apps">
+        <h2 class="authorised-apps__title">Applications</h2>
         <p>Manage the apps that have access to your profile card.</p>
         <ul class="app__list">
-          <li class="app__item"><span class="app__title">Stubapp</span>
-            <div class="app__remove"><a href="#" class="button button--pink">Revoke card</a></div>
+          <li class="app__item">
+            <div class="app__title">Stubapp</div>
+            <div class="app__remove">
+              <form action="/remove-app" method="post">
+                <!-- hidden inputs here-->
+                <button type="submit" class="button button--remove"><i class="fa button__icon fa-remove"></i><span class="button__text">Revoke card</span>
+                </button>
+              </form>
+            </div>
           </li>
-          <li class="app__item"><span class="app__title">Anotherapp</span>
-            <div class="app__remove"><a href="#" class="button button--pink">Revoke card</a></div>
+          <li class="app__item">
+            <div class="app__title">A really long name that will break this</div>
+            <div class="app__remove">
+              <form action="/remove-app" method="post">
+                <!-- hidden inputs here-->
+                <button type="submit" class="button button--remove"><i class="fa button__icon fa-remove"></i><span class="button__text">Revoke card</span>
+                </button>
+              </form>
+            </div>
+          </li>
+          <li class="app__item">
+            <div class="app__title">Anotherapp</div>
+            <div class="app__remove">
+              <form action="/remove-app" method="post">
+                <!-- hidden inputs here-->
+                <button type="submit" class="button button--remove"><i class="fa button__icon fa-remove"></i><span class="button__text">Revoke card</span>
+                </button>
+              </form>
+            </div>
           </li>
         </ul>
       </div>
     </div>
+    <script>document.addEventListener("touchstart", function(){}, true);</script>
   </body>
 </html>
