@@ -1,0 +1,33 @@
+---
+ - name: install git
+   apt: name=git state=present
+   
+ - name: add nodesource apt-key
+   apt_key: url=https://deb.nodesource.com/gpgkey/nodesource.gpg.key state=present
+  
+ - name: add nodesource deb repo
+   apt_repository: repo='deb https://deb.nodesource.com/node_0.10 trusty main' state=present
+
+ - name: add nodesource deb-src repo
+   apt_repository: repo='deb-src https://deb.nodesource.com/node_0.10 trusty main' state=present
+
+ - name: install node.js
+   apt: name=nodejs state=latest
+
+ - name: symlink node->nodejs
+   file: src=/usr/bin/nodejs dest=/usr/bin/node state=link
+
+ - name: Node.js | Install packages
+   npm: name={{item}} global=yes
+   with_items:
+     - npm
+     - grunt-cli
+
+ - name: install docker.io
+   apt: name="docker.io" state=present
+
+ - name: install firefox
+   apt: name=firefox state=present
+
+ - name: install xvfb
+   apt: name=xvfb state=present
