@@ -1,25 +1,32 @@
 (ns stonecutter.validation
   (:require [clojure.string :as s]))
 
+(def email-max-length 254)
+
+(def password-min-length 8)
+
+(def password-max-length 50)
+
 (defn is-email-valid? [{email :email}]
   (when email
     (re-matches #"\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+\b" email)))
 
-(defn exceeds-limit? [email]
-  (when (> (count email) 253) :too-long))
+(defn is-too-long? [string max-length]
+  (when (> (count string) max-length) :too-long))
 
+(defn is-too-short? [string min-length]
+  (when (< (count string) min-length) :too-short))
 
 (defn validate-email [is-duplicate-user-fn params]
-  (cond (exceeds-limit? (:email params)) :too-long
+  (cond (is-too-long? (:email params) email-max-length) :too-long
         (not (is-email-valid? params)) :invalid
         (is-duplicate-user-fn (:email params)) :duplicate
         :default nil))
 
-(defn is-password-valid? [{password :password}]
-  (not (s/blank? password)))
-
 (defn validate-password [params]
-  (cond (not (is-password-valid? params)) :invalid
+  (cond (s/blank? (:password params)) :invalid
+        (is-too-long? (:password params) password-max-length) :too-long
+        (is-too-short? (:password params) password-min-length) :too-short
         :default nil))
 
 (defn do-passwords-match? [{:keys [password confirm-password]}]

@@ -2,6 +2,9 @@
   (:require [midje.sweet :refer :all]
             [stonecutter.validation :as v]))
 
+(defn string-of-length [n]
+  (apply str (repeat n "x")))
+
 (tabular
   (fact "testing email validation"
         (v/is-email-valid? {:email ?email}) => ?is-valid?)
@@ -20,49 +23,40 @@
 
 (tabular
   (fact "testing password validation"
-        (v/is-password-valid? {:password ?password}) => ?is-valid?)
+        (v/validate-password {:password ?password}) => ?error)
 
-  ?password                     ?is-valid?
-  nil                           falsey
-  ""                            falsey
-  "valid-password"              truthy)
+  ?password                     ?error
+  nil                           :invalid
+  ""                            :invalid
+  "                "            :invalid
+  "\t\t\t\t\t\t\t\t"            :invalid
+  (string-of-length 7)          :too-short 
+  (string-of-length 51)         :too-long
+  (string-of-length 8)          nil
+  (string-of-length 50)         nil
+  "some-valid-password"         nil)
 
 (defn create-params [email password confirm-password]
   {:email email
    :password password
    :confirm-password confirm-password })
 
-(def default-duplicate-user-fn (fn [email] false))
+(def not-duplicate-user (fn [email] false))
 
-(facts "about registration validation"
-       (fact "invalid email returns email error key"
-             (v/validate-registration
-               (create-params "invalid-email" "valid-password" "valid-password")
-               default-duplicate-user-fn) => {:email :invalid})
-       (fact "there are no errors for valid email and passwords"
-             (v/validate-registration
-               (create-params "valid@email.com" "valid-password" "valid-password")
-               default-duplicate-user-fn) => {})
-       (fact "invalid password returns error message"
-             (v/validate-registration
-               (create-params "valid@email.com" "" "")
-               default-duplicate-user-fn) => {:password :invalid})
-       (fact "blank password and non-blank confirm password returns error message"
-             (v/validate-registration
-               (create-params "valid@email.com" "" "password")
-               default-duplicate-user-fn) => {:password         :invalid
-                                              :confirm-password :invalid})
-       (fact "return error when passwords don't match"
-             (v/validate-registration
-               (create-params "valid@email.com" "password" "invalid-password")
-               default-duplicate-user-fn) => {:confirm-password :invalid})
-       (fact "if a duplicate user is found then an error is returned"
-             (let [duplicate-user-fn (fn [email] true)]
-               (v/validate-registration
-                 (create-params "valid@email.com" "password" "password")
-                 duplicate-user-fn) => {:email :duplicate}))
-       (fact "email address longer than 254 characters returns email error key"
-             (let [long-email-address (apply str (repeat 255 "x"))]
-               (v/validate-registration
-                 (create-params long-email-address "valid-password" "valid-password")
-                 default-duplicate-user-fn) => {:email :too-long})))
+(def is-duplicate-user (fn [email] true))
+
+(tabular
+  (fact "validating registration"
+        (v/validate-registration
+          (create-params ?email ?password ?confirm-password)
+          ?duplicate-user-fn) => ?validations)
+  
+  ?email                   ?password           ?confirm-password        ?duplicate-user-fn        ?validations
+  "valid@email.com"        "valid-password"    "valid-password"         not-duplicate-user        {} 
+  "invalid-email"          "valid-password"    "valid-password"         not-duplicate-user        {:email :invalid}
+  (string-of-length 255)   "valid-password"    "valid-password"         not-duplicate-user        {:email :too-long} 
+  "valid@email.com"        ""                  ""                       not-duplicate-user        {:password :invalid} 
+  "valid@email.com"        ""                  "password"               not-duplicate-user        {:password :invalid 
+                                                                                                   :confirm-password :invalid} 
+  "valid@email.com"        "password"          "non-matching-password"  not-duplicate-user        {:confirm-password :invalid}
+  "valid@email.com"        "password"          "password"               is-duplicate-user         {:email :duplicate}) 
