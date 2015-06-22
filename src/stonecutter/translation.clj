@@ -1,7 +1,6 @@
 (ns stonecutter.translation
   (:require [clj-yaml.core :as yaml]
-            [clojure.java.io :refer [resource]])
-  )
+            [clojure.java.io :refer [resource]]))
 
 (defn load-translations-from-string [s]
   (yaml/parse-string s))

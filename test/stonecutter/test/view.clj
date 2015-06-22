@@ -1,15 +1,12 @@
 (ns stonecutter.test.view
   (:require [midje.sweet :refer :all]
             [net.cgrand.enlive-html :as html]
-            [stonecutter.view :refer [registration-form add-anti-forgery]]
-            ))
+            [stonecutter.view :refer [registration-form add-anti-forgery]]))
 
 (defn create-context [err params]
   {:translator {}
    :errors err
-   :params params
-   } 
-  )
+   :params params})
 
 (def long-email-address
   (apply str (repeat 255 "x")))
@@ -30,8 +27,7 @@
                      html/html-snippet)]
         (-> page
             add-anti-forgery
-            (html/select [:form (html/attr= :name "__anti-forgery-token")])
-            ) =not=> empty?))
+            (html/select [:form (html/attr= :name "__anti-forgery-token")])) =not=> empty?))
 
 
 (fact "there is no error message class if no error is passed"

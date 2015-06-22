@@ -25,8 +25,7 @@
     (let [error-translation (get-in error-translations [:email (:email err)])]
       (-> enlive-m
           (add-error-class [:.clj--registration-email])
-          (html/at [:.clj--registration-email :.form-row__validation] (html/set-attr :data-l8n (or error-translation "content:registration-form/unknown-error")))
-          ))
+          (html/at [:.clj--registration-email :.form-row__validation] (html/set-attr :data-l8n (or error-translation "content:registration-form/unknown-error")))))
     enlive-m))
 
 (defn add-password-error [enlive-m err]
@@ -60,8 +59,7 @@
 (defn registration-form [context]
   (let [err (:errors context)
         translator (:translator context)
-        params (:params context)
-        ]
+        params (:params context)]
     (->> (html/html-resource "public/register.html")
          set-form-action
          add-anti-forgery
@@ -70,4 +68,3 @@
          (t/translate translator)
          html/emit*
          (apply str))))
-

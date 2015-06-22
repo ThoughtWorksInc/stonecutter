@@ -9,9 +9,7 @@
                     (load-translations-from-string
                       "a:\n
                           hello: Hello\n
-                          goodbye: Goodbye\n"
-                      ) => {:a {:hello "Hello" :goodbye "Goodbye"}}))
+                          goodbye: Goodbye\n") => {:a {:hello "Hello" :goodbye "Goodbye"}}))
 
 (facts "can load some translations from a file"
-       (load-translations-from-file "test-translations.yml") => {:a {:hello "Hello" :goodbye "Goodbye"}}
-       )
+       (load-translations-from-file "test-translations.yml") => {:a {:hello "Hello" :goodbye "Goodbye"}})

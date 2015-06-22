@@ -4,7 +4,7 @@
             [ring.adapter.jetty :refer [run-jetty]]
             [bidi.bidi :refer [path-for]]
             [environ.core :refer [env]]
-            [scenic.routes :refer [scenic-handler load-routes-from-file]]
+            [scenic.routes :refer [scenic-handler]]
             [stonecutter.view :as view]
             [stonecutter.translation :refer [load-translations-from-file]]
             [stonecutter.validation :as v]
@@ -25,34 +25,31 @@
       r/response
       (r/content-type "text/html")))
 
-(defn show-registration-form [r]
+(defn show-registration-form [request]
   (let [context {:translator (translations-fn translation-map)}]
     (html-response (view/registration-form context))))
 
-(defn register-user [r]
-  (let [params (:params r)
+(defn register-user [request]
+  (let [params (:params request)
         email (:email params)
         password (:password params)
         err (v/validate-registration params s/is-duplicate-user?)
         context {:translator (translations-fn translation-map)
                  :errors err
                  :params params}]
-    (if (empty? err) 
-      (do 
+    (if (empty? err)
+      (do
         (s/store-user! email password)
-        (html-response "You saved the user")) 
-      (html-response (view/registration-form context))) 
-    ))
+        (html-response "You saved the user"))
+      (html-response (view/registration-form context)))))
 
-(defn not-found [r]
+(defn not-found [request]
   (html-response "These are not the droids you are looking for.."))
 
-(def handlers 
-  {:home (fn [r] (r/redirect (path :show-registration-form)))
+(def handlers
+  {:home (fn [request] (r/redirect (path :show-registration-form)))
    :show-registration-form show-registration-form
    :register-user register-user})
-
-
 
 (def app-handler
   (scenic-handler routes handlers not-found))
@@ -62,5 +59,5 @@
 
 (def port (Integer. (get env :port "3000")))
 
-(defn -main [& args]   
+(defn -main [& args]
   (run-jetty app {:port port}))
