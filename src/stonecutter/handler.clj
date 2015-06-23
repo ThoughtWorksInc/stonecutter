@@ -9,7 +9,8 @@
             [stonecutter.translation :refer [load-translations-from-file]]
             [stonecutter.validation :as v]
             [stonecutter.storage :as s]
-            [stonecutter.routes :refer [routes path]]))
+            [stonecutter.routes :refer [routes path]]
+            [stonecutter.logging :as log-config]))
 
 (def translation-map
   (load-translations-from-file "en.yml"))
@@ -60,9 +61,12 @@
 (def port (Integer. (get env :port "3000")))
 
 (defn -main [& args]
+  (log-config/init-logger!)
   (s/start-mongo-datastore! (get env :mongo-uri "mongodb://localhost:27017/stonecutter"))
   (run-jetty app {:port port}))
 
 (defn lein-ring-init
-  "Function called when running app with 'lein ring server'" []
+  "Function called when running app with 'lein ring server'"
+  []
+  (log-config/init-logger!)
   (s/start-in-memory-datastore!))

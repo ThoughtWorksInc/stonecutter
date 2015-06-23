@@ -1,7 +1,8 @@
 (ns stonecutter.mongo
   (:require [clauth.store :as s]
             [monger.collection :as mc]
-            [monger.core :as mongo]))
+            [monger.core :as mongo]
+            [clojure.tools.logging :as log]))
 
 (def user-collection "users")
 
@@ -27,4 +28,7 @@
   (MongoStore. mongo-db))
 
 (defn mongo-store-from-uri [mongo-uri]
-  (-> (mongo/connect-via-uri mongo-uri) :db new-mongo-store))
+  (log/debug "Connecting to mongo...")
+  (let [db (-> (mongo/connect-via-uri mongo-uri) :db)]
+    (log/debug "Connected to mongo.")
+    (new-mongo-store db)))
