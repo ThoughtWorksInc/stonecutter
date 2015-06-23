@@ -3,8 +3,8 @@ extends layout/layout
 block vars
   - bodyClass = ""
 
-block title
-  | Demo
+title(data-l8n="content:registration-form/title")
+  | !Register
 
 block headerScripts
 
@@ -14,11 +14,11 @@ block content
     .header__logo
       span.visuallyhidden Stonecutter
     nav.tabs
-      li.tabs__item: a.tabs__link(href="sign-in") Sign in
-      li.tabs__item.tabs__item--on: a.tabs__link(href="/register") Register
+      li.tabs__item: a.tabs__link(href="sign-in", data-l8n="content:registration-form/sign-in-tab") !Sign in
+      li.tabs__item.tabs__item--on: a.tabs__link(href="/register", data-l8n="content:registration-form/register-tab") !Register
 
   .middle-container
-    h1.page-title Register an account
+    h1.page-title(data-l8n="content:registration-form/page-header") !Register an account
     form.register-form(action="authorise", method="post")
       .validation-summary.clj--validation-summary
         .validation-summary__title

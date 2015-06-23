@@ -23,6 +23,12 @@
 (fact "registration url returns a 200 response"
       (-> (mock/request :get "/register") app :status) => 200)
 
+(future-fact "sign-in url returns a 200 response"
+      (-> (mock/request :get "/sign-in") app :status) => 200)
+
+(fact "unknown url returns a 404 response"
+      (-> (mock/request :get "/unknown-url") app :status) => 404)
+
 (fact "user data is saved"
       (let [user-registration-data (create-user "valid@email.com" "password")]
         (-> (create-request :post "/register" {:email "valid@email.com" :password "password" :confirm-password "password"})

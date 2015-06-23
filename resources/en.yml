@@ -1,4 +1,8 @@
 registration-form:
+  title: Register
+  sign-in-tab: Sign in
+  register-tab: Register
+  page-header: Register an account
   email-address: Email address
   email-address-invalid-validation-message: Enter a valid email address
   email-address-duplicate-validation-message: User already exists

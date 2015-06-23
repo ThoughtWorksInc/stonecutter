@@ -1,12 +1,16 @@
-(ns stonecutter.test.view
+(ns stonecutter.test.view.register
   (:require [midje.sweet :refer :all]
             [net.cgrand.enlive-html :as html]
-            [stonecutter.view :refer [registration-form add-anti-forgery]]))
+            [stonecutter.view.register :refer [registration-form add-anti-forgery]]))
 
 (defn create-context [err params]
   {:translator {}
    :errors err
    :params params})
+
+(def no-untranslated-strings
+  (let [untranslated-string-regex #"(?!!DOCTYPE|!IEMobile)!\w+"]
+    (chatty-checker [response-body] (empty? (re-seq untranslated-string-regex response-body)))))
 
 (fact "registration-form should return some html"
       (let [page (-> (create-context nil {})
@@ -17,6 +21,10 @@
 (fact "form should have correct action"
       (let [page (-> (create-context nil {}) registration-form html/html-snippet)]
         (-> page (html/select [:form]) first :attrs :action) => "/register"))
+
+(fact "there are no missing translations"
+      (let [page (-> (create-context nil {}) registration-form)]
+        page => no-untranslated-strings))
 
 (fact "can inject anti-forgery token"
       (let [page (-> "<html><form></form></html>"

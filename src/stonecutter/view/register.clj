@@ -1,4 +1,4 @@
-(ns stonecutter.view
+(ns stonecutter.view.register
   (:require [traduki.core :as t]
             [ring.util.anti-forgery :refer [anti-forgery-field]]
             [net.cgrand.enlive-html :as html]
