@@ -10,7 +10,8 @@
             [stonecutter.validation :as v]
             [stonecutter.storage :as s]
             [stonecutter.routes :refer [routes path]]
-            [stonecutter.logging :as log-config]))
+            [stonecutter.logging :as log-config]
+            [clojure.tools.logging :as log]))
 
 (def translation-map
   (load-translations-from-file "en.yml"))
@@ -55,15 +56,22 @@
 (def app-handler
   (scenic-handler routes handlers not-found))
 
-(def app
-  (wrap-defaults app-handler site-defaults))
+(defn wrap-error-handling [handler]
+  (fn [request]
+    (try
+      (handler request)
+      (catch Exception e
+        (log/error e)
+        (-> (html-response "Something went wrong...") (r/status 500))))))
+
+(def app  (wrap-defaults app-handler site-defaults))
 
 (def port (Integer. (get env :port "3000")))
 
 (defn -main [& args]
   (log-config/init-logger!)
   (s/start-mongo-datastore! (get env :mongo-uri "mongodb://localhost:27017/stonecutter"))
-  (run-jetty app {:port port}))
+  (-> app wrap-error-handling (run-jetty {:port port})))
 
 (defn lein-ring-init
   "Function called when running app with 'lein ring server'"

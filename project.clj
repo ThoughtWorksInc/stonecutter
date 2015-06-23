@@ -14,18 +14,18 @@
                            [environ "1.0.0"]
                            [com.novemberain/monger "2.0.0"]
                            [org.clojure/tools.logging "0.3.1"]
-                           [clj-logging-config "1.9.12"]
-                           ;[org.apache.logging.log4j/log4j-core "2.3"]
-                           [kerodon "0.6.1"]
-                           ]
-            :plugins [[lein-ring "0.8.13"]
-                      [lein-midje "3.1.3"]]
-            :ring {:handler stonecutter.handler/app
-                   :init    stonecutter.handler/lein-ring-init}
+                           [clj-logging-config "1.9.12"]]
             :main stonecutter.handler
             :aot :all
             :profiles {:dev {:dependencies   [[ring-mock "0.1.5"]
-                                              [midje "1.6.3"]]
+                                              [midje "1.6.3"]
+                                              [prone "0.8.2"]
+                                              [kerodon "0.6.1"]]
+                             :plugins        [[lein-ring "0.9.6"]
+                                              [lein-midje "3.1.3"]]
+                             :ring {:handler stonecutter.handler/app
+                                    :init    stonecutter.handler/lein-ring-init
+                                    :stacktrace-middleware prone.middleware/wrap-exceptions}
                              :resource-paths ["resources" "test-resources"]
                              :aliases        {"unit"        ["midje" "stonecutter.test.*"]
                                               "integration" ["midje" "stonecutter.integration.*"]
