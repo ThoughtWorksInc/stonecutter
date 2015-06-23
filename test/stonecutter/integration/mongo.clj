@@ -4,7 +4,7 @@
     [clauth.store :as s]
     [monger.core :as m]
     [monger.collection :as c]
-    [stonecutter.mongo :refer [new-mongo-store]]))
+    [stonecutter.mongo :refer [new-mongo-store mongo-store-from-uri]]))
 
 (def test-db "stonecutter-test")
 (def coll "users")
@@ -62,3 +62,8 @@
          (let [records (c/find-maps @db coll)]
            (count records) => 1
            (first records) => (contains {:login "userB" :password "passwordB"}))))
+
+(facts "about creating mongo store from mongo uri"
+       (let [store (mongo-store-from-uri "mongodb://localhost:27017/stonecutter")]
+         (s/store! store "userA" {:login "userA"})
+         (s/fetch store "userA") => {:login "userA"}))

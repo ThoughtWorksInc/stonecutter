@@ -27,5 +27,4 @@
   (MongoStore. mongo-db))
 
 (defn mongo-store-from-uri [mongo-uri]
-  (println "Connecting to: " mongo-uri)
-  (-> (mongo/connect-via-uri mongo-uri) new-mongo-store))
+  (-> (mongo/connect-via-uri mongo-uri) :db new-mongo-store))
