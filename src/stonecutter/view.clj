@@ -60,6 +60,9 @@
 (defn set-form-action [enlive-m]
   (html/at enlive-m [:form] (html/set-attr :action (r/path :register-user))))
 
+(defn set-title [title enlive-m]
+  (html/at enlive-m [:title] (html/content title)))
+
 (defn p [v] (prn v) v)
 
 (defn registration-form [context]
@@ -67,6 +70,7 @@
         translator (:translator context)
         params (:params context)]
     (->> (html/html-resource "public/register.html")
+         (set-title "Register")
          set-form-action
          add-anti-forgery
          (add-registration-errors err)

@@ -16,6 +16,7 @@
                            [org.clojure/tools.logging "0.3.1"]
                            [clj-logging-config "1.9.12"]
                            ;[org.apache.logging.log4j/log4j-core "2.3"]
+                           [kerodon "0.6.1"]
                            ]
             :plugins [[lein-ring "0.8.13"]
                       [lein-midje "3.1.3"]]
