@@ -12,10 +12,10 @@
     (re-matches #"\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+\b" email)))
 
 (defn is-too-long? [string max-length]
-  (when (> (count string) max-length) :too-long))
+  (> (count string) max-length))
 
 (defn is-too-short? [string min-length]
-  (when (< (count string) min-length) :too-short))
+  (< (count string) min-length))
 
 (defn validate-email [is-duplicate-user-fn params]
   (cond (is-too-long? (:email params) email-max-length) :too-long
@@ -25,8 +25,8 @@
 
 (defn validate-password [params]
   (cond (s/blank? (:password params)) :invalid
-        (is-too-long? (:password params) password-max-length) :too-long
-        (is-too-short? (:password params) password-min-length) :too-short
+        (is-too-long? (:password params) password-max-length) :invalid
+        (is-too-short? (:password params) password-min-length) :invalid
         :default nil))
 
 (defn do-passwords-match? [{:keys [password confirm-password]}]

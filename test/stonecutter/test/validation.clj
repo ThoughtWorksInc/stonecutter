@@ -30,8 +30,8 @@
   ""                            :invalid
   "                "            :invalid
   "\t\t\t\t\t\t\t\t"            :invalid
-  (string-of-length 7)          :too-short 
-  (string-of-length 51)         :too-long
+  (string-of-length 7)          :invalid
+  (string-of-length 51)         :invalid
   (string-of-length 8)          nil
   (string-of-length 50)         nil
   "some-valid-password"         nil)
@@ -50,13 +50,13 @@
         (v/validate-registration
           (create-params ?email ?password ?confirm-password)
           ?duplicate-user-fn) => ?validations)
-  
+
   ?email                   ?password           ?confirm-password        ?duplicate-user-fn        ?validations
-  "valid@email.com"        "valid-password"    "valid-password"         not-duplicate-user        {} 
+  "valid@email.com"        "valid-password"    "valid-password"         not-duplicate-user        {}
   "invalid-email"          "valid-password"    "valid-password"         not-duplicate-user        {:email :invalid}
-  (string-of-length 255)   "valid-password"    "valid-password"         not-duplicate-user        {:email :too-long} 
-  "valid@email.com"        ""                  ""                       not-duplicate-user        {:password :invalid} 
-  "valid@email.com"        ""                  "password"               not-duplicate-user        {:password :invalid 
-                                                                                                   :confirm-password :invalid} 
+  (string-of-length 255)   "valid-password"    "valid-password"         not-duplicate-user        {:email :too-long}
+  "valid@email.com"        ""                  ""                       not-duplicate-user        {:password :invalid}
+  "valid@email.com"        ""                  "password"               not-duplicate-user        {:password :invalid
+                                                                                                   :confirm-password :invalid}
   "valid@email.com"        "password"          "non-matching-password"  not-duplicate-user        {:confirm-password :invalid}
-  "valid@email.com"        "password"          "password"               is-duplicate-user         {:email :duplicate}) 
+  "valid@email.com"        "password"          "password"               is-duplicate-user         {:email :duplicate})

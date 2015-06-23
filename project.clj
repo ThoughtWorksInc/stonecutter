@@ -23,5 +23,6 @@
             :profiles {:dev {:dependencies   [[ring-mock "0.1.5"]
                                               [midje "1.6.3"]]
                              :resource-paths ["resources" "test-resources"]
-                             :aliases        {"unittest"    ["midje" "stonecutter.test.*"]
-                                              "integration" ["midje" "stonecutter.integration.*"]}}})
+                             :aliases        {"unit"        ["midje" "stonecutter.test.*"]
+                                              "integration" ["midje" "stonecutter.integration.*"]
+                                              "auto-unit"   ["midje" ":autotest" "test/stonecutter/test/" "src/"]}}})

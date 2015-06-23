@@ -14,10 +14,14 @@
 (defn add-error-class [enlive-m field-row-selector]
   (html/at enlive-m field-row-selector (html/add-class "form-row--validation-error")))
 
+(defn remove-element [enlive-m selector]
+  (html/at enlive-m selector nil))
+
 (def error-translations
   {:email {:invalid "content:registration-form/email-address-invalid-validation-message"
            :duplicate "content:registration-form/email-address-duplicate-validation-message"
            :too-long "content:registration-form/email-address-too-long-validation-message"}
+   :password {:invalid "content:registration-form/password-invalid-validation-message"}
    :confirm-password {:invalid "content:registration-form/confirm-password-invalid-validation-message"}})
 
 (defn add-email-error [enlive-m err]
@@ -25,21 +29,23 @@
     (let [error-translation (get-in error-translations [:email (:email err)])]
       (-> enlive-m
           (add-error-class [:.clj--registration-email])
-          (html/at [:.clj--registration-email :.form-row__validation] (html/set-attr :data-l8n (or error-translation "content:registration-form/unknown-error")))))
-    enlive-m))
+          (html/at [:.clj--registration-email__validation] (html/set-attr :data-l8n (or error-translation "content:registration-form/unknown-error")))))
+    (remove-element enlive-m [:.clj--registration-email__validation])))
 
 (defn add-password-error [enlive-m err]
   (if (contains? err :password)
-    (add-error-class enlive-m [:.clj--registration-password])
-    enlive-m))
+    (let [error-translation (get-in error-translations [:password (:password err)])]
+      (-> enlive-m
+          (add-error-class [:.clj--registration-password])
+          (html/at [:.clj--registration-password__validation] (html/set-attr :data-l8n (or error-translation "content:registration-form/unknown-error")))))
+    (remove-element enlive-m [:.clj--registration-password__validation])))
 
 (defn add-confirm-password-error [enlive-m err]
   (if (contains? err :confirm-password)
     (let [error-translation (get-in error-translations [:confirm-password (:confirm-password err)])]
       (-> enlive-m
-          (html/at [:.validation-summary] (html/remove-attr :hidden))
-          (html/at [:li.validation-summary__item] (html/set-attr :data-l8n (or error-translation "content:registration-form/unknown-error")))))
-    enlive-m))
+          (html/at [:.clj--validation-summary__item] (html/set-attr :data-l8n (or error-translation "content:registration-form/unknown-error")))))
+    (remove-element enlive-m [:.clj--validation-summary])))
 
 (defn add-registration-errors [err enlive-m]
   (-> enlive-m

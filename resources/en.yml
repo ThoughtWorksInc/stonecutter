@@ -4,6 +4,8 @@ registration-form:
   email-address-duplicate-validation-message: User already exists
   email-address-too-long-validation-message: Email address is too long
   password: Password
-  password-invalid-validation-message: Enter a password
+  password-invalid-validation-message: Password must be between 8 and 50 characters long
   confirm-password: Confirm password
   confirm-password-invalid-validation-message: Ensure your passwords match
+  unknown-error: Whoops! Unknown error
+  create-account: Create account
