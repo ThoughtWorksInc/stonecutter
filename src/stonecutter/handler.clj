@@ -6,6 +6,7 @@
             [environ.core :refer [env]]
             [scenic.routes :refer [scenic-handler]]
             [stonecutter.view.register :as register]
+            [stonecutter.view.sign-in :as sign-in]
             [stonecutter.translation :refer [load-translations-from-file]]
             [stonecutter.validation :as v]
             [stonecutter.storage :as s]
@@ -33,7 +34,7 @@
 
 (defn show-sign-in-form [request]
   (let [context {:translator (translations-fn translation-map)}]
-    (html-response (register/sign-in-form context))))
+    (html-response (sign-in/sign-in-form context))))
 
 (defn register-user [request]
   (let [params (:params request)
