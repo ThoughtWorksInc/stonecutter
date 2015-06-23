@@ -26,6 +26,12 @@ When the VM has started, the source folder will be located at /var/stonecutter
 To start a web server for the application in development mode, run:
 
     lein ring server-headless
+    
+NB: running the application like this will save users into an in memory cache that will be destroyed as soon as the app is shutdown.
+
+To start a web server with users persisted to mongodb, ensure you have mongo running locally and run:
+
+    lein run
 
 ## Running the static frontend
 
