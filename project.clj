@@ -16,7 +16,8 @@
                            ]
             :plugins [[lein-ring "0.8.13"]
                       [lein-midje "3.1.3"]]
-            :ring {:handler stonecutter.handler/app}
+            :ring {:handler stonecutter.handler/app
+                   :init    stonecutter.handler/lein-ring-init}
             :main stonecutter.handler
             :aot :all
             :profiles {:dev {:dependencies   [[ring-mock "0.1.5"]

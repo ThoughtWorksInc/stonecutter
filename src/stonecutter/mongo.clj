@@ -1,6 +1,7 @@
 (ns stonecutter.mongo
   (:require [clauth.store :as s]
-            [monger.collection :as mc]))
+            [monger.collection :as mc]
+            [monger.core :as mongo]))
 
 (def user-collection "users")
 
@@ -24,3 +25,7 @@
 
 (defn new-mongo-store [mongo-db]
   (MongoStore. mongo-db))
+
+(defn mongo-store-from-uri [mongo-uri]
+  (println "Connecting to: " mongo-uri)
+  (-> (mongo/connect-via-uri mongo-uri) new-mongo-store))

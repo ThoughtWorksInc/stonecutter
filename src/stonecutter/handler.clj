@@ -60,4 +60,9 @@
 (def port (Integer. (get env :port "3000")))
 
 (defn -main [& args]
+  (s/start-mongo-datastore! (get env :mongo-uri "mongodb://localhost:27017/stonecutter"))
   (run-jetty app {:port port}))
+
+(defn lein-ring-init
+  "Function called when running app with 'lein ring server'" []
+  (s/start-in-memory-datastore!))
