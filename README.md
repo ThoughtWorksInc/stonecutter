@@ -26,6 +26,9 @@ The source folder will be located at /var/stonecutter
 [Vagrant]: https://www.vagrantup.com
 
 ## Running
+Before starting the server, build the views by running:
+
+    gulp build
 
 To start a web server for the application in development mode, run:
 
