@@ -33,19 +33,10 @@
 (fact "unknown url returns a 404 response"
       (-> (mock/request :get "/unknown-url") app :status) => 404)
 
-(fact "user data is saved"
-      (let [user-registration-data (create-user "valid@email.com" "password")]
-        (-> (create-request :post "/register" user-confirm-params)
-            register-user
-            :status) => 200
-
-        (provided
-          (s/store-user! "valid@email.com" "password") => {:email "valid@email.com"})))
-
-(future-fact "user can sign in with valid credentials"
+(fact "user can sign in with valid credentials"
       (-> (create-request :post "/sign-in" user-params)
           sign-in
-          :body) => (:email user-params)
+          :body) => (contains (:email user-params))
 
       (provided
         (s/retrieve-user "valid@email.com" "password") => {:email "valid@email.com"}))
@@ -57,6 +48,15 @@
 
       (provided
         (s/retrieve-user "invalid@credentials.com" "password") => nil))
+
+(fact "user data is saved"
+      (let [user-registration-data (create-user "valid@email.com" "password")]
+        (-> (create-request :post "/register" user-confirm-params)
+            register-user
+            :status) => 200
+
+        (provided
+          (s/store-user! "valid@email.com" "password") => {:email "valid@email.com"})))
 
 (fact "email must not be a duplicate"
       (-> (create-request :post "/register" user-confirm-params)
