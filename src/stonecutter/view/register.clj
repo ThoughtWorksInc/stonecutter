@@ -1,21 +1,12 @@
 (ns stonecutter.view.register
   (:require [traduki.core :as t]
-            [ring.util.anti-forgery :refer [anti-forgery-field]]
             [net.cgrand.enlive-html :as html]
-            [stonecutter.routes :as r]))
+            [stonecutter.routes :as r]
+            [stonecutter.view.view-helpers :as vh]))
 
-(defn anti-forgery-snippet []
-  (html/html-snippet (anti-forgery-field)))
-
-(defn add-anti-forgery [enlive-m]
-  (html/at enlive-m
-           [:form] (html/prepend (anti-forgery-snippet))))
 
 (defn add-error-class [enlive-m field-row-selector]
   (html/at enlive-m field-row-selector (html/add-class "form-row--validation-error")))
-
-(defn remove-element [enlive-m selector]
-  (html/at enlive-m selector nil))
 
 (def error-translations
   {:email {:invalid "content:registration-form/email-address-invalid-validation-message"
@@ -30,7 +21,7 @@
       (-> enlive-m
           (add-error-class [:.clj--registration-email])
           (html/at [:.clj--registration-email__validation] (html/set-attr :data-l8n (or error-translation "content:registration-form/unknown-error")))))
-    (remove-element enlive-m [:.clj--registration-email__validation])))
+    (vh/remove-element enlive-m [:.clj--registration-email__validation])))
 
 (defn add-password-error [enlive-m err]
   (if (contains? err :password)
@@ -38,14 +29,14 @@
       (-> enlive-m
           (add-error-class [:.clj--registration-password])
           (html/at [:.clj--registration-password__validation] (html/set-attr :data-l8n (or error-translation "content:registration-form/unknown-error")))))
-    (remove-element enlive-m [:.clj--registration-password__validation])))
+    (vh/remove-element enlive-m [:.clj--registration-password__validation])))
 
 (defn add-confirm-password-error [enlive-m err]
   (if (contains? err :confirm-password)
     (let [error-translation (get-in error-translations [:confirm-password (:confirm-password err)])]
       (-> enlive-m
           (html/at [:.clj--validation-summary__item] (html/set-attr :data-l8n (or error-translation "content:registration-form/unknown-error")))))
-    (remove-element enlive-m [:.clj--validation-summary])))
+    (vh/remove-element enlive-m [:.clj--validation-summary])))
 
 (defn add-registration-errors [err enlive-m]
   (-> enlive-m
@@ -68,7 +59,7 @@
         params (:params context)]
     (->> (html/html-resource "public/register.html")
          set-form-action
-         add-anti-forgery
+         vh/add-anti-forgery
          (add-registration-errors err)
          (add-params params)
          (t/translate translator)

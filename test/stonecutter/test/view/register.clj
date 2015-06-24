@@ -2,7 +2,7 @@
   (:require [midje.sweet :refer :all]
             [net.cgrand.enlive-html :as html]
             [stonecutter.handler :refer [translations-fn translation-map]]
-            [stonecutter.view.register :refer [registration-form add-anti-forgery]]))
+            [stonecutter.view.register :refer [registration-form]]))
 
 (defn create-context [translator err params]
   {:translator translator
@@ -27,13 +27,6 @@
       (let [translator (translations-fn translation-map)
             page (-> (create-context translator nil {}) registration-form)]
         page => no-untranslated-strings))
-
-(fact "can inject anti-forgery token"
-      (let [page (-> "<html><form></form></html>"
-                     html/html-snippet)]
-        (-> page
-            add-anti-forgery
-            (html/select [:form (html/attr= :name "__anti-forgery-token")])) =not=> empty?))
 
 (facts "about removing elements when there are no errors"
       (let [page (-> (create-context {} nil {})
