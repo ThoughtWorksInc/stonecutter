@@ -13,32 +13,51 @@
     <div class="header">
       <div class="header__logo"><span class="visuallyhidden">Stonecutter</span></div>
       <nav class="tabs">
-        <li class="tabs__item"><a href="sign-in" data-l8n="content:registration-form/sign-in-tab" class="tabs__link">!Sign in</a></li>
-        <li class="tabs__item tabs__item--on"><a href="/register" data-l8n="content:registration-form/register-tab" class="tabs__link">!Register</a></li>
+        <li class="tabs__item"><a href="sign-in" data-l8n="content:sign-in-register/sign-in-tab" class="tabs__link">!Sign in</a></li>
+        <li class="tabs__item tabs__item--on"><a href="/register" data-l8n="content:sign-in-register/register-tab" class="tabs__link">!Register</a></li>
       </nav>
     </div>
     <div class="middle-container">
-      <h1 data-l8n="content:registration-form/page-header" class="page-title">!Register an account</h1>
-      <form action="authorise" method="post" class="register-form">
+      <h1 data-l8n="content:registration-form/page-header" class="page-title">
+         
+        !Register an account
+      </h1>
+      <form action="authorise" method="" class="register-form">
         <div class="validation-summary clj--validation-summary">
           <div class="validation-summary__title"></div>
           <ul class="validation-summary__list">
-            <li data-l8n="content:registration-form/confirm-password-invalid-validation-message" class="validation-summary__item clj--validation-summary__item">!Ensure your passwords match</li>
+            <li data-l8n="content:registration-form/confirm-password-invalid-validation-message" class="validation-summary__item clj--validation-summary__item">
+               
+              !Ensure your passwords match
+            </li>
           </ul>
         </div>
         <p class="form-row clj--registration-email">
-          <label for="email" class="form-row__label"><span data-l8n="content:registration-form/email-address" class="form-row__title">!Email address</span><span data-l8n="content:registration-form/email-address-invalid-validation-message" class="form-row__validation clj--registration-email__validation">!Enter a valid email address</span></label>
-          <input type="email" id="email" name="email" class="form-row__input registration-email-input">
+          <label for="email" class="form-row__label"><span data-l8n="content:registration-form/email-address" class="form-row__title">
+               
+              !Email address</span><span data-l8n="content:registration-form/email-address-invalid-validation-message" class="form-row__validation clj--registration-email__validation">
+               
+              !Enter a valid email address</span></label>
+          <input type="email" id="email" name="email" class="form-row__input registration-email-input func--email__input">
         </p>
         <p class="form-row clj--registration-password">
-          <label for="password" class="form-row__label"><span data-l8n="content:registration-form/password" class="form-row__title">!Password</span><span data-l8n="content:registration-form/password-invalid-validation-message" class="form-row__validation clj--registration-password__validation">!Password must be between 8 and 50 characters long</span></label>
-          <input type="password" id="password" name="password" class="form-row__input">
+          <label for="password" class="form-row__label"><span data-l8n="content:registration-form/password" class="form-row__title">
+               
+              !Password</span><span data-l8n="content:registration-form/password-invalid-validation-message" class="form-row__validation clj--registration-password__validation">
+               
+              !Password must be between 8 and 50 characters long</span></label>
+          <input type="password" id="password" name="password" class="form-row__input func--password__input">
         </p>
         <p class="form-row clj--registration-confirm-password">
-          <label for="confirm-password" class="form-row__label"><span data-l8n="content:registration-form/confirm-password" class="form-row__title">!Confirm Password</span></label>
-          <input type="password" id="confirm-password" name="confirm-password" class="form-row__input">
+          <label for="confirm-password" class="form-row__label"><span data-l8n="content:registration-form/confirm-password" class="form-row__title">
+               
+              !Confirm Password</span></label>
+          <input type="password" id="confirm-password" name="confirm-password" class="form-row__input func--confirm-password__input">
         </p>
-        <button type="submit" data-l8n="content:registration-form/create-account" class="button button--full-width">!Create account</button>
+        <button type="submit" data-l8n="content:registration-form/create-account" class="button button--full-width">
+           
+          !Create account
+        </button>
       </form>
     </div>
     <script>document.addEventListener("touchstart", function(){}, true);</script>
