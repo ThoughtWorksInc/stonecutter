@@ -5,6 +5,9 @@
             [clojure.tools.logging :as log]))
 
 (def user-collection "users")
+(def token-collection "tokens")
+(def auth-code-collection "auth-codes")
+(def client-collection "clients")
 
 (defrecord MongoStore [mongo-db coll]
   s/Store
@@ -36,3 +39,12 @@
 (defn create-mongo-user-store [db]
   (mc/ensure-index db user-collection {:login 1} {:unique true})
   (new-mongo-store db user-collection))
+
+(defn create-token-store [db]
+  (new-mongo-store db token-collection))
+
+(defn create-auth-code-store [db]
+  (new-mongo-store db auth-code-collection))
+
+(defn create-client-store [db]
+  (new-mongo-store db client-collection))
