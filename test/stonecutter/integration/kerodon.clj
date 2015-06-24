@@ -1,13 +1,20 @@
 (ns stonecutter.integration.kerodon
   (:require [midje.sweet :refer :all]
             [kerodon.core :as k]
-            [stonecutter.handler :refer [app]]
+            [stonecutter.handler :as h]
             [stonecutter.storage :as s]
+            [stonecutter.logging :as l]
+            [stonecutter.view.register :refer [registration-form]] 
             [net.cgrand.enlive-html :as html]))
+
+(l/init-logger!)
+
+(defn page-title [state]
+  (-> state :enlive (html/select [:title]) first html/text))
 
 (defn page-title-is [state title]
   (fact {:midje/name "Checking page title:"}
-        (-> state :enlive (html/select [:title]) first html/text) => title)
+       (page-title state) => title)
   state)
 
 (defn page-uri-is [state uri]
@@ -27,14 +34,14 @@
 (s/start-in-memory-datastore!)
 
 (facts "Home url redirects to registration page"
-       (-> (k/session app)
+       (-> (k/session h/app)
            (k/visit "/")
            (k/follow-redirect)
            (page-title-is "Register")
            (page-uri-is "/register")))
 
 (facts "User is returned to same page when email is invalid"
-       (-> (k/session app)
+       (-> (k/session h/app)
            (k/visit "/register")
            (k/fill-in "Email address" "invalid-email")
            (k/press "Create account")
@@ -42,7 +49,7 @@
            (selector-has-content [:.clj--registration-email__validation] "Enter a valid email address")))
 
 (facts "User is taken to success page when user is successfully created"
-       (-> (k/session app)
+       (-> (k/session h/app)
            (k/visit "/register")
            (k/fill-in :.func--email__input "email@server.com")
            (k/fill-in :.func--password__input "valid-password")
@@ -52,7 +59,7 @@
            (selector-has-content [:body] "You saved the user")))
 
 (future-facts "User can sign in"
-       (-> (k/session app)
+       (-> (k/session h/app)
            (k/visit "/sign-in")
            (k/fill-in :.func--email__input "email@server.com")
            (k/fill-in :.func--password__input "valid-password")
@@ -61,6 +68,13 @@
            (selector-has-content [:body] "You are signed in as email@server.com")))
 
 (facts "Not found page is shown for unknown url"
-       (-> (k/session app)
+       (-> (k/session h/app)
            (k/visit "/wrong-url")
            (page-title-is "Error-404")))
+
+(fact "Error page is shown if an exception is thrown"
+      (against-background
+         (registration-form anything) =throws=> (Exception.))
+       (-> (k/session (h/wrap-error-handling h/app))
+           (k/visit "/register")
+           (page-title-is "Error-500")))
