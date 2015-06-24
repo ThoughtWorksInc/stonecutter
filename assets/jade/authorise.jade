@@ -12,7 +12,7 @@ block content
     h1.page-title
       | Authorise
       = " "
-      span.clj-app-name Stubapp
+      span.clj-app-name Green Party
       = " "
       | to use your account?
 
@@ -29,9 +29,9 @@ block content
 
     .authorise-buttons
       .authorise-buttons__primary
-        a.button.button--full-width.button--primary(href="http://thoughtworksinc.github.io/stonecutter-client/authorise-success") Authorise app
+        a.button.button--full-width.button--primary(href="#{demoAppURL}/authorise-success") Authorise app
       .authorise-buttons__secondary
-        a.button.button--full-width.button--grey(href="http://thoughtworksinc.github.io/stonecutter-client/authorise-fail") Cancel
+        a.button.button--full-width.button--grey(href="#{demoAppURL}/authorise-fail") Cancel
 
     .authorise-text
       p.authorise-text__description
@@ -42,15 +42,11 @@ block content
         li.authorise-text__item
           i.fa.fa-times.authorise-text__icon.authorise-text__icon--disallowed
           = " "
-          | Drive a car
-        li.authorise-text__item
-          i.fa.fa-times.authorise-text__icon.authorise-text__icon--disallowed
-          = " "
-          | Order a pizza
-        li.authorise-text__item
-          i.fa.fa-times.authorise-text__icon.authorise-text__icon--disallowed
-          = " "
           | Read or write any direct messages
+        li.authorise-text__item
+          i.fa.fa-times.authorise-text__icon.authorise-text__icon--disallowed
+          = " "
+          | Update your account details
 
     .authorise-terms
       p

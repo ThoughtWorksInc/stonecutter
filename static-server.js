@@ -1,12 +1,13 @@
 var express = require('express');
 var app = express();
 
-app.set('port', (process.env.PORT || 7070));
+app.set('port', (process.env.PORT || 7069));
 
 var pageData = {
   "javascriptsBase": "/assets/javascripts",
   "stylesheetsBase": "/assets/stylesheets",
-  "imagesBase": "/assets/images"
+  "imagesBase": "/assets/images",
+  "demoAppURL": "http://localhost:7778"
 };
 
 app.use('/assets', express.static(__dirname + '/resources/public'));

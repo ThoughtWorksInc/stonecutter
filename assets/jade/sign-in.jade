@@ -18,7 +18,7 @@ block content
   .middle-container
     h1.page-title(data-l8n="content:sign-in-form/page-header")
       | !Sign in
-    form.login-form(action="authorise", method="")
+    form.login-form(action="authorise", method="post")
       //-p.form-row.form-row--validation-error
       p.form-row
         label.form-row__label(for="email")
@@ -36,3 +36,13 @@ block content
         input.form-row__input.func--password__input(type="password", id="password", name="password")
       button.button.button--full-width(type="submit", data-l8n="content:sign-in-form/sign-in")
         | !Sign in
+
+block footerScripts
+  if staticMode
+    script.
+      var form = document.getElementsByClassName('login-form')[0];
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var formAction = form.getAttribute('action') + "?";
+        window.location = formAction;
+      });

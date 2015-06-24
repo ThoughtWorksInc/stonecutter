@@ -46,3 +46,13 @@ block content
       button.button.button--full-width(type="submit" data-l8n="content:registration-form/create-account") 
         | !Create account
 
+
+block footerScripts
+  if staticMode
+    script.
+      var form = document.getElementsByClassName('register-form')[0];
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var formAction = form.getAttribute('action') + "?";
+        window.location = formAction;
+      });

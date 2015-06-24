@@ -15,6 +15,7 @@ var gulp = require('gulp'),
     ghPages = require('gulp-gh-pages');
 
 var isDev = false;
+var staticMode = false;
 var output_path = 'resources/public';
 var deployed_path = 'deployed';
 var dev_path = {
@@ -45,7 +46,8 @@ gulp.task('jade', function () {
           "javascriptsBase": "javascripts",
           "stylesheetsBase": "stylesheets",
           "imagesBase": "images",
-          "initData": ""
+          "initData": "",
+          "staticMode": staticMode
         }
       }))
       .on('error', function(err) {
@@ -105,7 +107,7 @@ gulp.task('bs-reload', function () {
 
 gulp.task('browser-sync', ['nodemon'], function () {
   return browsersync.init(null, {
-    proxy: "localhost:7070",  // local node app address
+    proxy: "localhost:7069",  // local node app address
     port: dev_path.port,  // use *different* port than above
     notify: true,
     open: false
@@ -164,6 +166,7 @@ gulp.task('ghpages', function() {
 });
 
 gulp.task('deploy', function (callback) {
+  staticMode = true;
   runSequence(['build'],
       ['ghpages'],
       ['clean-deployed'], callback);
@@ -174,7 +177,7 @@ gulp.task('nodemon', function (cb) {
   return nodemon({
     script: 'static-server.js',
     ignore: [
-      'Gulpfile.js',
+      'gulpfile.js',
       'node_modules/'
     ]
   })
