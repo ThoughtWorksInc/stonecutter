@@ -54,8 +54,8 @@
       (html-response (register/registration-form context)))))
 
 (defn show-profile [request]
- (when-let [email (get-in request [:params :email])]
-   (html-response email)))
+  (when-let [email (get-in request [:session :user :email])]
+    (html-response (str "You are signed in as " email))) )
 
 (defn sign-in [request]
   (let [params (:params request)
@@ -65,8 +65,7 @@
         context {:translator (translations-fn translation-map)
                  :params params}]
     (if user
-      ;(r/redirect (path :show-profile))
-      (show-profile request)
+      (assoc (r/redirect (path :show-profile)) :session {:user user})
       (html-response (sign-in/sign-in-form context)))))
 
 (defn not-found [request]
@@ -74,12 +73,12 @@
     (-> (html-response (error/not-found-error context))
         (r/status 404))))
 
-
 (def handlers
   {:home (fn [request] (r/redirect (path :show-registration-form)))
    :show-registration-form show-registration-form
    :register-user register-user
    :show-sign-in-form show-sign-in-form
+   :sign-in sign-in
    :show-profile show-profile})
 
 (def app-handler

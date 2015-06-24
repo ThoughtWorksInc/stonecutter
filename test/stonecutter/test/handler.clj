@@ -33,10 +33,9 @@
 (fact "unknown url returns a 404 response"
       (-> (mock/request :get "/unknown-url") app :status) => 404)
 
-(fact "user can sign in with valid credentials"
+(fact "user can sign in with valid credentials and is redirected to profile"
       (-> (create-request :post "/sign-in" user-params)
-          sign-in
-          :body) => (contains (:email user-params))
+          sign-in) => (contains {:status 302 :headers {"Location" "/profile"}})
 
       (provided
         (s/retrieve-user "valid@email.com" "password") => {:email "valid@email.com"}))
