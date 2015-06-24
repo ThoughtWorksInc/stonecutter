@@ -9,26 +9,30 @@ block headerScripts
 
 block headerContent
   nav.tabs
-    li.tabs__item.tabs__item--on: a.tabs__link(href="sign-in") !Sign in
-    li.tabs__item: a.tabs__link(href="register") !Register
+    li.tabs__item.tabs__item--on: a.tabs__link(href="sign-in", data-l8n="content:sign-in-register/sign-in-tab")
+      | !Sign in
+    li.tabs__item: a.tabs__link(href="register", data-l8n="content:sign-in-register/register-tab")
+      | !Register
 
 block content
   .middle-container
-    h1.page-title !Sign in
+    h1.page-title(data-l8n="content:sign-in-form/page-header")
+      | !Sign in
     form.login-form(action="authorise", method="")
       //-p.form-row.form-row--validation-error
       p.form-row
         label.form-row__label(for="email")
-          span.form-row__title
+          span.form-row__title(data-l8n="content:sign-in-form/email-address")
             | !Email address
-          span.form-row__validation
+          span.form-row__validation(data-l8n="content:sign-in-form/email-address-invalid-validation-message")
             | !Enter a valid email address
         input.form-row__input(type="email", id="email", name="email")
       p.form-row
         label.form-row__label(for="password")
-          span.form-row__title
+          span.form-row__title(data-l8n="content:sign-in-form/password")
             | !Password
           //-span.form-row__label__validation
             | !Cannot be blank
         input.form-row__input(type="password", id="password", name="password")
-      button.button.button--full-width(type="submit") !Sign in
+      button.button.button--full-width(type="submit", data-l8n="content:sign-in-form/sign-in")
+        | !Sign in

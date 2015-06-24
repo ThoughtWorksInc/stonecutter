@@ -8,7 +8,9 @@
   (html/at enlive-m [:form] (html/set-attr :action (r/path :sign-in))))
 
 (defn sign-in-form [context]
+  (let [translator (:translator context)]
   (->> (html/html-resource "public/sign-in.html")
        set-form-action
+       (t/translate translator)
        html/emit*
-       (apply str)))
+       (apply str))))

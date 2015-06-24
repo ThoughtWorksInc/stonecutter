@@ -23,7 +23,7 @@
 (fact "registration url returns a 200 response"
       (-> (mock/request :get "/register") app :status) => 200)
 
-(future-fact "sign-in url returns a 200 response"
+(fact "sign-in url returns a 200 response"
       (-> (mock/request :get "/sign-in") app :status) => 200)
 
 (fact "unknown url returns a 404 response"

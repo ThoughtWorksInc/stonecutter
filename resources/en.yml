@@ -1,7 +1,9 @@
-registration-form:
-  title: Register
+sign-in-register:
   sign-in-tab: Sign in
   register-tab: Register
+
+registration-form:
+  title: Register
   page-header: Register an account
   email-address: Email address
   email-address-invalid-validation-message: Enter a valid email address
@@ -13,3 +15,11 @@ registration-form:
   confirm-password-invalid-validation-message: Ensure your passwords match
   unknown-error: Whoops! Unknown error
   create-account: Create account
+
+sign-in-form:
+  title: Sign in
+  page-header: Sign in
+  email-address: Email address
+  email-address-invalid-validation-message: Enter a valid email address
+  password: Password
+  sign-in: Sign in

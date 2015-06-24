@@ -8,4 +8,3 @@
     {:name    "logger"
      :level   :debug
      :pattern "%d{yyyy-MM-dd HH:mm:ss} %-5p %c:%L - %m%n"}))
-

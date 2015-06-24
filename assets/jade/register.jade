@@ -9,30 +9,40 @@ block headerScripts
 
 block headerContent
   nav.tabs
-    li.tabs__item: a.tabs__link(href="sign-in", data-l8n="content:registration-form/sign-in-tab") !Sign in
-    li.tabs__item.tabs__item--on: a.tabs__link(href="/register", data-l8n="content:registration-form/register-tab") !Register
+    li.tabs__item: a.tabs__link(href="sign-in", data-l8n="content:sign-in-register/sign-in-tab")
+      | !Sign in
+    li.tabs__item.tabs__item--on: a.tabs__link(href="/register", data-l8n="content:sign-in-register/register-tab")
+      | !Register
 
 block content
   .middle-container
-    h1.page-title(data-l8n="content:registration-form/page-header") !Register an account
+    h1.page-title(data-l8n="content:registration-form/page-header") 
+      | !Register an account
     form.register-form(action="authorise", method="post")
       .validation-summary.clj--validation-summary
         .validation-summary__title
         ul.validation-summary__list
-          li.validation-summary__item.clj--validation-summary__item(data-l8n="content:registration-form/confirm-password-invalid-validation-message") !Ensure your passwords match
+          li.validation-summary__item.clj--validation-summary__item(data-l8n="content:registration-form/confirm-password-invalid-validation-message") 
+            | !Ensure your passwords match
       p.form-row.clj--registration-email
         label.form-row__label(for="email")
-          span.form-row__title(data-l8n="content:registration-form/email-address") !Email address
-          span.form-row__validation.clj--registration-email__validation(data-l8n="content:registration-form/email-address-invalid-validation-message") !Enter a valid email address
+          span.form-row__title(data-l8n="content:registration-form/email-address") 
+            | !Email address
+          span.form-row__validation.clj--registration-email__validation(data-l8n="content:registration-form/email-address-invalid-validation-message") 
+            | !Enter a valid email address
         input.form-row__input.registration-email-input(type="email", id="email", name="email")
       p.form-row.clj--registration-password
         label.form-row__label(for="password")
-          span.form-row__title(data-l8n="content:registration-form/password") !Password
-          span.form-row__validation.clj--registration-password__validation(data-l8n="content:registration-form/password-invalid-validation-message") !Password must be between 8 and 50 characters long
+          span.form-row__title(data-l8n="content:registration-form/password") 
+            | !Password
+          span.form-row__validation.clj--registration-password__validation(data-l8n="content:registration-form/password-invalid-validation-message") 
+            | !Password must be between 8 and 50 characters long
         input.form-row__input(type="password", id="password", name="password")
       p.form-row.clj--registration-confirm-password
         label.form-row__label(for="confirm-password")
-          span.form-row__title(data-l8n="content:registration-form/confirm-password") !Confirm Password
+          span.form-row__title(data-l8n="content:registration-form/confirm-password") 
+            | !Confirm Password
         input.form-row__input(type="password", id="confirm-password", name="confirm-password")
-      button.button.button--full-width(type="submit" data-l8n="content:registration-form/create-account") !Create account
+      button.button.button--full-width(type="submit" data-l8n="content:registration-form/create-account") 
+        | !Create account
 
