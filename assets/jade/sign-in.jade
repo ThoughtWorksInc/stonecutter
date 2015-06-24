@@ -8,15 +8,12 @@ block title
 
 block headerScripts
 
+block headerContent
+  nav.tabs
+    li.tabs__item.tabs__item--on: a.tabs__link(href="sign-in") !Sign in
+    li.tabs__item: a.tabs__link(href="register") !Register
+
 block content
-
-  .header
-    .header__logo
-      span.visuallyhidden Stonecutter
-    nav.tabs
-      li.tabs__item.tabs__item--on: a.tabs__link(href="sign-in") !Sign in
-      li.tabs__item: a.tabs__link(href="register") !Register
-
   .middle-container
     h1.page-title !Sign in
     form.login-form(action="authorise", method="")

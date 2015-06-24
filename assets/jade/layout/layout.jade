@@ -21,6 +21,10 @@ html
     block headerScripts
 
   body(class="#{bodyClass}")
+    .header
+      .header__logo
+        span.visuallyhidden Stonecutter
+      block headerContent
     block content
     script.
       document.addEventListener("touchstart", function(){}, true);
