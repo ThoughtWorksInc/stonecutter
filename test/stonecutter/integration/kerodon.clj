@@ -59,3 +59,8 @@
            (k/press "Sign in")
            (page-uri-is "/profile")
            (selector-has-content [:body] "You are signed in as email@server.com")))
+
+(facts "Not found page is shown for unknown url"
+       (-> (k/session app)
+           (k/visit "/wrong-url")
+           (page-title-is "Error-404")))
