@@ -61,5 +61,13 @@
       </form>
     </div>
     <script>document.addEventListener("touchstart", function(){}, true);</script>
+    <script>
+      var form = document.getElementsByClassName('login-form')[0];
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var formAction = form.getAttribute('action') + "?";
+        window.location = formAction;
+      });
+    </script>
   </body>
 </html>
