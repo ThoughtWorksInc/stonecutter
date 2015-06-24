@@ -29,7 +29,7 @@
     "gulp-nodemon": "^1.0.4"
   },
   "author": "Chris Cheshire",
-  "license": "ISC",
+  "license": "MIT",
   "scripts": {
     "postinstall": "gulp build",
     "start": "",
