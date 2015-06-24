@@ -1,5 +1,9 @@
 .validation-summary {
+  display: none;
   margin-bottom: 2rem;
+  &--show {
+    display: block;
+  }
   &__list {
     @include reset-list;
     background-color: lighten($light_pink,2%);

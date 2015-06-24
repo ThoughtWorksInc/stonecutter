@@ -35,6 +35,7 @@
   (if (contains? err :confirm-password)
     (let [error-translation (get-in error-translations [:confirm-password (:confirm-password err)])]
       (-> enlive-m
+          (html/at [:.clj--validation-summary] (html/add-class "validation-summary--show"))
           (html/at [:.clj--validation-summary__item] (html/set-attr :data-l8n (or error-translation "content:registration-form/unknown-error")))))
     (vh/remove-element enlive-m [:.clj--validation-summary])))
 
