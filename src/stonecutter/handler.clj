@@ -7,6 +7,7 @@
             [scenic.routes :refer [scenic-handler]]
             [stonecutter.view.register :as register]
             [stonecutter.view.sign-in :as sign-in]
+            [stonecutter.view.error-404 :as error-404]
             [stonecutter.translation :refer [load-translations-from-file]]
             [stonecutter.validation :as v]
             [stonecutter.storage :as s]
@@ -53,9 +54,9 @@
       (html-response (register/registration-form context)))))
 
 (defn not-found [request]
-  (-> "These are not the droids you are looking for.."
-      html-response
-      (r/status 404)))
+  (let [context {:translator (translations-fn translation-map)}]
+  (-> (html-response (error-404/not-found-error context))
+      (r/status 404))))
 
 (def handlers
   {:home (fn [request] (r/redirect (path :show-registration-form)))

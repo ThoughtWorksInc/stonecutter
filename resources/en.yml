@@ -23,3 +23,9 @@ sign-in-form:
   email-address-invalid-validation-message: Enter a valid email address
   password: Password
   sign-in: Sign in
+
+error-404:
+  title: Error-404
+  page-header: "Sorry the page you requested can't be found."
+  page-intro: "The page you were trying to reach at this address doesn't seem to exist. This is usually the result of a bad or outdated link. We apologise for any inconvenience."
+  page-content: '<h2>What can I do now?</h2><ul><li>Please return to the <a href="/register" title="Go to Sign in">sign-in page</a>.</li></ul>'
