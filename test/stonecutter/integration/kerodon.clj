@@ -31,7 +31,7 @@
   (prn (-> state :enlive))
   state)
 
-(s/start-in-memory-datastore!)
+(s/setup-in-memory-stores!)
 
 (facts "Home url redirects to registration page"
        (-> (k/session h/app)

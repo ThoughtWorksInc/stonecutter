@@ -1,13 +1,14 @@
 (ns stonecutter.storage
   (:require [clauth.user :as user-store]
             [clauth.store :as store]
-            [stonecutter.mongo :refer [mongo-store-from-uri]]
+            [stonecutter.mongo :as m]
             [clojure.string :as s]))
 
-(defn start-mongo-datastore! [mongo-uri]
-  (swap! user-store/user-store (constantly (mongo-store-from-uri mongo-uri))))
+(defn setup-mongo-stores! [mongo-uri]
+  (let [db (m/get-mongo-db mongo-uri)]
+    (swap! user-store/user-store (constantly (m/create-mongo-user-store db)))))
 
-(defn start-in-memory-datastore! []
+(defn setup-in-memory-stores! []
   (swap! user-store/user-store (constantly (store/create-memory-store))))
 
 (defn is-duplicate-user? [email]

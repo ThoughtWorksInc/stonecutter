@@ -94,11 +94,11 @@
 
 (defn -main [& args]
   (log-config/init-logger!)
-  (s/start-mongo-datastore! (get env :mongo-uri "mongodb://localhost:27017/stonecutter"))
+  (s/setup-mongo-stores! (get env :mongo-uri "mongodb://localhost:27017/stonecutter"))
   (-> app wrap-error-handling (run-jetty {:port port})))
 
 (defn lein-ring-init
   "Function called when running app with 'lein ring server'"
   []
   (log-config/init-logger!)
-  (s/start-in-memory-datastore!))
+  (s/setup-in-memory-stores!))
