@@ -44,7 +44,7 @@
        (-> (k/session h/app)
            (k/visit "/register")
            (k/fill-in "Email address" "invalid-email")
-           (k/press "Create account")
+           (k/press :.func--button-register-form)
            (page-uri-is "/register")
            (selector-has-content [:.clj--registration-email__validation] "Enter a valid email address")))
 
@@ -54,7 +54,7 @@
            (k/fill-in :.func--email__input "email@server.com")
            (k/fill-in :.func--password__input "valid-password")
            (k/fill-in :.func--confirm-password__input "valid-password")
-           (k/press "Create account")
+           (k/press :.func--button-register-form)
            (page-uri-is "/register")
            (selector-has-content [:body] "You saved the user")))
 
