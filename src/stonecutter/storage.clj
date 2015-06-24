@@ -10,8 +10,8 @@
 (defn start-in-memory-datastore! []
   (swap! user-store/user-store (constantly (store/create-memory-store))))
 
-(defn is-duplicate-user? [username]
-  (not (nil? (user-store/fetch-user (s/lower-case username)))))
+(defn is-duplicate-user? [email]
+  (not (nil? (user-store/fetch-user (s/lower-case email)))))
 
 (defn store-user! [email password]
   (-> email
@@ -19,3 +19,7 @@
       (user-store/new-user password)
       user-store/store-user))
 
+(defn retrieve-user [email password]
+  (let [user (user-store/authenticate-user email password)]
+    (when user
+      {:email (:login user)})))

@@ -53,17 +53,28 @@
         (html-response "You saved the user"))
       (html-response (register/registration-form context)))))
 
+(defn sign-in [request]
+  (let [params (:params request)
+        email (:email params)
+        password (:password params)
+        user (s/retrieve-user email password)
+        context {:translator (translations-fn translation-map)
+                 :params params}]
+    (if user
+      (r/redirect (path :profile))
+      (html-response (sign-in/sign-in-form context)))))
+
 (defn not-found [request]
   (let [context {:translator (translations-fn translation-map)}]
-  (-> (html-response (error/not-found-error context))
-      (r/status 404))))
+    (-> (html-response (error/not-found-error context))
+        (r/status 404))))
+
 
 (def handlers
   {:home (fn [request] (r/redirect (path :show-registration-form)))
    :show-registration-form show-registration-form
    :register-user register-user
-   :show-sign-in-form show-sign-in-form
-   })
+   :show-sign-in-form show-sign-in-form})
 
 (def app-handler
   (scenic-handler routes handlers not-found))

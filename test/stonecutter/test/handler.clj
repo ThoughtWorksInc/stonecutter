@@ -1,9 +1,10 @@
 (ns stonecutter.test.handler
   (:require [midje.sweet :refer :all]
             [ring.mock.request :as mock]
-            [stonecutter.handler :refer [app register-user]]
             [clauth.user :as user-store]
             [net.cgrand.enlive-html :as html]
+            [stonecutter.handler :refer :all]
+            [stonecutter.validation :as v]
             [stonecutter.storage :as s]))
 
 (defn p [v] (prn v) v)
@@ -18,6 +19,9 @@
    :name nil
    :url nil})
 
+(def user-params {:email "valid@email.com" :password "password"})
+(def user-confirm-params {:email "valid@email.com" :password "password" :confirm-password "password"})
+
 (background (before :facts (user-store/reset-user-store!)))
 
 (fact "registration url returns a 200 response"
@@ -31,22 +35,38 @@
 
 (fact "user data is saved"
       (let [user-registration-data (create-user "valid@email.com" "password")]
-        (-> (create-request :post "/register" {:email "valid@email.com" :password "password" :confirm-password "password"})
+        (-> (create-request :post "/register" user-confirm-params)
             register-user
             :status) => 200
 
         (provided
-          (s/store-user! "valid@email.com" "password") => user-registration-data)))
+          (s/store-user! "valid@email.com" "password") => {:email "valid@email.com"})))
 
-(fact "same user cannot be created twice"
-      (let [user-registration-data (create-user "valid@email.com" "password")]
-        (-> (create-request :post "/register" {:email "valid@email.com" :password "password" :confirm-password "password"})
-            register-user
-            :body) => (contains "You saved the user")
+(future-fact "user can sign in with valid credentials"
+      (-> (create-request :post "/sign-in" user-params)
+          sign-in
+          :body) => (:email user-params)
 
-        (-> (create-request :post "/register" {:email "valid@email.com" :password "password" :confirm-password "password"})
-            register-user
-            :body) => (contains "User already exists")))
+      (provided
+        (s/retrieve-user "valid@email.com" "password") => {:email "valid@email.com"}))
+
+(future-fact "user cannot sign in with invalid credentials"
+      (-> (create-request :post "/sign-in" {:email "invalid@credentials.com" :password "password"})
+          sign-in
+          :body) => (contains "Invalid email address or password")
+
+      (provided
+        (s/retrieve-user "invalid@credentials.com" "password") => nil))
+
+(fact "email must not be a duplicate"
+      (-> (create-request :post "/register" user-confirm-params)
+          register-user
+          :body) => (contains "User already exists")
+
+        (provided
+          (v/validate-registration user-confirm-params s/is-duplicate-user?) => {:email :duplicate}
+          (user-store/new-user anything anything) => anything :times 0
+          (user-store/store-user anything) => anything :times 0))
 
 (facts "about validation errors"
        (fact "user isn't saved to the database if email is invalid"

@@ -4,16 +4,43 @@
             [stonecutter.storage :as s]))
 
 (facts "about is-duplicate-user?"
-       (fact "unique username in not a duplicate"
-             (s/is-duplicate-user? "john") => false)
-       (fact "duplicate username is a duplicate"
-             (s/store-user! "valid@email.com" "password")
-             (s/is-duplicate-user? "valid@email.com") => true
-             (s/is-duplicate-user? "VALID@EMAIL.COM") => true))
+       (fact "unique email in not a duplicate"
+             (s/is-duplicate-user? "unique@email.com") => false
+             (provided
+               (user-store/fetch-user "unique@email.com") => nil))
 
-(fact "can save user into user storage"
-      (s/store-user! "email@server.com" "password")
-      (-> (user-store/fetch-user "email@server.com") :login) => "email@server.com"
+       (fact "duplicate email is a duplicate"
+             (s/is-duplicate-user? "valid@email.com") => true
+             (provided
+               (user-store/fetch-user "valid@email.com") => :a-user))
+
+       (fact "the email is always lower-cased"
+             (s/is-duplicate-user? "VALID@EMAIL.COM") => true
+             (provided
+               (user-store/fetch-user "valid@email.com") => :a-user)))
+
+(facts "about storing users"
+       (fact "users are stored in the user-store"
+             (s/store-user! "email@server.com" "password") => :a-stored-user
+             (provided
+               (user-store/new-user "email@server.com" "password") => :a-user
+               (user-store/store-user :a-user) => :a-stored-user)
+
       (fact "the email is always lower-cased"
-            (s/store-user! "NEWEMAIL@A.COM" "password")
-            (-> (user-store/fetch-user "newemail@a.com") :login) => "newemail@a.com"))
+            (s/store-user! "UPPER@CASE.COM" "password") => :a-stored-user
+            (provided
+               (user-store/new-user "upper@case.com" "password") => :a-user
+               (user-store/store-user :a-user) => :a-stored-user))))
+
+(fact "can retrieve user with valid credentials"
+      (s/retrieve-user "email@server.com" "password") => {:email "email@server.com"}
+      (provided
+        (user-store/authenticate-user "email@server.com" "password") => {:login "email@server.com"
+                                                                         :name nil
+                                                                         :password anything
+                                                                         :url nil}))
+
+(fact "retrieving user with invalid credentials returns nil"
+      (s/retrieve-user "invalid@credentials.com" "password") => nil
+      (provided
+        (user-store/authenticate-user "invalid@credentials.com" "password") => nil))
