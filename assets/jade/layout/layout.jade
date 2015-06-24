@@ -2,6 +2,8 @@ include ../mixins/_helpers
 include ../mixins/_view_helpers
 
 - var bodyClass = ""
+- var pageTitle = "Stonecutter"
+- var pageTitleDataL8n = "content:default/title"
 block vars
 
 doctype
@@ -9,8 +11,7 @@ html
   head
     meta(charset='utf-8')
     meta(http-equiv='X-UA-Compatible', content='IE=edge')
-    title
-      block title
+    title(data-l8n="#{pageTitleDataL8n}") #{pageTitle}
     meta(name="viewport", content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no")
     meta(name="format-detection", content="telephone=no")
     link(rel="icon" type="image/png" href="favicon.png")

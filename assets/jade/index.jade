@@ -2,9 +2,8 @@ extends layout/layout
 
 block vars
   - bodyClass = ""
-
-block title
-  | Demo
+  - pageTitle = "!Index"
+  - pageTitleDataL8n = ""
 
 block headerScripts
   style.
@@ -25,9 +24,6 @@ block headerScripts
     .demo-item a:hover {
       text-decoration: underline;
     }
-
-
-
 
 block content
 
