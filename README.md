@@ -69,3 +69,10 @@ sudo npm install -g gulp
 ```
 gulp server
 ```
+
+### Running test suite
+
+#### To run all test, run this in your virtual machine
+```
+lein midje
+```
