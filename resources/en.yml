@@ -29,3 +29,9 @@ error-404:
   page-header: "Sorry the page you requested can't be found."
   page-intro: "The page you were trying to reach at this address doesn't seem to exist. This is usually the result of a bad or outdated link. We apologise for any inconvenience."
   page-content: '<h2>What can I do now?</h2><ul><li>Please return to the <a href="/register" title="Go to Sign in">sign-in page</a>.</li></ul>'
+
+error-500:
+  title: Error-500
+  page-header: "Sorry something went wrong"
+  page-intro: "An unexpected error has occured, please try again. We apologise for any inconvenience."
+  page-content: '<h2>What can I do now?</h2><ul><li>Please return to the <a href="/register" title="Go to Sign in">sign-in page</a>.</li></ul>'

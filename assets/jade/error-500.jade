@@ -1,0 +1,17 @@
+extends layout/layout
+
+block vars
+  - bodyClass = ""
+  - pageTitle = "!Error-500"
+  - pageTitleDataL8n = "content:error-500/title"
+
+block headerScripts
+
+block content
+  .middle-container
+    h1.page-title(data-l8n="content:error-500/page-header") !Sorry something went wrong
+    p(data-l8n="content:error-500/page-intro") !An unexpected error has occured, please try again. We apologise for any inconvenience.
+    div(data-l8n="html:error-500/page-content")
+      h2 !What do I do now?
+        ul
+          li Return home 

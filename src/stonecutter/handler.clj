@@ -7,7 +7,7 @@
             [scenic.routes :refer [scenic-handler]]
             [stonecutter.view.register :as register]
             [stonecutter.view.sign-in :as sign-in]
-            [stonecutter.view.error-404 :as error-404]
+            [stonecutter.view.error :as error]
             [stonecutter.translation :refer [load-translations-from-file]]
             [stonecutter.validation :as v]
             [stonecutter.storage :as s]
@@ -55,7 +55,7 @@
 
 (defn not-found [request]
   (let [context {:translator (translations-fn translation-map)}]
-  (-> (html-response (error-404/not-found-error context))
+  (-> (html-response (error/not-found-error context))
       (r/status 404))))
 
 (def handlers
@@ -69,12 +69,13 @@
   (scenic-handler routes handlers not-found))
 
 (defn wrap-error-handling [handler]
-  (fn [request]
-    (try
-      (handler request)
-      (catch Exception e
-        (log/error e)
-        (-> (html-response "Something went wrong...") (r/status 500))))))
+  (let [context {:translator (translations-fn translation-map)}]
+    (fn [request]
+      (try
+        (handler request)
+        (catch Exception e
+          (log/error e)
+          (-> (html-response (error/internal-server-error context)) (r/status 500)))))))
 
 (def app  (wrap-defaults app-handler site-defaults))
 
