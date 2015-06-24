@@ -16,7 +16,11 @@ navigate to the ops/ directory of the project and run:
 
     vagrant up
 
-When the VM has started, the source folder will be located at /var/stonecutter
+When the VM has started, access the virtual machine by running:
+
+	vagrant ssh
+
+The source folder will be located at /var/stonecutter
 
 
 [Vagrant]: https://www.vagrantup.com
