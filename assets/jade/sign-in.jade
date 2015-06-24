@@ -26,13 +26,13 @@ block content
             | !Email address
           span.form-row__validation(data-l8n="content:sign-in-form/email-address-invalid-validation-message")
             | !Enter a valid email address
-        input.form-row__input(type="email", id="email", name="email")
+        input.form-row__input.func--email__input(type="email", id="email", name="email")
       p.form-row
         label.form-row__label(for="password")
           span.form-row__title(data-l8n="content:sign-in-form/password")
             | !Password
           //-span.form-row__label__validation
             | !Cannot be blank
-        input.form-row__input(type="password", id="password", name="password")
+        input.form-row__input.func--password__input(type="password", id="password", name="password")
       button.button.button--full-width(type="submit", data-l8n="content:sign-in-form/sign-in")
         | !Sign in

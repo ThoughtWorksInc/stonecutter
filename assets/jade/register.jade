@@ -30,19 +30,19 @@ block content
             | !Email address
           span.form-row__validation.clj--registration-email__validation(data-l8n="content:registration-form/email-address-invalid-validation-message") 
             | !Enter a valid email address
-        input.form-row__input.registration-email-input(type="email", id="email", name="email")
+        input.form-row__input.registration-email-input.func--email__input(type="email", id="email", name="email")
       p.form-row.clj--registration-password
         label.form-row__label(for="password")
           span.form-row__title(data-l8n="content:registration-form/password") 
             | !Password
           span.form-row__validation.clj--registration-password__validation(data-l8n="content:registration-form/password-invalid-validation-message") 
             | !Password must be between 8 and 50 characters long
-        input.form-row__input(type="password", id="password", name="password")
+        input.form-row__input.func--password__input(type="password", id="password", name="password")
       p.form-row.clj--registration-confirm-password
         label.form-row__label(for="confirm-password")
           span.form-row__title(data-l8n="content:registration-form/confirm-password") 
             | !Confirm Password
-        input.form-row__input(type="password", id="confirm-password", name="confirm-password")
+        input.form-row__input.func--confirm-password__input(type="password", id="confirm-password", name="confirm-password")
       button.button.button--full-width(type="submit" data-l8n="content:registration-form/create-account") 
         | !Create account
 
