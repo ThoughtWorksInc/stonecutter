@@ -64,6 +64,12 @@
            (first records) => (contains {:login "userB" :password "passwordB"}))))
 
 (facts "about creating mongo store from mongo uri"
-       (let [store (mongo-store-from-uri "mongodb://localhost:27017/stonecutter")]
+       (let [store (mongo-store-from-uri "mongodb://localhost:27017/stonecutter-test")]
          (s/store! store "userA" {:login "userA"})
          (s/fetch store "userA") => {:login "userA"}))
+
+(fact "check that unique index exists for 'login' field"
+      (let [store (mongo-store-from-uri "mongodb://localhost:27017/stonecutter-test")]
+        (c/indexes-on @db coll) => (contains [(contains {:name "login_1"})])
+        (c/insert @db coll {:login "userA"})
+        (c/insert @db coll {:login "userA"}) => (throws Exception)))

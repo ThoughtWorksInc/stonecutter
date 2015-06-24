@@ -31,4 +31,5 @@
   (log/debug "Connecting to mongo...")
   (let [db (-> (mongo/connect-via-uri mongo-uri) :db)]
     (log/debug "Connected to mongo.")
+    (mc/ensure-index db user-collection {:login 1} {:unique true})
     (new-mongo-store db)))
