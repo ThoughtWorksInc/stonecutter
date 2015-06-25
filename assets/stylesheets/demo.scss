@@ -1,10 +1,22 @@
 @import "utilities";
 @import "variables";
 
-
 .header {
   background-color: #78b82a;
 }
+
 .header__logo {
   background-image: image-url('demo-logo@2x.png');
+}
+
+.tabs__item {
+  color: $white;
+}
+
+.tabs__item--on {
+  color: #78b82a;
+}
+
+.tabs__link:hover {
+  color: darken(#78b82a,10%);
 }
