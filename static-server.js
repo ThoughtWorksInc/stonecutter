@@ -52,6 +52,23 @@ app.get('/profile', function(req, res){
   res.render('profile', pageData);
 });
 
+
+// temp stuff for demo
+
+app.get('/greenparty/register', function(req, res){
+  res.render('demo/register', pageData);
+});
+app.get('/greenparty/sign-in', function(req, res){
+  res.render('demo/sign-in', pageData);
+});
+app.all('/greenparty/authorise', function(req, res){
+  res.render('demo/authorise', pageData);
+});
+
+
+
+
+
 app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
