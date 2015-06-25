@@ -1,6 +1,3 @@
-form {
-  margin-bottom: 3rem;
-}
 label {
   cursor: pointer;
 }
@@ -92,4 +89,8 @@ input {
       -webkit-text-fill-color: $dark_cyan;
     }
   }
+}
+
+.login-form, .register-form {
+  margin-bottom: 3rem;
 }
