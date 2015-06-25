@@ -12,7 +12,8 @@ var gulp = require('gulp'),
     clean = require('gulp-clean'),
     runSequence = require('run-sequence'),
     nodemon = require('gulp-nodemon'),
-    ghPages = require('gulp-gh-pages');
+    ghPages = require('gulp-gh-pages'),
+    replace = require('gulp-replace');
 
 var isDev = false;
 var staticMode = false;
@@ -55,6 +56,7 @@ gulp.task('jade', function () {
         console.log(err);
         this.emit('end');
       })
+      .pipe(gulpif(staticMode, replace(/>!/g, '>')))
       .pipe(gulp.dest(build_path.html))
       .pipe(browsersync.reload({stream: true}));
 });

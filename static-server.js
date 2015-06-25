@@ -4,6 +4,7 @@ var app = express();
 app.set('port', (process.env.PORT || 7069));
 
 var pageData = {
+  "devMode": true,
   "javascriptsBase": "/javascripts",
   "stylesheetsBase": "/stylesheets",
   "imagesBase": "/images",
@@ -18,7 +19,7 @@ app.set('views', './assets/jade');
 
 function beforeAllFilter(req, res, next) {
   app.locals.pretty = true;
-
+  console.log(res);
   next();
 }
 
