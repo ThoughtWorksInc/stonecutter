@@ -19,57 +19,60 @@ app.set('views', './assets/jade');
 
 function beforeAllFilter(req, res, next) {
   app.locals.pretty = true;
-  console.log(res);
   next();
 }
 
 app.all('*', beforeAllFilter);
 
-app.get('/', function(req, res){
-  res.render('index', pageData);
+function customRender(res, template, data) {
+  res.render(template, data, function (err, html) {
+    var cleanHTML = html.replace(/>!/g, '>');
+    res.send(cleanHTML);
+  });
+}
+
+app.get('/', function (req, res) {
+  customRender(res, 'index', pageData);
 });
 
-app.get('/library', function(req, res){
-  res.render('library', pageData);
+app.get('/library', function (req, res) {
+  customRender(res, 'library', pageData);
 });
 
-app.get('/sign-in', function(req, res){
-  res.render('sign-in', pageData);
+app.get('/sign-in', function (req, res) {
+  customRender(res, 'sign-in', pageData);
 });
 
-app.get('/register', function(req, res){
-  res.render('register', pageData);
+app.get('/register', function (req, res) {
+  customRender(res, 'register', pageData);
 });
 
-app.all('/authorise', function(req, res){
-  res.render('authorise', pageData);
+app.all('/authorise', function (req, res) {
+  customRender(res, 'authorise', pageData);
 });
 
-app.get('/forgot-password', function(req, res){
-  res.render('forgot-password', pageData);
+app.get('/forgot-password', function (req, res) {
+  customRender(res, 'forgot-password', pageData);
 });
 
-app.get('/profile', function(req, res){
-  res.render('profile', pageData);
+app.get('/profile', function (req, res) {
+  customRender(res, 'profile', pageData);
 });
 
 
 // temp stuff for demo
 
-app.get('/greenparty/register', function(req, res){
-  res.render('greenparty/register', pageData);
+app.get('/greenparty/register', function (req, res) {
+  customRender(res, 'greenparty/register', pageData);
 });
-app.get('/greenparty/sign-in', function(req, res){
-  res.render('greenparty/sign-in', pageData);
+app.get('/greenparty/sign-in', function (req, res) {
+  customRender(res, 'greenparty/sign-in', pageData);
 });
-app.all('/greenparty/authorise', function(req, res){
-  res.render('greenparty/authorise', pageData);
+app.all('/greenparty/authorise', function (req, res) {
+  customRender(res, 'greenparty/authorise', pageData);
 });
 
 
-
-
-
-app.listen(app.get('port'), function() {
+app.listen(app.get('port'), function () {
   console.log('Node app is running on port', app.get('port'));
 });
