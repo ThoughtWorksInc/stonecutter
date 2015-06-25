@@ -21,10 +21,10 @@
   (swap! client-store/client-store (constantly (store/create-memory-store))))
 
 (defn reset-in-memory-stores! []
-  (reset! user-store/user-store (constantly (store/create-memory-store)))
-  (reset! token-store/token-store (constantly (store/create-memory-store)))
-  (reset! auth-code-store/auth-code-store (constantly (store/create-memory-store)))
-  (reset! client-store/client-store (constantly (store/create-memory-store))))
+  (reset! user-store/user-store (store/create-memory-store))
+  (reset! token-store/token-store  (store/create-memory-store))
+  (reset! auth-code-store/auth-code-store  (store/create-memory-store))
+  (reset! client-store/client-store (store/create-memory-store)))
 
 (defn is-duplicate-user? [email]
   (not (nil? (user-store/fetch-user (s/lower-case email)))))

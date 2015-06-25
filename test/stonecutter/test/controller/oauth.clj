@@ -23,11 +23,13 @@
        (fact "request with client-id, response_type and redirect_uri returns redirect to login page if there is no user session"
              (let [client-details (client/register-client "MyAPP" "myapp.com")
                    request (-> (r/request :get "/authorisation" {:client_id (:client-id client-details) :response_type "code" :redirect_uri "callback"})
+                               (assoc :params {:client_id (:client-id client-details) :response_type "code" :redirect_uri "callback"})
                                (r/header "accept" "text/html"))
                    response (oauth/authorise request)]
                (:status response) => 302
                (-> response (get-in [:headers "Location"])) => "/login"
-               (-> response (get-in [:session :return-to])) => (format "/authorisation?client_id=%s&response_type=code&redirect_uri=callback" (:client-id client-details))))
+               (-> response (get-in [:session :return-to])) => (format "/authorisation?client_id=%s&response_type=code&redirect_uri=callback" (:client-id client-details))
+               (-> response (get-in [:session :client-id])) => (:client-id client-details)))
 
        (fact "valid request redirects to callback with auth_code when there is an existing user session"
              (let [user (user/register-user "user" "password")
