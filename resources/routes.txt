@@ -1,6 +1,6 @@
 GET     /            home
 GET     /register    show-registration-form
 POST    /register    register-user
-GET     /sign-in     show-sign-in-form
-POST    /sign-in     sign-in
+GET     /login       show-sign-in-form
+POST    /login       sign-in
 GET     /profile     show-profile

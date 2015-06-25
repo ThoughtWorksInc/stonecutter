@@ -60,7 +60,7 @@
 
 (facts "User can sign in"
        (-> (k/session h/app)
-           (k/visit "/sign-in")
+           (k/visit "/login")
            (k/fill-in :.func--email__input "email@server.com")
            (k/fill-in :.func--password__input "valid-password")
            (k/press :.func--sign-in__button)

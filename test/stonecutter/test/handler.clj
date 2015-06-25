@@ -28,13 +28,13 @@
       (-> (mock/request :get "/register") app :status) => 200)
 
 (fact "sign-in url returns a 200 response"
-      (-> (mock/request :get "/sign-in") app :status) => 200)
+      (-> (mock/request :get "/login") app :status) => 200)
 
 (fact "unknown url returns a 404 response"
       (-> (mock/request :get "/unknown-url") app :status) => 404)
 
 (fact "user can sign in with valid credentials and is redirected to profile"
-      (-> (create-request :post "/sign-in" user-params)
+      (-> (create-request :post "/login" user-params)
           sign-in) => (contains {:status 302 :headers {"Location" "/profile"}})
 
       (provided
