@@ -13,7 +13,24 @@
 (fact "can remove elements from enlive map"
       (let [page (-> "<html><form></form></html>"
                      html/html-snippet)]
-        (html/select [:form]) =not=> empty?
+        (html/select page [:form]) =not=> empty?
         (-> page
             (remove-element [:form])
             (html/select [:form])) => empty?))
+
+(fact "templates caching"
+      (let [file-name "html-file"
+            html "some-html"]
+        (fact "template are cached when caching is enabled"
+              (reset-template-cache!)
+              (enable-template-caching!)
+              (load-template file-name) => html
+              (provided (html/html-resource file-name) => html :times 1)
+              (load-template file-name) => html
+              (provided (html/html-resource file-name) => html :times 0))
+        (fact "if caching is disabled then templates are always loaded from file"
+              (disable-template-caching!)
+              (load-template file-name) => html
+              (provided (html/html-resource file-name) => html :times 1)
+              (load-template file-name) => html
+              (provided (html/html-resource file-name) => html :times 1))))

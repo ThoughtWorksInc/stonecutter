@@ -8,6 +8,7 @@
             [stonecutter.view.register :as register]
             [stonecutter.view.sign-in :as sign-in]
             [stonecutter.view.error :as error]
+            [stonecutter.view.view-helpers :refer [enable-template-caching! disable-template-caching!]]
             [stonecutter.translation :refer [load-translations-from-file]]
             [stonecutter.validation :as v]
             [stonecutter.storage :as s]
@@ -112,6 +113,7 @@
 
 (defn -main [& args]
   (log-config/init-logger!)
+  (enable-template-caching!)
   (s/setup-mongo-stores! (get env :mongo-uri "mongodb://localhost:27017/stonecutter"))
   (-> app wrap-error-handling (run-jetty {:port port})))
 
@@ -119,4 +121,5 @@
   "Function called when running app with 'lein ring server'"
   []
   (log-config/init-logger!)
+  (disable-template-caching!)
   (s/setup-in-memory-stores!))

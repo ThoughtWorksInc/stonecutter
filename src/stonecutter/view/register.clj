@@ -60,7 +60,7 @@
   (let [err (:errors context)
         translator (:translator context)
         params (:params context)]
-    (->> (html/html-resource "public/register.html")
+    (->> (vh/load-template "public/register.html")
          set-form-action
          vh/add-anti-forgery
          (add-registration-errors err)

@@ -57,7 +57,7 @@
   (let [err (:errors context)
         translator (:translator context)
         params (:params context)]
-  (->> (html/html-resource "public/sign-in.html")
+  (->> (vh/load-template "public/sign-in.html")
        set-form-action
        vh/add-anti-forgery
        (add-sign-in-errors err)
