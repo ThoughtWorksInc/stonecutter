@@ -13,23 +13,24 @@
 
 .wrapper__card {
   perspective: 1000px;
-  padding: 20px;
+  padding: 40px 20px;
   background-color: darken($white,2%);
 }
 
 .card {
   $card_guttering: 25px;
-  background-color: $white;
+  background-color: #fcfcfc;
   max-width: 480px;
   min-height: 270px;
   margin: 0 auto;
   padding: $card_guttering;
   border: 1px solid $light_grey;
-  box-shadow: 0 0 4px 0 rgba(#000, 0.15);
-  transition: box-shadow 200ms linear, transform 200ms linear;
+  box-shadow: 0 30px 30px -5px rgba($black, 0.35);
+  transition: box-shadow 200ms linear, transform 200ms linear, background-color 200ms linear;
   &:hover {
-    transform: rotateX(-10deg) translateZ(30px);
-    box-shadow: 0 -6px 20px 0 rgba(#000, 0.15);
+    background-color: $white;
+    transform: translateY(-4px) translateZ(5px);
+    box-shadow: 0 30px 30px -3px rgba($black, 0.35);
   }
 
   &__row {
