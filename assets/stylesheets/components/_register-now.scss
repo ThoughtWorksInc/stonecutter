@@ -1,0 +1,21 @@
+.register-now {
+  padding: 16px 0;
+  //background-color: lighten($light_cyan, 5%);
+  //border-bottom: 1px solid $medium_cyan;
+  &__title {
+    //margin-top: 0;
+  }
+  &__text {
+    //margin-bottom: 0;
+  }
+  &__link {
+    //color: $medium_cyan;
+    //font-weight: bold;
+    //text-decoration: none;
+    //display: inline-block;
+    //border-bottom: 1px solid currentColor;
+    //&:hover {
+    //  color: $dark_cyan;
+    //}
+  }
+}

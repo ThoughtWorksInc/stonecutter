@@ -7,6 +7,7 @@ var pageData = {
   "javascriptsBase": "/assets/javascripts",
   "stylesheetsBase": "/assets/stylesheets",
   "imagesBase": "/assets/images",
+  "applicationName": "Stonecutter",
   "demoAppURL": "http://localhost:7778"
 };
 

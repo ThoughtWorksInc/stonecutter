@@ -1,3 +1,14 @@
+form {
+  margin-bottom: 3rem;
+}
+label {
+  cursor: pointer;
+}
+
+input {
+  border-radius: 0;
+}
+
 .validation-summary {
   display: none;
   margin-bottom: 2rem;
@@ -81,13 +92,4 @@
       -webkit-text-fill-color: $dark_cyan;
     }
   }
-}
-
-
-label {
-  cursor: pointer;
-}
-
-input {
-  border-radius: 0;
 }

@@ -16,6 +16,11 @@ registration-form:
   unknown-error: Whoops! Unknown error
   create-account: Create Profile Card
 
+register-now:
+  title: New to Stonecutter?
+  link-text-register: Register now
+  link-text-action: for you profile card
+
 sign-in-form:
   title: Sign in
   page-header: Sign in

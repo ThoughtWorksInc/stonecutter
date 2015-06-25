@@ -9,14 +9,14 @@ block headerScripts
 
 block headerContent
   nav.tabs
-    li.tabs__item.tabs__item--on: a.tabs__link(href="sign-in", data-l8n="content:sign-in-register/sign-in-tab")
+    li.tabs__item.tabs__item--on: a.tabs__link(href="./sign-in", data-l8n="content:sign-in-register/sign-in-tab")
       | !Sign in
-    li.tabs__item: a.tabs__link(href="register", data-l8n="content:sign-in-register/register-tab")
+    li.tabs__item: a.tabs__link(href="./register", data-l8n="content:sign-in-register/register-tab")
       | !Register
 
 block content
   .middle-container
-    h1.page-title(data-l8n="content:sign-in-form/page-header")
+    h1.page-title.visuallyhidden(data-l8n="content:sign-in-form/page-header")
       | !Sign in
     form.login-form(action="authorise", method="post")
       //-p.form-row.form-row--validation-error
@@ -36,6 +36,17 @@ block content
         input.form-row__input.func--password__input(type="password", id="password", name="password")
       button.button.button--full-width.func--sign-in__button(type="submit", data-l8n="content:sign-in-form/sign-in")
         | !Sign in to Profile
+
+    .register-now
+      h2.register-now__title(data-l8n="content:register-now/title")
+        | !New to
+        = " "
+        | #{applicationName}?
+        = " "
+      a.button.button--grey.register-now__link(href="./register")
+        span.highlight--dark-cyan(data-l8n="content:register-now/link-text-register") !Register now
+        = " "
+        span(data-l8n="content:register-now/link-text-action") !for you profile card
 
 block footerScripts
   if staticMode

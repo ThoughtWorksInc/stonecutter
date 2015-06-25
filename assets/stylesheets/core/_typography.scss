@@ -1,10 +1,12 @@
 @mixin h1 {
+  margin-top: 0;
   @include font-size(34px);
   line-height: 1.2;
   letter-spacing: -0.025em;
   color: $dark_cyan;
 }
 @mixin h2 {
+  margin-top: 0;
   @include font-size(28px);
   font-weight: 500;
   line-height: 1.2;
@@ -29,4 +31,13 @@ p {
 .no-bullet {
   list-style: none;
   padding-left: 0;
+}
+
+.highlight {
+  &--dark-pink {
+    color: $dark_pink;
+  }
+  &--dark-cyan {
+    color: $dark_cyan;
+  }
 }
