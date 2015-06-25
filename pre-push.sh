@@ -1,4 +1,4 @@
 #!/bin/bash
 
 gulp build
-lein midje
+lein unit 
