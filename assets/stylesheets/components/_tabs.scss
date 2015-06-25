@@ -15,7 +15,7 @@
     border-top: 1px solid transparent;
     border-right: 1px solid transparent;
     border-left: 1px solid transparent;
-    color: $medium_grey;
+    color: $dark_grey;
     &:hover {
       $my_grey: lighten($light_grey, 2.5%);
     }
@@ -45,6 +45,7 @@
     padding: 20px 30px;
     text-decoration: none;
     color: inherit;
+    transition: background 250ms ease, color 250ms ease;
     &:hover {
       cursor: pointer;
       color: $medium_cyan;
