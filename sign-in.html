@@ -13,24 +13,33 @@
     <div class="header">
       <div class="header__logo"><span class="visuallyhidden">Stonecutter</span></div>
       <nav class="tabs">
-        <li class="tabs__item tabs__item--on"><a href="sign-in" data-l8n="content:sign-in-register/sign-in-tab" class="tabs__link">!Sign in</a></li>
-        <li class="tabs__item"><a href="register" data-l8n="content:sign-in-register/register-tab" class="tabs__link">!Register</a></li>
+        <li class="tabs__item tabs__item--on"><a href="./sign-in" data-l8n="content:sign-in-register/sign-in-tab" class="tabs__link">!Sign in</a></li>
+        <li class="tabs__item"><a href="./register" data-l8n="content:sign-in-register/register-tab" class="tabs__link">!Register</a></li>
       </nav>
     </div>
     <div class="middle-container">
-      <h1 data-l8n="content:sign-in-form/page-header" class="page-title">!Sign in</h1>
+      <h1 data-l8n="content:sign-in-form/page-header" class="page-title visuallyhidden">!Sign in</h1>
       <form action="authorise" method="post" class="login-form">
-        <p class="form-row">
-          <label for="email" class="form-row__label"><span data-l8n="content:sign-in-form/email-address" class="form-row__title">!Email address</span><span data-l8n="content:sign-in-form/email-address-invalid-validation-message" class="form-row__validation">!Enter a valid email address</span></label>
-          <input type="email" id="email" name="email" class="form-row__input func--email__input">
+        <div class="validation-summary clj--validation-summary">
+          <div class="validation-summary__title"></div>
+          <ul class="validation-summary__list">
+            <li data-l8n="content:sign-in-form/invalid-credentials-validation-message" class="validation-summary__item clj--validation-summary__item">!Invalid email address or password</li>
+          </ul>
+        </div>
+        <p class="form-row clj--sign-in-email">
+          <label for="email" class="form-row__label"><span data-l8n="content:sign-in-form/email-address" class="form-row__title">!Email address</span><span data-l8n="content:sign-in-form/email-address-invalid-validation-message" class="form-row__validation clj--sign-in-email__validation">!Enter a valid email address</span></label>
+          <input type="email" id="email" name="email" class="form-row__input clj--email__input func--email__input">
         </p>
-        <p class="form-row">
-          <label for="password" class="form-row__label"><span data-l8n="content:sign-in-form/password" class="form-row__title">!Password</span>
-          </label>
+        <p class="form-row clj--sign-in-password">
+          <label for="password" class="form-row__label"><span data-l8n="content:sign-in-form/password" class="form-row__title">!Password</span><span data-l8n="content:sign-in-form/password-invalid-validation-message" class="form-row__validation clj--sign-in-password__validation">!Cannot be blank</span></label>
           <input type="password" id="password" name="password" class="form-row__input func--password__input">
         </p>
-        <button type="submit" data-l8n="content:sign-in-form/sign-in" class="button button--full-width">!Sign in</button>
+        <button type="submit" data-l8n="content:sign-in-form/sign-in" class="button button--full-width func--sign-in__button">!Sign in to Profile</button>
       </form>
+      <div class="register-now">
+        <h2 data-l8n="content:register-now/title" class="register-now__title">!New to Stonecutter? 
+        </h2><a href="./register" class="button button--grey register-now__link"><span data-l8n="content:register-now/link-text-register" class="highlight--dark-cyan">!Register now</span> <span data-l8n="content:register-now/link-text-action">!for you profile card</span></a>
+      </div>
     </div>
     <script>document.addEventListener("touchstart", function(){}, true);</script>
     <script>
