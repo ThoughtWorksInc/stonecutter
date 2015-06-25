@@ -11,10 +11,14 @@ block headerScripts
       padding-top: 40px;
     }
     .demo-nav {
+      margin-bottom: 40px;
       list-style: none;
     }
     .demo-item {
-      margin: 0 0 20px 0;
+      margin: 0 0 15px 0;
+    }
+    .demo-item:last-child {
+      margin-bottom: 0;
     }
     .demo-item a {
       color: #007E84;
@@ -29,11 +33,19 @@ block content
 
   .demo
     .middle-container
+
+      h2 Main App
       nav.demo-nav
-        li.demo-item: a(href="library") Library
-        li.demo-item: a(href="sign-in") Sign in
-        li.demo-item: a(href="register") Register
-        li.demo-item: a(href="forgot-password") Forgot password
-        li.demo-item: a(href="authorise") Authorise
-        li.demo-item: a(href="profile") Profile
+        li.demo-item: a(href="./library") Library
+        li.demo-item: a(href="./sign-in") Sign in
+        li.demo-item: a(href="./register") Register
+        li.demo-item: a(href="./forgot-password") Forgot password
+        li.demo-item: a(href="./authorise") Authorise
+        li.demo-item: a(href="./profile") Profile
+
+      h2 Demo App
+      nav.demo-nav
+        li.demo-item: a(href="./greenparty/sign-in") Sign in
+        li.demo-item: a(href="./greenparty/register") Register
+        li.demo-item: a(href="./greenparty/authorise") Authorise
 

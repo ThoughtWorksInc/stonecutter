@@ -4,14 +4,14 @@ var app = express();
 app.set('port', (process.env.PORT || 7069));
 
 var pageData = {
-  "javascriptsBase": "/assets/javascripts",
-  "stylesheetsBase": "/assets/stylesheets",
-  "imagesBase": "/assets/images",
+  "javascriptsBase": "/javascripts",
+  "stylesheetsBase": "/stylesheets",
+  "imagesBase": "/images",
   "applicationName": "Stonecutter",
   "demoAppURL": "http://localhost:7778"
 };
 
-app.use('/assets', express.static(__dirname + '/resources/public'));
+app.use('/', express.static(__dirname + '/resources/public'));
 
 app.set('view engine', 'jade');
 app.set('views', './assets/jade');
@@ -56,13 +56,13 @@ app.get('/profile', function(req, res){
 // temp stuff for demo
 
 app.get('/greenparty/register', function(req, res){
-  res.render('demo/register', pageData);
+  res.render('greenparty/register', pageData);
 });
 app.get('/greenparty/sign-in', function(req, res){
-  res.render('demo/sign-in', pageData);
+  res.render('greenparty/sign-in', pageData);
 });
 app.all('/greenparty/authorise', function(req, res){
-  res.render('demo/authorise', pageData);
+  res.render('greenparty/authorise', pageData);
 });
 
 

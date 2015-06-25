@@ -1,0 +1,10 @@
+@import "utilities";
+@import "variables";
+
+
+.header {
+  background-color: #78b82a;
+}
+.header__logo {
+  background-image: image-url('demo-logo@2x.png');
+}
