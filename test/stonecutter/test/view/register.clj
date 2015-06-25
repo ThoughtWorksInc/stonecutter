@@ -80,8 +80,8 @@
                 (fact "correct error message is displayed"
                       (html/select page [[:.clj--registration-email__validation (html/attr= :data-l8n "content:registration-form/email-address-too-long-validation-message")]]) =not=> empty?)))
 
-       (fact "when password is invalid"
-             (let [errors {:password :invalid}
+       (fact "when password is blank"
+             (let [errors {:password :blank}
                    params {:password ""}
                    page (-> (create-context {} errors params) registration-form html/html-snippet)]
                (fact "the class for styling errors is added"
@@ -89,7 +89,30 @@
                (fact "password validation element is present"
                      (html/select page [:.clj--registration-password__validation]) =not=> empty?)
                (fact "correct error message is displayed"
-                     (html/select page [[:.clj--registration-password__validation (html/attr= :data-l8n "content:registration-form/password-invalid-validation-message")]]) =not=> empty?)))
+                     (html/select page [[:.clj--registration-password__validation (html/attr= :data-l8n "content:registration-form/password-blank-validation-message")]]) =not=> empty?)))
+
+       (fact "when password is too short"
+             (let [errors {:password :too-short}
+                   params {:password "short"}
+                   page (-> (create-context {} errors params) registration-form html/html-snippet)]
+               (fact "the class for styling errors is added"
+                     (html/select page [[:.clj--registration-password :.form-row--validation-error]]) =not=> empty?)
+               (fact "password validation element is present"
+                     (html/select page [:.clj--registration-password__validation]) =not=> empty?)
+               (fact "correct error message is displayed"
+                     (html/select page [[:.clj--registration-password__validation (html/attr= :data-l8n "content:registration-form/password-too-short-validation-message")]]) =not=> empty?)))
+
+       (fact "when password is too long"
+             (let [long-password (apply str (repeat 255 "x"))
+                   errors {:password :too-long}
+                   params {:password long-password}
+                   page (-> (create-context {} errors params) registration-form html/html-snippet)]
+               (fact "the class for styling errors is added"
+                     (html/select page [[:.clj--registration-password :.form-row--validation-error]]) =not=> empty?)
+               (fact "password validation element is present"
+                     (html/select page [:.clj--registration-password__validation]) =not=> empty?)
+               (fact "correct error message is displayed"
+                     (html/select page [[:.clj--registration-password__validation (html/attr= :data-l8n "content:registration-form/password-too-long-validation-message")]]) =not=> empty?)))
 
        (fact "when confirm password is invalid"
              (let [errors {:confirm-password :invalid}

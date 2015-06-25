@@ -7,8 +7,6 @@
             [stonecutter.validation :as v]
             [stonecutter.storage :as s]))
 
-(defn p [v] (prn v) v)
-
 (defn create-request [method url params]
   (-> (mock/request method url)
       (assoc :params params)))
@@ -36,24 +34,34 @@
 (fact "user can sign in with valid credentials and is redirected to profile"
       (-> (create-request :post "/login" user-params)
           sign-in) => (contains {:status 302 :headers {"Location" "/profile"}})
-
       (provided
         (s/retrieve-user "valid@email.com" "password") => {:email "valid@email.com"}))
 
-(future-fact "user cannot sign in with invalid credentials"
-      (-> (create-request :post "/sign-in" {:email "invalid@credentials.com" :password "password"})
-          sign-in
-          :body) => (contains "Invalid email address or password")
-
-      (provided
-        (s/retrieve-user "invalid@credentials.com" "password") => nil))
+(facts "about sign-in validation errors" 
+       (fact "user cannot sign in with invalid credentials"
+             (-> (create-request :post "/sign-in" {:email "invalid@credentials.com" :password "password"})
+                 sign-in) => (contains {:status 400 :body (contains "Invalid email address or password")}) 
+             (provided
+               (s/retrieve-user "invalid@credentials.com" "password") => nil))
+       (facts "sign-in page is rendered with errors when invalid credentials are used"
+              (let [html-response ( -> (create-request :post "/sign-in" {:email "invalid@credentials.com"
+                                                                         :password "password"})
+                                       sign-in
+                                       :body
+                                       html/html-snippet)]
+                (fact "form should include validation error class"
+                      (html/select html-response [:.clj--validation-summary__item]) =not=> empty?)
+                (fact "email value should be preserved"
+                      (-> (html/select html-response [:.clj--email__input]) 
+                          first
+                          :attrs
+                          :value) => "invalid@credentials.com"))))
 
 (fact "user data is saved"
       (let [user-registration-data (create-user "valid@email.com" "password")]
         (-> (create-request :post "/register" user-confirm-params)
             register-user
             :status) => 200
-
         (provided
           (s/store-user! "valid@email.com" "password") => {:email "valid@email.com"})))
 
@@ -61,13 +69,12 @@
       (-> (create-request :post "/register" user-confirm-params)
           register-user
           :body) => (contains "User already exists")
-
         (provided
           (v/validate-registration user-confirm-params s/is-duplicate-user?) => {:email :duplicate}
           (user-store/new-user anything anything) => anything :times 0
           (user-store/store-user anything) => anything :times 0))
 
-(facts "about validation errors"
+(facts "about registration validation errors"
        (fact "user isn't saved to the database if email is invalid"
              (-> (create-request :post "/register" {:email "invalid"}) register-user) => anything
              (provided

@@ -10,7 +10,9 @@ registration-form:
   email-address-duplicate-validation-message: User already exists
   email-address-too-long-validation-message: Email address is too long
   password: Password
-  password-invalid-validation-message: Password must be between 8 and 50 characters long
+  password-blank-validation-message: Password cannot be blank
+  password-too-long-validation-message: Password is too long
+  password-too-short-validation-message: Password should be at least 8 characters long
   confirm-password: Confirm password
   confirm-password-invalid-validation-message: Ensure your passwords match
   unknown-error: Whoops! Unknown error
@@ -19,14 +21,19 @@ registration-form:
 register-now:
   title: New to Stonecutter?
   link-text-register: Register now
-  link-text-action: for you profile card
+  link-text-action: for your Profile Card
 
 sign-in-form:
   title: Sign in
   page-header: Sign in
+  invalid-credentials-validation-message: Invalid email address or password
   email-address: Email address
   email-address-invalid-validation-message: Enter a valid email address
+  email-address-too-long-validation-message: Email address is too long
   password: Password
+  password-blank-validation-message: Password cannot be blank
+  password-too-long-validation-message: Password is too long
+  password-too-short-validation-message: Password should be at least 8 characters long
   sign-in: Sign in to Profile
 
 error-404:

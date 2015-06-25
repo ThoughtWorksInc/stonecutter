@@ -54,27 +54,40 @@
       (html-response (register/registration-form context)))))
 
 (defn show-profile [request]
-  (when-let [email (get-in request [:session :user :email])]
-    (html-response (str "You are signed in as " email))) )
+  (if-let [email (get-in request [:session :user :email])]
+    (html-response (str "You are signed in as " email))
+    (r/redirect (path :sign-in))))
 
 (defn sign-in [request]
   (let [params (:params request)
         email (:email params)
         password (:password params)
-        user (s/retrieve-user email password)
+        err (v/validate-sign-in params)
         context {:translator (translations-fn translation-map)
-                 :params params}]
-    (if user
-      (assoc (r/redirect (path :show-profile)) :session {:user user})
-      (html-response (sign-in/sign-in-form context)))))
+                 :params params
+                 :errors err}]
+    (if (empty? err)
+      (if-let [user (s/retrieve-user email password)]
+        (assoc (r/redirect (path :show-profile)) :session {:user user})
+        (r/status (->> {:credentials :invalid}
+                       (assoc context :errors)
+                       sign-in/sign-in-form
+                       html-response)
+                400))
+      (r/status (->> context sign-in/sign-in-form html-response) 400))))
 
 (defn not-found [request]
   (let [context {:translator (translations-fn translation-map)}]
     (-> (html-response (error/not-found-error context))
         (r/status 404))))
 
+(defn home [request]
+  (if (get-in request [:session :user])
+    (r/redirect (path :show-profile))
+    (r/redirect (path :sign-in))))
+
 (def handlers
-  {:home (fn [request] (r/redirect (path :show-registration-form)))
+  {:home home
    :show-registration-form show-registration-form
    :register-user register-user
    :show-sign-in-form show-sign-in-form

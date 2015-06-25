@@ -33,12 +33,12 @@
 
 (s/setup-in-memory-stores!)
 
-(facts "Home url redirects to registration page"
+(facts "Home url redirects to sign-in page if user is not signed in"
        (-> (k/session h/app)
            (k/visit "/")
            (k/follow-redirect)
-           (page-title-is "Register")
-           (page-uri-is "/register")))
+           (page-title-is "Sign in")
+           (page-uri-is "/sign-in")))
 
 (facts "User is returned to same page when email is invalid"
        (-> (k/session h/app)
@@ -58,6 +58,12 @@
            (page-uri-is "/register")
            (selector-has-content [:body] "You saved the user")))
 
+(facts "User is redirected to sign-in page when accessing profile page not signed in"
+       (-> (k/session h/app)
+           (k/visit "/profile")
+           (k/follow-redirect)
+           (page-uri-is "/sign-in")))
+
 (facts "User can sign in"
        (-> (k/session h/app)
            (k/visit "/login")
@@ -67,6 +73,16 @@
            (k/follow-redirect)
            (page-uri-is "/profile")
            (selector-has-content [:body] "You are signed in as email@server.com")))
+
+(facts "Home url redirects to profile page if user is signed in"
+       (-> (k/session h/app)
+           (k/visit "/sign-in")
+           (k/fill-in :.func--email__input "email@server.com")
+           (k/fill-in :.func--password__input "valid-password")
+           (k/press :.func--sign-in__button)
+           (k/visit "/")
+           (k/follow-redirect)
+           (page-uri-is "/profile")))
 
 (facts "Not found page is shown for unknown url"
        (-> (k/session h/app)

@@ -12,7 +12,9 @@
   {:email {:invalid "content:registration-form/email-address-invalid-validation-message"
            :duplicate "content:registration-form/email-address-duplicate-validation-message"
            :too-long "content:registration-form/email-address-too-long-validation-message"}
-   :password {:invalid "content:registration-form/password-invalid-validation-message"}
+   :password {:blank "content:registration-form/password-blank-validation-message"
+              :too-long "content:registration-form/password-too-long-validation-message"
+              :too-short "content:registration-form/password-too-short-validation-message"}
    :confirm-password {:invalid "content:registration-form/confirm-password-invalid-validation-message"}})
 
 (defn add-email-error [enlive-m err]

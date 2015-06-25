@@ -19,19 +19,23 @@ block content
     h1.page-title.visuallyhidden(data-l8n="content:sign-in-form/page-header")
       | !Sign in
     form.login-form(action="authorise", method="post")
-      //-p.form-row.form-row--validation-error
-      p.form-row
+      .validation-summary.clj--validation-summary
+        .validation-summary__title
+        ul.validation-summary__list
+          li.validation-summary__item.clj--validation-summary__item(data-l8n="content:sign-in-form/invalid-credentials-validation-message")
+            | !Invalid email address or password
+      p.form-row.clj--sign-in-email
         label.form-row__label(for="email")
           span.form-row__title(data-l8n="content:sign-in-form/email-address")
             | !Email address
-          span.form-row__validation(data-l8n="content:sign-in-form/email-address-invalid-validation-message")
+          span.form-row__validation.clj--sign-in-email__validation(data-l8n="content:sign-in-form/email-address-invalid-validation-message")
             | !Enter a valid email address
-        input.form-row__input.func--email__input(type="email", id="email", name="email")
-      p.form-row
+        input.form-row__input.clj--email__input.func--email__input(type="email", id="email", name="email")
+      p.form-row.clj--sign-in-password
         label.form-row__label(for="password")
           span.form-row__title(data-l8n="content:sign-in-form/password")
             | !Password
-          //-span.form-row__label__validation
+          span.form-row__validation.clj--sign-in-password__validation(data-l8n="content:sign-in-form/password-invalid-validation-message")
             | !Cannot be blank
         input.form-row__input.func--password__input(type="password", id="password", name="password")
       button.button.button--full-width.func--sign-in__button(type="submit", data-l8n="content:sign-in-form/sign-in")
@@ -46,7 +50,7 @@ block content
       a.button.button--grey.register-now__link(href="./register")
         span.highlight--dark-cyan(data-l8n="content:register-now/link-text-register") !Register now
         = " "
-        span(data-l8n="content:register-now/link-text-action") !for you profile card
+        span(data-l8n="content:register-now/link-text-action") !for your Profile Card
 
 block footerScripts
   if staticMode
