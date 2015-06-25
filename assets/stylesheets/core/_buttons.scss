@@ -17,7 +17,7 @@
   @include no-select;
   &:focus, &:hover {
     background-color: lighten($medium_cyan, 1%);
-    box-shadow: 0 5px 12px rgba(#000, 0.3);
+    box-shadow: 0 19px 60px -10px rgba(0,0,0,.35);
     transform: translateY(-2px);
   }
   &:active {
