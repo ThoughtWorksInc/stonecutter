@@ -30,6 +30,9 @@
 (fact "sign-in url returns a 200 response"
       (-> (mock/request :get "/login") app :status) => 200)
 
+(fact "sign-out url returns a 302 response"
+      (-> (mock/request :get "/sign-out") app :status) => 302)
+
 (fact "unknown url returns a 404 response"
       (-> (mock/request :get "/unknown-url") app :status) => 404)
 

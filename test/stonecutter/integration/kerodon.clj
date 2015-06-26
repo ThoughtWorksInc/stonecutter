@@ -12,6 +12,11 @@
 (l/init-logger!)
 
 
+(defn selector-includes-content [state selector content]
+  (fact {:midje/name "Check if element contains string"}
+        (-> state :enlive (html/select selector) first html/text) => (contains content))
+  state)
+
 (defn print-enlive [state]
   (prn (-> state :enlive))
   state)
@@ -60,8 +65,18 @@
        (-> (k/session h/app)
            sign-in
            (k/follow-redirect)
-           (kh/page-uri-is "/profile")
-           (kh/selector-has-content [:body] "You are signed in as email@server.com")))
+           (kh/page-uri-is "/profile") 
+           (selector-includes-content [:body] "email@server.com"))) 
+
+(facts "User can sign out"
+       (-> (k/session h/app)
+           sign-in
+           (k/visit "/profile")
+           (k/follow :.func--sign-out__button)
+           (k/follow-redirect)
+           (kh/page-uri-is "/")
+           (k/follow-redirect)
+           (kh/page-uri-is "/login")))
 
 (facts "Home url redirects to profile page if user is signed in"
        (-> (k/session h/app)

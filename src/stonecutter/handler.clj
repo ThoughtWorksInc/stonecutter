@@ -8,6 +8,7 @@
             [stonecutter.view.register :as register]
             [stonecutter.view.sign-in :as sign-in]
             [stonecutter.view.error :as error]
+            [stonecutter.view.profile :as profile]
             [stonecutter.view.view-helpers :refer [enable-template-caching! disable-template-caching!]]
             [stonecutter.translation :refer [load-translations-from-file]]
             [stonecutter.validation :as v]
@@ -17,7 +18,19 @@
             [clojure.tools.logging :as log]
             [stonecutter.controller.oauth :as oauth]
             [clauth.token :as token]
-            [clauth.client :as client]))
+            [clauth.client :as client]
+            [clauth.endpoints :as ep]))
+
+(defn dissoc-in
+  [m [k & ks :as keys]]
+  (if ks
+    (if-let [nextmap (get m k)]
+      (let [newmap (dissoc-in nextmap ks)]
+        (if (seq newmap)
+          (assoc m k newmap)
+          (dissoc m k)))
+      m)
+    (dissoc m k)))
 
 (def translation-map
   (load-translations-from-file "en.yml"))
@@ -58,8 +71,8 @@
       (html-response (register/registration-form context)))))
 
 (defn show-profile [request]
-  (if-let [email (get-in request [:session :user :email])]
-    (html-response (str "You are signed in as " email))
+  (if (get-in request [:session :user :email])
+    (html-response (profile/profile request))
     (r/redirect (path :sign-in))))
 
 (defn redirect-to-authorisation [return-to user client-id email]
@@ -83,14 +96,19 @@
     (if (empty? err)
       (if-let [user (s/authenticate-and-retrieve-user email password)]
         (cond (and client-id return-to) (redirect-to-authorisation return-to user client-id email)
-               client-id                (throw (Exception. "Missing return-to value"))
+              client-id                (throw (Exception. "Missing return-to value"))
               :default                  (redirect-to-profile user))
         (r/status (->> {:credentials :invalid}
                        (assoc context :errors)
                        sign-in/sign-in-form
                        html-response)
-                400))
+                  400))
       (r/status (->> context sign-in/sign-in-form html-response) 400))))
+
+(defn sign-out [request]
+  (-> request
+      (dissoc-in [:session :user])
+      ep/logout-handler))
 
 (defn not-found [request]
   (let [context {:translator (translations-fn translation-map)}]
@@ -108,6 +126,7 @@
    :register-user          register-user
    :show-sign-in-form      show-sign-in-form
    :sign-in                sign-in
+   :sign-out               sign-out
    :show-profile           show-profile
    :authorise              oauth/authorise
    :validate-token         oauth/validate-token})
