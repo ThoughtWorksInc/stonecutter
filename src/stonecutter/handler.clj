@@ -19,8 +19,6 @@
             [clauth.token :as token]
             [clauth.client :as client]))
 
-(def config {:session-expiration-in-seconds 3600})
-
 (def translation-map
   (load-translations-from-file "en.yml"))
 
@@ -124,7 +122,11 @@
           (log/error e)
           (-> (html-response (error/internal-server-error context)) (r/status 500)))))))
 
-(def app (wrap-defaults app-handler (assoc site-defaults :session {:cookie-attrs {:max-age (get config :session-expiration-in-seconds 3600)}})))
+(def wrap-defaults-config
+  (-> site-defaults
+      (assoc-in [:session :cookie-attrs :max-age] 3600)))
+
+(def app (wrap-defaults app-handler wrap-defaults-config))
 
 (def port (Integer. (get env :port "3000")))
 

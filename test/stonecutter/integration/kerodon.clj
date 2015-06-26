@@ -1,11 +1,12 @@
 (ns stonecutter.integration.kerodon
   (:require [midje.sweet :refer :all]
+            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [kerodon.core :as k]
+            [net.cgrand.enlive-html :as html]
             [stonecutter.handler :as h]
             [stonecutter.storage :as s]
             [stonecutter.logging :as l]
-            [stonecutter.view.register :refer [registration-form]] 
-            [net.cgrand.enlive-html :as html]))
+            [stonecutter.view.register :refer [registration-form]]))
 
 (l/init-logger!)
 
@@ -64,22 +65,23 @@
            (k/follow-redirect)
            (page-uri-is "/login")))
 
+(defn sign-in [state]
+  ( -> state
+       (k/visit "/login")
+       (k/fill-in :.func--email__input "email@server.com")
+       (k/fill-in :.func--password__input "valid-password")
+       (k/press :.func--sign-in__button)))
+
 (facts "User can sign in"
        (-> (k/session h/app)
-           (k/visit "/login")
-           (k/fill-in :.func--email__input "email@server.com")
-           (k/fill-in :.func--password__input "valid-password")
-           (k/press :.func--sign-in__button)
+           sign-in
            (k/follow-redirect)
            (page-uri-is "/profile")
            (selector-has-content [:body] "You are signed in as email@server.com")))
 
 (facts "Home url redirects to profile page if user is signed in"
        (-> (k/session h/app)
-           (k/visit "/login")
-           (k/fill-in :.func--email__input "email@server.com")
-           (k/fill-in :.func--password__input "valid-password")
-           (k/press :.func--sign-in__button)
+           sign-in
            (k/visit "/")
            (k/follow-redirect)
            (page-uri-is "/profile")))
