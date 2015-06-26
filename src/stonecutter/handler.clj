@@ -14,7 +14,10 @@
             [stonecutter.storage :as s]
             [stonecutter.routes :refer [routes path]]
             [stonecutter.logging :as log-config]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [stonecutter.controller.oauth :as oauth]
+            [clauth.token :as token]
+            [clauth.client :as client]))
 
 (def translation-map
   (load-translations-from-file "en.yml"))
@@ -59,8 +62,18 @@
     (html-response (str "You are signed in as " email))
     (r/redirect (path :sign-in))))
 
+(defn redirect-to-authorisation [return-to user client-id email]
+  (if-let [client (client/fetch-client client-id)]
+    (assoc (r/redirect return-to) :session {:user user :access_token (:token (token/create-token client email))})
+    (throw (Exception. "Invalid client"))))
+
+(defn redirect-to-profile [user]
+  (assoc (r/redirect (path :show-profile)) :session {:user user}))
+
 (defn sign-in [request]
   (let [params (:params request)
+        client-id (get-in request [:session :client-id])
+        return-to (get-in request [:session :return-to])
         email (:email params)
         password (:password params)
         err (v/validate-sign-in params)
@@ -68,8 +81,10 @@
                  :params params
                  :errors err}]
     (if (empty? err)
-      (if-let [user (s/retrieve-user email password)]
-        (assoc (r/redirect (path :show-profile)) :session {:user user})
+      (if-let [user (s/authenticate-and-retrieve-user email password)]
+        (cond (and client-id return-to) (redirect-to-authorisation return-to user client-id email)
+               client-id                (throw (Exception. "Missing return-to value"))
+              :default                  (redirect-to-profile user))
         (r/status (->> {:credentials :invalid}
                        (assoc context :errors)
                        sign-in/sign-in-form

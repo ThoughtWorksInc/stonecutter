@@ -1,4 +1,5 @@
-(ns stonecutter.integration.oauth)
+(ns stonecutter.integration.oauth
+  (:require [midje.sweet :refer :all]))
 
 ;; CLIENT => AUTH    /authorisation?client-id=123&response_type=code&redirect_uri=callback-url
 ;;   USER LOGIN (Auth Server)

@@ -35,7 +35,7 @@
       (user-store/new-user password)
       user-store/store-user))
 
-(defn retrieve-user [email password]
+(defn authenticate-and-retrieve-user [email password]
   (let [user (user-store/authenticate-user email password)]
     (when user
       {:email (:login user)})))

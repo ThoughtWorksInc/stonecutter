@@ -33,7 +33,7 @@
                (user-store/store-user :a-user) => :a-stored-user))))
 
 (fact "can retrieve user with valid credentials"
-      (s/retrieve-user "email@server.com" "password") => {:email "email@server.com"}
+      (s/authenticate-and-retrieve-user "email@server.com" "password") => {:email "email@server.com"}
       (provided
         (user-store/authenticate-user "email@server.com" "password") => {:login "email@server.com"
                                                                          :name nil
@@ -41,6 +41,6 @@
                                                                          :url nil}))
 
 (fact "retrieving user with invalid credentials returns nil"
-      (s/retrieve-user "invalid@credentials.com" "password") => nil
+      (s/authenticate-and-retrieve-user "invalid@credentials.com" "password") => nil
       (provided
         (user-store/authenticate-user "invalid@credentials.com" "password") => nil))
