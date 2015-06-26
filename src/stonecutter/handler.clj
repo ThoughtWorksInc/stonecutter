@@ -103,12 +103,14 @@
     (r/redirect (path :sign-in))))
 
 (def handlers
-  {:home home
+  {:home                   home
    :show-registration-form show-registration-form
-   :register-user register-user
-   :show-sign-in-form show-sign-in-form
-   :sign-in sign-in
-   :show-profile show-profile})
+   :register-user          register-user
+   :show-sign-in-form      show-sign-in-form
+   :sign-in                sign-in
+   :show-profile           show-profile
+   :authorise              oauth/authorise
+   :validate-token         oauth/validate-token})
 
 (def app-handler
   (scenic-handler routes handlers not-found))

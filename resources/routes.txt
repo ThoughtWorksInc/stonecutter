@@ -1,6 +1,8 @@
-GET     /            home
-GET     /register    show-registration-form
-POST    /register    register-user
-GET     /login       show-sign-in-form
-POST    /login       sign-in
-GET     /profile     show-profile
+GET     /               home
+GET     /register       show-registration-form
+POST    /register       register-user
+GET     /login          show-sign-in-form
+POST    /login          sign-in
+GET     /profile        show-profile
+GET     /authorisation  authorise
+GET     /token          validate-token

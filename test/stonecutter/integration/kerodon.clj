@@ -3,6 +3,7 @@
             [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [kerodon.core :as k]
             [net.cgrand.enlive-html :as html]
+            [stonecutter.integration.kerodon-helpers :as kh]
             [stonecutter.handler :as h]
             [stonecutter.storage :as s]
             [stonecutter.logging :as l]
@@ -10,23 +11,6 @@
 
 (l/init-logger!)
 
-(defn page-title [state]
-  (-> state :enlive (html/select [:title]) first html/text))
-
-(defn page-title-is [state title]
-  (fact {:midje/name "Checking page title:"}
-       (page-title state) => title)
-  state)
-
-(defn page-uri-is [state uri]
-  (fact {:midje/name "Checking page uri:"}
-        (-> state :request :uri) => uri)
-  state)
-
-(defn selector-has-content [state selector content]
-  (fact {:midje/name "Check content of element"}
-        (-> state :enlive (html/select selector) first html/text) => content)
-  state)
 
 (defn print-enlive [state]
   (prn (-> state :enlive))
@@ -38,16 +22,16 @@
        (-> (k/session h/app)
            (k/visit "/")
            (k/follow-redirect)
-           (page-title-is "Sign in")
-           (page-uri-is "/login")))
+           (kh/page-title-is "Sign in")
+           (kh/page-uri-is "/login")))
 
 (facts "User is returned to same page when email is invalid"
        (-> (k/session h/app)
            (k/visit "/register")
            (k/fill-in "Email address" "invalid-email")
            (k/press :.func--create-profile__button)
-           (page-uri-is "/register")
-           (selector-has-content [:.clj--registration-email__validation] "Enter a valid email address")))
+           (kh/page-uri-is "/register")
+           (kh/selector-has-content [:.clj--registration-email__validation] "Enter a valid email address")))
 
 (facts "User is taken to success page when user is successfully created"
        (-> (k/session h/app)
@@ -56,14 +40,14 @@
            (k/fill-in :.func--password__input "valid-password")
            (k/fill-in :.func--confirm-password__input "valid-password")
            (k/press :.func--create-profile__button)
-           (page-uri-is "/register")
-           (selector-has-content [:body] "You saved the user")))
+           (kh/page-uri-is "/register")
+           (kh/selector-has-content [:body] "You saved the user")))
 
 (facts "User is redirected to sign-in page when accessing profile page not signed in"
        (-> (k/session h/app)
            (k/visit "/profile")
            (k/follow-redirect)
-           (page-uri-is "/login")))
+           (kh/page-uri-is "/login")))
 
 (defn sign-in [state]
   ( -> state
@@ -76,24 +60,24 @@
        (-> (k/session h/app)
            sign-in
            (k/follow-redirect)
-           (page-uri-is "/profile")
-           (selector-has-content [:body] "You are signed in as email@server.com")))
+           (kh/page-uri-is "/profile")
+           (kh/selector-has-content [:body] "You are signed in as email@server.com")))
 
 (facts "Home url redirects to profile page if user is signed in"
        (-> (k/session h/app)
            sign-in
            (k/visit "/")
            (k/follow-redirect)
-           (page-uri-is "/profile")))
+           (kh/page-uri-is "/profile")))
 
 (facts "Not found page is shown for unknown url"
        (-> (k/session h/app)
            (k/visit "/wrong-url")
-           (page-title-is "Error-404")))
+           (kh/page-title-is "Error-404")))
 
 (fact "Error page is shown if an exception is thrown"
       (against-background
          (registration-form anything) =throws=> (Exception.))
        (-> (k/session (h/wrap-error-handling h/app))
            (k/visit "/register")
-           (page-title-is "Error-500")))
+           (kh/page-title-is "Error-500")))

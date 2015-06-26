@@ -64,7 +64,7 @@
                                                :redirect_uri "callback"
                                                :code         (:code auth-code)})
                                (create-auth-header client-details))
-                   response (oauth/token request)
+                   response (oauth/validate-token request)
                    response-body (-> response :body (json/parse-string keyword))]
                (:status response) => 200
                (:access_token response-body) =not=> nil
