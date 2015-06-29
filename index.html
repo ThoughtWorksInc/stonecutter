@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title data-l8n="">Index</title>
+    <title data-l8n="content:default/title">Index</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
     <link rel="icon" type="image/png" href="favicon.png">
@@ -35,25 +35,31 @@
   </head>
   <body>
     <div class="header">
-      <div class="header__logo"><span class="visuallyhidden">Stonecutter</span></div>
+      <div class="header__inner middle-container">
+        <div class="header__logo"><span class="visuallyhidden">Stonecutter</span></div>
+        <nav class="tabs">
+        </nav>
+      </div>
     </div>
-    <div class="demo">
-      <div class="middle-container">
-        <h2>Main App</h2>
-        <nav class="demo-nav">
-          <li class="demo-item"><a href="./library">Library</a></li>
-          <li class="demo-item"><a href="./sign-in">Sign in</a></li>
-          <li class="demo-item"><a href="./register">Register</a></li>
-          <li class="demo-item"><a href="./forgot-password">Forgot password</a></li>
-          <li class="demo-item"><a href="./authorise">Authorise</a></li>
-          <li class="demo-item"><a href="./profile">Profile</a></li>
-        </nav>
-        <h2>Demo App</h2>
-        <nav class="demo-nav">
-          <li class="demo-item"><a href="./greenparty/sign-in">Sign in</a></li>
-          <li class="demo-item"><a href="./greenparty/register">Register</a></li>
-          <li class="demo-item"><a href="./greenparty/authorise">Authorise</a></li>
-        </nav>
+    <div role="main">
+      <div class="demo">
+        <div class="middle-container">
+          <h2>Main App</h2>
+          <nav class="demo-nav">
+            <li class="demo-item"><a href="./library">Library</a></li>
+            <li class="demo-item"><a href="./sign-in">Sign in</a></li>
+            <li class="demo-item"><a href="./register">Register</a></li>
+            <li class="demo-item"><a href="./forgot-password">Forgot password</a></li>
+            <li class="demo-item"><a href="./authorise">Authorise</a></li>
+            <li class="demo-item"><a href="./profile">Profile</a></li>
+          </nav>
+          <h2>Demo App</h2>
+          <nav class="demo-nav">
+            <li class="demo-item"><a href="./greenparty/sign-in">Sign in</a></li>
+            <li class="demo-item"><a href="./greenparty/register">Register</a></li>
+            <li class="demo-item"><a href="./greenparty/authorise">Authorise</a></li>
+          </nav>
+        </div>
       </div>
     </div>
     <script>document.addEventListener("touchstart", function(){}, true);</script>

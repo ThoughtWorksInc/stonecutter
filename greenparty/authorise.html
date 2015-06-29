@@ -12,34 +12,42 @@
   </head>
   <body class="gp">
     <div class="header">
-      <div class="header__logo"><span class="visuallyhidden">Stonecutter</span></div>
+      <div class="header__inner middle-container">
+        <div class="header__logo"><span class="visuallyhidden">Stonecutter</span></div>
+        <nav class="tabs">
+        </nav>
+      </div>
     </div>
-    <div class="middle-container">
-      <h1 class="page-title">The <span class="clj-app-name">Green Party Voting</span> would to use your Profile Card:
-      </h1>
-      <div class="authorise-text">
-        <p class="authorise-text__description">This application <span class="authorise-text__description--allowed">will be able to:</span>
-        </p>
-        <ul class="authorise-text__list">
-          <li class="authorise-text__item"><i class="fa fa-check authorise-text__icon authorise-text__icon--allowed"></i> View your Profile Card
-          </li>
-        </ul>
-      </div>
-      <div class="authorise-text">
-        <p class="authorise-text__description">This application <span class="authorise-text__description--disallowed">will not be able to:</span>
-        </p>
-        <ul class="authorise-text__list">
-          <li class="authorise-text__item"><i class="fa fa-times authorise-text__icon authorise-text__icon--disallowed"></i> Update your Profile Card
-          </li>
-        </ul>
-      </div>
-      <div class="authorise-buttons">
-        <div class="authorise-buttons__primary"><a href="http://thoughtworksinc.github.io/stonecutter-client/authorise-success" class="button button--full-width button--primary">Share my Profile Card</a></div>
-        <div class="authorise-buttons__secondary"><a href="http://thoughtworksinc.github.io/stonecutter-client/authorise-fail" class="button button--full-width button--grey">Cancel</a></div>
-      </div>
-      <div class="authorise-terms">
-        <p>You can revoke your Profile Card at anytime from your <span class="authorise-terms__link">profile settings</span>.
-        </p>
+    <div role="main">
+      <div class="middle-container">
+        <h1 class="page-title"><span class="clj-app-name">Green Party Voting</span> would like to use your Profile Card
+        </h1>
+        <div class="authorise-text">
+          <p class="authorise-text__description">By sharing your Profile Card this application <span class="authorise-text__description--allowed">will be able to:</span>
+          </p>
+          <ul class="authorise-text__list">
+            <li class="authorise-text__item"><i class="fa fa-check fa-fw authorise-text__icon authorise-text__icon--allowed"></i> Sign you in
+            </li>
+            <li class="authorise-text__item"><i class="fa fa-check fa-fw authorise-text__icon authorise-text__icon--allowed"></i> View your Profile Card
+            </li>
+          </ul>
+        </div>
+        <div class="authorise-text">
+          <p class="authorise-text__description">This application <span class="authorise-text__description--disallowed">will not be able to:</span>
+          </p>
+          <ul class="authorise-text__list">
+            <li class="authorise-text__item"><i class="fa fa-times fa-fw authorise-text__icon authorise-text__icon--disallowed"></i> Update your Profile Card
+            </li>
+          </ul>
+        </div>
+        <div class="authorise-buttons">
+          <div class="authorise-buttons__primary"><a href="http://thoughtworksinc.github.io/stonecutter-client/authorise-success" class="button button--full-width button--primary">Share Profile Card</a></div>
+          <div class="authorise-buttons__secondary"><a href="http://thoughtworksinc.github.io/stonecutter-client/authorise-fail" class="button button--full-width button--grey">Cancel</a></div>
+        </div>
+        <div class="authorise-terms">
+          <p>You can unshare your Profile Card at anytime from your <span class="authorise-terms__link">profile</span>.
+          </p>
+        </div>
       </div>
     </div>
     <script>document.addEventListener("touchstart", function(){}, true);</script>
