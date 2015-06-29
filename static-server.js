@@ -39,7 +39,8 @@ app.get('/library', function (req, res) {
   customRender(res, 'library', pageData);
 });
 
-app.get('/sign-in', function (req, res) {
+var signInRoutes = ['/sign-in','/login'];
+app.get(signInRoutes, function (req, res) {
   customRender(res, 'sign-in', pageData);
 });
 
@@ -59,17 +60,26 @@ app.get('/profile', function (req, res) {
   customRender(res, 'profile', pageData);
 });
 
+app.get('/sign-out', function (req, res) {
+  res.redirect('/sign-in');
+});
+
+
 
 // temp stuff for demo
 
 app.get('/greenparty/register', function (req, res) {
   customRender(res, 'greenparty/register', pageData);
 });
-app.get('/greenparty/sign-in', function (req, res) {
+var demoSignInRoutes = ['/greenparty/sign-in','/greenparty/login'];
+app.get(demoSignInRoutes, function (req, res) {
   customRender(res, 'greenparty/sign-in', pageData);
 });
 app.all('/greenparty/authorise', function (req, res) {
   customRender(res, 'greenparty/authorise', pageData);
+});
+app.all('/greenparty/profile', function (req, res) {
+  customRender(res, 'greenparty/profile', pageData);
 });
 
 
