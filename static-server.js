@@ -48,6 +48,10 @@ app.get('/register', function (req, res) {
   customRender(res, 'register', pageData);
 });
 
+app.all('/profile-created', function (req, res) {
+  customRender(res, 'profile-created', pageData);
+});
+
 app.all('/authorise', function (req, res) {
   customRender(res, 'authorise', pageData);
 });

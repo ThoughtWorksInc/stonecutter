@@ -10,18 +10,20 @@ block headerScripts
 block content
   .middle-container
     h1.page-title
-      | The
-      = " "
       span.clj-app-name Green Party Voting
       = " "
-      | would to use your Profile Card:
+      | would like to use your Profile Card
 
     .authorise-text
       p.authorise-text__description
-        | This application
+        | By sharing your Profile Card this application
         = " "
         span.authorise-text__description--allowed will be able to:
       ul.authorise-text__list
+        li.authorise-text__item
+          i.fa.fa-check.fa-fw.authorise-text__icon.authorise-text__icon--allowed
+          = " "
+          | Sign you in
         li.authorise-text__item
           i.fa.fa-check.fa-fw.authorise-text__icon.authorise-text__icon--allowed
           = " "
@@ -40,13 +42,13 @@ block content
 
     .authorise-buttons
       .authorise-buttons__primary
-        a.button.button--full-width.button--primary(href="#{demoAppURL}/authorise-success") Share my Profile Card
+        a.button.button--full-width.button--primary(href="#{demoAppURL}/authorise-success") Share Profile Card
       .authorise-buttons__secondary
         a.button.button--full-width.button--grey(href="#{demoAppURL}/authorise-fail") Cancel
 
     .authorise-terms
       p
-        | You can revoke your Profile Card at anytime from your
+        | You can unshare your Profile Card at anytime from your
         =" "
-        span.authorise-terms__link profile settings
+        span.authorise-terms__link profile
         ="."

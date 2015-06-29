@@ -15,9 +15,14 @@ block headerContent
 
 block content
   .middle-container
-    h1.page-title.visuallyhidden(data-l8n="content:registration-form/page-header")
-      | !Register a Profile
-    form.register-form(action="authorise", method="post")
+    h1.page-title(data-l8n="content:registration-form/page-header")
+      | !Register for a Profile Card
+    .profile-card-description
+      p
+        strong A Profile Card
+        =" "
+        | allows you to sign in to supported applications without creating more accounts.
+    form.register-form(action="./profile-created", method="post")
       .validation-summary.clj--validation-summary
         .validation-summary__title
         ul.validation-summary__list

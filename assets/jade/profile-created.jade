@@ -1,0 +1,25 @@
+extends layout/layout
+
+block vars
+  - bodyClass = ""
+  - pageTitle = "!Authorise"
+  - pageTitleDataL8n = ""
+
+block headerScripts
+
+block content
+  .middle-container
+    h1.page-title
+      | Your Profile Card has been created
+
+    .card-demo
+      i.fa.fa-user.card-demo__user-icon
+      i.fa.fa-check.card-demo__tick-icon
+      .card-demo__email
+
+    p
+      | Your Profile Card can be used to sign in to supported applications like
+      = " "
+      span.clj-app-name Green Party Voting.
+
+    a.button.button--half-width.button--primary(href="./authorise") Next

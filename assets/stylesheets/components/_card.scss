@@ -144,3 +144,33 @@
     }
   }
 }
+
+
+.card-demo {
+  position: relative;
+  width: 200px;
+  height: 130px;
+  margin-bottom: 30px;
+  border: 1px solid $light_grey;
+  border-radius: 6px;
+  &__user-icon {
+    position: absolute;
+    bottom: 5px;
+    left: 10px;
+    display: inline-block;
+    color: $medium_cyan;
+    font-size: 90px;
+    vertical-align: baseline;
+  }
+  &__tick-icon {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    @include circle(60px);
+    border: 1px solid $light_grey;
+    color: $medium_cyan;
+    line-height: 60px;
+    font-size: 40px;
+    text-align: center;
+  }
+}
