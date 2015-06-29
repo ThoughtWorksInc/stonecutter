@@ -27,6 +27,8 @@
 (fact "registration url returns a 200 response"
       (-> (mock/request :get "/register") app :status) => 200)
 
+(defn p [v] (prn v) v)
+
 (fact "sign-in url returns a 200 response"
       (-> (mock/request :get "/login") app :status) => 200)
 

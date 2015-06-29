@@ -2,8 +2,8 @@ extends layout/layout
 
 block vars
   - bodyClass = ""
-  - pageTitle = ""
-  - pageTitleDataL8n = ""
+  - pageTitle = "!Profile"
+  - pageTitleDataL8n = "content:profile/title"
 
 block headerScripts
 
@@ -30,8 +30,10 @@ mixin authorisedAppItem(appName)
 
 
 block headerContent
-  li.tabs__item: a.tabs__link.clj--sign-out-link.func--sign-out__button(href="/sign-out")
-    | !Sign out
+  nav.header__nav
+    a.header__nav-item.clj--sign-out__link.func--sign-out__link(href="./sign-out")
+      span(data-l8n="content:profile/sign-out-link")
+        | !Sign out
 
 
 block content

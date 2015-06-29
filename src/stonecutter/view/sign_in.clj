@@ -53,10 +53,11 @@
 (defn set-form-action [enlive-m]
   (html/at enlive-m [:form] (html/set-attr :action (r/path :sign-in))))
 
-(defn sign-in-form [context]
-  (let [err (:errors context)
-        translator (:translator context)
-        params (:params context)]
+(defn sign-in-form [request]
+  (let [context (:context request)
+        params (:params request)
+        err (:errors context)
+        translator (:translator context)]
   (->> (vh/load-template "public/sign-in.html")
        set-form-action
        vh/add-anti-forgery

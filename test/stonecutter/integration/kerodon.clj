@@ -72,7 +72,7 @@
        (-> (k/session h/app)
            sign-in
            (k/visit "/profile")
-           (k/follow :.func--sign-out__button)
+           (k/follow :.func--sign-out__link)
            (k/follow-redirect)
            (kh/page-uri-is "/")
            (k/follow-redirect)

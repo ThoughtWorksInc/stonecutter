@@ -50,30 +50,33 @@
 
 (defn show-registration-form [request]
   (let [context {:translator (translations-fn translation-map)}]
-    (html-response (register/registration-form context))))
+    (-> request
+        (assoc-in [:context] context)
+        register/registration-form
+        html-response)))
 
 (defn show-sign-in-form [request]
-  (let [context {:translator (translations-fn translation-map)}]
-    (html-response (sign-in/sign-in-form context))))
+  (let [request (assoc-in request [:context] {:translator (translations-fn translation-map)})]
+    (html-response (sign-in/sign-in-form request))))
 
 (defn register-user [request]
   (let [params (:params request)
         email (:email params)
         password (:password params)
         err (v/validate-registration params s/is-duplicate-user?)
-        context {:translator (translations-fn translation-map)
-                 :errors err
-                 :params params}]
+        request (assoc-in request [:context] {:translator (translations-fn translation-map)
+                                              :errors err})]
     (if (empty? err)
       (do
         (s/store-user! email password)
         (html-response "You saved the user"))
-      (html-response (register/registration-form context)))))
+      (html-response (register/registration-form request)))))
 
 (defn show-profile [request]
-  (if (get-in request [:session :user :email])
-    (html-response (profile/profile request))
-    (r/redirect (path :sign-in))))
+  (let [request (assoc-in request [:context] {:translator (translations-fn translation-map)})]
+  (if-let [email (get-in request [:session :user :email])] 
+    (html-response (profile/profile request)) 
+    (r/redirect (path :sign-in)))))
 
 (defn redirect-to-authorisation [return-to user client-id email]
   (if-let [client (client/fetch-client client-id)]
@@ -84,26 +87,25 @@
   (assoc (r/redirect (path :show-profile)) :session {:user user}))
 
 (defn sign-in [request]
-  (let [params (:params request)
-        client-id (get-in request [:session :client-id])
+  (let [client-id (get-in request [:session :client-id])
         return-to (get-in request [:session :return-to])
+        params (:params request)
         email (:email params)
         password (:password params)
         err (v/validate-sign-in params)
-        context {:translator (translations-fn translation-map)
-                 :params params
-                 :errors err}]
+        request (assoc-in request [:context] {:translator (translations-fn translation-map)
+                                              :errors err})]
     (if (empty? err)
       (if-let [user (s/authenticate-and-retrieve-user email password)]
         (cond (and client-id return-to) (redirect-to-authorisation return-to user client-id email)
               client-id                (throw (Exception. "Missing return-to value"))
               :default                  (redirect-to-profile user))
         (r/status (->> {:credentials :invalid}
-                       (assoc context :errors)
+                       (assoc-in request [:context :errors])
                        sign-in/sign-in-form
                        html-response)
                   400))
-      (r/status (->> context sign-in/sign-in-form html-response) 400))))
+      (r/status (->> request sign-in/sign-in-form html-response) 400))))
 
 (defn sign-out [request]
   (-> request
@@ -147,7 +149,20 @@
   (-> site-defaults
       (assoc-in [:session :cookie-attrs :max-age] 3600)))
 
-(def app (wrap-defaults app-handler wrap-defaults-config))
+(def app 
+  (-> app-handler 
+      (wrap-defaults wrap-defaults-config)
+     ; wrap-translator
+      
+      ))
+
+#_(defn middleware [handler]
+    (fn [request]
+      (->
+        process-request
+        handler)
+      )
+    )
 
 (def port (Integer. (get env :port "3000")))
 

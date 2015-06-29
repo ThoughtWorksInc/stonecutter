@@ -56,10 +56,11 @@
 
 (defn p [v] (prn v) v)
 
-(defn registration-form [context]
-  (let [err (:errors context)
+(defn registration-form [request]
+  (let [context (:context request)
+        err (:errors context)
         translator (:translator context)
-        params (:params context)]
+        params (:params request)]
     (->> (vh/load-template "public/register.html")
          set-form-action
          vh/add-anti-forgery

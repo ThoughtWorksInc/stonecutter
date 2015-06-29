@@ -2,34 +2,31 @@
   (:require [midje.sweet :refer :all]
             [net.cgrand.enlive-html :as html]
             [stonecutter.handler :refer [translations-fn translation-map]]
-            [stonecutter.view.register :refer [registration-form]]))
-
-(defn create-context [translator err params]
-  {:translator translator
-   :errors err
-   :params params})
+            [stonecutter.view.register :refer [registration-form]]
+            [stonecutter.test.view.test-helpers :refer [create-request]]
+            ))
 
 (def no-untranslated-strings
   (let [untranslated-string-regex #"(?!!DOCTYPE|!IEMobile)!\w+"]
     (chatty-checker [response-body] (empty? (re-seq untranslated-string-regex response-body)))))
 
 (fact "registration-form should return some html"
-      (let [page (-> (create-context {} nil {})
+      (let [page (-> (create-request {} nil {})
                      registration-form
                      html/html-snippet)]
         (html/select page [:form]) =not=> empty?))
 
 (fact "form should have correct action"
-      (let [page (-> (create-context {} nil {}) registration-form html/html-snippet)]
+      (let [page (-> (create-request {} nil {}) registration-form html/html-snippet)]
         (-> page (html/select [:form]) first :attrs :action) => "/register"))
 
 (fact "there are no missing translations"
       (let [translator (translations-fn translation-map)
-            page (-> (create-context translator nil {}) registration-form)]
+            page (-> (create-request translator nil {}) registration-form)]
         page => no-untranslated-strings))
 
 (facts "about removing elements when there are no errors"
-      (let [page (-> (create-context {} nil {})
+      (let [page (-> (create-request {} nil {})
                      registration-form
                      html/html-snippet)]
         (fact "no elements have class for styling errors"
@@ -45,7 +42,7 @@
        (facts "when email is invalid"
               (let [errors {:email :invalid}
                     params {:email "invalid"}
-                    page (-> (create-context {} errors params) registration-form html/html-snippet)]
+                    page (-> (create-request {} errors params) registration-form html/html-snippet)]
                 (fact "the class for styling errors is added"
                       (html/select page [[:.clj--registration-email :.form-row--validation-error]]) =not=> empty?)
                 (fact "email validation element is present"
@@ -58,7 +55,7 @@
        (facts "when email is a duplicate"
               (let [errors {:email :duplicate}
                     params {:email "valid@email.com"}
-                    page (-> (create-context {} errors params) registration-form html/html-snippet)]
+                    page (-> (create-request {} errors params) registration-form html/html-snippet)]
                 (fact "the class for styling errors is added"
                       (html/select page [[:.clj--registration-email :.form-row--validation-error]]) =not=> empty?)
                 (fact "email validation element is present"
@@ -72,7 +69,7 @@
               (let [long-email-address (apply str (repeat 255 "x"))
                     errors {:email :too-long}
                     params {:email long-email-address}
-                    page (-> (create-context {} errors params) registration-form html/html-snippet)]
+                    page (-> (create-request {} errors params) registration-form html/html-snippet)]
                 (fact "the class for styling errors is added"
                       (html/select page [[:.clj--registration-email :.form-row--validation-error]]) =not=> empty?)
                 (fact "email validation element is present"
@@ -83,7 +80,7 @@
        (fact "when password is blank"
              (let [errors {:password :blank}
                    params {:password ""}
-                   page (-> (create-context {} errors params) registration-form html/html-snippet)]
+                   page (-> (create-request {} errors params) registration-form html/html-snippet)]
                (fact "the class for styling errors is added"
                      (html/select page [[:.clj--registration-password :.form-row--validation-error]]) =not=> empty?)
                (fact "password validation element is present"
@@ -94,7 +91,7 @@
        (fact "when password is too short"
              (let [errors {:password :too-short}
                    params {:password "short"}
-                   page (-> (create-context {} errors params) registration-form html/html-snippet)]
+                   page (-> (create-request {} errors params) registration-form html/html-snippet)]
                (fact "the class for styling errors is added"
                      (html/select page [[:.clj--registration-password :.form-row--validation-error]]) =not=> empty?)
                (fact "password validation element is present"
@@ -106,7 +103,7 @@
              (let [long-password (apply str (repeat 255 "x"))
                    errors {:password :too-long}
                    params {:password long-password}
-                   page (-> (create-context {} errors params) registration-form html/html-snippet)]
+                   page (-> (create-request {} errors params) registration-form html/html-snippet)]
                (fact "the class for styling errors is added"
                      (html/select page [[:.clj--registration-password :.form-row--validation-error]]) =not=> empty?)
                (fact "password validation element is present"
@@ -117,7 +114,7 @@
        (fact "when confirm password is invalid"
              (let [errors {:confirm-password :invalid}
                    params {:password "password" :confirm-password "invalid-password"}
-                   page (-> (create-context {} errors params) registration-form html/html-snippet)]
+                   page (-> (create-request {} errors params) registration-form html/html-snippet)]
                (fact "confirm password validation is present as a validation summary item"
                      (html/select page [:.clj--validation-summary__item]) =not=> empty?)
                (fact "correct error message is displayed"
