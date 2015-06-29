@@ -27,7 +27,7 @@
                                (r/header "accept" "text/html"))
                    response (oauth/authorise request)]
                (:status response) => 302
-               (-> response (get-in [:headers "Location"])) => "/login"
+               (-> response (get-in [:headers "Location"])) => "/sign-in"
                (-> response (get-in [:session :return-to])) => (format "/authorisation?client_id=%s&response_type=code&redirect_uri=callback" (:client-id client-details))
                (-> response (get-in [:session :client-id])) => (:client-id client-details)))
 

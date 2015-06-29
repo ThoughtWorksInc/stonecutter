@@ -15,7 +15,7 @@
 
 (fact "form should have correct action"
       (let [page (-> (create-request {} nil {}) sign-in-form html/html-snippet)]
-        (-> page (html/select [:form]) first :attrs :action) => "/login"))
+        (-> page (html/select [:form]) first :attrs :action) => "/sign-in"))
 
 (fact "there are no missing translations"
       (stonecutter.logging/init-logger!)

@@ -30,7 +30,7 @@
 (defn p [v] (prn v) v)
 
 (fact "sign-in url returns a 200 response"
-      (-> (mock/request :get "/login") app :status) => 200)
+      (-> (mock/request :get "/sign-in") app :status) => 200)
 
 (fact "sign-out url returns a 302 response"
       (-> (mock/request :get "/sign-out") app :status) => 302)

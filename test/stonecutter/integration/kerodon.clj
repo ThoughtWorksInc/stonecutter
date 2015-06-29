@@ -28,7 +28,7 @@
            (k/visit "/")
            (k/follow-redirect)
            (kh/page-title-is "Sign in")
-           (kh/page-uri-is "/login")))
+           (kh/page-uri-is "/sign-in")))
 
 (facts "User is returned to same page when email is invalid"
        (-> (k/session h/app)
@@ -52,11 +52,11 @@
        (-> (k/session h/app)
            (k/visit "/profile")
            (k/follow-redirect)
-           (kh/page-uri-is "/login")))
+           (kh/page-uri-is "/sign-in")))
 
 (defn sign-in [state]
   ( -> state
-       (k/visit "/login")
+       (k/visit "/sign-in")
        (k/fill-in :.func--email__input "email@server.com")
        (k/fill-in :.func--password__input "valid-password")
        (k/press :.func--sign-in__button)))
@@ -76,7 +76,7 @@
            (k/follow-redirect)
            (kh/page-uri-is "/")
            (k/follow-redirect)
-           (kh/page-uri-is "/login")))
+           (kh/page-uri-is "/sign-in")))
 
 (facts "Home url redirects to profile page if user is signed in"
        (-> (k/session h/app)

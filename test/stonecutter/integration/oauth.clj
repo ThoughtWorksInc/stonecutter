@@ -76,7 +76,7 @@
            (client-sends-authorisation-request client-id)
            (k/follow-redirect)
            ;; login
-           (kh/page-uri-is "/login")
+           (kh/page-uri-is "/sign-in")
            (k/fill-in :.func--email__input "email@server.com")
            (k/fill-in :.func--password__input "valid-password")
            (k/press :.func--sign-in__button)
@@ -93,7 +93,7 @@
                   (client-sends-authorisation-request client-id)
                   (k/follow-redirect)
                   ;; login
-                  (kh/page-uri-is "/login")
+                  (kh/page-uri-is "/sign-in")
                   (k/fill-in :.func--email__input "email@server.com")
                   (k/fill-in :.func--password__input "valid-password")
                   (k/press :.func--sign-in__button)
@@ -109,7 +109,7 @@
                   (client-sends-authorisation-request client-id)
                   (k/follow-redirect)
                   ;; login
-                  (kh/page-uri-is "/login")
+                  (kh/page-uri-is "/sign-in")
                   (k/fill-in :.func--email__input "email@server.com")
                   (k/fill-in :.func--password__input "invalid-password")
                   (k/press :.func--sign-in__button)

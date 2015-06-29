@@ -8,7 +8,7 @@
                            [scenic "0.2.3"]
                            [enlive "1.1.5"]
                            [hiccup "1.0.5"]
-                           [clauth "1.0.0-rc17"]
+                           [johncowie/clauth "1.0.1-SNAPSHOT"]
                            [traduki "0.1.1-SNAPSHOT"]
                            [clj-yaml "0.4.0"]
                            [environ "1.0.0"]
