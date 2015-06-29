@@ -30,11 +30,7 @@ mixin authorisedAppItem(appName)
 
 
 block headerContent
-  nav.header__nav
-    a.header__nav-item.clj--sign-out__link.func--sign-out__link(href="./sign-out")
-      span(data-l8n="content:profile/sign-out-link")
-        | !Sign out
-
+  li.tabs__item: a.tabs__link.clj--sign-out__link.func--sign-out__link(href="./sign-out", data-l8n="content:profile/sign-out-link") !Sign out
 
 block content
 
