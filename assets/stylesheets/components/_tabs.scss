@@ -5,13 +5,21 @@
   max-width: $max_site_width;
   margin: 0 auto;
   list-style: none;
-  //text-align: center;
+  text-align: center;
+
+  @include  width-from($medium_device) {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    text-align: right;
+  }
+
   &__item {
     position: relative;
     z-index: 10;
     display: inline-block;
-    float: left;
-    margin-right: -1px;
+    //float: left;
+    margin-right: -6px;
     border-top: 1px solid transparent;
     border-right: 1px solid transparent;
     border-left: 1px solid transparent;
@@ -19,7 +27,7 @@
     &:hover {
       $my_grey: lighten($light_grey, 2.5%);
     }
-    &--on {
+    &--active {
       color: $dark_cyan;
       background-color: $white;
       &:after {

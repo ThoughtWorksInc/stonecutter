@@ -1,35 +1,29 @@
 .header {
   @include clearfix;
-  //min-height: 95px;
+  min-height: 120px;
   margin-bottom: 40px;
   background-color: $light_grey;
 
   &__inner {
+    position: relative;
+    min-height: 120px;
     padding-top: 35px;
     padding-left: 1rem;
     padding-right: 1rem;
+    margin-bottom: 0;
   }
 
   &__logo {
-    width: 50%;
     height: 50px;
-    margin: 0 auto 30px auto;
-    float: left;
-    background: image-url('logo.svg') no-repeat 0 0;
+    margin-bottom: 15px;
+    background: image-url('logo.svg') no-repeat 50% 0;
     background-size: 220px auto;
-  }
-  &__nav {
-    width: 50%;
-    float: right;
-    text-align: right;
-    padding-top: 21px;
-  }
-  &__nav-item {
-    //text-align: right;
-    color: $dark_grey;
-    text-decoration: none;
-    @include font-size(20px);
-    font-weight: bold;
+    @include width-from($medium_device) {
+      width: 50%;
+      float: left;
+      margin-bottom: 0;
+      background-position: 0 0;
+    }
   }
 }
 
