@@ -59,6 +59,16 @@
       @include font-size(20px);
     }
   }
+  &__username {
+    margin-bottom: 2px;
+    @include font-size(18px);
+    color: $dark_cyan;
+    font-weight: bold;
+    line-height: 1.2;
+    @include width-from($smallish_device) {
+      @include font-size(20px);
+    }
+  }
   &__display-name {
     @include font-size(16px);
     color: rgba($dark_cyan, 0.75);
