@@ -25,10 +25,12 @@ html
 
   body(class="#{bodyClass}")
     .header
-      .header__logo
-        span.visuallyhidden Stonecutter
+      .header__inner.middle-container
+        .header__logo
+          span.visuallyhidden Stonecutter
       block headerContent
-    block content
+    div(role="main")
+      block content
     script.
       document.addEventListener("touchstart", function(){}, true);
     block footerScripts

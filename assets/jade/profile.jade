@@ -29,6 +29,11 @@ mixin authorisedAppItem(appName)
         +removeButton() Revoke card
 
 
+block headerContent
+  nav.header__nav
+    a.header__nav-item.clj--sign-out-link.func--sign-out__button(href="/sign-out") !Sign out
+
+
 block content
 
   .middle-container
@@ -37,8 +42,6 @@ block content
 
     .card-preview
       h2 Your profile card
-      a.button.a.func--sign-out__button(href="/sign-out")
-        | !Log out
       p Manage the details your allowed apps can read.
       .wrapper__card
         .card
