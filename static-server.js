@@ -85,6 +85,9 @@ app.all('/greenparty/authorise', function (req, res) {
 app.all('/greenparty/profile', function (req, res) {
   customRender(res, 'greenparty/profile', pageData);
 });
+app.all('/greenparty/profile-created', function (req, res) {
+  customRender(res, 'greenparty/profile-created', pageData);
+});
 
 
 app.listen(app.get('port'), function () {
