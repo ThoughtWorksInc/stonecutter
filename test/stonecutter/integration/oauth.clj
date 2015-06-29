@@ -36,6 +36,7 @@
 (def client (client/register-client "myclient" "myclient.com"))
 (def client-id (:client-id client))
 (def client-secret (:client-secret client))
+(def invalid-client-secret (str/reverse client-secret))
 
 (def user (user/register-user "email@server.com" "valid-password"))
 
@@ -85,3 +86,32 @@
            (client-sends-token-request client-id client-secret)
            ;; return 200 with new access_token
            (kh/response-has-access-token)))
+
+(facts "no access token will be issued with invalid credentials"
+       (facts "user cannot sign in with invalid client secret"
+              (-> (k/session h/app)
+                  (client-sends-authorisation-request client-id)
+                  (k/follow-redirect)
+                  ;; login
+                  (kh/page-uri-is "/login")
+                  (k/fill-in :.func--email__input "email@server.com")
+                  (k/fill-in :.func--password__input "valid-password")
+                  (k/press :.func--sign-in__button)
+                  ;; check redirect - should have auth_code
+                  (k/follow-redirect)
+                  (kh/location-contains "callback?code=")
+                  (client-sends-token-request client-id invalid-client-secret)
+                  :response
+                  :status) => 400)
+
+       (facts "user cannot sign in with invalid password"
+              (-> (k/session h/app)
+                  (client-sends-authorisation-request client-id)
+                  (k/follow-redirect)
+                  ;; login
+                  (kh/page-uri-is "/login")
+                  (k/fill-in :.func--email__input "email@server.com")
+                  (k/fill-in :.func--password__input "invalid-password")
+                  (k/press :.func--sign-in__button)
+                  :response
+                  :status) => 400))
