@@ -56,6 +56,20 @@
           (client/fetch-client "client-id") => ...client...
           (token/create-token ...client... "valid@email.com") => {:token ...token...})))
 
+(defn p [v] (prn v) v)
+
+(fact "if user logged out, access token and user email are removed from session"
+      (let [return-to-url "/authorisation?client-id=whatever"] 
+        (-> (create-request :post "/login" user-params)
+            (assoc-in [:session :client-id] "client-id")
+            (assoc-in [:session :return-to] return-to-url)
+            sign-in
+            sign-out) =not=> (contains {:session {:user {:email "valid@email.com"} :access_token ...token...}})  
+        (provided
+          (s/authenticate-and-retrieve-user "valid@email.com" "password") => {:email "valid@email.com"}
+          (client/fetch-client "client-id") => ...client...
+          (token/create-token ...client... "valid@email.com") => {:token ...token...}))) 
+
 (fact "if user has client id but no return-to in session, throws an exception"
       (-> (create-request :post "/login" user-params)
           (assoc-in [:session :client-id] "client-id")
