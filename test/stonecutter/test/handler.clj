@@ -73,7 +73,7 @@
 
 (facts "about sign-in validation errors"
        (fact "user cannot sign in with invalid credentials"
-             (-> (create-request :post "/sign-in" {:email "invalid@credentials.com" :password "password"})
+             (-> (create-request :post "/login" {:email "invalid@credentials.com" :password "password"})
                  sign-in) => (contains {:status 400 :body (contains "Invalid email address or password")})
              (provided
                (s/authenticate-and-retrieve-user "invalid@credentials.com" "password") => nil))
