@@ -6,7 +6,8 @@
             [ring.mock.request :as r]
             [clauth.client :as client]
             [clauth.user :as user]
-            [stonecutter.integration.kerodon-helpers :as kh]))
+            [stonecutter.integration.kerodon-helpers :as kh]
+            [clojure.string :as str]))
 
 ;; CLIENT => AUTH    /authorisation?client-id=123&response_type=code&redirect_uri=callback-url
 ;;   USER LOGIN (Auth Server)
@@ -45,25 +46,34 @@
                                                                          :redirect_uri  "myclient.com/callback"})))
 
 (defn debug [state]
-  ;(prn "IN DEBUG" state)
-  (prn "++++++++++++++++++++++++++++++++" (-> state :response (get-in [:headers "Location"])))
+  (prn "IN DEBUG" state)
   state)
 
+(defn get-auth-code [state]
+  (let [query-string (-> state
+                         :response
+                         (get-in [:headers "Location"])
+                         (str/split #"\?")
+                         (peek))
+        auth-code (-> {:query-string query-string}
+                      (ring.middleware.params/params-request)
+                      (get-in [:params "code"]))]
+    auth-code))
+
 (defn client-sends-token-request [state client-id client-secret]
- (let [location-url (-> state :response (get-in [:headers "Location"]))]
-   (prn "STATE " state)
-   (prn "LOCATION URL" location-url)
-   (prn "++++++URI+++" (-> {:uri location-url}
-                           (ring.middleware.params/assoc-query-params "UTF-8")))
-   )
-  )
+  (let [auth-code (get-auth-code state)]
+    (-> state
+        (k/visit "/token"
+                 :params {:grant_type    "authorization_code"
+                          :redirect_uri  "myclient.com/callback"
+                          :code          auth-code
+                          :client_id     client-id
+                          :client_secret client-secret}))))
 
 (facts "user can sign in through client"
-       (prn "FAILING TEST")
        (-> (k/session h/app)
            (client-sends-authorisation-request client-id)
            (k/follow-redirect)
-
            ;; login
            (kh/page-uri-is "/login")
            (k/fill-in :.func--email__input "email@server.com")
@@ -72,9 +82,6 @@
            ;; check redirect - should have auth_code
            (k/follow-redirect)
            (kh/location-contains "callback?code=")
-
-           ;(client-sends-token-request client-id client-secret)
-
-           ;; return redirects with new access_token
-           ;; end of this test is to check that the server has granted approval
-           ))
+           (client-sends-token-request client-id client-secret)
+           ;; return 200 with new access_token
+           (kh/response-has-access-token)))

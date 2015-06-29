@@ -1,5 +1,6 @@
 (ns stonecutter.integration.kerodon-helpers
   (:require [midje.sweet :refer :all]
+            [cheshire.core :as json]
             [net.cgrand.enlive-html :as html]))
 
 (defn page-title [state]
@@ -25,3 +26,13 @@
         (-> state :response (get-in [:headers "Location"])) => (contains path))
   state
   )
+
+(defn response-has-access-token [state]
+  (fact {:midje/name "Checking if response has access bearer token"}
+        (let [response-body (-> state
+                                :response
+                                :body
+                                (json/parse-string keyword))]
+          (:access_token response-body) => (just #"[A-Z0-9]{32}")
+          (:token_type response-body) => "bearer")
+  state))

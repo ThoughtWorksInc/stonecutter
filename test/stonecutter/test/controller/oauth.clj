@@ -44,16 +44,20 @@
                (get-in response [:headers "Location"]) => (contains "callback?code=")
                (get-in response [:session :access_token]) => (:token access-token))))
 
+(defn encode-client-info [client]
+  (format "Basic %s"
+          (.encodeAsString
+            (Base64.)
+            (.getBytes
+              (format "%s:%s"
+                      (:client-id client)
+                      (:client-secret
+                        client))))))
+
 (defn create-auth-header [request client]
   (assoc-in request [:headers "authorization"]
-            (format "Basic %s"
-                    (.encodeAsString
-                      (Base64.)
-                      (.getBytes
-                        (format "%s:%s"
-                                (:client-id client)
-                                (:client-secret
-                                  client)))))))
+            (encode-client-info client)))
+
 (facts "about token endpoint"
        (fact "request with grant type authorization_code and correct credentials returns access token"
              (let [user (user/register-user "user2" "password")
@@ -67,5 +71,5 @@
                    response (oauth/validate-token request)
                    response-body (-> response :body (json/parse-string keyword))]
                (:status response) => 200
-               (:access_token response-body) =not=> nil
+               (:access_token response-body) => (just #"[A-Z0-9]{32}")
                (:token_type response-body) => "bearer")))
