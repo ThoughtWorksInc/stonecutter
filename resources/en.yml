@@ -4,7 +4,7 @@ sign-in-register:
 
 registration-form:
   title: Register
-  page-header: Register a Profile
+  page-header: Register for a Profile Card
   email-address: Email address
   email-address-invalid-validation-message: Enter a valid email address
   email-address-duplicate-validation-message: User already exists
