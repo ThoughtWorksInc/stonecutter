@@ -10,20 +10,20 @@
     <link href="../stylesheets/application.css" media="screen" rel="stylesheet" type="text/css"/>
     <link href="../stylesheets/demo.css" media="screen" rel="stylesheet" type="text/css"/>
   </head>
-  <body class="gp">
-    <div class="header">
+  <body class="gp"><a href="#main" class="skip-link">Skip navigation</a>
+    <div role="banner" class="header">
       <div class="header__inner middle-container">
         <div class="header__logo"><span class="visuallyhidden">Stonecutter</span></div>
-        <nav class="tabs">
+        <nav role="navigation" class="tabs">
           <li class="tabs__item tabs__item--active"><a href="./login" data-l8n="content:sign-in-register/sign-in-tab" class="tabs__link">Sign in</a></li>
           <li class="tabs__item"><a href="./register" data-l8n="content:sign-in-register/register-tab" class="tabs__link">Register</a></li>
         </nav>
       </div>
     </div>
-    <div role="main">
+    <div id="main" role="main" class="main-content">
       <div class="middle-container">
         <h1 data-l8n="content:sign-in-form/page-header" class="page-title visuallyhidden">Sign in</h1>
-        <form action="authorise" method="post" class="login-form">
+        <form action="authorise" method="post" role="form" class="login-form">
           <div class="validation-summary clj--validation-summary">
             <div class="validation-summary__title"></div>
             <ul class="validation-summary__list">

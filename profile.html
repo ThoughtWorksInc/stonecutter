@@ -9,27 +9,27 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link href="stylesheets/application.css" media="screen" rel="stylesheet" type="text/css"/>
   </head>
-  <body>
-    <div class="header">
+  <body><a href="#main" class="skip-link">Skip navigation</a>
+    <div role="banner" class="header">
       <div class="header__inner middle-container">
         <div class="header__logo"><span class="visuallyhidden">Stonecutter</span></div>
-        <nav class="tabs">
+        <nav role="navigation" class="tabs">
           <li class="tabs__item"><a href="./sign-out" data-l8n="content:profile/sign-out-link" class="tabs__link clj--sign-out__link func--sign-out__link">Sign out</a></li>
         </nav>
       </div>
     </div>
-    <div role="main">
+    <div id="main" role="main" class="main-content">
       <div class="middle-container">
         <h1 class="page-title">Profile</h1>
         <div class="card-preview">
-          <h2>Your profile card</h2>
-          <p>Manage the details your allowed apps can read.</p>
+          <h2>Your Profile Card</h2>
+          <p>Manage your shared details with allowed applications.</p>
           <div class="wrapper__card">
             <div class="card">
               <div class="card__row card__row--bottom-border">
                 <div class="card__photo">
                   <!--a.button.button--full-width.card__photo-button(href="#") Update-->
-                  <div class="card__image"><img src="images/temp-avatar-300x300.jpg"/>
+                  <div class="card__image"><img src="images/temp-avatar-300x300.jpg" alt="Your profile picture"/>
                     <!--img(src="http://placekitten.com/g/302/302")-->
                   </div>
                 </div>
@@ -55,8 +55,8 @@
           </div>
         </div>
         <div class="authorised-apps">
-          <h2 class="authorised-apps__title">Applications</h2>
-          <p>Manage the apps that have access to your profile card.</p>
+          <h2 aria-describedby="authorised-apps-lede" class="authorised-apps__title">Applications</h2>
+          <p id="authorised-apps-lede" class="lede">Manage the applications that you've shared your Profile Card with.</p>
           <ul class="app__list">
             <li class="app__item">
               <div class="app__title">Green Party</div>
