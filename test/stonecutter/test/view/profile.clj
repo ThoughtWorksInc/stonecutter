@@ -1,6 +1,7 @@
 (ns stonecutter.test.view.profile 
   (:require [midje.sweet :refer :all]
             [net.cgrand.enlive-html :as html]
+            [stonecutter.routes :as r]
             [stonecutter.handler :refer [translations-fn translation-map]]
             [stonecutter.test.view.test-helpers :refer [create-request]]
             [stonecutter.view.profile :refer [profile]]))
@@ -17,7 +18,7 @@
 
 (fact "sign out link should go to correct endpoint"
       (let [page (-> (create-request {} nil {}) profile html/html-snippet)]
-        (-> page (html/select [:.func--sign-out__link]) first :attrs :href) => "/sign-out"))
+        (-> page (html/select [:.func--sign-out__link]) first :attrs :href) => (r/path :sign-out)))
 
 (fact "there are no missing translations"
       (let [translator (translations-fn translation-map)

@@ -17,6 +17,10 @@
               :too-short "content:registration-form/password-too-short-validation-message"}
    :confirm-password {:invalid "content:registration-form/confirm-password-invalid-validation-message"}})
 
+(defn set-sign-in-link [enlive-m]
+  (html/at enlive-m 
+           [:.clj--sign-in__link] (html/set-attr :href (r/path :sign-in))))
+
 (defn add-email-error [enlive-m err]
   (if (contains? err :email)
     (let [error-translation (get-in error-translations [:email (:email err)])]
@@ -62,6 +66,7 @@
         translator (:translator context)
         params (:params request)]
     (->> (vh/load-template "public/register.html")
+         set-sign-in-link
          set-form-action
          vh/add-anti-forgery
          (add-registration-errors err)

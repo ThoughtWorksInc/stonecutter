@@ -1,6 +1,7 @@
 (ns stonecutter.test.view.register
   (:require [midje.sweet :refer :all]
             [net.cgrand.enlive-html :as html]
+            [stonecutter.routes :as r]
             [stonecutter.handler :refer [translations-fn translation-map]]
             [stonecutter.view.register :refer [registration-form]]
             [stonecutter.test.view.test-helpers :refer [create-request]]
@@ -15,6 +16,10 @@
                      registration-form
                      html/html-snippet)]
         (html/select page [:form]) =not=> empty?))
+
+(fact "sign in link should go to correct endpoint"
+      (let [page (-> (create-request {} nil {}) registration-form html/html-snippet)]
+        (-> page (html/select [:.func--sign-in__link]) first :attrs :href) => (r/path :sign-in)))
 
 (fact "form should have correct action"
       (let [page (-> (create-request {} nil {}) registration-form html/html-snippet)]
