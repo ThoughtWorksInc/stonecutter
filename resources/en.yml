@@ -40,6 +40,9 @@ profile:
   title: Profile
   profile-link: Profile
   sign-out-link: Sign out
+  delete-title: Delete your account
+  delete-intro: Permanently delete your account and Profile Card.
+  delete-button: Delete account
 
 profile-created:
   title: Your Profile Card has been created
