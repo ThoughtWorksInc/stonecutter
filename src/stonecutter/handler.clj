@@ -49,23 +49,19 @@
       (r/content-type "text/html")))
 
 (defn show-registration-form [request]
-  (let [context {:translator (translations-fn translation-map)}]
-    (-> request
-        (assoc-in [:context] context)
+  (-> request
         register/registration-form
-        html-response)))
+        html-response))
 
 (defn show-sign-in-form [request]
-  (let [request (assoc-in request [:context] {:translator (translations-fn translation-map)})]
-    (html-response (sign-in/sign-in-form request))))
+  (html-response (sign-in/sign-in-form request)))
 
 (defn register-user [request]
   (let [params (:params request)
         email (:email params)
         password (:password params)
         err (v/validate-registration params s/is-duplicate-user?)
-        request (assoc-in request [:context] {:translator (translations-fn translation-map)
-                                              :errors err})]
+        request (assoc-in request [:context :errors] err)]
     (if (empty? err)
       (do
         (s/store-user! email password)
@@ -73,10 +69,9 @@
       (html-response (register/registration-form request)))))
 
 (defn show-profile [request]
-  (let [request (assoc-in request [:context] {:translator (translations-fn translation-map)})]
   (if-let [email (get-in request [:session :user :email])] 
     (html-response (profile/profile request)) 
-    (r/redirect (path :sign-in)))))
+    (r/redirect (path :sign-in))))
 
 (defn redirect-to-authorisation [return-to user client-id email]
   (if-let [client (client/fetch-client client-id)]
@@ -93,8 +88,7 @@
         email (:email params)
         password (:password params)
         err (v/validate-sign-in params)
-        request (assoc-in request [:context] {:translator (translations-fn translation-map)
-                                              :errors err})]
+        request (assoc-in request [:context :errors] err)]
     (if (empty? err)
       (if-let [user (s/authenticate-and-retrieve-user email password)]
         (cond (and client-id return-to) (redirect-to-authorisation return-to user client-id email)
@@ -145,24 +139,20 @@
           (log/error e)
           (-> (html-response (error/internal-server-error context)) (r/status 500)))))))
 
+(defn wrap-translator [handler]
+  (fn [request]
+    (-> request
+        (assoc-in [:context :translator] (translations-fn translation-map))
+        handler)))
+
 (def wrap-defaults-config
   (-> site-defaults
       (assoc-in [:session :cookie-attrs :max-age] 3600)))
 
 (def app 
   (-> app-handler 
-      (wrap-defaults wrap-defaults-config)
-     ; wrap-translator
-      
-      ))
-
-#_(defn middleware [handler]
-    (fn [request]
-      (->
-        process-request
-        handler)
-      )
-    )
+      (wrap-defaults wrap-defaults-config) 
+      wrap-translator))
 
 (def port (Integer. (get env :port "3000")))
 
