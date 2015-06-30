@@ -13,12 +13,17 @@
   (html/at enlive-m 
            [:.clj--sign-out__link] (html/set-attr :href (r/path :sign-out))))
 
+(defn remove-work-in-progress [enlive-m]
+  (html/at enlive-m
+           [:.clj-wip] nil))
+
 (defn pri [v] (prn v) v)
 
 (defn profile [request]
   (let [context (:context request)
         translator (:translator context)]
     (->> (vh/load-template "public/profile.html")
+         remove-work-in-progress
          (add-username request)
          add-sign-out-link
          (t/translate translator)

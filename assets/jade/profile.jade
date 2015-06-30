@@ -45,7 +45,7 @@ block content
       .wrapper__card
         .card
           .card__row.card__row--bottom-border
-            .card__photo
+            .card__photo.clj-wip
               //a.button.button--full-width.card__photo-button(href="#") Update
               .card__image
                 +imageIncludeTag("temp-avatar-300x300.jpg", "", {alt:"Your profile picture"})
@@ -53,10 +53,10 @@ block content
             .card__details
               .card__heading
                 .card__name.clj--card--name Peter Thomas Cheshire
-                .card__display-name PTC
-              .card__description
+                .card__display-name.clj-wip PTC
+              .card__description.clj-wip
                 p Hoodie bespoke Tumblr, Pitchfork Etsy dreamcatcher cronut sartorial flexitarian vinyl synth PBR&B Neutra single-origin coffee.
-          .card__row
+          .card__row.clj-wip
             dl.card__items
               dt.card__items-key PGP KeyID
               dd.card__items-value E97A7A5D
@@ -65,7 +65,7 @@ block content
 
 
 
-    .authorised-apps
+    .authorised-apps.clj-wip
       h2.authorised-apps__title(aria-describedby="authorised-apps-lede") Applications
       p.lede#authorised-apps-lede Manage the applications that you've shared your Profile Card with.
       ul.app__list
@@ -73,7 +73,7 @@ block content
         +authorisedAppItem("A really long name that will break this")
         +authorisedAppItem("Anotherapp")
 
-    .delete-account
+    .delete-account.clj-wip
       h2(data-l8n="content:profile/delete-title") !Delete your account
       p(data-l8n="content:profile/delete-intro") !Permanently delete your account and Profile Card.
       a.button.button--grey(href="#", data-l8n="content:profile/delete-button") !Delete account
