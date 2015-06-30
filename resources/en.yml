@@ -38,6 +38,7 @@ sign-in-form:
 
 profile:
   title: Profile
+  profile-link: Profile
   sign-out-link: Sign out
 
 profile-created:
