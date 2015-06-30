@@ -15,6 +15,7 @@
   outline: 0;
   white-space: nowrap;
   @include no-select;
+  transform-style: preserve-3d; // Fix safari text flicker (children need backface-visibility: hidden;)
   &:focus, &:hover {
     background-color: lighten($dark_cyan, 1%);
     box-shadow: 0 19px 60px -10px rgba(0,0,0,.35);
@@ -62,6 +63,7 @@
 
 .button__icon {
   display: block;
+  backface-visibility: hidden; // Fix safari text flicker (parent needs transform-style: preserve-3d)
   @include width-from($smallish_device) {
     display: none;
   }
@@ -69,6 +71,7 @@
 
 .button__text {
   display: none;
+  backface-visibility: hidden; // Fix safari text flicker (parent needs transform-style: preserve-3d)
   @include width-from($smallish_device) {
     display: block;
   }
