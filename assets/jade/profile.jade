@@ -39,15 +39,15 @@ block content
       | Profile
 
     .card-preview
-      h2 Your profile card
-      p Manage the details your allowed apps can read.
+      h2 Your Profile Card
+      p Manage your shared details with allowed applications.
       .wrapper__card
         .card
           .card__row.card__row--bottom-border
             .card__photo
               //a.button.button--full-width.card__photo-button(href="#") Update
               .card__image
-                +imageIncludeTag("temp-avatar-300x300.jpg")
+                +imageIncludeTag("temp-avatar-300x300.jpg", "", {alt:"Your profile picture"})
                 //img(src="http://placekitten.com/g/302/302")
             .card__details
               .card__heading
@@ -65,8 +65,8 @@ block content
 
 
     .authorised-apps
-      h2.authorised-apps__title Applications
-      p Manage the apps that have access to your profile card.
+      h2.authorised-apps__title(aria-describedby="authorised-apps-lede") Applications
+      p.lede#authorised-apps-lede Manage the applications that you've shared your Profile Card with.
       ul.app__list
         +authorisedAppItem("Green Party")
         +authorisedAppItem("A really long name that will break this")

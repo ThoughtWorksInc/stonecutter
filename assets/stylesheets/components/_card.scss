@@ -71,7 +71,7 @@
   }
   &__display-name {
     @include font-size(16px);
-    color: rgba($dark_cyan, 0.75);
+    color: $dark_cyan;
     font-weight: normal;
     line-height: 1.3;
     @include width-from($smallish_device) {

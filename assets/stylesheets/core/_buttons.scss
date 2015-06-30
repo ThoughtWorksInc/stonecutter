@@ -7,7 +7,7 @@
   padding: 24px;
   @include font-size(20px);
   text-align: left;
-  background-color: $medium_cyan;
+  background-color: $dark_cyan;
   color: $white;
   font-weight: bold;
   text-decoration: none;
@@ -16,12 +16,12 @@
   white-space: nowrap;
   @include no-select;
   &:focus, &:hover {
-    background-color: lighten($medium_cyan, 1%);
+    background-color: lighten($dark_cyan, 1%);
     box-shadow: 0 19px 60px -10px rgba(0,0,0,.35);
     transform: translateY(-2px);
   }
   &:active {
-    background-color: darken($medium_cyan, 5%);
+    background-color: darken($dark_cyan, 5%);
     outline: 0;
   }
 

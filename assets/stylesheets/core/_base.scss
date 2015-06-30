@@ -1,3 +1,19 @@
+.skip-link {
+  padding: 1em;
+  position: absolute;
+  top: -40px;
+  left: 1em;
+  z-index: 1000;
+  color: $darker_grey;
+  transition: top 250ms ease-in-out;
+  &:focus {
+    top: 1em;
+    background: #fff;
+  }
+  &:hover {
+    outline: auto 5px -webkit-focus-ring-color;
+  }
+}
 .middle-container {
   max-width: $medium_device;
   padding: 0 1rem;
