@@ -1,6 +1,7 @@
 (ns stonecutter.test.view.sign-in
   (:require [midje.sweet :refer :all]
             [net.cgrand.enlive-html :as html]
+            [stonecutter.routes :as r]
             [stonecutter.handler :refer [translations-fn translation-map]]
             [stonecutter.view.sign-in :refer [sign-in-form]]
             [stonecutter.test.view.test-helpers :refer [create-request]]))
@@ -13,9 +14,13 @@
       (let [page (-> (create-request {} nil {}) sign-in-form html/html-snippet)]
         (html/select page [:form]) =not=> empty?))
 
+(fact "register link should go to correct endpoint"
+      (let [page (-> (create-request {} nil {}) sign-in-form html/html-snippet)]
+        (-> page (html/select [:.func--register__link]) first :attrs :href) => (r/path :show-registration-form)))
+
 (fact "form should have correct action"
       (let [page (-> (create-request {} nil {}) sign-in-form html/html-snippet)]
-        (-> page (html/select [:form]) first :attrs :action) => "/sign-in"))
+        (-> page (html/select [:form]) first :attrs :action) => (r/path :sign-in)))
 
 (fact "there are no missing translations"
       (stonecutter.logging/init-logger!)
