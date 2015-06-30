@@ -40,6 +40,11 @@ profile:
   title: Profile
   sign-out-link: Sign out
 
+profile-created:
+  title: Your Profile Card has been created
+  intro: Your Profile Card can be used to sign in to supported applications like
+  action-button: Next
+
 error-404:
   title: Error-404
   page-header: "Sorry the page you requested can't be found."

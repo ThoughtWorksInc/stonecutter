@@ -9,8 +9,8 @@ block headerScripts
 
 block content
   .middle-container
-    h1.page-title
-      | Your Profile Card has been created
+    h1.page-title(data-l8n="content:profile-created/title")
+      | !Your Profile Card has been created
 
     .card-demo
       i.fa.fa-user.card-demo__user-icon
@@ -18,8 +18,8 @@ block content
       .card-demo__email
 
     p
-      | Your Profile Card can be used to sign in to supported applications like
+      span(data-l8n="content:profile-created/intro") !Your Profile Card can be used to sign in to supported applications like
       = " "
-      span.clj-app-name Green Party Voting.
+      span.clj-app-name !Green Party Voting.
 
-    a.button.button--half-width.button--primary(href="./authorise") Next
+    a.button.button--half-width.button--primary(href="./authorise", data-l8n="content:profile-created/action-button") !Next
