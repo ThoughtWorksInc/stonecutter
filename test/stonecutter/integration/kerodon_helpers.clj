@@ -34,5 +34,14 @@
                                 :body
                                 (json/parse-string keyword))]
           (:access_token response-body) => (just #"[A-Z0-9]{32}")
-          (:token_type response-body) => "bearer")
-  state))
+          (:token_type response-body) => "bearer")) 
+  state)
+
+(defn response-has-user-email [state email]
+  (fact {:midje/name "Checking if response has user email"}
+        (let [response-body (-> state
+                                :response
+                                :body
+                                (json/parse-string keyword))]
+          (:user-email response-body) => email)) 
+  state)

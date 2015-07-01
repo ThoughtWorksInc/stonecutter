@@ -42,7 +42,24 @@
                    response (oauth/authorise request)]
                (:status response) => 302
                (get-in response [:headers "Location"]) => (contains "callback?code=")
-               (get-in response [:session :access_token]) => (:token access-token))))
+               (get-in response [:session :access_token]) => (:token access-token)))
+
+       (fact "user-email in session stays in session if user is logged in"
+             (let [user-email "email@user.com"
+                   user (user/register-user user-email "password")
+                   client-details (client/register-client "MYAPP" "myapp.com") ; NB this saves into the client store
+                   access-token (token/create-token client-details user) ; NB this saves into the token store
+                   request (-> (r/request :get "/authorisation")
+                               (assoc :params {:client_id (:client-id client-details) :response_type "code" :redirect_uri "callback" :access-token (:token access-token)})
+                               (r/header "accept" "text/html")
+                               (assoc-in [:session :access_token] (:token access-token))
+                               (assoc-in [:session :user :email] user-email))
+                   response (oauth/authorise request)]
+               (:status response) => 302
+               (get-in response [:headers "Location"]) => (contains "callback?code=")
+               (get-in response [:session :access_token]) => (:token access-token)
+               (get-in response [:session :user :email]) => user-email)))
+
 
 (defn encode-client-info [client]
   (format "Basic %s"
@@ -72,4 +89,22 @@
                    response-body (-> response :body (json/parse-string keyword))]
                (:status response) => 200
                (:access_token response-body) => (just #"[A-Z0-9]{32}")
-               (:token_type response-body) => "bearer")))
+               (:token_type response-body) => "bearer"))
+
+       (fact "user-email in session is returned in body after validating token"
+             (let [user-email "email@user.com"
+                   user (user/register-user user-email "password")
+                   client-details (client/register-client "MYAPP" "myapp.com")
+                   auth-code (auth-code/create-auth-code client-details user "callback")
+                   request (-> (r/request :get "/token")
+                               (assoc :params {:grant_type   "authorization_code"
+                                               :redirect_uri "callback"
+                                               :code         (:code auth-code)})
+                               (assoc-in [:session :user :email] user-email)
+                               (create-auth-header client-details))
+                   response (oauth/validate-token request)
+                   response-body (-> response :body (json/parse-string keyword))]
+               (:status response) => 200
+               (:access_token response-body) => (just #"[A-Z0-9]{32}")
+               (:token_type response-body) => "bearer"
+               (:user-email response-body) => user-email)))

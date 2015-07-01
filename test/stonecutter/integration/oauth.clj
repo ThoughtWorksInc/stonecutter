@@ -71,6 +71,7 @@
                           :client_id     client-id
                           :client_secret client-secret}))))
 
+
 (facts "user can sign in through client"
        (-> (k/session h/app)
            (client-sends-authorisation-request client-id)
@@ -85,7 +86,8 @@
            (kh/location-contains "callback?code=")
            (client-sends-token-request client-id client-secret)
            ;; return 200 with new access_token
-           (kh/response-has-access-token)))
+           (kh/response-has-access-token)
+           (kh/response-has-user-email "email@server.com")))
 
 (facts "no access token will be issued with invalid credentials"
        (facts "user cannot sign in with invalid client secret"
