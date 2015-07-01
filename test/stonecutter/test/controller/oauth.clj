@@ -76,35 +76,26 @@
             (encode-client-info client)))
 
 (facts "about token endpoint"
-       (fact "request with grant type authorization_code and correct credentials returns access token"
-             (let [user (user/register-user "user2" "password")
-                   client-details (client/register-client "MYAPP" "myapp.com")
-                   auth-code (auth-code/create-auth-code client-details user "callback")
-                   request (-> (r/request :get "/token")
-                               (assoc :params {:grant_type   "authorization_code"
-                                               :redirect_uri "callback"
-                                               :code         (:code auth-code)})
-                               (create-auth-header client-details))
-                   response (oauth/validate-token request)
-                   response-body (-> response :body (json/parse-string keyword))]
-               (:status response) => 200
-               (:access_token response-body) => (just #"[A-Z0-9]{32}")
-               (:token_type response-body) => "bearer"))
+       (let [user-email "email@user.com"
+             user (user/register-user user-email "password")
+             client-details (client/register-client "MYAPP" "myapp.com")
+             auth-code (auth-code/create-auth-code client-details user "callback")
+             request (-> (r/request :get "/token")
+                         (assoc :params {:grant_type   "authorization_code"
+                                         :redirect_uri "callback"
+                                         :code         (:code auth-code)})
+                         (assoc-in [:session :user :email] user-email)
+                         (create-auth-header client-details))
+             response (oauth/validate-token request)
+             response-body (-> response :body (json/parse-string keyword))]
 
-       (fact "user-email in session is returned in body after validating token"
-             (let [user-email "email@user.com"
-                   user (user/register-user user-email "password")
-                   client-details (client/register-client "MYAPP" "myapp.com")
-                   auth-code (auth-code/create-auth-code client-details user "callback")
-                   request (-> (r/request :get "/token")
-                               (assoc :params {:grant_type   "authorization_code"
-                                               :redirect_uri "callback"
-                                               :code         (:code auth-code)})
-                               (assoc-in [:session :user :email] user-email)
-                               (create-auth-header client-details))
-                   response (oauth/validate-token request)
-                   response-body (-> response :body (json/parse-string keyword))]
+         (fact "request with grant type authorization_code and correct credentials returns access token"
                (:status response) => 200
                (:access_token response-body) => (just #"[A-Z0-9]{32}")
-               (:token_type response-body) => "bearer"
-               (:user-email response-body) => user-email)))
+               (:token_type response-body) => "bearer")
+
+         (fact "user-email in session is returned in body after validating token"
+               (:user-email response-body) => user-email)
+
+         (fact "user email stays in the session after validating token"
+               (get-in response [:session :user :email]) => user-email)))

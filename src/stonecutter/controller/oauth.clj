@@ -22,4 +22,6 @@
                  (json/parse-string keyword)
                  (assoc :user-email user-email)
                  (json/generate-string))]
-    (assoc response :body body)))
+    (-> response
+        (assoc :body body)
+        (assoc-in [:session :user :email] user-email))))
