@@ -13,6 +13,8 @@
 (defn remove-element [enlive-m selector]
   (html/at enlive-m selector nil))
 
+(defn remove-work-in-progress [enlive-m]
+  (remove-element enlive-m [:.clj-wip]))
 
 ;;; templates
 

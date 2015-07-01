@@ -16,6 +16,10 @@
                      html/html-snippet)]
         (html/select page [:body]) =not=> empty?))
 
+(fact "work in progress should be removed from page"
+      (let [page (-> (create-request {} nil {}) profile html/html-snippet)]
+        (-> page (html/select [:.clj-wip])) => empty?))
+
 (fact "sign out link should go to correct endpoint"
       (let [page (-> (create-request {} nil {}) profile html/html-snippet)]
         (-> page (html/select [:.func--sign-out__link]) first :attrs :href) => (r/path :sign-out)))

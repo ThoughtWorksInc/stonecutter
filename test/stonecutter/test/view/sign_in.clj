@@ -14,6 +14,10 @@
       (let [page (-> (create-request {} nil {}) sign-in-form html/html-snippet)]
         (html/select page [:form]) =not=> empty?))
 
+(fact "work in progress should be removed from page"
+      (let [page (-> (create-request {} nil {}) sign-in-form html/html-snippet)]
+        (-> page (html/select [:.clj-wip])) => empty?))
+
 (fact "register link should go to correct endpoint"
       (let [page (-> (create-request {} nil {}) sign-in-form html/html-snippet)]
         (-> page (html/select [:.func--register__link]) first :attrs :href) => (r/path :show-registration-form)))

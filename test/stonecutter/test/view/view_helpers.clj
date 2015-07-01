@@ -34,3 +34,11 @@
               (provided (html/html-resource file-name) => html :times 1)
               (load-template file-name) => html
               (provided (html/html-resource file-name) => html :times 1))))
+
+(fact "clj-wip class is removed"
+     (let [page (-> "<html><p class='clj-wip'>Random element.</p></html>"
+                    html/html-snippet)]
+       (html/select page [:p]) =not=> empty?
+       (-> page
+           remove-work-in-progress 
+           (html/select [:p])) => empty?))
