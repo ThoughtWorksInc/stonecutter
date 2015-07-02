@@ -20,8 +20,8 @@
    :name     nil
    :url      nil})
 
-(def user-params {:email "valid@email.com" :password "password"})
-(def user-confirm-params {:email "valid@email.com" :password "password" :confirm-password "password"})
+(def sign-in-user-params {:email "valid@email.com" :password "password"})
+(def register-user-params {:email "valid@email.com" :password "password" :confirm-password "password"})
 
 (background (before :facts (user-store/reset-user-store!)))
 
@@ -40,14 +40,20 @@
       (-> (mock/request :get "/unknown-url") app :status) => 404)
 
 (fact "user can sign in with valid credentials and is redirected to profile, with user added to session"
-      (-> (create-request :post "/sign-in" user-params)
+      (-> (create-request :post "/sign-in" sign-in-user-params)
           sign-in) => (contains {:status 302 :headers {"Location" "/profile"} :session {:user {:email "valid@email.com"}}})
       (provided
-        (s/authenticate-and-retrieve-user "valid@email.com" "password") => {:email "valid@email.com"}))
+          (s/authenticate-and-retrieve-user "valid@email.com" "password") => {:email "valid@email.com"}))
+
+(fact "user can register in with valid credentials and is redirected to profile, with user added to session"
+      (-> (create-request :post "/register" register-user-params)
+          register-user) => (contains {:status 302 :headers {"Location" "/profile"} :session {:user {:email "valid@email.com"}}})
+      (provided
+        (v/validate-registration register-user-params s/is-duplicate-user?) => {}))
 
 (fact "if user has session client id, then create an access token and add to user session"
       (let [return-to-url "/authorisation?client-id=whatever"]
-        (-> (create-request :post "/sign-in" user-params)
+        (-> (create-request :post "/sign-in" sign-in-user-params)
             (assoc-in [:session :client-id] "client-id")
             (assoc-in [:session :return-to] return-to-url)
             sign-in) => (contains {:status  302 :headers {"Location" return-to-url}
@@ -61,7 +67,7 @@
 
 (fact "if user logged out, access token and user email are removed from session"
       (let [return-to-url "/authorisation?client-id=whatever"] 
-        (-> (create-request :post "/sign-in" user-params)
+        (-> (create-request :post "/sign-in" sign-in-user-params)
             (assoc-in [:session :client-id] "client-id")
             (assoc-in [:session :return-to] return-to-url)
             sign-in
@@ -72,7 +78,7 @@
           (token/create-token ...client... "valid@email.com") => {:token ...token...}))) 
 
 (fact "if user has client id but no return-to in session, throws an exception"
-      (-> (create-request :post "/sign-in" user-params)
+      (-> (create-request :post "/sign-in" sign-in-user-params)
           (assoc-in [:session :client-id] "client-id")
           sign-in) => (throws Exception)
       (provided
@@ -80,7 +86,7 @@
 
 (fact "if user has invalid client id, then throws an exception"
       (let [return-to-url "/authorisation?client-id=whatever"]
-        (-> (create-request :post "/sign-in" user-params)
+        (-> (create-request :post "/sign-in" sign-in-user-params)
             (assoc-in [:session :client-id] "client-id")
             (assoc-in [:session :return-to] return-to-url)
             sign-in) => (throws Exception)
@@ -110,14 +116,14 @@
 
 (fact "user data is saved"
       (let [user-registration-data (create-user "valid@email.com" "password")]
-        (-> (create-request :post "/register" user-confirm-params)
+        (-> (create-request :post "/register" register-user-params)
             register-user
-            :status) => 200
+            :status) => 302
         (provided
           (s/store-user! "valid@email.com" "password") => {:email "valid@email.com"})))
 
 (fact "email must not be a duplicate"
-      (let [html-response (-> (create-request :post "/register" user-confirm-params)
+      (let [html-response (-> (create-request :post "/register" register-user-params)
                               register-user
                               :body
                               html/html-snippet)]
@@ -126,7 +132,7 @@
            :attrs
            :class)) => (contains "clj--registration-email")  
       (provided
-        (v/validate-registration user-confirm-params s/is-duplicate-user?) => {:email :duplicate}
+        (v/validate-registration register-user-params s/is-duplicate-user?) => {:email :duplicate}
         (user-store/new-user anything anything) => anything :times 0
         (user-store/store-user anything) => anything :times 0))
 

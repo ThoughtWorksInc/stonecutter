@@ -50,11 +50,14 @@
 
 (defn show-registration-form [request]
   (-> request
-        register/registration-form
-        html-response))
+      register/registration-form
+      html-response))
 
 (defn show-sign-in-form [request]
   (html-response (sign-in/sign-in-form request)))
+
+(defn redirect-to-profile [user]
+  (assoc (r/redirect (path :show-profile)) :session {:user user}))
 
 (defn register-user [request]
   (let [params (:params request)
@@ -64,13 +67,13 @@
         request (assoc-in request [:context :errors] err)]
     (if (empty? err)
       (do
-        (s/store-user! email password)
-        (html-response "You saved the user"))
+        (let [user (s/store-user! email password)]
+        (redirect-to-profile {:email (:login user)})))
       (html-response (register/registration-form request)))))
 
 (defn show-profile [request]
-  (if-let [email (get-in request [:session :user :email])] 
-    (html-response (profile/profile request)) 
+  (if-let [email (get-in request [:session :user :email])]
+    (html-response (profile/profile request))
     (r/redirect (path :sign-in))))
 
 (defn redirect-to-authorisation [return-to user client-id email]
@@ -78,8 +81,6 @@
     (assoc (r/redirect return-to) :session {:user user :access_token (:token (token/create-token client email))})
     (throw (Exception. "Invalid client"))))
 
-(defn redirect-to-profile [user]
-  (assoc (r/redirect (path :show-profile)) :session {:user user}))
 
 (defn sign-in [request]
   (let [client-id (get-in request [:session :client-id])
@@ -92,8 +93,8 @@
     (if (empty? err)
       (if-let [user (s/authenticate-and-retrieve-user email password)]
         (cond (and client-id return-to) (redirect-to-authorisation return-to user client-id email)
-              client-id                (throw (Exception. "Missing return-to value"))
-              :default                  (redirect-to-profile user))
+              client-id (throw (Exception. "Missing return-to value"))
+              :default (redirect-to-profile user))
         (r/status (->> {:credentials :invalid}
                        (assoc-in request [:context :errors])
                        sign-in/sign-in-form
@@ -149,9 +150,9 @@
   (-> site-defaults
       (assoc-in [:session :cookie-attrs :max-age] 3600)))
 
-(def app 
-  (-> app-handler 
-      (wrap-defaults wrap-defaults-config) 
+(def app
+  (-> app-handler
+      (wrap-defaults wrap-defaults-config)
       wrap-translator))
 
 (def port (Integer. (get env :port "3000")))
