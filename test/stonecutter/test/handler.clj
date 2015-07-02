@@ -4,6 +4,7 @@
             [clauth.user :as user-store]
             [net.cgrand.enlive-html :as html]
             [stonecutter.handler :refer :all]
+            [stonecutter.controller.user :refer :all]
             [stonecutter.validation :as v]
             [stonecutter.storage :as s]
             [clauth.token :as token]

@@ -1,7 +1,6 @@
 (ns stonecutter.test.view.profile-created
   (:require [midje.sweet :refer :all]
             [net.cgrand.enlive-html :as html]
-            [stonecutter.routes :as r]
             [stonecutter.handler :refer [translations-fn translation-map]]
             [stonecutter.test.view.test-helpers :refer [create-request]]
             [stonecutter.view.profile-created :refer [profile-created]]))
