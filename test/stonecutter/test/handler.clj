@@ -45,9 +45,9 @@
       (provided
           (s/authenticate-and-retrieve-user "valid@email.com" "password") => {:email "valid@email.com"}))
 
-(fact "user can register in with valid credentials and is redirected to profile, with user added to session"
+(fact "user can register with valid credentials and is redirected to profile-created page, with user added to session"
       (-> (create-request :post "/register" register-user-params)
-          register-user) => (contains {:status 302 :headers {"Location" "/profile"} :session {:user {:email "valid@email.com"}}})
+          register-user) => (contains {:status 302 :headers {"Location" "/profile-created"} :session {:user {:email "valid@email.com"}}})
       (provided
         (v/validate-registration register-user-params s/is-duplicate-user?) => {}))
 

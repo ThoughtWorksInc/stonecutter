@@ -9,6 +9,7 @@
             [stonecutter.view.sign-in :as sign-in]
             [stonecutter.view.error :as error]
             [stonecutter.view.profile :as profile]
+            [stonecutter.view.profile-created :as profile-created]
             [stonecutter.view.view-helpers :refer [enable-template-caching! disable-template-caching!]]
             [stonecutter.translation :refer [load-translations-from-file]]
             [stonecutter.validation :as v]
@@ -59,6 +60,9 @@
 (defn redirect-to-profile [user]
   (assoc (r/redirect (path :show-profile)) :session {:user user}))
 
+(defn redirect-to-profile-created [user]
+  (assoc (r/redirect (path :show-profile-created)) :session {:user user}))
+
 (defn register-user [request]
   (let [params (:params request)
         email (:email params)
@@ -68,7 +72,7 @@
     (if (empty? err)
       (do
         (let [user (s/store-user! email password)]
-        (redirect-to-profile {:email (:login user)})))
+        (redirect-to-profile-created {:email (:login user)})))
       (html-response (register/registration-form request)))))
 
 (defn show-profile [request]
@@ -76,11 +80,13 @@
     (html-response (profile/profile request))
     (r/redirect (path :sign-in))))
 
+(defn show-profile-created [request]
+  (html-response (profile-created/profile-created request)))
+
 (defn redirect-to-authorisation [return-to user client-id email]
   (if-let [client (client/fetch-client client-id)]
     (assoc (r/redirect return-to) :session {:user user :access_token (:token (token/create-token client email))})
     (throw (Exception. "Invalid client"))))
-
 
 (defn sign-in [request]
   (let [client-id (get-in request [:session :client-id])
@@ -125,6 +131,7 @@
    :sign-in                sign-in
    :sign-out               sign-out
    :show-profile           show-profile
+   :show-profile-created   show-profile-created
    :authorise              oauth/authorise
    :validate-token         oauth/validate-token})
 

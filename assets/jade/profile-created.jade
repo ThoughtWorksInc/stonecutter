@@ -2,14 +2,14 @@ extends layout/layout
 
 block vars
   - bodyClass = ""
-  - pageTitle = "!Authorise"
-  - pageTitleDataL8n = ""
+  - pageTitle = "!Your Profile Card has been created"
+  - pageTitleDataL8n = "content:profile-created/title"
 
 block headerScripts
 
 block content
   .middle-container
-    h1.page-title(data-l8n="content:profile-created/title")
+    h1.page-title(data-l8n="content:profile-created/page-header")
       | !Your Profile Card has been created
 
     .card-demo
@@ -17,9 +17,9 @@ block content
       i.fa.fa-check.card-demo__tick-icon
       .card-demo__email
 
-    p
+    p.clj-wip
       span(data-l8n="content:profile-created/intro") !Your Profile Card can be used to sign in to supported applications like
       = " "
       span.clj-app-name !Green Party Voting.
 
-    a.button.button--half-width.button--primary(href="./authorise", data-l8n="content:profile-created/action-button") !Next
+    a.button.button--half-width.button--primary.clj-wip(href="./authorise", data-l8n="content:profile-created/action-button") !Next

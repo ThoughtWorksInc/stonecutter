@@ -52,11 +52,11 @@
            (kh/page-uri-is "/register")
            (kh/selector-has-content [:.clj--registration-email__validation] "Enter a valid email address")))
 
-(facts "Register page redirects to profile page when registered"
+(facts "Register page redirects to profile-created page when registered"
        (-> (k/session h/app)
            (register "email@server.com")
            (k/follow-redirect)
-           (kh/page-uri-is "/profile")))
+           (kh/page-uri-is "/profile-created")))
 
 (facts "User is redirected to sign-in page when accessing profile page not signed in"
        (-> (k/session h/app)
@@ -84,6 +84,13 @@
 (facts "Home url redirects to profile page if user is signed in"
        (-> (k/session h/app)
            sign-in
+           (k/visit "/")
+           (k/follow-redirect)
+           (kh/page-uri-is "/profile")))
+
+(facts "Home url redirects to profile page if user is registered"
+       (-> (k/session h/app)
+           (register "email2@server.com")
            (k/visit "/")
            (k/follow-redirect)
            (kh/page-uri-is "/profile")))
