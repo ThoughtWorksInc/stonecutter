@@ -18,8 +18,7 @@
             [stonecutter.routes :refer [routes path]]
             [stonecutter.logging :as log-config]
             [stonecutter.controller.user :as user]
-            [stonecutter.controller.oauth :as oauth]
-            [clauth.client :as client]))
+            [stonecutter.controller.oauth :as oauth]))
 
 (def translation-map
   (load-translations-from-file "en.yml"))
@@ -109,7 +108,7 @@
   (log-config/init-logger!)
   (disable-template-caching!)
   (s/setup-in-memory-stores!)
-  (let [user (user/register-user "user@email.com" "password") 
-        client-details (client/register-client "MYAPP" "myapp.com")]
+  (let [user (clauth.user/register-user "user@email.com" "password") 
+        client-details (clauth.client/register-client "MYAPP" "myapp.com")]
     (log/info (str "TEST USER DETAILS:" user))
     (log/info (str "TEST CLIENT DETAILS:" client-details))))
