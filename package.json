@@ -4,7 +4,7 @@
   "description": "Build all the things",
   "main": "server.js",
   "engines": {
-    "node": "0.10.28"
+    "node": "0.12.4"
   },
   "dependencies": {
     "browser-sync": "^1.6.2",
@@ -12,7 +12,7 @@
     "font-awesome": "^4.3.0",
     "gulp": "^3.8.10",
     "gulp-autoprefixer": "^1.0.1",
-    "gulp-clean": "^0.3.1",
+    "del": "^1.2.0",
     "gulp-concat": "^2.4.1",
     "gulp-express": "^0.1.0",
     "gulp-gh-pages": "^0.5.0",
@@ -23,10 +23,9 @@
     "gulp-nodemon": "^1.0.4",
     "gulp-open": "^0.3.0",
     "gulp-replace": "^0.5.3",
-    "gulp-sass": "*",
+    "gulp-sass": "^2.0.3",
     "gulp-util": "^3.0.1",
     "jade": "*",
-    "requestify": "^0.1.17",
     "run-sequence": "^1.0.1"
   },
   "author": "Chris Cheshire",

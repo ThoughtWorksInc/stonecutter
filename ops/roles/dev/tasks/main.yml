@@ -4,15 +4,18 @@
    
  - name: add nodesource apt-key
    apt_key: url=https://deb.nodesource.com/gpgkey/nodesource.gpg.key state=present
-  
+
  - name: add nodesource deb repo
-   apt_repository: repo='deb https://deb.nodesource.com/node_0.10 trusty main' state=present
+   apt_repository: repo='deb https://deb.nodesource.com/node_0.12 trusty main' state=present
 
  - name: add nodesource deb-src repo
-   apt_repository: repo='deb-src https://deb.nodesource.com/node_0.10 trusty main' state=present
+   apt_repository: repo='deb-src https://deb.nodesource.com/node_0.12 trusty main' state=present
 
  - name: install node.js
-   apt: name=nodejs state=latest
+   apt: pkg=nodejs state=latest
+
+ - name: Node.js | Update npm
+   command: npm install npm -g
 
  - name: symlink node->nodejs
    file: src=/usr/bin/nodejs dest=/usr/bin/node state=link
@@ -21,7 +24,13 @@
    npm: name={{item}} global=yes
    with_items:
      - npm
-     - grunt-cli
+     - gulp
+
+ - name: Rebuild node-sass
+   args:
+     chdir: /var/stonecutter
+   command: npm rebuild node-sass
+
 
  - name: install docker.io
    apt: name="docker.io" state=present
