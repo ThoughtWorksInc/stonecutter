@@ -12,10 +12,13 @@
       slurp
       load-client-credentials-from-string))
 
-(defn register-clients-from-map [client-credentials-map]
+(defn store-clients-from-map [client-credentials-map]
   (let [client-credentials-seq (seq client-credentials-map)]
     (doseq [client-entry client-credentials-seq]
-      (client-store/store-client {:name          (:name client-entry)
-                                  :client-id     (:id client-entry)
-                                  :client-secret (:secret client-entry)
-                                  :url           nil}))))
+      (let [name (:name client-entry)
+            client-id (:client-id client-entry)
+            client-secret (:client-secret client-entry)]
+        (client-store/store-client {:name          name
+                                    :client-id     client-id
+                                    :client-secret client-secret
+                                    :url           nil})))))
