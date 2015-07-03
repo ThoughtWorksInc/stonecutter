@@ -1,10 +1,13 @@
 (ns stonecutter.controller.oauth
   (:require [clauth.endpoints :as ep]
             [cheshire.core :as json]
-            [stonecutter.routes :refer [path]]))
+            [stonecutter.routes :refer [path]]
+            [stonecutter.storage :as s]))
 
 (def auth-handler (ep/authorization-handler {:auto-approver (constantly true)
                                              :user-session-required-redirect (path :show-sign-in-form)}))
+
+(def token-handler (ep/token-handler))
 
 (defn authorise [request]
   (let [user (get-in request [:session :user])
@@ -15,8 +18,9 @@
         (assoc-in [:session :user] user))))
 
 (defn validate-token [request]
-  (let [user-email (get-in request [:session :user :email])
-        response ((ep/token-handler) request)
+  (let [auth-code (get-in request [:params :code])
+        user-email (-> auth-code s/retrieve-user-with-auth-code :login)
+        response (token-handler request)
         body (-> response
                  :body
                  (json/parse-string keyword)

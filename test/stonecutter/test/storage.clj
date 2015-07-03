@@ -1,6 +1,7 @@
 (ns stonecutter.test.storage
   (:require [midje.sweet :refer :all]
             [clauth.user :as user-store]
+            [clauth.auth-code :as auth-code-store]
             [stonecutter.storage :as s]))
 
 (facts "about is-duplicate-user?"
@@ -33,7 +34,7 @@
                (user-store/store-user :a-user) => :a-stored-user))))
 
 (fact "can retrieve user with valid credentials"
-      (s/authenticate-and-retrieve-user "email@server.com" "password") => {:email "email@server.com"}
+      (s/authenticate-and-retrieve-user "email@server.com" "password") => (contains {:login "email@server.com"})
       (provided
         (user-store/authenticate-user "email@server.com" "password") => {:login "email@server.com"
                                                                          :name nil
@@ -44,3 +45,9 @@
       (s/authenticate-and-retrieve-user "invalid@credentials.com" "password") => nil
       (provided
         (user-store/authenticate-user "invalid@credentials.com" "password") => nil))
+
+(fact "can retrieve user using auth-code"
+      (let [auth-code-record (auth-code-store/create-auth-code ...client... ...user... ...redirect-uri...)]
+        (s/retrieve-user-with-auth-code "code") => ...user...
+        (provided
+          (auth-code-store/fetch-auth-code "code") => auth-code-record)))

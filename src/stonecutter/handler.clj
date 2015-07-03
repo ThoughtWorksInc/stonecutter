@@ -38,7 +38,7 @@
   (html-response (sign-in/sign-in-form request)))
 
 (defn show-profile [request]
-  (if (get-in request [:session :user :email])
+  (if (get-in request [:session :user])
     (html-response (profile/profile request))
     (r/redirect (path :sign-in))))
 

@@ -36,6 +36,8 @@
       user-store/store-user))
 
 (defn authenticate-and-retrieve-user [email password]
-  (let [user (user-store/authenticate-user email password)]
-    (when user
-      {:email (:login user)})))
+  (-> (user-store/authenticate-user email password)
+      (dissoc :password)))
+
+(defn retrieve-user-with-auth-code [code]
+  (-> (auth-code-store/fetch-auth-code code) :subject))

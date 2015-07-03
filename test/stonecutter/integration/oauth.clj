@@ -40,7 +40,7 @@
 
 (def user (user/register-user "email@server.com" "valid-password"))
 
-(defn client-sends-authorisation-request [state client-id]
+(defn browser-sends-authorisation-request-from-client-redirect [state client-id]
   (-> state
       (k/visit "/authorisation" :headers {"accept" "text/html"} :params {:client_id     client-id
                                                                          :response_type "code"
@@ -59,11 +59,13 @@
         auth-code (-> {:query-string query-string}
                       (ring.middleware.params/params-request)
                       (get-in [:params "code"]))]
-    auth-code))
+    auth-code
+    ))
 
-(defn client-sends-token-request [state client-id client-secret]
+(defn client-sends-http-token-request [state client-id client-secret]
   (let [auth-code (get-auth-code state)]
     (-> state
+        (dissoc :cookie-jar)                                ;; HTTP request so won't have browser cookie
         (k/visit "/token"
                  :params {:grant_type    "authorization_code"
                           :redirect_uri  "myclient.com/callback"
@@ -74,7 +76,7 @@
 
 (facts "user can sign in through client"
        (-> (k/session h/app)
-           (client-sends-authorisation-request client-id)
+           (browser-sends-authorisation-request-from-client-redirect client-id)
            (k/follow-redirect)
            ;; login
            (kh/page-uri-is "/sign-in")
@@ -84,7 +86,7 @@
            ;; check redirect - should have auth_code
            (k/follow-redirect)
            (kh/location-contains "callback?code=")
-           (client-sends-token-request client-id client-secret)
+           (client-sends-http-token-request client-id client-secret)
            ;; return 200 with new access_token
            (kh/response-has-access-token)
            (kh/response-has-user-email "email@server.com")))
@@ -92,7 +94,7 @@
 (facts "no access token will be issued with invalid credentials"
        (facts "user cannot sign in with invalid client secret"
               (-> (k/session h/app)
-                  (client-sends-authorisation-request client-id)
+                  (browser-sends-authorisation-request-from-client-redirect client-id)
                   (k/follow-redirect)
                   ;; login
                   (kh/page-uri-is "/sign-in")
@@ -102,13 +104,13 @@
                   ;; check redirect - should have auth_code
                   (k/follow-redirect)
                   (kh/location-contains "callback?code=")
-                  (client-sends-token-request client-id invalid-client-secret)
+                  (client-sends-http-token-request client-id invalid-client-secret)
                   :response
                   :status) => 400)
 
        (facts "user cannot sign in with invalid password"
               (-> (k/session h/app)
-                  (client-sends-authorisation-request client-id)
+                  (browser-sends-authorisation-request-from-client-redirect client-id)
                   (k/follow-redirect)
                   ;; login
                   (kh/page-uri-is "/sign-in")

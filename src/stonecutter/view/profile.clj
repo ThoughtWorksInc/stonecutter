@@ -4,8 +4,8 @@
             [stonecutter.routes :as r]
             [stonecutter.view.view-helpers :as vh]))
 
-(defn add-username [context enlive-m]
-  (let [email (get-in context [:session :user :email])]
+(defn add-username [request enlive-m]
+  (let [email (get-in request [:session :user :login])]
     (-> enlive-m
         (html/at [:.clj--card--name] (html/content email)))))
 

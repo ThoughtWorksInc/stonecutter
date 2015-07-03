@@ -84,7 +84,6 @@
                          (assoc :params {:grant_type   "authorization_code"
                                          :redirect_uri "callback"
                                          :code         (:code auth-code)})
-                         (assoc-in [:session :user :email] user-email)
                          (create-auth-header client-details))
              response (oauth/validate-token request)
              response-body (-> response :body (json/parse-string keyword))]

@@ -44,11 +44,11 @@
             (assoc-in [:session :client-id] "client-id")
             (assoc-in [:session :return-to] return-to-url)
             c/sign-in) => (contains {:status  302 :headers {"Location" return-to-url}
-                                   :session {:user {:email "valid@email.com"} :access_token ...token...}})
+                                    :session {:access_token ...token... :user ...user...}})
         (provided
-          (s/authenticate-and-retrieve-user "valid@email.com" "password") => {:email "valid@email.com"}
+          (s/authenticate-and-retrieve-user "valid@email.com" "password") => ...user...
           (client/fetch-client "client-id") => ...client...
-          (token/create-token ...client... "valid@email.com") => {:token ...token...})))
+          (token/create-token ...client... ...user...) => {:token ...token...})))
 
 (defn p [v] (prn v) v)
 
@@ -58,11 +58,12 @@
             (assoc-in [:session :client-id] "client-id")
             (assoc-in [:session :return-to] return-to-url)
             c/sign-in
-            c/sign-out) =not=> (contains {:session {:user {:email "valid@email.com"} :access_token ...token...}})
+            c/sign-out
+            :session) => empty?
         (provided
-          (s/authenticate-and-retrieve-user "valid@email.com" "password") => {:email "valid@email.com"}
+          (s/authenticate-and-retrieve-user "valid@email.com" "password") => ...user...
           (client/fetch-client "client-id") => ...client...
-          (token/create-token ...client... "valid@email.com") => {:token ...token...})))
+          (token/create-token ...client... ...user...) => {:token ...token...})))
 
 (fact "if user has client id but no return-to in session, throws an exception"
       (-> (create-request :post "/sign-in" sign-in-user-params)
