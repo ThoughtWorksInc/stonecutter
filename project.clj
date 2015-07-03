@@ -22,7 +22,8 @@
                                               [prone "0.8.2"]
                                               [kerodon "0.6.1"]]
                              :plugins        [[lein-ring "0.9.6"]
-                                              [lein-midje "3.1.3"]]
+                                              [lein-midje "3.1.3"]
+                                              [gencred "0.1.0-SNAPSHOT"]]
                              :ring {:handler stonecutter.handler/app
                                     :init    stonecutter.handler/lein-ring-init
                                     :stacktrace-middleware prone.middleware/wrap-exceptions}
