@@ -14,22 +14,13 @@
             [stonecutter.view.view-helpers :refer [enable-template-caching! disable-template-caching!]]
             [stonecutter.translation :refer [load-translations-from-file]]
             [stonecutter.storage :as s]
-            [stonecutter.utils :refer :all]
+            [stonecutter.utils :refer [html-response]]
             [stonecutter.routes :refer [routes path]]
             [stonecutter.logging :as log-config]
             [stonecutter.controller.user :as user]
-            [stonecutter.controller.oauth :as oauth]))
-
-(def translation-map
-  (load-translations-from-file "en.yml"))
-
-(defn translations-fn [translation-map]
-  (fn [translation-key]
-    (let [key1 (keyword (namespace translation-key))
-          key2 (keyword (name translation-key))
-          translation (get-in translation-map [key1 key2])]
-      (when-not translation (log/warn (str "No translation found for " translation-key)))
-      translation)))
+            [stonecutter.controller.oauth :as oauth]
+            [stonecutter.translation :as t]
+            [stonecutter.middleware :as m]))
 
 (defn show-registration-form [request]
   (html-response (register/registration-form request)))
@@ -46,7 +37,7 @@
   (html-response (profile-created/profile-created request)))
 
 (defn not-found [request]
-  (let [context {:translator (translations-fn translation-map)}]
+  (let [context {:translator (t/translations-fn t/translation-map)}]
     (-> (html-response (error/not-found-error context))
         (r/status 404))))
 
@@ -70,20 +61,6 @@
 (def app-handler
   (scenic-handler routes handlers not-found))
 
-(defn wrap-error-handling [handler]
-  (let [context {:translator (translations-fn translation-map)}]
-    (fn [request]
-      (try
-        (handler request)
-        (catch Exception e
-          (log/error e)
-          (-> (html-response (error/internal-server-error context)) (r/status 500)))))))
-
-(defn wrap-translator [handler]
-  (fn [request]
-    (-> request
-        (assoc-in [:context :translator] (translations-fn translation-map))
-        handler)))
 
 (def wrap-defaults-config
   (-> site-defaults
@@ -92,7 +69,7 @@
 (def app
   (-> app-handler
       (wrap-defaults wrap-defaults-config)
-      wrap-translator))
+      m/wrap-translator))
 
 (def port (Integer. (get env :port "3000")))
 
@@ -100,7 +77,7 @@
   (log-config/init-logger!)
   (enable-template-caching!)
   (s/setup-mongo-stores! (get env :mongo-uri "mongodb://localhost:27017/stonecutter"))
-  (-> app wrap-error-handling (run-jetty {:port port})))
+  (-> app m/wrap-error-handling (run-jetty {:port port})))
 
 (defn lein-ring-init
   "Function called when running app with 'lein ring server'"

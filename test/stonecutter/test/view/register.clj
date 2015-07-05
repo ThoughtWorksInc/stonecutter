@@ -2,9 +2,9 @@
   (:require [midje.sweet :refer :all]
             [net.cgrand.enlive-html :as html]
             [stonecutter.routes :as r]
-            [stonecutter.handler :refer [translations-fn translation-map]]
             [stonecutter.view.register :refer [registration-form]]
             [stonecutter.test.view.test-helpers :refer [create-request]]
+            [stonecutter.translation :as t]
             ))
 
 (def no-untranslated-strings
@@ -30,7 +30,7 @@
         (-> page (html/select [:form]) first :attrs :action) => "/register"))
 
 (fact "there are no missing translations"
-      (let [translator (translations-fn translation-map)
+      (let [translator (t/translations-fn t/translation-map)
             page (-> (create-request translator nil {}) registration-form)]
         page => no-untranslated-strings))
 

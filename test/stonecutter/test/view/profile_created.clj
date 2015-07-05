@@ -1,9 +1,9 @@
 (ns stonecutter.test.view.profile-created
   (:require [midje.sweet :refer :all]
             [net.cgrand.enlive-html :as html]
-            [stonecutter.handler :refer [translations-fn translation-map]]
             [stonecutter.test.view.test-helpers :refer [create-request]]
-            [stonecutter.view.profile-created :refer [profile-created]]))
+            [stonecutter.view.profile-created :refer [profile-created]]
+            [stonecutter.translation :as t]))
 
 (def no-untranslated-strings
   (let [untranslated-string-regex #"(?!!DOCTYPE|!IEMobile)!\w+"]
@@ -21,6 +21,6 @@
 
 
 (fact "there are no missing translations"
-      (let [translator (translations-fn translation-map)
+      (let [translator (t/translations-fn t/translation-map)
             page (-> (create-request translator nil {}) profile-created)]
         page => no-untranslated-strings))

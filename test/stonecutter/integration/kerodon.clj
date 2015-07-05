@@ -7,7 +7,8 @@
             [stonecutter.handler :as h]
             [stonecutter.storage :as s]
             [stonecutter.logging :as l]
-            [stonecutter.view.register :refer [registration-form]]))
+            [stonecutter.view.register :refer [registration-form]]
+            [stonecutter.middleware :as m]))
 
 (l/init-logger!)
 
@@ -103,6 +104,6 @@
 (fact "Error page is shown if an exception is thrown"
       (against-background
         (registration-form anything) =throws=> (Exception.))
-      (-> (k/session (h/wrap-error-handling h/app))
+      (-> (k/session (m/wrap-error-handling h/app))
           (k/visit "/register")
           (kh/page-title-is "Error-500")))
