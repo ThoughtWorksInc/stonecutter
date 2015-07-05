@@ -67,6 +67,7 @@
     (-> state
         (dissoc :cookie-jar)                                ;; HTTP request so won't have browser cookie
         (k/visit "/api/token"
+                 :request-method :post
                  :params {:grant_type    "authorization_code"
                           :redirect_uri  "myclient.com/callback"
                           :code          auth-code
