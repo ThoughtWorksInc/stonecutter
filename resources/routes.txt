@@ -7,4 +7,4 @@ GET     /sign-out               sign-out
 GET     /profile                show-profile
 GET     /profile-created        show-profile-created
 GET     /authorisation          authorise
-GET     /token                  validate-token
+GET     /api/token              validate-token

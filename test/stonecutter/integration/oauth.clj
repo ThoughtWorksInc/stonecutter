@@ -66,7 +66,7 @@
   (let [auth-code (get-auth-code state)]
     (-> state
         (dissoc :cookie-jar)                                ;; HTTP request so won't have browser cookie
-        (k/visit "/token"
+        (k/visit "/api/token"
                  :params {:grant_type    "authorization_code"
                           :redirect_uri  "myclient.com/callback"
                           :code          auth-code

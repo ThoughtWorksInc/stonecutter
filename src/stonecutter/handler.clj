@@ -1,5 +1,5 @@
 (ns stonecutter.handler
-  (:require [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
+  (:require [ring.middleware.defaults :refer [wrap-defaults site-defaults api-defaults]]
             [ring.util.response :as r]
             [ring.adapter.jetty :refer [run-jetty]]
             [bidi.bidi :refer [path-for]]
@@ -46,7 +46,7 @@
     (r/redirect (path :show-profile))
     (r/redirect (path :sign-in))))
 
-(def handlers
+(def site-handlers
   {:home                   home
    :show-registration-form show-registration-form
    :register-user          user/register-user
@@ -55,22 +55,41 @@
    :sign-out               user/sign-out
    :show-profile           show-profile
    :show-profile-created   show-profile-created
-   :authorise              oauth/authorise
-   :validate-token         oauth/validate-token})
+   :authorise              oauth/authorise})
 
-(def app-handler
-  (scenic-handler routes handlers not-found))
+(def api-handlers
+  {:validate-token         oauth/validate-token})
 
+(def site-handler
+  (scenic-handler routes site-handlers not-found))
+
+(def api-handler
+  (scenic-handler routes api-handlers not-found))
+
+(defn splitter [site api]
+  (fn [request]
+    (let [uri (-> request :uri)]
+      (if (.startsWith uri "/api")
+        (api request)
+        (site request)))))
 
 (def wrap-defaults-config
   (-> site-defaults
       (assoc-in [:session :cookie-attrs :max-age] 3600)))
 
-(defn create-app [dev-mode?]
-  (-> app-handler
+(defn create-site-app [dev-mode?]
+  (-> site-handler
       (wrap-defaults wrap-defaults-config)
       m/wrap-translator
       (m/wrap-error-handling dev-mode?)))
+
+(defn create-api-app [dev-mode?]
+  (-> api-handler
+      (wrap-defaults api-defaults)
+      (m/wrap-error-handling dev-mode?)))                   ;; TODO create json error handler
+
+(defn create-app [dev-mode?]
+  (splitter (create-site-app dev-mode?) (create-api-app dev-mode?)))
 
 (def app (create-app false))
 
