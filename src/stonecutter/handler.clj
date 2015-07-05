@@ -66,10 +66,13 @@
   (-> site-defaults
       (assoc-in [:session :cookie-attrs :max-age] 3600)))
 
-(def app
+(defn create-app [dev-mode?]
   (-> app-handler
       (wrap-defaults wrap-defaults-config)
-      m/wrap-translator))
+      m/wrap-translator
+      (m/wrap-error-handling dev-mode?)))
+
+(def app (create-app false))
 
 (def port (Integer. (get env :port "3000")))
 
@@ -77,7 +80,7 @@
   (log-config/init-logger!)
   (enable-template-caching!)
   (s/setup-mongo-stores! (get env :mongo-uri "mongodb://localhost:27017/stonecutter"))
-  (-> app m/wrap-error-handling (run-jetty {:port port})))
+  (run-jetty app {:port port}))
 
 (defn lein-ring-init
   "Function called when running app with 'lein ring server'"
@@ -89,3 +92,5 @@
         client-details (clauth.client/register-client "MYAPP" "myapp.com")]
     (log/info (str "TEST USER DETAILS:" user))
     (log/info (str "TEST CLIENT DETAILS:" client-details))))
+
+(def lein-app (create-app true))

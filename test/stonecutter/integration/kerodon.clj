@@ -104,6 +104,9 @@
 (fact "Error page is shown if an exception is thrown"
       (against-background
         (registration-form anything) =throws=> (Exception.))
-      (-> (k/session (m/wrap-error-handling h/app))
+      (-> (k/session (h/create-app false))
           (k/visit "/register")
-          (kh/page-title-is "Error-500")))
+          (kh/page-title-is "Error-500"))
+      (fact "if dev mode is enabled then error middleware isn't invoked"
+            (-> (k/session (h/create-app true))
+                (k/visit "/register")) => (throws Exception)))
