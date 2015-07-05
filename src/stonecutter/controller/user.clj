@@ -8,7 +8,9 @@
             [stonecutter.validation :as v]
             [stonecutter.storage :as s]
             [stonecutter.view.register :as register]
-            [stonecutter.utils :refer :all]))
+            [stonecutter.utils :refer :all]
+            [stonecutter.view.profile-created :as profile-created]
+            [stonecutter.view.profile :as profile]))
 
 (declare redirect-to-authorisation redirect-to-profile redirect-to-profile-created)
 
@@ -59,3 +61,22 @@
 
 (defn redirect-to-profile-created [user]
   (assoc (r/redirect (path :show-profile-created)) :session {:user user}))
+
+(defn show-registration-form [request]
+  (html-response (register/registration-form request)))
+
+(defn show-sign-in-form [request]
+  (html-response (sign-in/sign-in-form request)))
+
+(defn show-profile [request]
+  (if (get-in request [:session :user])
+    (html-response (profile/profile request))
+    (r/redirect (path :sign-in))))
+
+(defn show-profile-created [request]
+  (html-response (profile-created/profile-created request)))
+
+(defn home [request]
+  (if (get-in request [:session :user])
+    (r/redirect (path :show-profile))
+    (r/redirect (path :sign-in))))
