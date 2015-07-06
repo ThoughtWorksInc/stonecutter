@@ -25,13 +25,13 @@
              (s/store-user! "email@server.com" "password") => :a-stored-user
              (provided
                (user-store/new-user "email@server.com" "password") => :a-user
-               (user-store/store-user :a-user) => :a-stored-user)
+               (user-store/store-user :a-user) => :a-stored-user))
 
-      (fact "the email is always lower-cased"
-            (s/store-user! "UPPER@CASE.COM" "password") => :a-stored-user
-            (provided
+       (fact "the email is always lower-cased"
+             (s/store-user! "UPPER@CASE.COM" "password") => :a-stored-user
+             (provided
                (user-store/new-user "upper@case.com" "password") => :a-user
-               (user-store/store-user :a-user) => :a-stored-user))))
+               (user-store/store-user :a-user) => :a-stored-user)))
 
 (fact "can retrieve user with valid credentials"
       (s/authenticate-and-retrieve-user "email@server.com" "password") => (contains {:login "email@server.com"})

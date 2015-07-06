@@ -3,15 +3,16 @@
             [clauth.client :as client-store]
             [environ.core :refer [env]]
             [schema.core :as schema]
-            [clojure.java.io :refer [resource]]))
+            [clojure.java.io :refer [resource]]
+            [clojure.string :as s]))
 
-(def not-empty? (complement empty?))
+(def not-blank? (complement s/blank?))
 
 (def Client
   "A schema for a client entry"
-  {:name          (schema/both schema/Str (schema/pred not-empty?))
-   :client-id     (schema/both schema/Str (schema/pred not-empty?))
-   :client-secret (schema/both schema/Str (schema/pred not-empty?))
+  {:name          (schema/both schema/Str (schema/pred not-blank?))
+   :client-id     (schema/both schema/Str (schema/pred not-blank?))
+   :client-secret (schema/both schema/Str (schema/pred not-blank?))
    :url           schema/Any})
 
 (defn load-client-credentials-from-string [s]
@@ -36,12 +37,15 @@
 (defn is-not-duplicate-client-id? [clients client-id]
   (not-any? #(= client-id (:client-id %)) clients))
 
+(defn validate-client-entry [client-entry]
+  (schema/validate
+    Client
+    client-entry))
+
 (defn store-clients-from-map [client-credentials-map]
   (let [client-credentials-seq (seq client-credentials-map)]
     (doseq [client-entry client-credentials-seq]
-      (schema/validate
-        Client
-        client-entry)
+      (validate-client-entry client-entry)
       (let [name (:name client-entry)
             client-id (:client-id client-entry)
             client-secret (:client-secret client-entry)]
@@ -51,5 +55,5 @@
                                       :client-secret client-secret
                                       :url           nil}))))))
 
-(defn load-client-credentials-and-store-clients [file-name]
-  (store-clients-from-map (load-client-credentials-from-resource file-name)))
+(defn load-client-credentials-and-store-clients [resource-or-file]
+  (store-clients-from-map (load-client-credentials resource-or-file)))

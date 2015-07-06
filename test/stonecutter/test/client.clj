@@ -2,7 +2,7 @@
   (:require [midje.sweet :refer :all]
             [clauth.client :as client-store]
             [stonecutter.storage :as storage]
-            [stonecutter.client :refer [load-client-credentials-from-resource load-client-credentials-from-file store-clients-from-map load-client-credentials]]))
+            [stonecutter.client :refer :all]))
 
 (background
   (before :facts (storage/setup-in-memory-stores!)
@@ -30,8 +30,22 @@
       (client-store/clients) => '({:client-id "NOPQRSTUVWXYZ", :client-secret "ABCDEFGHIJKLM", :name "Red Party", :url nil}
                                    {:client-id "ABCDEFGHIJKLM", :client-secret "NOPQRSTUVWXYZ", :name "Green Party", :url nil}))
 
+(tabular
+  (fact "will throw exception if user credentials are invalid"
+        (validate-client-entry {:client-id     ?client-id
+                                :name          ?name
+                                :client-secret ?client-secret
+                                :url           nil}) => (throws Exception))
+  ?client-id            ?name           ?client-secret
+  ""                    "valid-name"    "valid-secret"
+  "valid-id"            ""              "valid-secret"
+  "valid-id"            "valid-name"    ""
+  ""                    ""              ""
+  "  "                  "valid-name"    "valid-secret"
+  "\t\t"                "valid-name"    "valid-secret")
+
 (fact "will load and store client-credentials from a resource if provided a resource name"
-      (store-clients-from-map (load-client-credentials "test-client-credentials.yml"))
+      (load-client-credentials-and-store-clients "test-client-credentials.yml")
       (client-store/clients) => '({:client-id "M4DPY7IO5KZ77KRHMXYTACUZEEZEK4FH", :name "Red Resource Party", :client-secret "VZ27BQ5GWLWXVFQQBPGDIPY4QTDEUZNM", :url nil}
                                    {:client-id "ZW76L2MGCVMQBN44VYRE7MS5JOZMUE2Z", :name "Green Resource Party", :client-secret "WUSB7HHQIYEZNIGZ4HT4BSHEEAYCCKV", :url nil}))
 
