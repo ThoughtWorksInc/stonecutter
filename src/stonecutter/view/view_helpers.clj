@@ -1,7 +1,8 @@
 (ns stonecutter.view.view-helpers
   (:require [ring.util.anti-forgery :refer [anti-forgery-field]]
             [net.cgrand.enlive-html :as html]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [stonecutter.translation :as t]))
 
 (defn anti-forgery-snippet []
   (html/html-snippet (anti-forgery-field)))
@@ -44,3 +45,18 @@
         (swap! template-cache #(assoc % path html))
         html))
     (html-resource-with-log path)))
+
+(defn apply-fns [x fns]
+  (reduce #(%2 %1) x fns))
+
+(defn enlive-to-str [nodes]
+  (->> nodes
+       html/emit*
+       (apply str)))
+
+(defn transform-template [context path & transformations]
+  (->
+    (load-template path)
+    (apply-fns transformations)
+    (t/context-translate context)
+    enlive-to-str))

@@ -1,7 +1,8 @@
 (ns stonecutter.translation
   (:require [clj-yaml.core :as yaml]
             [clojure.java.io :refer [resource]]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [traduki.core :as t]))
 
 (defn load-translations-from-string [s]
   (yaml/parse-string s))
@@ -22,3 +23,6 @@
           translation (get-in translation-map [key1 key2])]
       (when-not translation (log/warn (str "No translation found for " translation-key)))
       translation)))
+
+(defn context-translate [enlive-m context]
+  (t/translate (:translator context) enlive-m))

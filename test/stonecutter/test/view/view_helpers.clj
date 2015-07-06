@@ -42,3 +42,18 @@
        (-> page
            remove-work-in-progress 
            (html/select [:p])) => empty?))
+
+(fact "helper function for transforming templates"
+      (let [page-html "<html><body><p class=\"a\"></p></body></html>"
+            file-name "myfile"
+            default-context {:translator identity}]
+        (facts "can transform a page-enlive"
+              (against-background (load-template file-name) => (html/html-snippet page-html))
+              (fact "if there are no transformations then template is untouched"
+                    (transform-template default-context file-name) => page-html)
+              (fact "applies each supplied transformation in turn"
+                    (transform-template default-context file-name
+                                        (fn [m] (html/at m [:.a] (html/content "Hello")))
+                                        (fn [m] (html/at m [:p] (html/set-attr :class "b")))
+                                        )
+                    => "<html><body><p class=\"b\">Hello</p></body></html>"))))
