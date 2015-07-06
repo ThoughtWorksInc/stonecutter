@@ -17,10 +17,11 @@
             [stonecutter.translation :as t]
             [stonecutter.middleware :as m]))
 
+(def default-context {:translator (t/translations-fn t/translation-map)})
+
 (defn not-found [request]
-  (let [context {:translator (t/translations-fn t/translation-map)}]
-    (-> (html-response (error/not-found-error context))
-        (r/status 404))))
+  (-> (html-response (error/not-found-error default-context))
+      (r/status 404)))
 
 (def site-handlers
   {:home                   user/home
@@ -43,9 +44,14 @@
         (api request)
         (site request)))))
 
+(defn handle-anti-forgery-error [req]
+  (log/warn "ANTI_FORGERY_ERROR - headers: " (:headers req))
+  (html-response (error/internal-server-error default-context)))
+
 (def wrap-defaults-config
   (-> site-defaults
-      (assoc-in [:session :cookie-attrs :max-age] 3600)))
+      (assoc-in [:session :cookie-attrs :max-age] 3600)
+      (assoc-in [:security :anti-forgery] {:error-handler handle-anti-forgery-error})))
 
 (defn create-site-app [dev-mode?]
   (-> (scenic-handler routes site-handlers not-found)
@@ -58,10 +64,10 @@
       (wrap-defaults api-defaults)
       (m/wrap-error-handling dev-mode?)))                   ;; TODO create json error handler
 
-(defn create-app [dev-mode?]
+(defn create-app [& {dev-mode? :dev-mode? }]
   (splitter (create-site-app dev-mode?) (create-api-app dev-mode?)))
 
-(def app (create-app false))
+(def app (create-app :dev-mode? false))
 
 (def port (Integer. (get env :port "3000")))
 
@@ -84,4 +90,4 @@
     (log/info (str "TEST USER DETAILS:" user))
     (log/info (str "TEST CLIENT DETAILS:" client-details))))
 
-(def lein-app (create-app true))
+(def lein-app (create-app :dev-mode? true))
