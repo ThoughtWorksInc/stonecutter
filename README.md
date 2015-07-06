@@ -1,5 +1,7 @@
 # stonecutter
 
+[![Build Status](https://snap-ci.com/ThoughtWorksInc/stonecutter/branch/master/build_image)](https://snap-ci.com/ThoughtWorksInc/stonecutter/branch/master)
+
 A D-CENT project: an easily deployable oauth server for small organisations.
 
 ## Prerequisites
