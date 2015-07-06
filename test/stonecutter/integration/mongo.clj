@@ -30,13 +30,13 @@
 (facts "about storing"
        (let [store (create-mongo-user-store @db)]
          (c/find-maps @db coll) => empty?
-         (s/store! store "userA" {:login "userA" :password "password"}) => {:login "userA" :password "password"}
+         (s/store! store :login {:login "userA" :password "password"}) => {:login "userA" :password "password"}
          (count (c/find-maps @db coll)) => 1
          (c/find-one-as-map @db coll {:login "userA"}) => (contains {:login "userA" :password "password"})))
 
 (facts "about fetching"
        (let [store (create-mongo-user-store @db)]
-         (c/insert @db coll {:login "userA" :password "passwordA"})
+         (c/insert @db coll {:_id "userA" :login "userA" :password "passwordA"})
          (s/fetch store "userA") => {:login "userA" :password "passwordA"}))
 
 (facts "about viewing entries"
@@ -56,8 +56,8 @@
 
 (facts "about revoking a user"
        (let [store (create-mongo-user-store @db)]
-         (c/insert @db coll {:login "userA" :password "passwordA"})
-         (c/insert @db coll {:login "userB" :password "passwordB"})
+         (c/insert @db coll {:_id "userA" :login "userA" :password "passwordA"})
+         (c/insert @db coll {:_id "userB" :login "userB" :password "passwordB"})
          (s/revoke! store "userA")
          (let [records (c/find-maps @db coll)]
            (count records) => 1
@@ -65,7 +65,7 @@
 
 (facts "about creating mongo store from mongo uri"
        (let [store (-> "mongodb://localhost:27017/stonecutter-test" get-mongo-db create-mongo-user-store)]
-         (s/store! store "userA" {:login "userA"})
+         (s/store! store :login {:login "userA"})
          (s/fetch store "userA") => {:login "userA"}))
 
 (fact "check that unique index exists for 'login' field"

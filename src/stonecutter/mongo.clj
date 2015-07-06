@@ -13,14 +13,13 @@
   s/Store
   (fetch [this t]
     (->
-      (mc/find-one-as-map mongo-db coll {:login t})
+      (mc/find-map-by-id mongo-db coll t)
       (dissoc :_id)))
   (revoke! [this k]
-    (mc/remove mongo-db coll {:login k}))
+    (mc/remove-by-id mongo-db coll k))
   (store! [this k item]
-    (->
-      (mc/insert-and-return mongo-db coll item)
-      (dissoc :_id)))
+    (-> (mc/insert-and-return mongo-db coll (assoc item :_id (k item)))
+        (dissoc :_id)))
   (entries [this]
     (->> (mc/find-maps mongo-db coll)
          (map #(dissoc % :_id))))
