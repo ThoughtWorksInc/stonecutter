@@ -57,3 +57,6 @@
 
 (defn load-client-credentials-and-store-clients [resource-or-file]
   (store-clients-from-map (load-client-credentials resource-or-file)))
+
+(defn delete-clients![]
+  (client-store/reset-client-store!))

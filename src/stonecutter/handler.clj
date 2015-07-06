@@ -83,6 +83,7 @@
   (log-config/init-logger!)
   (enable-template-caching!)
   (s/setup-mongo-stores! (get env :mongo-uri "mongodb://localhost:27017/stonecutter"))
+  (client/delete-clients!)
   (client/load-client-credentials-and-store-clients (get env :client-credentials-file-path "client-credentials.yml"))
   (run-jetty app {:port port}))
 
@@ -92,6 +93,7 @@
   (log-config/init-logger!)
   (disable-template-caching!)
   (s/setup-in-memory-stores!)
+  (client/delete-clients!)
   (client/load-client-credentials-and-store-clients (get env :client-credentials-file-path "client-credentials.yml"))
   (let [user (clauth.user/register-user "user@email.com" "password")
         client-details (clauth.client/register-client "MYAPP" "myapp.com")]

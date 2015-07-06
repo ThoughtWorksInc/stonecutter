@@ -44,12 +44,17 @@
   "  "                  "valid-name"    "valid-secret"
   "\t\t"                "valid-name"    "valid-secret")
 
-(fact "will load and store client-credentials from a resource if provided a resource name"
+(fact "will load client credentials and store clients from a resource if provided a resource name"
       (load-client-credentials-and-store-clients "test-client-credentials.yml")
       (client-store/clients) => '({:client-id "M4DPY7IO5KZ77KRHMXYTACUZEEZEK4FH", :name "Red Resource Party", :client-secret "VZ27BQ5GWLWXVFQQBPGDIPY4QTDEUZNM", :url nil}
                                    {:client-id "ZW76L2MGCVMQBN44VYRE7MS5JOZMUE2Z", :name "Green Resource Party", :client-secret "WUSB7HHQIYEZNIGZ4HT4BSHEEAYCCKV", :url nil}))
 
 (fact "will load and store client-credentials from a file if provided a file path"
-      (store-clients-from-map (load-client-credentials "test-var/var/test-client-credentials-file.yml"))
+      (load-client-credentials-and-store-clients "test-var/var/test-client-credentials-file.yml")
       (client-store/clients) => '({:client-id "F7ZFMTRJLS5FF6DTWMBCGWA7CXEQTH24", :name "Blue File Party", :client-secret "ISLS5HVYP65QE6OROI43FLHFFOBGISOG", :url nil}
                                    {:client-id "7I6DTMPXGESEJ2AEEWVGZF2B5AOFGK6D", :name "Yellow File Party", :client-secret "ABH7ZKGVMKQQA3OITBOXPBVSZMMD5NGS", :url nil}))
+
+(fact "can drop the collection of clients"
+      (load-client-credentials-and-store-clients "test-client-credentials.yml")
+      (delete-clients!)
+      (client-store/clients) => [])
