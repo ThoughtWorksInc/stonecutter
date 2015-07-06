@@ -2,7 +2,7 @@
   (:require [clojure.tools.logging :as log]
             [stonecutter.view.error :as error]
             [ring.util.response :as r]
-            [stonecutter.utils :as u]
+            [stonecutter.helper :as h]
             [stonecutter.translation :as t]))
 
 (defn wrap-error-handling [handler dev-mode?]
@@ -13,7 +13,7 @@
           (handler request)
           (catch Exception e
             (log/error e)
-            (-> (u/html-response (error/internal-server-error context)) (r/status 500))))))
+            (-> (h/html-response (error/internal-server-error context)) (r/status 500))))))
     handler))
 
 (defn wrap-translator [handler]
