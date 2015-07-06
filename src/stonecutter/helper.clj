@@ -1,4 +1,4 @@
-(ns stonecutter.utils
+(ns stonecutter.helper
   (:require [ring.util.response :as r]))
 
 (defn html-response [s]

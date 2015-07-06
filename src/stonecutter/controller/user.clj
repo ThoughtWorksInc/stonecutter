@@ -8,11 +8,11 @@
             [stonecutter.validation :as v]
             [stonecutter.storage :as s]
             [stonecutter.view.register :as register]
-            [stonecutter.utils :refer :all]
             [stonecutter.view.profile-created :as profile-created]
-            [stonecutter.view.profile :as profile]))
+            [stonecutter.view.profile :as profile]
+            [stonecutter.helper :refer :all]))
 
-(declare redirect-to-authorisation redirect-to-profile redirect-to-profile-created)
+(declare redirect-to-profile redirect-to-profile-created)
 
 (defn redirect-to-authorisation [return-to user client-id]
   (if-let [client (client/fetch-client client-id)]

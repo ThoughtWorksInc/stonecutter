@@ -8,9 +8,10 @@
             [stonecutter.view.error :as error]
             [stonecutter.view.view-helpers :refer [enable-template-caching! disable-template-caching!]]
             [stonecutter.storage :as s]
-            [stonecutter.utils :refer [html-response]]
+            [stonecutter.helper :refer :all]
             [stonecutter.routes :refer [routes path]]
             [stonecutter.logging :as log-config]
+            [stonecutter.client :as client]
             [stonecutter.controller.user :as user]
             [stonecutter.controller.oauth :as oauth]
             [stonecutter.translation :as t]
@@ -68,6 +69,7 @@
   (log-config/init-logger!)
   (enable-template-caching!)
   (s/setup-mongo-stores! (get env :mongo-uri "mongodb://localhost:27017/stonecutter"))
+  (client/load-client-credentials-and-store-clients (get env :client-credentials-file-path "client-credentials.yml"))
   (run-jetty app {:port port}))
 
 (defn lein-ring-init
@@ -76,6 +78,7 @@
   (log-config/init-logger!)
   (disable-template-caching!)
   (s/setup-in-memory-stores!)
+  (client/load-client-credentials-and-store-clients (get env :client-credentials-file-path "client-credentials.yml"))
   (let [user (clauth.user/register-user "user@email.com" "password")
         client-details (clauth.client/register-client "MYAPP" "myapp.com")]
     (log/info (str "TEST USER DETAILS:" user))

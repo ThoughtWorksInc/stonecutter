@@ -14,7 +14,9 @@
                            [environ "1.0.0"]
                            [com.novemberain/monger "2.0.0"]
                            [org.clojure/tools.logging "0.3.1"]
-                           [clj-logging-config "1.9.12"]]
+                           [clj-logging-config "1.9.12"]
+                           [crypto-random "1.1.0"]
+                           [prismatic/schema "0.4.3"]]
             :main stonecutter.handler
             :aot :all
             :profiles {:dev {:dependencies   [[ring-mock "0.1.5"]
@@ -22,12 +24,12 @@
                                               [prone "0.8.2"]
                                               [kerodon "0.6.1"]]
                              :plugins        [[lein-ring "0.9.6"]
-                                              [lein-midje "3.1.3"]
-                                              [gencred "0.1.0-SNAPSHOT"]]
+                                              [lein-midje "3.1.3"]]
                              :ring {:handler stonecutter.handler/lein-app
                                     :init    stonecutter.handler/lein-ring-init
                                     :stacktrace-middleware prone.middleware/wrap-exceptions}
                              :resource-paths ["resources" "test-resources"]
                              :aliases        {"unit"        ["midje" "stonecutter.test.*"]
                                               "integration" ["midje" "stonecutter.integration.*"]
-                                              "auto-unit"   ["midje" ":autotest" "test/stonecutter/test/" "src/"]}}})
+                                              "auto-unit"   ["midje" ":autotest" "test/stonecutter/test/" "src/"]
+                                              "gencred"     ["run" "-m" "stonecutter.util.gencred"]}}})
