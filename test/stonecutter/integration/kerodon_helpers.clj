@@ -1,7 +1,8 @@
 (ns stonecutter.integration.kerodon-helpers
   (:require [midje.sweet :refer :all]
             [cheshire.core :as json]
-            [net.cgrand.enlive-html :as html]))
+            [net.cgrand.enlive-html :as html]
+            [kerodon.core :as k]))
 
 (defn page-title [state]
   (-> state :enlive (html/select [:title]) first html/text))
@@ -14,6 +15,11 @@
 (defn page-uri-is [state uri]
   (fact {:midje/name "Checking page uri:"}
         (-> state :request :uri) => uri)
+  state)
+
+(defn response-state-is [state status]
+  (fact {:midje/name "Checking response status"}
+        (-> state :response :status) => status)
   state)
 
 (defn selector-has-content [state selector content]
@@ -45,3 +51,8 @@
                                 (json/parse-string keyword))]
           (:user-email response-body) => email)) 
   state)
+
+;; FIXME can't reuse the body because it's a buffered input stream
+(defn replay-last-request [state]
+  (let [request (-> state :request)]
+    (k/visit state (:uri request) :body (:body state) :headers (:headers state) :request-method :post)))

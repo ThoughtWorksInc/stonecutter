@@ -50,6 +50,9 @@ profile-created:
   intro: Your Profile Card can be used to sign in to supported applications like
   action-button: Next
 
+error-403:
+  page-intro: "CSRF Forbidden Response.  Click the link below to try again."
+
 error-404:
   title: Error-404
   page-header: "Sorry the page you requested can't be found."

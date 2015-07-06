@@ -27,6 +27,10 @@
   (-> (html-response (error/internal-server-error default-context))
       (r/status 500)))
 
+(defn csrf-err-handler [req]
+  (-> (html-response (error/csrf-error default-context))
+      (r/status 403)))
+
 (def site-handlers
   {:home                   user/home
    :show-registration-form user/show-registration-form
@@ -50,7 +54,7 @@
 
 (defn handle-anti-forgery-error [req]
   (log/warn "ANTI_FORGERY_ERROR - headers: " (:headers req))
-  (err-handler req))
+  (csrf-err-handler req))
 
 (def wrap-defaults-config
   (-> site-defaults

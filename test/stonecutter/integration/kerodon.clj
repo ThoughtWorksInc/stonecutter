@@ -21,6 +21,11 @@
   (prn (-> state :enlive))
   state)
 
+(defn print-request [state]
+  (prn (-> state :request))
+  state
+  )
+
 (defn register [state email]
   (-> state
       (k/visit "/register")
@@ -29,10 +34,10 @@
       (k/fill-in :.func--confirm-password__input "valid-password")
       (k/press :.func--create-profile__button)))
 
-(defn sign-in [state]
+(defn sign-in [state email]
   (-> state
       (k/visit "/sign-in")
-      (k/fill-in :.func--email__input "email@server.com")
+      (k/fill-in :.func--email__input email)
       (k/fill-in :.func--password__input "valid-password")
       (k/press :.func--sign-in__button)))
 
@@ -67,14 +72,14 @@
 
 (facts "User can sign in"
        (-> (k/session h/app)
-           sign-in
+           (sign-in "email@server.com")
            (k/follow-redirect)
            (kh/page-uri-is "/profile")
            (selector-includes-content [:body] "email@server.com")))
 
 (facts "User can sign out"
        (-> (k/session h/app)
-           sign-in
+           (sign-in "email@server.com")
            (k/visit "/profile")
            (k/follow :.func--sign-out__link)
            (k/follow-redirect)
@@ -84,7 +89,7 @@
 
 (facts "Home url redirects to profile page if user is signed in"
        (-> (k/session h/app)
-           sign-in
+           (sign-in "email@server.com")
            (k/visit "/")
            (k/follow-redirect)
            (kh/page-uri-is "/profile")))
@@ -110,3 +115,10 @@
       (fact "if dev mode is enabled then error middleware isn't invoked"
             (-> (k/session (h/create-app :dev-mode? true))
                 (k/visit "/register")) => (throws Exception)))
+
+(future-fact "Replaying the same post will generate a 403 from the csrf handling"
+      (-> (k/session h/app)
+          (register "csrf@email.com")
+          (sign-in "csrf@email.com")
+          (kh/replay-last-request)
+          (kh/response-state-is 403)))
