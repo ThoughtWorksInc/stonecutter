@@ -4,7 +4,8 @@
             [stonecutter.routes :as r]
             [stonecutter.view.sign-in :refer [sign-in-form]]
             [stonecutter.test.view.test-helpers :refer [create-request]]
-            [stonecutter.translation :as t]))
+            [stonecutter.translation :as t]
+            [stonecutter.logging :as l]))
 
 (def no-untranslated-strings 
   (let [untranslated-string-regex #"(?!!DOCTYPE|!IEMobile)!\w+"]
@@ -27,7 +28,7 @@
         (-> page (html/select [:form]) first :attrs :action) => (r/path :sign-in)))
 
 (fact "there are no missing translations"
-      (stonecutter.logging/init-logger!)
+      (l/init-logger!)
       (let [translator (t/translations-fn t/translation-map)
             page (-> (create-request translator nil {}) sign-in-form)]
         page => no-untranslated-strings))

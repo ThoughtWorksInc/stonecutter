@@ -23,6 +23,10 @@
   (-> (html-response (error/not-found-error default-context))
       (r/status 404)))
 
+(defn err-handler [request]
+  (-> (html-response (error/internal-server-error default-context))
+      (r/status 500)))
+
 (def site-handlers
   {:home                   user/home
    :show-registration-form user/show-registration-form
@@ -46,7 +50,7 @@
 
 (defn handle-anti-forgery-error [req]
   (log/warn "ANTI_FORGERY_ERROR - headers: " (:headers req))
-  (html-response (error/internal-server-error default-context)))
+  (err-handler req))
 
 (def wrap-defaults-config
   (-> site-defaults
@@ -57,14 +61,14 @@
   (-> (scenic-handler routes site-handlers not-found)
       (wrap-defaults wrap-defaults-config)
       m/wrap-translator
-      (m/wrap-error-handling dev-mode?)))
+      (m/wrap-error-handling err-handler dev-mode?)))
 
 (defn create-api-app [dev-mode?]
   (-> (scenic-handler routes api-handlers not-found)
       (wrap-defaults api-defaults)
-      (m/wrap-error-handling dev-mode?)))                   ;; TODO create json error handler
+      (m/wrap-error-handling err-handler dev-mode?)))                   ;; TODO create json error handler
 
-(defn create-app [& {dev-mode? :dev-mode? }]
+(defn create-app [& {dev-mode? :dev-mode?}]
   (splitter (create-site-app dev-mode?) (create-api-app dev-mode?)))
 
 (def app (create-app :dev-mode? false))
