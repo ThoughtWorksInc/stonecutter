@@ -2,9 +2,10 @@
   (:require
     [midje.sweet :refer :all]
     [clauth.store :as s]
+    [clauth.client :as client]
     [monger.core :as m]
     [monger.collection :as c]
-    [stonecutter.mongo :refer [create-mongo-user-store get-mongo-db]]))
+    [stonecutter.mongo :refer [create-client-store create-mongo-user-store get-mongo-db]]))
 
 (def test-db "stonecutter-test")
 (def coll "users")
@@ -34,10 +35,17 @@
          (count (c/find-maps @db coll)) => 1
          (c/find-one-as-map @db coll {:login "userA"}) => (contains {:login "userA" :password "password"})))
 
-(facts "about fetching"
-       (let [store (create-mongo-user-store @db)]
-         (c/insert @db coll {:_id "userA" :login "userA" :password "passwordA"})
-         (s/fetch store "userA") => {:login "userA" :password "passwordA"}))
+(facts "about fetching users"
+       (let [store (create-mongo-user-store @db)
+             user {:login "userA" :password "passwordA"}]
+         (s/store! store :login user)
+         (s/fetch store "userA") => user))
+
+(facts "about fetching clients"
+       (let [store (create-client-store @db)
+             client {:client-id "ABCDEFGHIJKLM", :name "Green Party", :client-secret "NOPQRSTUVWXYZ", :url nil}]
+         (s/store! store :client-id client)
+         (s/fetch store "ABCDEFGHIJKLM") => client))
 
 (facts "about viewing entries"
        (let [store (create-mongo-user-store @db)]
