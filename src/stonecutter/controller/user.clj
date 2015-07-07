@@ -10,6 +10,7 @@
             [stonecutter.view.register :as register]
             [stonecutter.view.profile-created :as profile-created]
             [stonecutter.view.profile :as profile]
+            [stonecutter.view.authorise :as authorise]
             [stonecutter.helper :refer :all]))
 
 (declare redirect-to-profile redirect-to-profile-created)
@@ -86,6 +87,9 @@
 
 (defn show-profile-created [request]
   (html-response (profile-created/profile-created request)))
+
+(defn show-authorise-form [request]
+  (html-response (authorise/authorise-form request)))
 
 (defn home [request]
   (if (signed-in? request)

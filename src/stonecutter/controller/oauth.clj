@@ -1,11 +1,18 @@
 (ns stonecutter.controller.oauth
   (:require [clauth.endpoints :as ep]
             [cheshire.core :as json]
+            [ring.util.response :as r]
             [stonecutter.routes :refer [path]]
-            [stonecutter.storage :as s]))
+            [stonecutter.storage :as s]
+            [stonecutter.controller.user :as user]
+            [stonecutter.helper :refer :all]))
 
-(def auth-handler (ep/authorization-handler {:auto-approver (constantly true)
-                                             :user-session-required-redirect (path :show-sign-in-form)}))
+(defn authorisation-form []
+  (fn [req] (user/show-authorise-form req)))
+
+(def auth-handler (ep/authorization-handler {:auto-approver                  (constantly false)
+                                             :user-session-required-redirect (path :show-sign-in-form)
+                                             :authorization-form             (authorisation-form)}))
 
 (def token-handler (ep/token-handler))
 

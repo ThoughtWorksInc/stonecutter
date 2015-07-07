@@ -79,7 +79,7 @@
   (before :contents (s/reset-mongo-stores! "mongodb://localhost:27017/stonecutter-test")
           :after (s/reset-mongo-stores! "mongodb://localhost:27017/stonecutter-test")))
 
-(facts "user can sign in through client"
+(future-facts "user can sign in through client"
               (let [{:keys [client-id client-secret]} (setup)]
                 (-> (k/session h/app)
                     (browser-sends-authorisation-request-from-client-redirect client-id)
@@ -97,7 +97,7 @@
                     (kh/response-has-access-token)
                     (kh/response-has-user-email email))))
 
-(facts "no access token will be issued with invalid credentials"
+(future-facts "no access token will be issued with invalid credentials"
        (facts "user cannot sign in with invalid client secret"
               (let [{:keys [client-id invalid-client-secret]} (setup)]
                 (-> (k/session h/app)

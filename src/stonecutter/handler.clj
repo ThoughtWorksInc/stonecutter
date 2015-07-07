@@ -5,6 +5,7 @@
             [environ.core :refer [env]]
             [scenic.routes :refer [scenic-handler]]
             [clojure.tools.logging :as log]
+            [clauth.endpoints :as ep]
             [stonecutter.view.error :as error]
             [stonecutter.view.view-helpers :refer [enable-template-caching! disable-template-caching!]]
             [stonecutter.storage :as s]
@@ -36,6 +37,7 @@
    :show-registration-form user/show-registration-form
    :register-user          user/register-user
    :show-sign-in-form      user/show-sign-in-form
+   :show-authorise-form    user/show-authorise-form
    :sign-in                user/sign-in
    :sign-out               user/sign-out
    :show-profile           user/show-profile

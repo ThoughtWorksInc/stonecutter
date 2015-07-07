@@ -8,7 +8,6 @@
   (html/at enlive-m
            [:.clj--profile-created-next__button] (html/set-attr :href (r/path :show-profile))))
 
-
 (defn profile-created [request]
   (let [context (:context request)
         translator (:translator context)]
