@@ -1,6 +1,7 @@
 (ns stonecutter.test.view.profile-created
   (:require [midje.sweet :refer :all]
             [net.cgrand.enlive-html :as html]
+            [stonecutter.routes :as r]
             [stonecutter.test.view.test-helpers :refer [create-request]]
             [stonecutter.view.profile-created :refer [profile-created]]
             [stonecutter.translation :as t]))
@@ -24,3 +25,9 @@
       (let [translator (t/translations-fn t/translation-map)
             page (-> (create-request translator nil {}) profile-created)]
         page => no-untranslated-strings))
+
+(fact "next button should go to correct endpoint"
+      (let [page (-> (create-request {} nil {})
+                     profile-created
+                     html/html-snippet)]
+        (-> page (html/select [:.func--profile-created-next__button]) first :attrs :href) => (r/path :show-profile)))
