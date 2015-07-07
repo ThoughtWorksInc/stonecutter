@@ -20,10 +20,16 @@ navigate to the ops/ directory of the project and run:
 
 When the VM has started, access the virtual machine by running:
 
-	vagrant ssh
+    vagrant ssh
 
-The source folder will be located at /var/stonecutter
+The source folder will be located at `/var/stonecutter`
 
+After initial setup you will need to run:
+
+    cd /var/stonecutter
+    npm install
+
+This will take a while (upwards of 10 minutes).
 
 [Vagrant]: https://www.vagrantup.com
 
