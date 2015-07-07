@@ -4,10 +4,11 @@
             [stonecutter.handler :as h]
             [stonecutter.storage :as s]
             [ring.mock.request :as r]
+            [clojure.string :as str]  
             [clauth.client :as client]
+            [clauth.token :as token]
             [clauth.user :as user]
-            [stonecutter.integration.kerodon-helpers :as kh]
-            [clojure.string :as str]))
+            [stonecutter.integration.kerodon-helpers :as kh]))
 
 ;; CLIENT => AUTH    /authorisation?client-id=123&response_type=code&redirect_uri=callback-url
 ;;   USER LOGIN (Auth Server)
@@ -31,24 +32,11 @@
 ;<- Auth/Client conversation
 ; CLIENT:   'You are logged in'
 
-(s/setup-in-memory-stores!)
-
-(def client (client/register-client "myclient" "myclient.com"))
-(def client-id (:client-id client))
-(def client-secret (:client-secret client))
-(def invalid-client-secret (str/reverse client-secret))
-
-(def user (user/register-user "email@server.com" "valid-password"))
-
 (defn browser-sends-authorisation-request-from-client-redirect [state client-id]
   (-> state
       (k/visit "/authorisation" :headers {"accept" "text/html"} :params {:client_id     client-id
                                                                          :response_type "code"
                                                                          :redirect_uri  "myclient.com/callback"})))
-
-(defn debug [state]
-  (prn "IN DEBUG" state)
-  state)
 
 (defn get-auth-code [state]
   (let [query-string (-> state
@@ -59,8 +47,7 @@
         auth-code (-> {:query-string query-string}
                       (ring.middleware.params/params-request)
                       (get-in [:params "code"]))]
-    auth-code
-    ))
+    auth-code))
 
 (defn client-sends-http-token-request [state client-id client-secret]
   (let [auth-code (get-auth-code state)]
@@ -74,49 +61,69 @@
                           :client_id     client-id
                           :client_secret client-secret}))))
 
+(def email "email@server.com")
+(def password "valid-password")
+
+(defn setup [] 
+  (s/reset-mongo-stores! "mongodb://localhost:27017/stonecutter-test")
+  (let [client (client/register-client "myclient" "myclient.com") 
+        client-id (:client-id client)
+        client-secret (:client-secret client) 
+        invalid-client-secret (str/reverse client-secret)
+        user (user/register-user email password)] 
+    {:client-id client-id
+     :client-secret client-secret
+     :invalid-client-secret invalid-client-secret}))
+
+(background
+  (before :contents (s/reset-mongo-stores! "mongodb://localhost:27017/stonecutter-test")
+          :after (s/reset-mongo-stores! "mongodb://localhost:27017/stonecutter-test")))
 
 (facts "user can sign in through client"
-       (-> (k/session h/app)
-           (browser-sends-authorisation-request-from-client-redirect client-id)
-           (k/follow-redirect)
-           ;; login
-           (kh/page-uri-is "/sign-in")
-           (k/fill-in :.func--email__input "email@server.com")
-           (k/fill-in :.func--password__input "valid-password")
-           (k/press :.func--sign-in__button)
-           ;; check redirect - should have auth_code
-           (k/follow-redirect)
-           (kh/location-contains "callback?code=")
-           (client-sends-http-token-request client-id client-secret)
-           ;; return 200 with new access_token
-           (kh/response-has-access-token)
-           (kh/response-has-user-email "email@server.com")))
+              (let [{:keys [client-id client-secret]} (setup)]
+                (-> (k/session h/app)
+                    (browser-sends-authorisation-request-from-client-redirect client-id)
+                    (k/follow-redirect)
+                    ;; login
+                    (kh/page-uri-is "/sign-in")
+                    (k/fill-in :.func--email__input email)
+                    (k/fill-in :.func--password__input password)
+                    (k/press :.func--sign-in__button)
+                    ;; check redirect - should have auth_code
+                    (k/follow-redirect)
+                    (kh/location-contains "callback?code=")
+                    (client-sends-http-token-request client-id client-secret)
+                    ;; return 200 with new access_token
+                    (kh/response-has-access-token)
+                    (kh/response-has-user-email email))))
 
 (facts "no access token will be issued with invalid credentials"
        (facts "user cannot sign in with invalid client secret"
-              (-> (k/session h/app)
-                  (browser-sends-authorisation-request-from-client-redirect client-id)
-                  (k/follow-redirect)
-                  ;; login
-                  (kh/page-uri-is "/sign-in")
-                  (k/fill-in :.func--email__input "email@server.com")
-                  (k/fill-in :.func--password__input "valid-password")
-                  (k/press :.func--sign-in__button)
-                  ;; check redirect - should have auth_code
-                  (k/follow-redirect)
-                  (kh/location-contains "callback?code=")
-                  (client-sends-http-token-request client-id invalid-client-secret)
-                  :response
-                  :status) => 400)
+              (let [{:keys [client-id invalid-client-secret]} (setup)]
+                (-> (k/session h/app)
+                    (browser-sends-authorisation-request-from-client-redirect client-id)
+                    (k/follow-redirect)
+                    ;; login
+                    (kh/page-uri-is "/sign-in")
+                    (k/fill-in :.func--email__input email)
+                    (k/fill-in :.func--password__input password)
+                    (k/press :.func--sign-in__button)
+                    ;; check redirect - should have auth_code
+                    (k/follow-redirect)
+                    (kh/location-contains "callback?code=")
+                    (client-sends-http-token-request client-id invalid-client-secret)
+                    :response
+                    :status)) => 400)
 
        (facts "user cannot sign in with invalid password"
-              (-> (k/session h/app)
-                  (browser-sends-authorisation-request-from-client-redirect client-id)
-                  (k/follow-redirect)
-                  ;; login
-                  (kh/page-uri-is "/sign-in")
-                  (k/fill-in :.func--email__input "email@server.com")
-                  (k/fill-in :.func--password__input "invalid-password")
-                  (k/press :.func--sign-in__button)
-                  :response
-                  :status) => 400))
+              (let [{:keys [client-id]} (setup)]
+                (-> (k/session h/app)
+                    (browser-sends-authorisation-request-from-client-redirect client-id)
+                    (k/follow-redirect)
+                    ;; login
+                    (kh/page-uri-is "/sign-in")
+                    (k/fill-in :.func--email__input email)
+                    (k/fill-in :.func--password__input "invalid-password")
+                    (k/press :.func--sign-in__button)
+                    :response
+                    :status)) => 400))

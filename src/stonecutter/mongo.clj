@@ -12,11 +12,12 @@
 (defrecord MongoStore [mongo-db coll]
   s/Store
   (fetch [this t]
-    (->
-      (mc/find-map-by-id mongo-db coll t)
-      (dissoc :_id)))
-  (revoke! [this k]
-    (mc/remove-by-id mongo-db coll k))
+    (when t
+      (-> (mc/find-map-by-id mongo-db coll t)
+          (dissoc :_id))))
+  (revoke! [this t]
+    (when t
+      (mc/remove-by-id mongo-db coll t)))
   (store! [this k item]
     (-> (mc/insert-and-return mongo-db coll (assoc item :_id (k item)))
         (dissoc :_id)))

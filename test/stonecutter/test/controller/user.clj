@@ -50,8 +50,6 @@
           (client/fetch-client "client-id") => ...client...
           (token/create-token ...client... ...user...) => {:token ...token...})))
 
-(defn p [v] (prn v) v)
-
 (fact "if user logged out, access token and user email are removed from session"
       (let [return-to-url "/authorisation?client-id=whatever"]
         (-> (create-request :post "/sign-in" sign-in-user-params)

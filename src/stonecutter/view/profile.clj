@@ -13,8 +13,6 @@
   (html/at enlive-m 
            [:.clj--sign-out__link] (html/set-attr :href (r/path :sign-out))))
 
-(defn pri [v] (prn v) v)
-
 (defn profile [request]
   (let [context (:context request)
         translator (:translator context)]

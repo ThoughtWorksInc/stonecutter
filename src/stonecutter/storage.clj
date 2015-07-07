@@ -4,11 +4,24 @@
             [clauth.client :as client-store]
             [clauth.auth-code :as auth-code-store]
             [clauth.store :as store]
-            [stonecutter.mongo :as m]
-            [clojure.string :as s]))
+            [clojure.string :as s]  
+            [clojure.tools.logging :as log]
+            [stonecutter.mongo :as m]))
 
 (defn setup-mongo-stores! [mongo-uri]
   (let [db (m/get-mongo-db mongo-uri)]
+    (swap! user-store/user-store (constantly (m/create-mongo-user-store db)))
+    (swap! token-store/token-store (constantly (m/create-token-store db)))
+    (swap! auth-code-store/auth-code-store (constantly (m/create-auth-code-store db)))
+    (swap! client-store/client-store (constantly (m/create-client-store db)))))
+
+(defn reset-mongo-stores! [mongo-uri]
+  (log/info "Resetting mongo stores")
+  (let [db (m/get-mongo-db mongo-uri)]
+    (store/reset-store! @user-store/user-store)
+    (store/reset-store! @token-store/token-store)
+    (store/reset-store! @auth-code-store/auth-code-store)
+    (store/reset-store! @client-store/client-store)
     (swap! user-store/user-store (constantly (m/create-mongo-user-store db)))
     (swap! token-store/token-store (constantly (m/create-token-store db)))
     (swap! auth-code-store/auth-code-store (constantly (m/create-auth-code-store db)))

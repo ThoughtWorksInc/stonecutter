@@ -2,7 +2,6 @@
 # vi: set ft=ruby :
 
 VAGRANTFILE_API_VERSION = "2"
-digital_ocean_memory = 1024
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 

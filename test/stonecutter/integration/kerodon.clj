@@ -23,8 +23,7 @@
 
 (defn print-request [state]
   (prn (-> state :request))
-  state
-  )
+  state)
 
 (defn register [state email]
   (-> state

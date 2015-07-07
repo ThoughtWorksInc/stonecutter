@@ -58,8 +58,6 @@
 (defn set-form-action [enlive-m]
   (html/at enlive-m [:form] (html/set-attr :action (r/path :register-user))))
 
-(defn p [v] (prn v) v)
-
 (defn registration-form [request]
   (let [context (:context request)
         err (:errors context)
