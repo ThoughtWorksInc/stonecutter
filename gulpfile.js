@@ -8,7 +8,6 @@ var gulp = require('gulp'),
     minifyCSS = require('gulp-minify-css'),
     imagemin = require('gulp-imagemin'),
     browsersync = require('browser-sync'),
-    open = require("gulp-open"),
     del = require('del'),
     runSequence = require('run-sequence'),
     nodemon = require('gulp-nodemon'),
@@ -115,15 +114,6 @@ gulp.task('browser-sync', ['nodemon'], function () {
     notify: true,
     open: false
   })
-});
-
-gulp.task('url', function () {
-  var options = {
-    url: 'http://localhost:' + dev_path.port + '/',
-    app: 'safari'
-  };
-  gulp.src('./public/index.html') // An actual file must be specified or gulp will overlook the task.
-      .pipe(open('<%file.path%>', options));
 });
 
 gulp.task('clean-build', function (cb) {
