@@ -6,7 +6,10 @@
             [clauth.token :as token]
             [clauth.user :as user]
             [clauth.auth-code :as auth-code]
+            [clauth.middleware :as mw]
             [cheshire.core :as json]
+            [stonecutter.controller.user :as u]
+            [stonecutter.controller.oauth :as oauth]
             [stonecutter.storage :as storage])
   (:import (org.apache.commons.codec.binary Base64)))
 
@@ -31,27 +34,43 @@
                (-> response (get-in [:session :return-to])) => (format "/authorisation?client_id=%s&response_type=code&redirect_uri=callback" (:client-id client-details))
                (-> response (get-in [:session :client-id])) => (:client-id client-details)))
 
-       (fact "valid request redirects to callback with auth_code when there is an existing user session"
-             (let [user (user/register-user "user" "password")
-                   client-details (client/register-client "MYAPP" "myapp.com") ; NB this saves into the client store
-                   access-token (token/create-token client-details user) ; NB this saves into the token store
-                   request (-> (r/request :get "/authorisation")
-                               (assoc :params {:client_id (:client-id client-details) :response_type "code" :redirect_uri "callback" :access-token (:token access-token)})
-                               (r/header "accept" "text/html")
-                               (assoc-in [:session :access_token] (:token access-token)))
-                   response (oauth/authorise request)]
-               (:status response) => 302
-               (get-in response [:headers "Location"]) => (contains "callback?code=")
-               (get-in response [:session :access_token]) => (:token access-token)))
-
-       (fact "user-email and access_token in session stay in session if user is logged in"
+       (future-fact "valid request goes to authorisation page with auth_code and email when there is an existing user session"
              (let [user-email "email@user.com"
                    user (user/register-user user-email "password")
                    client-details (client/register-client "MYAPP" "myapp.com") ; NB this saves into the client store
                    access-token (token/create-token client-details user) ; NB this saves into the token store
                    request (-> (r/request :get "/authorisation")
-                               (assoc :params {:client_id (:client-id client-details) :response_type "code" :redirect_uri "callback" :access-token (:token access-token)})
+                               (assoc :params {:client_id (:client-id client-details) :response_type "code" :redirect_uri "callback"})
                                (r/header "accept" "text/html")
+                               (assoc-in [:session :access_token] (:token access-token))
+                               (assoc-in [:session :user :email] user-email)
+                               (assoc-in [:context :translator] {}))
+                   response (oauth/authorise request)]
+               (:status response) => 200
+               (get-in response [:session :access_token]) => (:token access-token)
+               (get response :body) => (contains "Share Profile Card")
+               (get-in response [:session :user :email]) => user-email))
+
+       (fact "posting to authorisation endpoint redirects to callback with auth code"
+             (let [user-email "email@user.com"
+                   user (user/register-user user-email "password")
+                   client-details (client/register-client "MYAPP" "myapp.com")
+                   access-token (token/create-token client-details user)
+                   request (-> (r/request :post "/authorisation")
+                               (assoc :params {:client_id (:client-id client-details) :response_type "code" :redirect_uri "callback"})
+                               (assoc-in [:session :access_token] (:token access-token))
+                               (assoc-in [:session :user :email] user-email))
+                   response (oauth/authorise-client request)]
+               (:status response) => 302
+               (get-in response [:headers "Location"]) => (contains "callback?code=")))
+
+       (fact "user-email and access_token in session stay in session if user is logged in"
+             (let [user-email "email@user.com"
+                   user (user/register-user user-email "password")
+                   client-details (client/register-client "MYAPP" "myapp.com")
+                   access-token (token/create-token client-details user)
+                   request (-> (r/request :post "/authorisation")
+                               (assoc :params {:client_id (:client-id client-details) :response_type "code" :redirect_uri "callback"})
                                (assoc-in [:session :access_token] (:token access-token))
                                (assoc-in [:session :user] user)
                                ;; stale csrf token can cause session to be lost
@@ -61,7 +80,6 @@
                (get-in response [:headers "Location"]) => (contains "callback?code=")
                (get-in response [:session :access_token]) => (:token access-token)
                (get-in response [:session :user]) => user)))
-
 
 (defn encode-client-info [client]
   (format "Basic %s"

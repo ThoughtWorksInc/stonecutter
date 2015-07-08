@@ -42,7 +42,8 @@
    :sign-out               user/sign-out
    :show-profile           user/show-profile
    :show-profile-created   user/show-profile-created
-   :authorise              oauth/authorise})
+   :authorise              oauth/authorise
+   :authorise-client       oauth/authorise-client})
 
 (def api-handlers
   {:validate-token         oauth/validate-token})

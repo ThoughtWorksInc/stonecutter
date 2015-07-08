@@ -48,7 +48,7 @@ profile-created:
   title: Your Profile Card has been created
   page-header: Your Profile Card has been created
   intro: Your Profile Card can be used to sign in to supported applications like
-  action-button: Next
+  action-button: View your profile
 
 authorise:
   title: Authorise

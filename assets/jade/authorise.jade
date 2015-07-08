@@ -40,11 +40,16 @@ block content
           = " "
           | Update your Profile Card
 
-    .authorise-buttons
-      .authorise-buttons__primary
-        a.button.button--full-width.button--primary(href="#{demoAppURL}/authorise-success") Share Profile Card
-      .authorise-buttons__secondary
-        a.button.button--full-width.button--grey(href="#{demoAppURL}/authorise-fail") Cancel
+    form.clj--authorise__form(action="./authorisation", method="post", role="form")
+      input.clj--authorise-client-id__input(type="hidden" name="client_id" value="ASDAD1234")
+      input.clj--authorise-response-type__input(type="hidden" name="response_type" value="code")
+      input.clj--authorise-redirect-uri__input(type="hidden" name="redirect_uri" value="./callback")
+      .authorise-buttons
+        .authorise-buttons__primary
+          button.button.button--full-width.button--primary.func--authorise-share-profile__button(type="submit")
+            span Share Profile Card
+        .authorise-buttons__secondary
+          a.button.button--full-width.button--grey(href="#{demoAppURL}/authorise-fail") Cancel
 
     .authorise-terms
       p

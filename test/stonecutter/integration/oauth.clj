@@ -79,7 +79,9 @@
   (before :contents (s/reset-mongo-stores! "mongodb://localhost:27017/stonecutter-test")
           :after (s/reset-mongo-stores! "mongodb://localhost:27017/stonecutter-test")))
 
-(future-facts "user can sign in through client"
+(defn print-debug [v] (prn v) v)
+
+(facts "user can sign in through client"
               (let [{:keys [client-id client-secret]} (setup)]
                 (-> (k/session h/app)
                     (browser-sends-authorisation-request-from-client-redirect client-id)
@@ -91,13 +93,15 @@
                     (k/press :.func--sign-in__button)
                     ;; check redirect - should have auth_code
                     (k/follow-redirect)
-                    (kh/location-contains "callback?code=")
+                    ;(kh/page-uri-is "/authorisation")
+                    ;(k/press :.func--authorise-share-profile__button)
+                    ;(k/follow-redirect)
                     (client-sends-http-token-request client-id client-secret)
-                    ;; return 200 with new access_token
+                    ; return 200 with new access_token
                     (kh/response-has-access-token)
                     (kh/response-has-user-email email))))
 
-(future-facts "no access token will be issued with invalid credentials"
+(facts "no access token will be issued with invalid credentials"
        (facts "user cannot sign in with invalid client secret"
               (let [{:keys [client-id invalid-client-secret]} (setup)]
                 (-> (k/session h/app)
