@@ -59,6 +59,7 @@
 (def wrap-defaults-config
   (-> site-defaults
       (assoc-in [:session :cookie-attrs :max-age] 3600)
+      (assoc-in [:session :cookie-name] "stonecutter-session")
       (assoc-in [:security :anti-forgery] {:error-handler handle-anti-forgery-error})))
 
 (defn create-site-app [dev-mode?]

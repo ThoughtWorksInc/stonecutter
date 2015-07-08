@@ -44,7 +44,7 @@
                (get-in response [:headers "Location"]) => (contains "callback?code=")
                (get-in response [:session :access_token]) => (:token access-token)))
 
-       (fact "user-email in session stays in session if user is logged in"
+       (fact "user-email and access_token in session stay in session if user is logged in"
              (let [user-email "email@user.com"
                    user (user/register-user user-email "password")
                    client-details (client/register-client "MYAPP" "myapp.com") ; NB this saves into the client store
@@ -53,12 +53,14 @@
                                (assoc :params {:client_id (:client-id client-details) :response_type "code" :redirect_uri "callback" :access-token (:token access-token)})
                                (r/header "accept" "text/html")
                                (assoc-in [:session :access_token] (:token access-token))
-                               (assoc-in [:session :user :email] user-email))
+                               (assoc-in [:session :user] user)
+                               ;; stale csrf token can cause session to be lost
+                               (assoc-in [:session :csrf-token] "staleCSRFtoken"))
                    response (oauth/authorise request)]
                (:status response) => 302
                (get-in response [:headers "Location"]) => (contains "callback?code=")
                (get-in response [:session :access_token]) => (:token access-token)
-               (get-in response [:session :user :email]) => user-email)))
+               (get-in response [:session :user]) => user)))
 
 
 (defn encode-client-info [client]

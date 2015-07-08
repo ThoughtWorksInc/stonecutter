@@ -11,11 +11,13 @@
 
 (defn authorise [request]
   (let [user (get-in request [:session :user])
+        access-token (get-in request [:session :access_token])
         client-id (get-in request [:params :client_id])
         response (auth-handler request)]
     (-> response
         (assoc-in [:session :client-id] client-id)
-        (assoc-in [:session :user] user))))
+        (assoc-in [:session :user] user)
+        (assoc-in [:session :access_token] access-token))))
 
 (defn validate-token [request]
   (let [auth-code (get-in request [:params :code])

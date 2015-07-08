@@ -44,12 +44,11 @@
         (cond (and client-id return-to) (redirect-to-authorisation return-to user client-id)
               client-id (throw (Exception. "Missing return-to value"))
               :default (redirect-to-profile user))
-        (r/status (->> {:credentials :invalid}
-                       (assoc-in request [:context :errors])
-                       sign-in/sign-in-form
-                       html-response)
-                  400))
-      (r/status (->> request sign-in/sign-in-form html-response) 400))))
+        (->> {:credentials :invalid}
+             (assoc-in request [:context :errors])
+             sign-in/sign-in-form
+             html-response))
+      (html-response (sign-in/sign-in-form request)))))
 
 (defn sign-out [request]
   (-> request
@@ -57,19 +56,31 @@
       ep/logout-handler))
 
 (defn redirect-to-profile [user]
-  (assoc (r/redirect (path :show-profile)) :session {:user user}))
+  (assoc (r/redirect (path :show-profile)) :session {:user user
+                                                     :access_token (:token (token/create-token nil user))}))
 
 (defn redirect-to-profile-created [user]
-  (assoc (r/redirect (path :show-profile-created)) :session {:user user}))
+  (assoc (r/redirect (path :show-profile-created)) :session {:user user
+                                                             :access_token (:token (token/create-token nil user))}))
 
 (defn show-registration-form [request]
   (html-response (register/registration-form request)))
 
+(defn signed-in? [request]
+  (let [session (:session request)]
+    (and (:user session) (:access_token session))))
+
+(defn preserve-session [response request]
+  (-> response
+      (assoc :session (:session request))))
+
 (defn show-sign-in-form [request]
-  (html-response (sign-in/sign-in-form request)))
+  (if (signed-in? request)
+    (-> (r/redirect (path :home)) (preserve-session request))
+    (html-response (sign-in/sign-in-form request))))
 
 (defn show-profile [request]
-  (if (get-in request [:session :user])
+  (if (signed-in? request)
     (html-response (profile/profile request))
     (r/redirect (path :sign-in))))
 
@@ -77,6 +88,6 @@
   (html-response (profile-created/profile-created request)))
 
 (defn home [request]
-  (if (get-in request [:session :user])
+  (if (signed-in? request)
     (r/redirect (path :show-profile))
     (r/redirect (path :sign-in))))

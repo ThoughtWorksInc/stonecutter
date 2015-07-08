@@ -126,4 +126,4 @@
                     (k/fill-in :.func--password__input "invalid-password")
                     (k/press :.func--sign-in__button)
                     :response
-                    :status)) => 400))
+                    :body)) => (contains "Invalid email address or password")))

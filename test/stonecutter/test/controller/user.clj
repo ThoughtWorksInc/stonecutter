@@ -26,17 +26,36 @@
 
 (background (before :facts (user-store/reset-user-store!)))
 
-(fact "user can sign in with valid credentials and is redirected to profile, with user added to session"
+(fact "user can sign in with valid credentials and is redirected to profile, with user and access_token added to session"
       (-> (create-request :post "/sign-in" sign-in-user-params)
-          c/sign-in) => (contains {:status 302 :headers {"Location" "/profile"} :session {:user {:email "valid@email.com"}}})
+          c/sign-in) => (contains {:status 302 :headers {"Location" "/profile"}
+                                   :session {:user ...user...
+                                             :access_token ...token...}})
       (provided
-        (s/authenticate-and-retrieve-user "valid@email.com" "password") => {:email "valid@email.com"}))
+        (s/authenticate-and-retrieve-user "valid@email.com" "password") => ...user...
+        (token/create-token nil ...user...) => {:token ...token...}))
 
 (fact "user can register with valid credentials and is redirected to profile-created page, with user added to session"
       (-> (create-request :post "/register" register-user-params)
-          c/register-user) => (contains {:status 302 :headers {"Location" "/profile-created"} :session {:user {:email "valid@email.com"}}})
+          c/register-user) => (contains {:status 302 :headers {"Location" "/profile-created"}
+                                         :session {:user {:email "valid@email.com"}
+                                                   :access_token ...token...}})
       (provided
-        (v/validate-registration register-user-params s/is-duplicate-user?) => {}))
+        (v/validate-registration register-user-params s/is-duplicate-user?) => {}
+        (token/create-token nil {:email "valid@email.com"}) => {:token ...token...}))
+
+(facts "accessing sign-in form"
+       (fact "without user and access_token in session shows the sign-in form"
+             (-> (create-request :get "/sign-in" nil)
+                 c/show-sign-in-form) => (contains {:status 200}))
+
+       (fact "with user and access_token in session redirects to /")
+             (-> (create-request :get "/sign-in" nil)
+                 (assoc-in [:session :user] ...user...)
+                 (assoc-in [:session :access_token] ...token...)
+                 c/show-sign-in-form) => (contains {:status 302 :headers {"Location" "/"}
+                                                    :session {:user ...user...
+                                                              :access_token ...token...}}))
 
 (fact "if user has session client id, then create an access token and add to user session"
       (let [return-to-url "/authorisation?client-id=whatever"]
@@ -81,9 +100,12 @@
           (client/fetch-client "client-id") => nil)))
 
 (facts "about sign-in validation errors"
+       (fact "user cannot sign in with blank password"
+             (-> (create-request :post "/sign-in" {:email "email@credentials.com" :password ""})
+                 c/sign-in) => (contains {:status 200}))
        (fact "user cannot sign in with invalid credentials"
              (-> (create-request :post "/sign-in" {:email "invalid@credentials.com" :password "password"})
-                 c/sign-in) => (contains {:status 400})
+                 c/sign-in) => (contains {:status 200})
              (provided
                (s/authenticate-and-retrieve-user "invalid@credentials.com" "password") => nil))
        (facts "sign-in page is rendered with errors when invalid credentials are used"
