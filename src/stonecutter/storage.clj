@@ -46,7 +46,8 @@
   (-> email
       s/lower-case
       (user-store/new-user password)
-      user-store/store-user))
+      user-store/store-user
+      (dissoc :password)))
 
 (defn authenticate-and-retrieve-user [email password]
   (-> (user-store/authenticate-user email password)

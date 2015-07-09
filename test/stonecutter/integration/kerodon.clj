@@ -57,11 +57,17 @@
            (kh/page-uri-is "/register")
            (kh/selector-has-content [:.clj--registration-email__validation] "Enter a valid email address")))
 
-(facts "Register page redirects to profile-created page when registered"
+(facts "Register page redirects to profile-created page when registered
+       and
+       user is correctly in the session so that email address is displayed on profile card"
        (-> (k/session h/app)
            (register "email@server.com")
            (k/follow-redirect)
-           (kh/page-uri-is "/profile-created")))
+           (kh/page-uri-is "/profile-created")
+
+           (k/visit "/profile")
+           (kh/page-uri-is "/profile")
+           (selector-includes-content [:body] "email@server.com")))
 
 (facts "User is redirected to sign-in page when accessing profile page not signed in"
        (-> (k/session h/app)

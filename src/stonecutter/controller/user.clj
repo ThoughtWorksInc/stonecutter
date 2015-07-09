@@ -27,9 +27,8 @@
         err (v/validate-registration params s/is-duplicate-user?)
         request (assoc-in request [:context :errors] err)]
     (if (empty? err)
-      (do
-        (let [user (s/store-user! email password)]
-          (redirect-to-profile-created {:email (:login user)})))
+      (-> (s/store-user! email password)
+          redirect-to-profile-created)
       (html-response (register/registration-form request)))))
 
 (defn sign-in [request]

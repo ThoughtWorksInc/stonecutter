@@ -9,9 +9,10 @@
             [clauth.user :as user-store]
             [net.cgrand.enlive-html :as html]))
 
-(def sign-in-user-params {:email "valid@email.com" :password "password"})
-(def register-user-params {:email "valid@email.com" :password "password" :confirm-password "password"})
-
+(def email "valid@email.com")
+(def password "password")
+(def sign-in-user-params {:email email :password password})
+(def register-user-params {:email email :password password :confirm-password password})
 
 (defn create-request [method url params]
   (-> (mock/request method url)
@@ -32,17 +33,18 @@
                                    :session {:user ...user...
                                              :access_token ...token...}})
       (provided
-        (s/authenticate-and-retrieve-user "valid@email.com" "password") => ...user...
+        (s/authenticate-and-retrieve-user email password) => ...user...
         (token/create-token nil ...user...) => {:token ...token...}))
 
 (fact "user can register with valid credentials and is redirected to profile-created page, with user added to session"
       (-> (create-request :post "/register" register-user-params)
           c/register-user) => (contains {:status 302 :headers {"Location" "/profile-created"}
-                                         :session {:user {:email "valid@email.com"}
+                                         :session {:user ...user...
                                                    :access_token ...token...}})
       (provided
         (v/validate-registration register-user-params s/is-duplicate-user?) => {}
-        (token/create-token nil {:email "valid@email.com"}) => {:token ...token...}))
+        (s/store-user! email password) => ...user...
+        (token/create-token nil ...user...) => {:token ...token...}))
 
 (facts "accessing sign-in form"
        (fact "without user and access_token in session shows the sign-in form"
@@ -65,7 +67,7 @@
             c/sign-in) => (contains {:status  302 :headers {"Location" return-to-url}
                                     :session {:access_token ...token... :user ...user...}})
         (provided
-          (s/authenticate-and-retrieve-user "valid@email.com" "password") => ...user...
+          (s/authenticate-and-retrieve-user email password) => ...user...
           (client/fetch-client "client-id") => ...client...
           (token/create-token ...client... ...user...) => {:token ...token...})))
 
@@ -78,7 +80,7 @@
             c/sign-out
             :session) => empty?
         (provided
-          (s/authenticate-and-retrieve-user "valid@email.com" "password") => ...user...
+          (s/authenticate-and-retrieve-user email password) => ...user...
           (client/fetch-client "client-id") => ...client...
           (token/create-token ...client... ...user...) => {:token ...token...})))
 
@@ -87,7 +89,7 @@
           (assoc-in [:session :client-id] "client-id")
           c/sign-in) => (throws Exception)
       (provided
-        (s/authenticate-and-retrieve-user "valid@email.com" "password") => {:email "valid@email.com"}))
+        (s/authenticate-and-retrieve-user email password) => ...user...))
 
 (fact "if user has invalid client id, then throws an exception"
       (let [return-to-url "/authorisation?client-id=whatever"]
@@ -96,7 +98,7 @@
             (assoc-in [:session :return-to] return-to-url)
             c/sign-in) => (throws Exception)
         (provided
-          (s/authenticate-and-retrieve-user "valid@email.com" "password") => {:email "valid@email.com"}
+          (s/authenticate-and-retrieve-user email password) => ...user...
           (client/fetch-client "client-id") => nil)))
 
 (facts "about sign-in validation errors"
@@ -128,7 +130,7 @@
             c/register-user
             :status) => 302
         (provided
-          (s/store-user! "valid@email.com" "password") => {:email "valid@email.com"})))
+          (s/store-user! "valid@email.com" "password") => ...user...)))
 
 (fact "email must not be a duplicate"
       (let [html-response (-> (create-request :post "/register" register-user-params)
