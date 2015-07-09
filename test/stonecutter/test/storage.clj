@@ -1,8 +1,20 @@
 (ns stonecutter.test.storage
   (:require [midje.sweet :refer :all]
             [clauth.user :as user-store]
+            [clauth.store :as clauth-store]
             [clauth.auth-code :as auth-code-store]
             [stonecutter.storage :as s]))
+
+(fact "can store, authenticate/retrieve and delete users - in memory store is used here"
+      (s/setup-in-memory-stores!)
+      (s/store-user! "email@server.com" "password") => (contains {:login "email@server.com"
+                                                                  :name nil
+                                                                  :url nil})
+      (s/authenticate-and-retrieve-user "email@server.com" "password") => (contains {:login "email@server.com"
+                                                                                     :name nil
+                                                                                     :url nil})
+      (s/delete-user! "email@server.com") => {}
+      (s/authenticate-and-retrieve-user "email@server.com" "password") => nil)
 
 (facts "about is-duplicate-user?"
        (fact "unique email in not a duplicate"

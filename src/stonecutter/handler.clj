@@ -43,6 +43,7 @@
      :sign-out               user/sign-out
      :show-profile           user/show-profile
      :show-profile-created   user/show-profile-created
+     :delete-account         user/delete-account
      :authorise              oauth/authorise
      :authorise-client       oauth/authorise-client}
     (m/wrap-handlers m/wrap-disable-caching #{:show-sign-in-form :home})

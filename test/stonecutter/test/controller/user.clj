@@ -7,6 +7,7 @@
             [clauth.client :as client]
             [clauth.token :as token]
             [clauth.user :as user-store]
+            [clauth.store :as clauth-store]
             [net.cgrand.enlive-html :as html]))
 
 (def email "valid@email.com")
@@ -143,6 +144,14 @@
             :status) => 302
         (provided
           (s/store-user! "valid@email.com" "password") => ...user...)))
+
+(fact "account can be deleted and user is signed-out"
+      (-> (create-request :get "/delete-account" nil)
+          (assoc-in [:session :user :login] "account_to_be@deleted.com")
+          (assoc-in [:session :access_token] ...token...)
+          c/delete-account) => (contains {:status 302 :headers {"Location" "/sign-out"}})
+      (provided
+        (s/delete-user! "account_to_be@deleted.com") => anything))
 
 (fact "email must not be a duplicate"
       (let [html-response (-> (create-request :post "/register" register-user-params)

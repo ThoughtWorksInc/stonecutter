@@ -57,6 +57,9 @@
       user-store/store-user
       (dissoc :password)))
 
+(defn delete-user! [email]
+  (store/revoke! @user-store/user-store email))
+
 (defn authenticate-and-retrieve-user [email password]
   (-> (user-store/authenticate-user email password)
       (dissoc :password)))

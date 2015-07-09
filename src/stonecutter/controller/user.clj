@@ -59,6 +59,11 @@
       (update-in [:session] dissoc :user)
       ep/logout-handler))
 
+(defn delete-account [request]
+  (let [email (get-in request [:session :user :login])]
+    (s/delete-user! email)
+    (r/redirect (path :sign-out))))
+
 (defn redirect-to-profile [user]
   (assoc (r/redirect (path :show-profile)) :session {:user user
                                                      :access_token (:token (token/create-token nil user))}))

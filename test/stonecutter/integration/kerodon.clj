@@ -122,6 +122,13 @@
            (k/follow-redirect)
            (kh/page-uri-is "/profile")))
 
+(future-facts "User can delete account"
+      (-> (k/session h/app)
+          (register "account_to_be@deleted.com")
+          (k/visit "/delete-account")
+          (kh/page-uri-is "/delete-account")
+          (kh/response-status-is 200)))
+
 (facts "Not found page is shown for unknown url"
        (-> (k/session h/app)
            (k/visit "/wrong-url")
