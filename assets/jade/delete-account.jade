@@ -1,0 +1,35 @@
+extends layout/layout
+
+block vars
+  - bodyClass = ""
+  - pageTitle = "!Delete your account"
+  - pageTitleDataL8n = "content:delete-account/title"
+
+block headerScripts
+
+block headerContent
+  li.tabs__item: a.tabs__link(href="./profile", data-l8n="content:profile/profile-link") !Profile
+  li.tabs__item: a.tabs__link.clj--sign-out__link.func--sign-out__link(href="./sign-out", data-l8n="content:profile/sign-out-link") !Sign out
+
+block content
+  .middle-container
+    +modal('Are you sure you want to delete your account?','content:delete-account/modal-delete-title','clj-wip')
+      +set('modalBody')
+        p(data-l8n="content:delete-account/modal-delete-lede")
+          | If you delete your account all your data will be removed.
+      +set('modalButtons')
+        .modal-buttons__primary
+          form.delete-account.clj-delete-account-form(action="./register",method="post")
+            button.button.button--full-width(type="submit", data-l8n="content:delete-account/modal-delete-ok-button") !Delete account
+        .modal-buttons__secondary
+          a.button.button--full-width.button--secondary(href="./profile", data-l8n="content:delete-account/modal-delete-cancel-button") !Cancel
+
+block footerScripts
+  if staticMode
+    script.
+      var form = document.getElementsByClassName('delete-account')[0];
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var formAction = form.getAttribute('action') + "?";
+        window.location = formAction;
+      });

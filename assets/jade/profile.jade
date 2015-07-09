@@ -24,7 +24,7 @@ mixin authorisedAppItem(appName)
   li.app__item
     .app__title #{appName}
     .app__remove
-      form(action="/unshare-profile-card", method="post")
+      form(action="./unshare-profile-card", method="post")
         // hidden inputs here
         +removeButton() Unshare Card
 
@@ -75,4 +75,4 @@ block content
     .delete-account.clj-wip
       h2(data-l8n="content:profile/delete-title") !Delete your account
       p(data-l8n="content:profile/delete-intro") !Permanently delete your account and Profile Card.
-      a.button.button--secondary(href="#", data-l8n="content:profile/delete-button") !Delete account
+      a.button.button--secondary(href="./delete-account", data-l8n="content:profile/delete-button") !Delete account

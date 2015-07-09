@@ -44,7 +44,7 @@ app.get(signInRoutes, function (req, res) {
   customRender(res, 'sign-in', pageData);
 });
 
-app.get('/register', function (req, res) {
+app.all('/register', function (req, res) {
   customRender(res, 'register', pageData);
 });
 
@@ -60,12 +60,16 @@ app.get('/forgot-password', function (req, res) {
   customRender(res, 'forgot-password', pageData);
 });
 
-app.get('/profile', function (req, res) {
+app.all('/profile', function (req, res) {
   customRender(res, 'profile', pageData);
 });
 
 app.all('/unshare-profile-card', function (req, res) {
   customRender(res, 'unshare-profile-card', pageData);
+});
+
+app.get('/delete-account', function (req, res) {
+  customRender(res, 'delete-account', pageData);
 });
 
 app.get('/sign-out', function (req, res) {
