@@ -24,7 +24,7 @@ mixin authorisedAppItem(appName)
   li.app__item
     .app__title #{appName}
     .app__remove
-      form(action="/remove-app", method="post")
+      form(action="/unshare-profile-card", method="post")
         // hidden inputs here
         +removeButton() Unshare Card
 
