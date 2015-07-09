@@ -31,10 +31,6 @@
      chdir: /var/stonecutter
    command: npm rebuild node-sass
 
-
- - name: install docker.io
-   apt: name="docker.io" state=present
-
  - name: install firefox
    apt: name=firefox state=present
 
