@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title data-l8n="content:unshare/title">Unshare your Profile Card</title>
+    <title data-l8n="content:delete-account/title">Delete your account</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
     <link rel="icon" type="image/png" href="favicon.png">
@@ -24,26 +24,26 @@
       <div class="middle-container">
         <div class="modal__content clj-modal-contents js-modal clj-wip">
           <div class="modal__header">
-            <h2 data-l8n="content:" class="modal__title"><span data-l8n="content:unshare/modal-unshare-title">Are you sure you want to unshare your Profile Card with</span> <span class="clj--app-name">Green Party</span>?
+            <h2 data-l8n="content:content:delete-account/modal-delete-title" class="modal__title">Are you sure you want to delete your account?
             </h2>
           </div>
           <div class="modal__body">
-        <p data-l8n="content:unshare/modal-unshare-lede">If you unshare you will need to approve <span class="clj-app-name">Green Party</a> again to sign in.</p>
+        <p data-l8n="content:delete-account/modal-delete-lede">If you delete your account all your data will be removed.</p>
           </div>
           <div class="modal-buttons">
         <div class="modal-buttons__primary">
-          <form action="./profile" method="post" class="unshare-card clj-unshare-card-form">
-            <button type="submit" data-l8n="content:unshare/modal-unshare-ok-button" class="button button--full-width">Unshare Profile Card</button>
+          <form action="./register" method="post" class="delete-account clj-delete-account-form">
+            <button type="submit" data-l8n="content:delete-account/modal-delete-ok-button" class="button button--full-width">Delete account</button>
           </form>
         </div>
-        <div class="modal-buttons__secondary"><a href="./profile" data-l8n="content:unshare/modal-unshare-cancel-button" class="button button--full-width button--secondary">Cancel</a></div>
+        <div class="modal-buttons__secondary"><a href="./profile" data-l8n="content:delete-account/modal-delete-cancel-button" class="button button--full-width button--secondary">Cancel</a></div>
           </div>
         </div>
       </div>
     </div>
     <script>document.addEventListener("touchstart", function(){}, true);</script>
     <script>
-      var form = document.getElementsByClassName('unshare-card')[0];
+      var form = document.getElementsByClassName('delete-account')[0];
       form.addEventListener("submit", function (e) {
         e.preventDefault();
         var formAction = form.getAttribute('action') + "?";
