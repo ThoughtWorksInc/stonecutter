@@ -17,3 +17,7 @@
     (-> request
         (assoc-in [:context :translator] (t/translations-fn t/translation-map))
         handler)))
+
+(defn wrap-handlers [handlers wrap-function exclusions]
+  (into {} (for [[k v] handlers]
+             [k (if (k exclusions) v (wrap-function v))])))
