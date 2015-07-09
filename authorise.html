@@ -1,9 +1,10 @@
-<!DOCTYPE html>
+
+<!-- initialization--><!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title data-l8n="content:default/title">Authorise</title>
+    <title data-l8n="content:authorise/title">Authorise</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
     <link rel="icon" type="image/png" href="favicon.png">
@@ -39,10 +40,17 @@
             </li>
           </ul>
         </div>
-        <div class="authorise-buttons">
-          <div class="authorise-buttons__primary"><a href="http://thoughtworksinc.github.io/stonecutter-client/authorise-success" class="button button--full-width button--primary">Share Profile Card</a></div>
-          <div class="authorise-buttons__secondary"><a href="http://thoughtworksinc.github.io/stonecutter-client/authorise-fail" class="button button--full-width button--grey">Cancel</a></div>
-        </div>
+        <form action="./authorisation" method="post" role="form" class="clj--authorise__form">
+          <input type="hidden" name="client_id" value="ASDAD1234" class="clj--authorise-client-id__input">
+          <input type="hidden" name="response_type" value="code" class="clj--authorise-response-type__input">
+          <input type="hidden" name="redirect_uri" value="./callback" class="clj--authorise-redirect-uri__input">
+          <div class="authorise-buttons">
+            <div class="authorise-buttons__primary">
+              <button type="submit" class="button button--full-width button--primary func--authorise-share-profile__button"><span>Share Profile Card</span></button>
+            </div>
+            <div class="authorise-buttons__secondary"><a href="http://thoughtworksinc.github.io/stonecutter-client/authorise-fail" class="button button--full-width button--grey">Cancel</a></div>
+          </div>
+        </form>
         <div class="authorise-terms">
           <p>You can unshare your Profile Card at anytime from your <span class="authorise-terms__link">profile</span>.
           </p>

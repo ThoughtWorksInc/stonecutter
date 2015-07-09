@@ -1,4 +1,5 @@
-<!DOCTYPE html>
+
+<!-- initialization--><!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -15,6 +16,7 @@
       <div class="header__inner middle-container">
         <div class="header__logo"><span class="visuallyhidden">Stonecutter</span></div>
         <nav role="navigation" class="tabs">
+          <li class="tabs__item tabs__item--active"><a href="./profile" data-l8n="content:profile/profile-link" class="tabs__link">Profile</a></li>
           <li class="tabs__item"><a href="./sign-out" data-l8n="content:profile/sign-out-link" class="tabs__link clj--sign-out__link func--sign-out__link">Sign out</a></li>
         </nav>
       </div>
@@ -28,7 +30,7 @@
           <div class="wrapper__card">
             <div class="card">
               <div class="card__row card__row--bottom-border">
-                <div class="card__photo">
+                <div class="card__photo clj-wip">
                   <!--a.button.button--full-width.card__photo-button(href="#") Update-->
                   <div class="card__image"><img src="images/temp-avatar-300x300.jpg" alt="Your profile picture"/>
                     <!--img(src="http://placekitten.com/g/302/302")-->
@@ -37,14 +39,14 @@
                 <div class="card__details">
                   <div class="card__heading">
                     <div class="card__name clj--card--name">Peter Thomas Cheshire</div>
-                    <div class="card__display-name">PTC</div>
+                    <div class="card__display-name clj-wip">PTC</div>
                   </div>
-                  <div class="card__description">
+                  <div class="card__description clj-wip">
                     <p>Hoodie bespoke Tumblr, Pitchfork Etsy dreamcatcher cronut sartorial flexitarian vinyl synth PBR&B Neutra single-origin coffee.</p>
                   </div>
                 </div>
               </div>
-              <div class="card__row">
+              <div class="card__row clj-wip">
                 <dl class="card__items">
                   <dt class="card__items-key">PGP KeyID</dt>
                   <dd class="card__items-value">E97A7A5D</dd>
@@ -55,16 +57,16 @@
             </div>
           </div>
         </div>
-        <div class="authorised-apps">
+        <div class="authorised-apps clj-wip">
           <h2 aria-describedby="authorised-apps-lede" class="authorised-apps__title">Applications</h2>
           <p id="authorised-apps-lede" class="lede">Manage the applications that you've shared your Profile Card with.</p>
           <ul class="app__list">
             <li class="app__item">
               <div class="app__title">Green Party</div>
               <div class="app__remove">
-                <form action="/remove-app" method="post">
+                <form action="/unshare-profile-card" method="post">
                   <!-- hidden inputs here-->
-                  <button type="submit" class="button button--remove"><i class="fa button__icon fa-remove"></i><span class="button__text">Unshare card</span>
+                  <button type="submit" class="button button--remove"><i class="fa button__icon fa-remove"></i><span class="button__text">Unshare Card</span>
                   </button>
                 </form>
               </div>
@@ -72,9 +74,9 @@
             <li class="app__item">
               <div class="app__title">A really long name that will break this</div>
               <div class="app__remove">
-                <form action="/remove-app" method="post">
+                <form action="/unshare-profile-card" method="post">
                   <!-- hidden inputs here-->
-                  <button type="submit" class="button button--remove"><i class="fa button__icon fa-remove"></i><span class="button__text">Unshare card</span>
+                  <button type="submit" class="button button--remove"><i class="fa button__icon fa-remove"></i><span class="button__text">Unshare Card</span>
                   </button>
                 </form>
               </div>
@@ -82,14 +84,18 @@
             <li class="app__item">
               <div class="app__title">Anotherapp</div>
               <div class="app__remove">
-                <form action="/remove-app" method="post">
+                <form action="/unshare-profile-card" method="post">
                   <!-- hidden inputs here-->
-                  <button type="submit" class="button button--remove"><i class="fa button__icon fa-remove"></i><span class="button__text">Unshare card</span>
+                  <button type="submit" class="button button--remove"><i class="fa button__icon fa-remove"></i><span class="button__text">Unshare Card</span>
                   </button>
                 </form>
               </div>
             </li>
           </ul>
+        </div>
+        <div class="delete-account clj-wip">
+          <h2 data-l8n="content:profile/delete-title">Delete your account</h2>
+          <p data-l8n="content:profile/delete-intro">Permanently delete your account and Profile Card.</p><a href="#" data-l8n="content:profile/delete-button" class="button button--grey">Delete account</a>
         </div>
       </div>
     </div>
