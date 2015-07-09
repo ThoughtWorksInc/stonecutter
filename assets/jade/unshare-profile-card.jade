@@ -5,12 +5,6 @@ block vars
   - pageTitle = "!Unshare your Profile Card"
   - pageTitleDataL8n = "content:unshare/title"
 
-block headerScripts
-
-block headerContent
-  li.tabs__item: a.tabs__link(href="./profile", data-l8n="content:profile/profile-link") !Profile
-  li.tabs__item: a.tabs__link.clj--sign-out__link.func--sign-out__link(href="./sign-out", data-l8n="content:profile/sign-out-link") !Sign out
-
 block content
   .middle-container
     +modal(null,'','clj-wip')
