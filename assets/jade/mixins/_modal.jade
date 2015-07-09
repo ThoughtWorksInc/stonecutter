@@ -6,7 +6,7 @@ mixin modal(title, titleTranslationKey, modalCssClass)
         if blocks.modalTitle
           - blocks.modalTitle()
         else
-          !{title}
+          | !{title}
     .modal__body
       if blocks.modalBody
         - blocks.modalBody()
