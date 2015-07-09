@@ -4,9 +4,10 @@
             [clauth.client :as client-store]
             [clauth.auth-code :as auth-code-store]
             [clauth.store :as store]
-            [clojure.string :as s]  
+            [clojure.string :as s]
             [clojure.tools.logging :as log]
-            [stonecutter.mongo :as m]))
+            [stonecutter.mongo :as m])
+  (:import (java.util UUID)))
 
 (defn setup-mongo-stores! [mongo-uri]
   (let [db (m/get-mongo-db mongo-uri)]
@@ -42,10 +43,17 @@
 (defn is-duplicate-user? [email]
   (not (nil? (user-store/fetch-user (s/lower-case email)))))
 
+(defn create-user [id-gen email password]
+  (let [lower-email (s/lower-case email)]
+    (->
+      (user-store/new-user lower-email password)
+      (assoc :uid (id-gen)))))
+
+(defn uuid []
+  (UUID/randomUUID))
+
 (defn store-user! [email password]
-  (-> email
-      s/lower-case
-      (user-store/new-user password)
+  (-> (create-user uuid email password)
       user-store/store-user
       (dissoc :password)))
 

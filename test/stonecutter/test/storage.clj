@@ -22,24 +22,26 @@
 
 (def a-user {:login "email@server.com" :name nil :url nil})
 
+(fact "about creating a user record"
+      (let [id-gen (constantly "id")]
+        (fact "a uuid is added"
+              (s/create-user id-gen "email" "password") => {:login "email" :password "encrypted_password" :uid "id" :name nil :url nil}
+              (provided (user-store/bcrypt "password") => "encrypted_password"))
+        (fact "email is lower-cased"
+              (s/create-user id-gen "EMAIL" "password") => (contains {:login "email"}))))
+
 (facts "about storing users"
        (fact "users are stored in the user-store"
              (s/store-user! "email@server.com" "password") => a-user
              (provided
-               (user-store/new-user "email@server.com" "password") => ...user...
-               (user-store/store-user ...user...) => a-user))
-
-       (fact "the email is always lower-cased"
-             (s/store-user! "UPPER@CASE.COM" "password") => a-user
-             (provided
-               (user-store/new-user "upper@case.com" "password") => ...user...
+               (s/create-user s/uuid "email@server.com" "password") => ...user...
                (user-store/store-user ...user...) => a-user))
 
        (fact "password is removed before returning user"
              (-> (s/store-user! "email@server.com" "password")
                  :password) => nil
              (provided
-               (user-store/new-user "email@server.com" "password") => ...user...
+               (s/create-user s/uuid "email@server.com" "password") => ...user...
                (user-store/store-user ...user...) => {:password "hashedAndSaltedPassword"})))
 
 (facts "about authenticating and retrieving users"
