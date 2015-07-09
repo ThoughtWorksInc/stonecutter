@@ -84,3 +84,29 @@ gulp server
 ```
 lein midje
 ```
+
+### Customising the theme
+
+####Colours
+
+Currently without getting your hands dirty we offer customisation of the header, logo and navigation tabs.
+
+Locate /assets/stylesheets/application.scss and modify the line that looks like this:
+```
+//@import "theme"; // uncomment to apply your theme
+```
+
+To look like this:
+```
+@import "theme"; // uncomment to apply your theme
+```
+
+Then update the variable values inside /assets/stylesheets/theme.scss 
+
+####Logo
+
+You can either update the /assets/images/logo.svg or supply your own.  If you choose you own be sure to enable the theme and update the path in assets/stylesheets/theme.scss.
+
+####Fav icon
+
+You can update the favicons located in /assets/icons/.

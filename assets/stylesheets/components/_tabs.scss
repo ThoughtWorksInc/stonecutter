@@ -1,3 +1,10 @@
+$tab_bg_color: $dark_grey !default;
+$tab_bg_color_active: $white !default;
+$tab_color_active: $dark_cyan !default;
+$tab_link_bg_colour_hover: rgba($white, 0.5) !default;
+$tab_link_colour_hover: $medium_cyan !default;
+
+
 .tabs {
   @include clearfix;
   position: relative;
@@ -23,13 +30,10 @@
     border-top: 1px solid transparent;
     border-right: 1px solid transparent;
     border-left: 1px solid transparent;
-    color: $dark_grey;
-    &:hover {
-      $my_grey: lighten($light_grey, 2.5%);
-    }
+    color: $tab_bg_color;
     &--active {
-      color: $dark_cyan;
-      background-color: $white;
+      color: $tab_color_active;
+      background-color: $tab_bg_color_active;
       &:after {
         content: '';
         display: block;
@@ -56,8 +60,8 @@
     transition: background 250ms ease, color 250ms ease;
     &:hover {
       cursor: pointer;
-      color: $medium_cyan;
-      background-color: rgba($white, 0.5);
+      color: $tab_link_colour_hover;
+      background-color: $tab_link_bg_colour_hover;
     }
   }
 }

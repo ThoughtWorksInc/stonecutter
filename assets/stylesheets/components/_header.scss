@@ -1,8 +1,11 @@
+$header_background_color: $light_grey !default;
+$header_logo_image_path: 'logo.svg' !default;
+
 .header {
   @include clearfix;
   min-height: 120px;
   margin-bottom: 40px;
-  background-color: $light_grey;
+  background-color: $header_background_color;
 
   &__inner {
     position: relative;
@@ -16,7 +19,7 @@
   &__logo {
     height: 50px;
     margin-bottom: 15px;
-    background: image-url('logo.svg') no-repeat 50% 0;
+    background: image-url($header_logo_image_path) no-repeat 50% 0;
     background-size: 220px auto;
     @include width-from($medium_device) {
       width: 50%;

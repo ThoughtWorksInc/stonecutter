@@ -1,9 +1,6 @@
 $white: #fff;
 $black: #000;
 
-
-
-
 $light_grey: #EEEEEE;
 $light_pink: #FFEAFC;
 $light_cyan: #D3FFFD;
@@ -21,9 +18,7 @@ $darker_grey: #222222;
 $darker_cyan: #00444A;
 $darker_pink: #690055;
 
-
 $orange: $dark_pink;
-
 
 $text_grey: #333;
 
@@ -32,10 +27,10 @@ $background_color: $white;
 
 $error_color: $orange;
 
-$link_colour: $default_text_color;
-$link_hover_colour: $link_colour;
-$link_visited_colour: $link_colour;
-$link_active_colour: $link_colour;
+$link_colour: $default_text_color !default;
+$link_hover_colour: $link_colour !default;
+$link_visited_colour: $link_colour !default;
+$link_active_colour: $link_colour !default;
 
 //
 
