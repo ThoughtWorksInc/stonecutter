@@ -10,6 +10,7 @@
             [stonecutter.view.register :as register]
             [stonecutter.view.profile-created :as profile-created]
             [stonecutter.view.profile :as profile]
+            [stonecutter.view.delete-account :as delete-account]
             [stonecutter.view.authorise :as authorise]
             [stonecutter.helper :refer :all]))
 
@@ -58,6 +59,10 @@
   (-> request
       (update-in [:session] dissoc :user)
       ep/logout-handler))
+
+
+(defn show-confirm-account-confirmation [request]
+  (html-response (delete-account/delete-account-confirmation request)))
 
 (defn delete-account [request]
   (let [email (get-in request [:session :user :login])]

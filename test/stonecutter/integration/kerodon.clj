@@ -25,6 +25,10 @@
   (prn (-> state :request))
   state)
 
+(defn print-state [state]
+  (prn state)
+  state)
+
 (def registration-email-input :.func--email__input)
 (def registration-password-input :.func--password__input)
 (def registration-confirm-input :.func--confirm-password__input)
@@ -122,12 +126,15 @@
            (k/follow-redirect)
            (kh/page-uri-is "/profile")))
 
-(future-facts "User can delete account"
+(facts "User can delete account"
       (-> (k/session h/app)
           (register "account_to_be@deleted.com")
           (k/visit "/delete-account")
           (kh/page-uri-is "/delete-account")
-          (kh/response-status-is 200)))
+          (kh/response-status-is 200)
+          (k/press :.func--delete-account__button)
+          (k/follow-redirect)
+          (kh/page-uri-is "/sign-out")))
 
 (facts "Not found page is shown for unknown url"
        (-> (k/session h/app)
