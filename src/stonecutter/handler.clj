@@ -45,7 +45,11 @@
      :show-profile-created   user/show-profile-created
      :authorise              oauth/authorise
      :authorise-client       oauth/authorise-client}
-    (m/wrap-handlers m/wrap-disable-caching #{:show-sign-in-form :home})))
+    (m/wrap-handlers m/wrap-disable-caching #{:show-sign-in-form :home})
+    (m/wrap-handlers m/wrap-signed-in #{:show-registration-form :register-user
+                                        :show-sign-in-form      :sign-in
+                                        :sign-out
+                                        :authorise})))
 
 (def api-handlers
   {:validate-token         oauth/validate-token})

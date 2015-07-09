@@ -15,6 +15,10 @@
 
 (declare redirect-to-profile redirect-to-profile-created)
 
+(defn signed-in? [request]
+  (let [session (:session request)]
+    (and (:user session) (:access_token session))))
+
 (defn redirect-to-authorisation [return-to user client-id]
   (if-let [client (client/fetch-client client-id)]
     (assoc (r/redirect return-to) :session {:user user :access_token (:token (token/create-token client user))})
@@ -66,10 +70,6 @@
 (defn show-registration-form [request]
   (html-response (register/registration-form request)))
 
-(defn signed-in? [request]
-  (let [session (:session request)]
-    (and (:user session) (:access_token session))))
-
 (defn preserve-session [response request]
   (-> response
       (assoc :session (:session request))))
@@ -80,9 +80,7 @@
     (html-response (sign-in/sign-in-form request))))
 
 (defn show-profile [request]
-  (if (signed-in? request)
-    (html-response (profile/profile request))
-    (r/redirect (path :sign-in))))
+  (html-response (profile/profile request)))
 
 (defn show-profile-created [request]
   (html-response (profile-created/profile-created request)))
@@ -91,6 +89,4 @@
   (html-response (authorise/authorise-form request)))
 
 (defn home [request]
-  (if (signed-in? request)
-    (r/redirect (path :show-profile))
-    (r/redirect (path :sign-in))))
+  (r/redirect (path :show-profile)))

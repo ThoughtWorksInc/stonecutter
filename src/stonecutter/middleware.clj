@@ -1,6 +1,9 @@
 (ns stonecutter.middleware
   (:require [clojure.tools.logging :as log]
+            [ring.util.response :as r]
             [stonecutter.translation :as translation]
+            [stonecutter.routes :as routes]
+            [stonecutter.controller.user :as user]
             [stonecutter.helper :as helper]))
 
 (defn wrap-error-handling [handler err-handler dev-mode?]
@@ -28,3 +31,9 @@
     (-> request
         handler
         helper/disable-caching)))
+
+(defn wrap-signed-in [handler]
+  (fn [request]
+    (if (user/signed-in? request)
+      (handler request)
+      (r/redirect (routes/path :sign-in)))))

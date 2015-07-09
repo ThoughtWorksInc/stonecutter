@@ -46,6 +46,18 @@
         (s/store-user! email password) => ...user...
         (token/create-token nil ...user...) => {:token ...token...}))
 
+(fact "signed-in? returns true only when user and access_token are in the session"
+      (tabular
+        (c/signed-in? ?request) => ?expected-result
+       ?request                                                  ?expected-result
+       {:session {:user ...user... :access_token ...token...}}   truthy
+       {:session {:user nil        :access_token ...token...}}   falsey
+       {:session {:user ...user... :access_token nil}}           falsey
+       {:session {:user nil        :access_token nil}}           falsey
+       {:session {}}                                             falsey
+       {:session nil}                                            falsey
+       {}                                                        falsey))
+
 (facts "accessing sign-in form"
        (fact "without user and access_token in session shows the sign-in form"
              (-> (create-request :get "/sign-in" nil)
