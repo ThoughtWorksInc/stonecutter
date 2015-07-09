@@ -17,7 +17,7 @@
         (-> state :request :uri) => uri)
   state)
 
-(defn response-state-is [state status]
+(defn response-status-is [state status]
   (fact {:midje/name "Checking response status"}
         (-> state :response :status) => status)
   state)

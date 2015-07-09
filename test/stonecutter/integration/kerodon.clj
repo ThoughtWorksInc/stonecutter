@@ -25,13 +25,18 @@
   (prn (-> state :request))
   state)
 
+(def registration-email-input :.func--email__input)
+(def registration-password-input :.func--password__input)
+(def registration-confirm-input :.func--confirm-password__input)
+(def registration-submit :.func--create-profile__button)
+
 (defn register [state email]
   (-> state
       (k/visit "/register")
-      (k/fill-in :.func--email__input email)
-      (k/fill-in :.func--password__input "valid-password")
-      (k/fill-in :.func--confirm-password__input "valid-password")
-      (k/press :.func--create-profile__button)))
+      (k/fill-in registration-email-input email)
+      (k/fill-in registration-password-input "valid-password")
+      (k/fill-in registration-confirm-input "valid-password")
+      (k/press registration-submit)))
 
 (defn sign-in [state email]
   (-> state
@@ -56,6 +61,17 @@
            (k/press :.func--create-profile__button)
            (kh/page-uri-is "/register")
            (kh/selector-has-content [:.clj--registration-email__validation] "Enter a valid email address")))
+
+(facts "User is returned to same page when existing email is used"
+       (-> (k/session h/app)
+           (register "existing@user.com")
+           (k/visit "/register")
+           (k/fill-in registration-email-input "existing@user.com")
+           (k/fill-in registration-password-input "password")
+           (k/fill-in registration-confirm-input "password")
+           (k/press registration-submit)
+           (kh/page-uri-is "/register")
+           (kh/response-status-is 200)))
 
 (facts "Register page redirects to profile-created page when registered
        and
@@ -126,4 +142,4 @@
           (register "csrf@email.com")
           (sign-in "csrf@email.com")
           (kh/replay-last-request)
-          (kh/response-state-is 403)))
+          (kh/response-status-is 403)))
