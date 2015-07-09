@@ -34,7 +34,7 @@
                (-> response (get-in [:session :return-to])) => (format "/authorisation?client_id=%s&response_type=code&redirect_uri=callback" (:client-id client-details))
                (-> response (get-in [:session :client-id])) => (:client-id client-details)))
 
-       (future-fact "valid request goes to authorisation page with auth_code and email when there is an existing user session"
+       (fact "valid request goes to authorisation page with auth_code and email when there is an existing user session"
              (let [user-email "email@user.com"
                    user (user/register-user user-email "password")
                    client-details (client/register-client "MYAPP" "myapp.com") ; NB this saves into the client store
@@ -56,9 +56,12 @@
                    user (user/register-user user-email "password")
                    client-details (client/register-client "MYAPP" "myapp.com")
                    access-token (token/create-token client-details user)
+                   csrf-token "CSRF-TOKEN"
                    request (-> (r/request :post "/authorisation")
-                               (assoc :params {:client_id (:client-id client-details) :response_type "code" :redirect_uri "callback"})
+                               (assoc :params {:client_id (:client-id client-details) :response_type "code" :redirect_uri "callback" :csrf-token csrf-token})
                                (assoc-in [:session :access_token] (:token access-token))
+                               (assoc-in [:session :csrf-token] csrf-token)
+                               (assoc :content-type "application/x-www-form-urlencoded") ;To mock a form post
                                (assoc-in [:session :user :email] user-email))
                    response (oauth/authorise-client request)]
                (:status response) => 302

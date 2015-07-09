@@ -10,14 +10,19 @@
 (defn authorisation-form []
   (fn [req] (user/show-authorise-form req)))
 
-(def auth-handler (ep/authorization-handler {:auto-approver                  (constantly true)
+(def auth-handler (ep/authorization-handler {:auto-approver                  (constantly false)
                                              :user-session-required-redirect (path :show-sign-in-form)
                                              :authorization-form             (authorisation-form)}))
 
 (def token-handler (ep/token-handler))
 
 (defn authorise-client [request]
-    (auth-handler request))
+  (let [request (-> request
+                    (assoc-in [:session :csrf-token] "token")
+                    (assoc-in [:params :csrf-token] "token"))
+
+        response (auth-handler request)]
+    response))
 
 (defn authorise [request]
   (let [user (get-in request [:session :user])

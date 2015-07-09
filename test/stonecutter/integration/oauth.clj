@@ -64,42 +64,42 @@
 (def email "email@server.com")
 (def password "valid-password")
 
-(defn setup [] 
+(defn setup []
   (s/reset-mongo-stores! "mongodb://localhost:27017/stonecutter-test")
-  (let [client (client/register-client "myclient" "myclient.com") 
+  (let [client (client/register-client "myclient" "myclient.com")
         client-id (:client-id client)
-        client-secret (:client-secret client) 
+        client-secret (:client-secret client)
         invalid-client-secret (str/reverse client-secret)
-        user (user/register-user email password)] 
-    {:client-id client-id
-     :client-secret client-secret
+        user (user/register-user email password)]
+    {:client-id             client-id
+     :client-secret         client-secret
      :invalid-client-secret invalid-client-secret}))
 
 (background
   (before :contents (s/reset-mongo-stores! "mongodb://localhost:27017/stonecutter-test")
           :after (s/reset-mongo-stores! "mongodb://localhost:27017/stonecutter-test")))
 
-(defn print-debug [v] (prn v) v)
+(defn print-debug [v] (prn "KERODON!!!!!!!!!!!!!!!!!!!!!!!!" v) v)
 
 (facts "user can sign in through client"
-              (let [{:keys [client-id client-secret]} (setup)]
-                (-> (k/session h/app)
-                    (browser-sends-authorisation-request-from-client-redirect client-id)
-                    (k/follow-redirect)
-                    ;; login
-                    (kh/page-uri-is "/sign-in")
-                    (k/fill-in :.func--email__input email)
-                    (k/fill-in :.func--password__input password)
-                    (k/press :.func--sign-in__button)
-                    ;; check redirect - should have auth_code
-                    (k/follow-redirect)
-                    ;(kh/page-uri-is "/authorisation")
-                    ;(k/press :.func--authorise-share-profile__button)
-                    ;(k/follow-redirect)
-                    (client-sends-http-token-request client-id client-secret)
-                    ; return 200 with new access_token
-                    (kh/response-has-access-token)
-                    (kh/response-has-user-email email))))
+       (let [{:keys [client-id client-secret]} (setup)]
+         (-> (k/session h/app)
+             (browser-sends-authorisation-request-from-client-redirect client-id)
+             (k/follow-redirect)
+             ;; login
+             (kh/page-uri-is "/sign-in")
+             (k/fill-in :.func--email__input email)
+             (k/fill-in :.func--password__input password)
+             (k/press :.func--sign-in__button)
+             ;; check redirect - should have auth_code
+             (k/follow-redirect)
+             (kh/page-uri-is "/authorisation")
+             (k/press :.func--authorise-share-profile__button)
+             (client-sends-http-token-request client-id client-secret)
+             ; return 200 with new access_token
+             (kh/response-has-access-token)
+             (kh/response-has-user-email email)
+             )))
 
 (facts "no access token will be issued with invalid credentials"
        (facts "user cannot sign in with invalid client secret"
@@ -114,6 +114,8 @@
                     (k/press :.func--sign-in__button)
                     ;; check redirect - should have auth_code
                     (k/follow-redirect)
+                    (kh/page-uri-is "/authorisation")
+                    (k/press :.func--authorise-share-profile__button)
                     (kh/location-contains "callback?code=")
                     (client-sends-http-token-request client-id invalid-client-secret)
                     :response
