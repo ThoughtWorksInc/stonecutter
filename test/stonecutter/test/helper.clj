@@ -7,4 +7,4 @@
       (let [r (-> (response/response "a-response") disable-caching)]
         (get-in r [:headers "Pragma"]) => "no-cache"
         (get-in r [:headers "Cache-Control"]) => "no-cache, no-store, must-revalidate"
-        (get-in r [:headers "Expires"]) => 0))
+        (get-in r [:headers "Expires"]) => "0"))

@@ -33,17 +33,19 @@
       (r/status 403)))
 
 (def site-handlers
-  {:home                   user/home
-   :show-registration-form user/show-registration-form
-   :register-user          user/register-user
-   :show-sign-in-form      user/show-sign-in-form
-   :show-authorise-form    user/show-authorise-form
-   :sign-in                user/sign-in
-   :sign-out               user/sign-out
-   :show-profile           user/show-profile
-   :show-profile-created   user/show-profile-created
-   :authorise              oauth/authorise
-   :authorise-client       oauth/authorise-client})
+  (->
+    {:home                   user/home
+     :show-registration-form user/show-registration-form
+     :register-user          user/register-user
+     :show-sign-in-form      user/show-sign-in-form
+     :show-authorise-form    user/show-authorise-form
+     :sign-in                user/sign-in
+     :sign-out               user/sign-out
+     :show-profile           user/show-profile
+     :show-profile-created   user/show-profile-created
+     :authorise              oauth/authorise
+     :authorise-client       oauth/authorise-client}
+    (m/wrap-handlers m/wrap-disable-caching #{:show-sign-in-form :home})))
 
 (def api-handlers
   {:validate-token         oauth/validate-token})
@@ -69,7 +71,8 @@
   (-> (scenic-handler routes site-handlers not-found)
       (wrap-defaults wrap-defaults-config)
       m/wrap-translator
-      (m/wrap-error-handling err-handler dev-mode?)))
+      (m/wrap-error-handling err-handler dev-mode?)
+      ))
 
 (defn create-api-app [dev-mode?]
   (-> (scenic-handler routes api-handlers not-found)
