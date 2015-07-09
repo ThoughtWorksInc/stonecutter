@@ -24,6 +24,17 @@ block content
           | If you unshare you will need to approve <span class="clj-app-name">Green Party</a> again to sign in.
       +set('modalButtons')
         .modal-buttons__primary
-          a.button.button--full-width(href="/profile", data-l8n="content:unshare/modal-unshare-ok-button") !Unshare Profile Card
+          form.unshare-card.clj-unshare-card-form(action="./profile",method="post")
+            button.button.button--full-width(type="submit", data-l8n="content:unshare/modal-unshare-ok-button") !Unshare Profile Card
         .modal-buttons__secondary
-          a.button.button--full-width.button--secondary(href="/profile", data-l8n="content:unshare/modal-unshare-cancel-button") !Cancel
+          a.button.button--full-width.button--secondary(href="./profile", data-l8n="content:unshare/modal-unshare-cancel-button") !Cancel
+
+block footerScripts
+  if staticMode
+    script.
+      var form = document.getElementsByClassName('unshare-card')[0];
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var formAction = form.getAttribute('action') + "?";
+        window.location = formAction;
+      });
