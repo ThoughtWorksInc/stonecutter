@@ -4,11 +4,12 @@
             [stonecutter.handler :as h]
             [stonecutter.storage :as s]
             [ring.mock.request :as r]
-            [clojure.string :as str]  
+            [clojure.string :as str]
             [clauth.client :as client]
             [clauth.token :as token]
             [clauth.user :as user]
-            [stonecutter.integration.kerodon-helpers :as kh]))
+            [stonecutter.integration.kerodon-helpers :as kh]
+            [stonecutter.storage :as storage]))
 
 ;; CLIENT => AUTH    /authorisation?client-id=123&response_type=code&redirect_uri=callback-url
 ;;   USER LOGIN (Auth Server)
@@ -70,7 +71,7 @@
         client-id (:client-id client)
         client-secret (:client-secret client)
         invalid-client-secret (str/reverse client-secret)
-        user (user/register-user email password)]
+        user (storage/store-user! email password)]
     {:client-id             client-id
      :client-secret         client-secret
      :invalid-client-secret invalid-client-secret}))
@@ -99,6 +100,7 @@
              ; return 200 with new access_token
              (kh/response-has-access-token)
              (kh/response-has-user-email email)
+             (kh/response-has-id )
              )))
 
 (facts "no access token will be issued with invalid credentials"

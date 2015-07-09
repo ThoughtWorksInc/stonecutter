@@ -6,7 +6,6 @@
             [clauth.token :as token]
             [clauth.user :as user]
             [clauth.auth-code :as auth-code]
-            [clauth.middleware :as mw]
             [cheshire.core :as json]
             [stonecutter.controller.user :as u]
             [stonecutter.controller.oauth :as oauth]
@@ -36,7 +35,7 @@
 
        (fact "valid request goes to authorisation page with auth_code and email when there is an existing user session"
              (let [user-email "email@user.com"
-                   user (user/register-user user-email "password")
+                   user (storage/store-user! user-email "password")
                    client-details (client/register-client "MYAPP" "myapp.com") ; NB this saves into the client store
                    access-token (token/create-token client-details user) ; NB this saves into the token store
                    request (-> (r/request :get "/authorisation")
@@ -53,7 +52,7 @@
 
        (fact "posting to authorisation endpoint redirects to callback with auth code"
              (let [user-email "email@user.com"
-                   user (user/register-user user-email "password")
+                   user (storage/store-user! user-email "password")
                    client-details (client/register-client "MYAPP" "myapp.com")
                    access-token (token/create-token client-details user)
                    csrf-token "CSRF-TOKEN"
@@ -69,7 +68,7 @@
 
        (fact "user-email and access_token in session stay in session if user is logged in"
              (let [user-email "email@user.com"
-                   user (user/register-user user-email "password")
+                   user (storage/store-user! user-email "password")
                    client-details (client/register-client "MYAPP" "myapp.com")
                    access-token (token/create-token client-details user)
                    request (-> (r/request :post "/authorisation")
@@ -100,7 +99,7 @@
 
 (facts "about token endpoint"
        (let [user-email "email@user.com"
-             user (user/register-user user-email "password")
+             user (storage/store-user! user-email "password")
              client-details (client/register-client "MYAPP" "myapp.com")
              auth-code (auth-code/create-auth-code client-details user "callback")
              request (-> (r/request :get "/token")
@@ -118,6 +117,10 @@
 
          (fact "user-email in session is returned in body after validating token"
                (:user-email response-body) => user-email)
+
+         (fact "user id in session is returned in body after validating token"
+               (:user-id response-body) => (:uid user)
+               (:uid user) =not=> nil?)
 
          (fact "user email stays in the session after validating token"
                (get-in response [:session :user :email]) => user-email)))

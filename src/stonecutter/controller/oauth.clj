@@ -36,12 +36,15 @@
 
 (defn validate-token [request]
   (let [auth-code (get-in request [:params :code])
-        user-email (-> auth-code s/retrieve-user-with-auth-code :login)
+        user (s/retrieve-user-with-auth-code auth-code)
+        user-email (:login user)
+        user-id (:uid user)
         response (token-handler request)
         body (-> response
                  :body
                  (json/parse-string keyword)
                  (assoc :user-email user-email)
+                 (assoc :user-id user-id)
                  (json/generate-string))]
     (-> response
         (assoc :body body)

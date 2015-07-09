@@ -50,7 +50,7 @@
       (assoc :uid (id-gen)))))
 
 (defn uuid []
-  (UUID/randomUUID))
+  (str (UUID/randomUUID)))
 
 (defn store-user! [email password]
   (-> (create-user uuid email password)

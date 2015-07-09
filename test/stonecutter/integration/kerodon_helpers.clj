@@ -2,7 +2,8 @@
   (:require [midje.sweet :refer :all]
             [cheshire.core :as json]
             [net.cgrand.enlive-html :as html]
-            [kerodon.core :as k]))
+            [kerodon.core :as k]
+            [clojure.string :as string]))
 
 (defn page-title [state]
   (-> state :enlive (html/select [:title]) first html/text))
@@ -51,6 +52,14 @@
                                 (json/parse-string keyword))]
           (:user-email response-body) => email)) 
   state)
+
+(defn response-has-id [state]
+  (fact {:midje/name "Checking if response has user id"}
+        (let [response-body (-> state
+                                :response
+                                :body
+                                (json/parse-string keyword))]
+          (:user-id response-body) =not=> string/blank?)))
 
 ;; FIXME can't reuse the body because it's a buffered input stream
 (defn replay-last-request [state]
