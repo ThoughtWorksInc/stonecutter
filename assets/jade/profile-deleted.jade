@@ -1,0 +1,23 @@
+extends layout/layout
+
+block vars
+  - bodyClass = ""
+  - pageTitle = "!Profile deleted"
+  - pageTitleDataL8n = "content:profile-deleted/title"
+
+block headerScripts
+
+block content
+  .middle-container
+    h1.page-title(data-l8n="content:profile-deleted/page-header")
+      | !Your Profile has been deleted
+
+    .card-demo
+      i.fa.fa-user.card-demo__user-icon
+      i.fa.fa-check.card-demo__tick-icon
+      i.fa.fa-times.card-demo__cross-icon
+
+    p
+      span(data-l8n="content:profile-deleted/intro") !All you Profile Cards and data have been completely removed.
+
+    a.button.button--half-width.button--primary.func--profile-deleted-next__button.clj--profile-deleted-next__button(href="./register", data-l8n="content:profile-deleted/action-button") !Register

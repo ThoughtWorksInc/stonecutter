@@ -64,6 +64,12 @@ profile-created:
   intro: Your Profile Card can be used to sign in to supported applications like
   action-button: View your profile
 
+profile-deleted:
+  title: Profile deleted
+  page-header: Your Profile has been deleted
+  intro: All you Profile Cards and data have been completely removed.
+  action-button: Register
+
 authorise:
   title: Authorise
 
