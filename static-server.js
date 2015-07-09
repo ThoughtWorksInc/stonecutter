@@ -64,6 +64,10 @@ app.get('/profile', function (req, res) {
   customRender(res, 'profile', pageData);
 });
 
+app.get('/unshare-profile-card', function (req, res) {
+  customRender(res, 'unshare-profile-card', pageData);
+});
+
 app.get('/sign-out', function (req, res) {
   res.redirect('/sign-in');
 });

@@ -1,6 +1,7 @@
 @mixin h1 {
   margin-top: 0;
   @include font-size(34px);
+  font-weight: bold;
   line-height: 1.2;
   letter-spacing: -0.025em;
   color: $dark_cyan;

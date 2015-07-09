@@ -1,0 +1,20 @@
+.modal {
+  &__content {
+    margin-bottom: 30px;
+  }
+  &__title {
+    @include h1;
+    margin-bottom: 32px;
+  }
+}
+.modal-buttons {
+  @include columns;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  &__primary {
+    @include column-two-thirds($medium_device);
+  }
+  &__secondary {
+    @include column-one-third($medium_device);
+  }
+}

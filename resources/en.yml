@@ -44,6 +44,12 @@ profile:
   delete-intro: Permanently delete your account and Profile Card.
   delete-button: Delete account
 
+unshare:
+  modal-unshare-title: Are you sure you want to unshare your Profile Card with
+  modal-unshare-lede: 'If you unshare you will need to approve <span class="clj-app-name">Green Party</a> again to sign in.'
+  modal-unshare-ok-button: Unshare Profile Card
+  modal-unshare-cancel-button: Cancel
+
 profile-created:
   title: Your Profile Card has been created
   page-header: Your Profile Card has been created
@@ -67,3 +73,6 @@ error-500:
   page-header: "Sorry something went wrong"
   page-intro: "An unexpected error has occured, please try again. We apologise for any inconvenience."
   page-content: '<h2>What can I do now?</h2><ul><li>Please return to the <a href="/register" title="Go to Sign in">sign-in page</a>.</li></ul>'
+
+modal:
+  modal-dismiss: Close

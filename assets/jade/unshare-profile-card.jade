@@ -1,0 +1,29 @@
+extends layout/layout
+
+block vars
+  - bodyClass = ""
+  - pageTitle = "!Profile"
+  - pageTitleDataL8n = "content:unshare/title"
+
+block headerScripts
+
+block headerContent
+  li.tabs__item: a.tabs__link(href="./profile", data-l8n="content:unshare/profile-link") !Profile
+  li.tabs__item: a.tabs__link.clj--sign-out__link.func--sign-out__link(href="./sign-out", data-l8n="content:unshare/sign-out-link") !Sign out
+
+block content
+  .middle-container
+    +modal(null,'','clj-wip')
+      +set('modalTitle')
+        span(data-l8n="content:unshare/modal-unshare-title") Are you sure you want to unshare your Profile Card with
+        = " "
+        span.clj--app-name Green Party
+        |?
+      +set('modalBody')
+        p(data-l8n="content:unshare/modal-unshare-lede")
+          | If you unshare you will need to approve <span class="clj-app-name">Green Party</a> again to sign in.
+      +set('modalButtons')
+        .modal-buttons__primary
+          a.button.button--full-width(href="#") !Unshare Profile Card
+        .modal-buttons__secondary
+          a.button.button--full-width.button--grey(href="#") !Cancel
