@@ -17,18 +17,14 @@
 (def token-handler (ep/token-handler))
 
 (defn authorise-client [request]
-  (let [request (-> request
-                    (assoc-in [:session :csrf-token] "token")
-                    (assoc-in [:params :csrf-token] "token"))
-
-        response (auth-handler request)]
+  (let [response (auth-handler request)]
     response))
 
 (defn authorise [request]
   (let [user (get-in request [:session :user])
         access-token (get-in request [:session :access_token])
         client-id (get-in request [:params :client_id])
-        response (auth-handler request)]
+        response (auth-handler (assoc-in request [:headers "accept"] "text/html"))]
     (-> response
         (assoc-in [:session :client-id] client-id)
         (assoc-in [:session :user] user)

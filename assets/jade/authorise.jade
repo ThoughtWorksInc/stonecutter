@@ -41,6 +41,7 @@ block content
           | Update your Profile Card
 
     form.clj--authorise__form(action="./authorisation", method="post", role="form")
+      input.clj--authorise-csrf__input(type="hidden" name="csrf-token" value="1234")
       input.clj--authorise-client-id__input(type="hidden" name="client_id" value="ASDAD1234")
       input.clj--authorise-response-type__input(type="hidden" name="response_type" value="code")
       input.clj--authorise-redirect-uri__input(type="hidden" name="redirect_uri" value="./callback")
