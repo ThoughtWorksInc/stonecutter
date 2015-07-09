@@ -13,7 +13,7 @@ block content
           | If you delete your account all your data will be removed.
       +set('modalButtons')
         .modal-buttons__primary
-          form.delete-account.clj-delete-account-form(action="./register",method="post")
+          form.delete-account.clj-delete-account-form(action="./profile-deleted",method="post")
             button.button.button--full-width(type="submit", data-l8n="content:delete-account/modal-delete-ok-button") !Delete account
         .modal-buttons__secondary
           a.button.button--full-width.button--secondary(href="./profile", data-l8n="content:delete-account/modal-delete-cancel-button") !Cancel
