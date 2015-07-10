@@ -73,6 +73,10 @@ profile-deleted:
 authorise:
   title: Authorise
 
+authorise-fail:
+  title: Authorise failure
+  lede: can not have access to your Profile Card and cannot sign in.
+
 error-403:
   page-intro: "CSRF Forbidden Response.  Click the link below to try again."
 

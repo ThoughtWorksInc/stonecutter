@@ -60,6 +60,10 @@ app.all('/authorise', function (req, res) {
   customRender(res, 'authorise', pageData);
 });
 
+app.all('/authorise-failure', function (req, res) {
+  customRender(res, 'authorise-failure', pageData);
+});
+
 app.get('/forgot-password', function (req, res) {
   customRender(res, 'forgot-password', pageData);
 });
