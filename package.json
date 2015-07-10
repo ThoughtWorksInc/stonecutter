@@ -7,7 +7,7 @@
     "node": "0.12.4"
   },
   "dependencies": {
-    "browser-sync": "^1.6.2",
+    "browser-sync": "^2.7.13",
     "express": "^4.10.1",
     "font-awesome": "^4.3.0",
     "gulp": "^3.8.10",
