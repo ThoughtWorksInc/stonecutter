@@ -9,12 +9,11 @@
             [stonecutter.mongo :as m])
   (:import (java.util UUID)))
 
-(defn setup-mongo-stores! [mongo-uri]
-  (let [db (m/get-mongo-db mongo-uri)]
-    (swap! user-store/user-store (constantly (m/create-mongo-user-store db)))
-    (swap! token-store/token-store (constantly (m/create-token-store db)))
-    (swap! auth-code-store/auth-code-store (constantly (m/create-auth-code-store db)))
-    (swap! client-store/client-store (constantly (m/create-client-store db)))))
+(defn setup-mongo-stores! [db]
+  (swap! user-store/user-store (constantly (m/create-mongo-user-store db)))
+  (swap! token-store/token-store (constantly (m/create-token-store db)))
+  (swap! auth-code-store/auth-code-store (constantly (m/create-auth-code-store db)))
+  (swap! client-store/client-store (constantly (m/create-client-store db))))
 
 (defn reset-mongo-stores! [mongo-uri]
   (log/info "Resetting mongo stores")

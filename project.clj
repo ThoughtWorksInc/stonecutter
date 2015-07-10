@@ -16,7 +16,8 @@
                            [org.clojure/tools.logging "0.3.1"]
                            [clj-logging-config "1.9.12"]
                            [crypto-random "1.1.0"]
-                           [prismatic/schema "0.4.3"]]
+                           [prismatic/schema "0.4.3"]
+                           [ragtime "0.4.1"]]
             :main stonecutter.handler
             :aot :all
             :profiles {:dev {:dependencies   [[ring-mock "0.1.5"]

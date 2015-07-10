@@ -16,7 +16,9 @@
             [stonecutter.controller.user :as user]
             [stonecutter.controller.oauth :as oauth]
             [stonecutter.translation :as t]
-            [stonecutter.middleware :as m]))
+            [stonecutter.middleware :as m]
+            [stonecutter.db.migration :as migration]
+            [stonecutter.mongo :as mongo]))
 
 (def default-context {:translator (t/translations-fn t/translation-map)})
 
@@ -97,8 +99,10 @@
 (defn -main [& args]
   (log-config/init-logger!)
   (enable-template-caching!)
-  (s/setup-mongo-stores! (get env :mongo-uri "mongodb://localhost:27017/stonecutter"))
-  (client/delete-clients!)
+  (let [db (mongo/get-mongo-db (get env :mongo-uri "mongodb://localhost:27017/stonecutter"))]
+    (s/setup-mongo-stores! db)
+    (client/delete-clients!)                                ;; TODO move this into function below
+    (migration/run-migrations db))
   (client/load-client-credentials-and-store-clients (get env :client-credentials-file-path "client-credentials.yml"))
   (run-jetty app {:port port}))
 
