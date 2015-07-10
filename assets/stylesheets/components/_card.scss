@@ -145,41 +145,40 @@
   }
 }
 
-
 .card-demo {
   position: relative;
-  width: 200px;
-  height: 130px;
+  max-height: 210px;
   margin-bottom: 30px;
-  border: 1px solid $light_grey;
-  border-radius: 6px;
-  &__user-icon {
-    position: absolute;
-    bottom: 5px;
-    left: 10px;
-    display: inline-block;
-    color: $medium_cyan;
-    font-size: 90px;
-    vertical-align: baseline;
+  padding: 32px;
+  background-color: #404040;
+  text-align: center;
+  &:after {
+    content: '';
+    display: block;
+    padding-top: 74%;
   }
-  &__tick-icon {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    @include circle(60px);
-    border: 1px solid $light_grey;
-    color: $medium_cyan;
-    line-height: 60px;
-    font-size: 40px;
-    text-align: center;
-  }
-  &__cross-icon {
-    position: absolute;
-    bottom: 42px;
-    left: 18px;
-    color: $darker_pink;
-    line-height: 60px;
-    font-size: 70px;
-    text-align: center;
-  }
+}
+.card-demo__created {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 12%;
+  left: 12%;
+  height: 149px;
+  margin: auto;
+  background: image-url('card-created.png') no-repeat 50% 50%;
+  background-size: contain;
+  transform: rotate(-2deg);
+}
+
+.card-demo__deleted {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 12%;
+  left: 12%;
+  height: 154px;
+  margin: auto;
+  background: image-url('card-deleted.png') no-repeat 50% 50%;
+  background-size: contain;
 }

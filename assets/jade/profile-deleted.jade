@@ -13,11 +13,9 @@ block content
       | !Your Profile has been deleted
 
     .card-demo
-      i.fa.fa-user.card-demo__user-icon
-      i.fa.fa-check.card-demo__tick-icon
-      i.fa.fa-times.card-demo__cross-icon
+      .card-demo__deleted
 
     p
       span(data-l8n="content:profile-deleted/intro") !All your Profile Cards and data have been completely removed.
 
-    a.button.button--half-width.button--primary.func--profile-deleted-next__button.clj--profile-deleted-next__button(href="./register", data-l8n="content:profile-deleted/action-button") !Register
+    a.button.button--primary.func--profile-deleted-next__button.clj--profile-deleted-next__button(href="./register", data-l8n="content:profile-deleted/action-button") !Register
