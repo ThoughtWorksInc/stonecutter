@@ -22,6 +22,7 @@
 
 (defn authorise [request]
   (let [user (get-in request [:session :user])
+        request (update-in request [:session] dissoc :csrf-token)
         access-token (get-in request [:session :access_token])
         client-id (get-in request [:params :client_id])
         response (auth-handler (assoc-in request [:headers "accept"] "text/html"))]
