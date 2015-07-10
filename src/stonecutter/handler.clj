@@ -1,16 +1,15 @@
 (ns stonecutter.handler
-  (:require [ring.middleware.defaults :refer [wrap-defaults site-defaults api-defaults]]
+  (:require [ring.middleware.defaults :as ring-mw]
             [ring.util.response :as r]
-            [ring.adapter.jetty :refer [run-jetty]]
-            [environ.core :refer [env]]
-            [scenic.routes :refer [scenic-handler]]
+            [ring.adapter.jetty :as ring-jetty]
+            [environ.core :as env]
+            [scenic.routes :as scenic]
             [clojure.tools.logging :as log]
-            [clauth.endpoints :as ep]
             [stonecutter.view.error :as error]
-            [stonecutter.view.view-helpers :refer [enable-template-caching! disable-template-caching!]]
+            [stonecutter.view.view-helpers :as vh]
             [stonecutter.db.storage :as s]
-            [stonecutter.helper :refer :all]
-            [stonecutter.routes :refer [routes path]]
+            [stonecutter.helper :as sh]
+            [stonecutter.routes :as routes]
             [stonecutter.logging :as log-config]
             [stonecutter.client :as client]
             [stonecutter.controller.user :as user]
@@ -23,15 +22,15 @@
 (def default-context {:translator (t/translations-fn t/translation-map)})
 
 (defn not-found [request]
-  (-> (html-response (error/not-found-error default-context))
+  (-> (sh/html-response (error/not-found-error default-context))
       (r/status 404)))
 
 (defn err-handler [request]
-  (-> (html-response (error/internal-server-error default-context))
+  (-> (sh/html-response (error/internal-server-error default-context))
       (r/status 500)))
 
 (defn csrf-err-handler [req]
-  (-> (html-response (error/csrf-error default-context))
+  (-> (sh/html-response (error/csrf-error default-context))
       (r/status 403)))
 
 (def site-handlers
@@ -72,21 +71,20 @@
   (csrf-err-handler req))
 
 (def wrap-defaults-config
-  (-> site-defaults
+  (-> ring-mw/site-defaults
       (assoc-in [:session :cookie-attrs :max-age] 3600)
       (assoc-in [:session :cookie-name] "stonecutter-session")
       (assoc-in [:security :anti-forgery] {:error-handler handle-anti-forgery-error})))
 
 (defn create-site-app [dev-mode?]
-  (-> (scenic-handler routes site-handlers not-found)
-      (wrap-defaults wrap-defaults-config)
+  (-> (scenic/scenic-handler routes/routes site-handlers not-found)
+      (ring-mw/wrap-defaults wrap-defaults-config)
       m/wrap-translator
-      (m/wrap-error-handling err-handler dev-mode?)
-      ))
+      (m/wrap-error-handling err-handler dev-mode?)))
 
 (defn create-api-app [dev-mode?]
-  (-> (scenic-handler routes api-handlers not-found)
-      (wrap-defaults api-defaults)
+  (-> (scenic/scenic-handler routes/routes api-handlers not-found)
+      (ring-mw/wrap-defaults ring-mw/api-defaults)
       (m/wrap-error-handling err-handler dev-mode?)))                   ;; TODO create json error handler
 
 (defn create-app [& {dev-mode? :dev-mode?}]
@@ -94,26 +92,26 @@
 
 (def app (create-app :dev-mode? false))
 
-(def port (Integer. (get env :port "3000")))
+(def port (Integer. (get env/env :port "3000")))
 
 (defn -main [& args]
   (log-config/init-logger!)
-  (enable-template-caching!)
-  (let [db (mongo/get-mongo-db (get env :mongo-uri "mongodb://localhost:27017/stonecutter"))]
+  (vh/enable-template-caching!)
+  (let [db (mongo/get-mongo-db (get env/env :mongo-uri "mongodb://localhost:27017/stonecutter"))]
     (s/setup-mongo-stores! db)
     (client/delete-clients!)                                ;; TODO move this into function below
     (migration/run-migrations db))
-  (client/load-client-credentials-and-store-clients (get env :client-credentials-file-path "client-credentials.yml"))
-  (run-jetty app {:port port}))
+  (client/load-client-credentials-and-store-clients (get env/env :client-credentials-file-path "client-credentials.yml"))
+  (ring-jetty/run-jetty app {:port port}))
 
 (defn lein-ring-init
   "Function called when running app with 'lein ring server'"
   []
   (log-config/init-logger!)
-  (disable-template-caching!)
+  (vh/disable-template-caching!)
   (s/setup-in-memory-stores!)
   (client/delete-clients!)
-  (client/load-client-credentials-and-store-clients (get env :client-credentials-file-path "client-credentials.yml"))
+  (client/load-client-credentials-and-store-clients (get env/env :client-credentials-file-path "client-credentials.yml"))
   (let [user (clauth.user/register-user "user@email.com" "password")
         client-details (clauth.client/register-client "MYAPP" "myapp.com")]
     (log/info (str "TEST USER DETAILS:" user))
