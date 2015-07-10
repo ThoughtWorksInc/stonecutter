@@ -33,3 +33,24 @@ Bad:
 (ns mynamespace
   (:require [clauth.user :as user]))
 ```
+
+### List external dependencies at start, and internal ones at end
+
+Good:
+```
+(ns stonecutter.namespace
+  (:require [clauth.token :as cl-token]
+            [net.cgrand.enlive-html :as html]
+            [stonecutter.helper :as helper]
+            [stonecutter.storage :as storage]))
+```
+
+Bad:
+```
+(ns stonecutter.namespace
+  (:require
+            [clauth.token :as cl-token]
+            [stonecutter.helper :as helper]
+            [net.cgrand.enlive-html :as html]
+            [stonecutter.storage :as storage]))
+```
