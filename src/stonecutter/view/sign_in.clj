@@ -1,6 +1,5 @@
 (ns stonecutter.view.sign-in
   (:require [traduki.core :as t]
-            [ring.util.anti-forgery :refer [anti-forgery-field]]
             [net.cgrand.enlive-html :as html]
             [stonecutter.routes :as r]
             [stonecutter.view.view-helpers :as vh]))
