@@ -54,8 +54,10 @@
                                    :client-secret client-secret
                                    :url           nil}))))))
 
-(defn load-client-credentials-and-store-clients [resource-or-file]
-  (store-clients-from-map (load-client-credentials resource-or-file)))
 
 (defn delete-clients![]
   (cl-client/reset-client-store!))
+
+(defn load-client-credentials-and-store-clients [resource-or-file]
+  (do (delete-clients!)
+      (store-clients-from-map (load-client-credentials resource-or-file))))

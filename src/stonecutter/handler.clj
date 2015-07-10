@@ -99,7 +99,6 @@
   (vh/enable-template-caching!)
   (let [db (mongo/get-mongo-db (get env/env :mongo-uri "mongodb://localhost:27017/stonecutter"))]
     (s/setup-mongo-stores! db)
-    (client/delete-clients!)                                ;; TODO move this into function below
     (migration/run-migrations db))
   (client/load-client-credentials-and-store-clients (get env/env :client-credentials-file-path "client-credentials.yml"))
   (ring-jetty/run-jetty app {:port port}))
@@ -110,7 +109,6 @@
   (log-config/init-logger!)
   (vh/disable-template-caching!)
   (s/setup-in-memory-stores!)
-  (client/delete-clients!)
   (client/load-client-credentials-and-store-clients (get env/env :client-credentials-file-path "client-credentials.yml"))
   (let [user (clauth.user/register-user "user@email.com" "password")
         client-details (clauth.client/register-client "MYAPP" "myapp.com")]
