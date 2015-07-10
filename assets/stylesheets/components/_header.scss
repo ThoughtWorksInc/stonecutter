@@ -20,7 +20,7 @@ $header_logo_image_path: 'logo.svg' !default;
     height: 50px;
     margin-bottom: 15px;
     background: image-url($header_logo_image_path) no-repeat 50% 0;
-    background-size: 220px auto;
+    background-size: contain;
     @include width-from($medium_device) {
       width: 50%;
       float: left;
