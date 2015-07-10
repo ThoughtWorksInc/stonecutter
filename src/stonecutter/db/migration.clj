@@ -3,7 +3,7 @@
             [monger.collection :as coll]
             [ragtime.core :as ragtime]
             [clojure.tools.logging :as log]
-            [stonecutter.storage :as storage]))
+            [stonecutter.db.storage :as storage]))
 
 (defn do-to-coll [db coll f]
   (let [records (coll/find-maps db coll)]

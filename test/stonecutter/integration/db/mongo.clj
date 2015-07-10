@@ -1,11 +1,10 @@
-(ns stonecutter.integration.mongo
+(ns stonecutter.integration.db.mongo
   (:require
     [midje.sweet :refer :all]
     [clauth.store :as s]
-    [clauth.client :as client]
     [monger.core :as m]
     [monger.collection :as c]
-    [stonecutter.mongo :refer [create-client-store create-mongo-user-store get-mongo-db]]))
+    [stonecutter.db.mongo :refer [create-client-store create-mongo-user-store get-mongo-db]]))
 
 (def test-db "stonecutter-test")
 (def coll "users")

@@ -42,7 +42,7 @@ Good:
   (:require [clauth.token :as cl-token]
             [net.cgrand.enlive-html :as html]
             [stonecutter.helper :as helper]
-            [stonecutter.storage :as storage]))
+            [stonecutter.db.storage :as storage]))
 ```
 
 Bad:
@@ -52,5 +52,5 @@ Bad:
             [clauth.token :as cl-token]
             [stonecutter.helper :as helper]
             [net.cgrand.enlive-html :as html]
-            [stonecutter.storage :as storage]))
+            [stonecutter.db.storage :as storage]))
 ```

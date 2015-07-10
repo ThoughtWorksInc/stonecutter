@@ -1,4 +1,4 @@
-(ns stonecutter.mongo
+(ns stonecutter.db.mongo
   (:require [clauth.store :as s]
             [monger.collection :as mc]
             [monger.core :as mongo]

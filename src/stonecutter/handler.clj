@@ -8,7 +8,7 @@
             [clauth.endpoints :as ep]
             [stonecutter.view.error :as error]
             [stonecutter.view.view-helpers :refer [enable-template-caching! disable-template-caching!]]
-            [stonecutter.storage :as s]
+            [stonecutter.db.storage :as s]
             [stonecutter.helper :refer :all]
             [stonecutter.routes :refer [routes path]]
             [stonecutter.logging :as log-config]
@@ -18,7 +18,7 @@
             [stonecutter.translation :as t]
             [stonecutter.middleware :as m]
             [stonecutter.db.migration :as migration]
-            [stonecutter.mongo :as mongo]))
+            [stonecutter.db.mongo :as mongo]))
 
 (def default-context {:translator (t/translations-fn t/translation-map)})
 

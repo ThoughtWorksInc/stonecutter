@@ -3,7 +3,7 @@
             [cheshire.core :as json]
             [ring.util.response :as r]
             [stonecutter.routes :refer [path]]
-            [stonecutter.storage :as s]
+            [stonecutter.db.storage :as s]
             [stonecutter.controller.user :as user]
             [stonecutter.helper :refer :all]))
 

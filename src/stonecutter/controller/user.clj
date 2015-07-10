@@ -6,7 +6,7 @@
             [stonecutter.routes :refer [routes path]]
             [stonecutter.view.sign-in :as sign-in]
             [stonecutter.validation :as v]
-            [stonecutter.storage :as s]
+            [stonecutter.db.storage :as s]
             [stonecutter.view.register :as register]
             [stonecutter.view.profile-created :as profile-created]
             [stonecutter.view.profile :as profile]

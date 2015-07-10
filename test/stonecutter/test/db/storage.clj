@@ -1,9 +1,9 @@
-(ns stonecutter.test.storage
+(ns stonecutter.test.db.storage
   (:require [midje.sweet :refer :all]
             [clauth.user :as user-store]
             [clauth.store :as clauth-store]
             [clauth.auth-code :as auth-code-store]
-            [stonecutter.storage :as s]))
+            [stonecutter.db.storage :as s]))
 
 (fact "can store, authenticate/retrieve and delete users - in memory store is used here"
       (s/setup-in-memory-stores!)

@@ -5,7 +5,7 @@
             [net.cgrand.enlive-html :as html]
             [stonecutter.integration.kerodon-helpers :as kh]
             [stonecutter.handler :as h]
-            [stonecutter.storage :as s]
+            [stonecutter.db.storage :as s]
             [stonecutter.logging :as l]
             [stonecutter.view.register :refer [registration-form]]
             [stonecutter.middleware :as m]))

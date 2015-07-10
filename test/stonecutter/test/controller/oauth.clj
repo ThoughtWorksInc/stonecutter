@@ -9,7 +9,7 @@
             [cheshire.core :as json]
             [stonecutter.controller.user :as u]
             [stonecutter.controller.oauth :as oauth]
-            [stonecutter.storage :as storage])
+            [stonecutter.db.storage :as storage])
   (:import (org.apache.commons.codec.binary Base64)))
 
 (background

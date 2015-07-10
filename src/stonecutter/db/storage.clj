@@ -1,4 +1,4 @@
-(ns stonecutter.storage
+(ns stonecutter.db.storage
   (:require [clauth.user :as user-store]
             [clauth.token :as token-store]
             [clauth.client :as client-store]
@@ -6,7 +6,7 @@
             [clauth.store :as store]
             [clojure.string :as s]
             [clojure.tools.logging :as log]
-            [stonecutter.mongo :as m])
+            [stonecutter.db.mongo :as m])
   (:import (java.util UUID)))
 
 (defn setup-mongo-stores! [db]

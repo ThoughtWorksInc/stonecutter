@@ -2,7 +2,7 @@
   (:require [midje.sweet :refer :all]
             [stonecutter.controller.user :as c]
             [ring.mock.request :as mock]
-            [stonecutter.storage :as s]
+            [stonecutter.db.storage :as s]
             [stonecutter.validation :as v]
             [clauth.client :as client]
             [clauth.token :as token]

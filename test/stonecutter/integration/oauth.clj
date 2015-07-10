@@ -2,14 +2,14 @@
   (:require [midje.sweet :refer :all]
             [kerodon.core :as k]
             [stonecutter.handler :as h]
-            [stonecutter.storage :as s]
+            [stonecutter.db.storage :as s]
             [ring.mock.request :as r]
             [clojure.string :as str]
             [clauth.client :as client]
             [clauth.token :as token]
             [clauth.user :as user]
             [stonecutter.integration.kerodon-helpers :as kh]
-            [stonecutter.storage :as storage]))
+            [stonecutter.db.storage :as storage]))
 
 ;; CLIENT => AUTH    /authorisation?client-id=123&response_type=code&redirect_uri=callback-url
 ;;   USER LOGIN (Auth Server)
