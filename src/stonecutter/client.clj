@@ -61,3 +61,6 @@
 (defn load-client-credentials-and-store-clients [resource-or-file]
   (do (delete-clients!)
       (store-clients-from-map (load-client-credentials resource-or-file))))
+
+(defn retrieve-client-with-client-id [client-id]
+  (cl-client/fetch-client client-id))

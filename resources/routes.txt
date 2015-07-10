@@ -12,4 +12,5 @@ POST    /delete-account         delete-account
 GET     /authorisation          authorise
 POST    /authorisation          authorise-client
 GET     /authorise-form         show-authorise-form
+GET     /authorise-failure      show-authorise-failure
 POST    /api/token              validate-token

@@ -82,26 +82,45 @@
 
 (defn print-debug [v] (prn "Kerodon:" v) v)
 
-(facts "user can sign in through client"
-       (let [{:keys [client-id client-secret]} (setup)]
-         (-> (k/session h/app)
-             (browser-sends-authorisation-request-from-client-redirect client-id)
-             (k/follow-redirect)
-             ;; login
-             (kh/page-uri-is "/sign-in")
-             (k/fill-in :.func--email__input email)
-             (k/fill-in :.func--password__input password)
-             (k/press :.func--sign-in__button)
-             ;; check redirect - should have auth_code
-             (k/follow-redirect)
-             (kh/page-uri-is "/authorisation")
-             (k/press :.func--authorise-share-profile__button)
-             (kh/location-contains "callback?code=")
-             (client-sends-http-token-request client-id client-secret)
-             ; return 200 with new access_token
-             (kh/response-has-access-token)
-             (kh/response-has-user-email email)
-             (kh/response-has-id))))
+(facts "user authorising client-apps"
+       (facts "user can sign in through client"
+              (let [{:keys [client-id client-secret]} (setup)]
+                (-> (k/session h/app)
+                    (browser-sends-authorisation-request-from-client-redirect client-id)
+                    (k/follow-redirect)
+                    ;; login
+                    (kh/page-uri-is "/sign-in")
+                    (k/fill-in :.func--email__input email)
+                    (k/fill-in :.func--password__input password)
+                    (k/press :.func--sign-in__button)
+                    ;; check redirect - should have auth_code
+                    (k/follow-redirect)
+                    (kh/page-uri-is "/authorisation")
+                    (k/press :.func--authorise-share-profile__button)
+                    (kh/location-contains "callback?code=")
+                    (client-sends-http-token-request client-id client-secret)
+                    ; return 200 with new access_token
+                    (kh/response-has-access-token)
+                    (kh/response-has-user-email email)
+                    (kh/response-has-id))))
+
+       (facts "user is redirected to authorisation-failure page when cancelling authorisation"
+              (let [{:keys [client-id client-secret]} (setup)]
+                (-> (k/session h/app)
+                    (browser-sends-authorisation-request-from-client-redirect client-id)
+                    (k/follow-redirect)
+                    ;; login
+                    (kh/page-uri-is "/sign-in")
+                    (k/fill-in :.func--email__input email)
+                    (k/fill-in :.func--password__input password)
+                    (k/press :.func--sign-in__button)
+                    ;; check redirect - should have auth_code
+                    (k/follow-redirect)
+                    (kh/page-uri-is "/authorisation")
+                    (k/follow :.func--authorise-cancel__link)
+                    (kh/page-uri-is "/authorise-failure")
+                    :response
+                    :status)) => 200))
 
 (facts "no access token will be issued with invalid credentials"
        (facts "user cannot sign in with invalid client secret"

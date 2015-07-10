@@ -100,8 +100,5 @@
 (defn show-profile-deleted [request]
   (sh/html-response (delete-account/profile-deleted request)))
 
-(defn show-authorise-form [request]
-  (sh/html-response (authorise/authorise-form request)))
-
 (defn home [request]
   (r/redirect (routes/path :show-profile)))

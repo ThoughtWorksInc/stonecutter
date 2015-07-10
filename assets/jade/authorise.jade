@@ -40,7 +40,7 @@ block content
           = " "
           | Update your Profile Card
 
-    form.clj--authorise__form(action="./authorisation", method="post", role="form")
+    form.func--authorise__form.clj--authorise__form(action="./authorisation", method="post", role="form")
       input.clj--authorise-csrf__input(type="hidden" name="csrf-token" value="1234")
       input.clj--authorise-client-id__input(type="hidden" name="client_id" value="ASDAD1234")
       input.clj--authorise-response-type__input(type="hidden" name="response_type" value="code")
@@ -50,7 +50,7 @@ block content
           button.button.button--full-width.button--primary.func--authorise-share-profile__button(type="submit")
             span Share Profile Card
         .authorise-buttons__secondary
-          a.button.button--full-width.button--secondary(href="./authorise-failure") Cancel
+          a.button.button--full-width.button--secondary.clj--authorise-cancel__link.func--authorise-cancel__link(href="./authorise-failure") Cancel
 
     .authorise-terms
       p

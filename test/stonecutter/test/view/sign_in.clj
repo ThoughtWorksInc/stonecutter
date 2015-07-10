@@ -18,7 +18,7 @@
       (let [page (-> (th/create-request {} nil {}) sign-in-form html/html-snippet)]
         (-> page (html/select [:.func--register__link]) first :attrs :href) => (r/path :show-registration-form)))
 
-(fact "form should have correct action"
+(fact "sign in form posts to correct endpoint"
       (let [page (-> (th/create-request {} nil {}) sign-in-form html/html-snippet)]
         (-> page (html/select [:form]) first :attrs :action) => (r/path :sign-in)))
 
@@ -50,7 +50,7 @@
                 (fact "email validation element is present"
                       (html/select page [:.clj--sign-in-email__validation]) =not=> empty?)
                 (fact "correct error message is displayed"
-                      (html/select page [[:.clj--sign-in-email__validation (html/attr= :data-l8n "content:sign-in-form/email-address-invalid-validation-message")]]) =not=> empty?) 
+                      (html/select page [[:.clj--sign-in-email__validation (html/attr= :data-l8n "content:sign-in-form/email-address-invalid-validation-message")]]) =not=> empty?)
                 (fact "invalid value is preserved in input field"
                       (-> page (html/select [:.clj--email__input]) first :attrs :value) => "invalid")))
 

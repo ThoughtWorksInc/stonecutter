@@ -7,6 +7,9 @@
 (defn set-form-action [enlive-m]
   (html/at enlive-m [:.clj--authorise__form] (html/set-attr :action (r/path :authorise-client))))
 
+(defn set-cancel-link [enlive-m]
+  (html/at enlive-m [:.clj--authorise-cancel__link] (html/set-attr :href (r/path :show-authorise-failure))))
+
 (defn set-hidden-params [params enlive-m]
   (-> enlive-m
       (html/at [:.clj--authorise-client-id__input] (html/set-attr :value (:client_id params)))
@@ -24,6 +27,7 @@
         translator (:translator context)]
     (->> (vh/load-template "public/authorise.html")
          set-form-action
+         set-cancel-link
          vh/add-anti-forgery
          (set-hidden-params params)
          (set-hidden-clauth-csrf-token csrf-token)

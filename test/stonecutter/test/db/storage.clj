@@ -2,7 +2,9 @@
   (:require [midje.sweet :refer :all]
             [clauth.user :as user-store]
             [clauth.store :as clauth-store]
+            [clauth.client :as client-store]
             [clauth.auth-code :as auth-code-store]
+            [stonecutter.client :as client]
             [stonecutter.db.storage :as s]))
 
 (fact "can store, authenticate/retrieve and delete users - in memory store is used here"
@@ -78,3 +80,11 @@
         (s/retrieve-user-with-auth-code "code") => ...user...
         (provided
           (auth-code-store/fetch-auth-code "code") => auth-code-record)))
+
+(fact "can retrieve client using client-id"
+      (let [client-entry {:name           "name"
+                          :client-id      "client-id"
+                          :client-secret  "client-secret"
+                          :url            nil}]
+        (client-store/store-client client-entry)
+        (client/retrieve-client-with-client-id "client-id") => client-entry))

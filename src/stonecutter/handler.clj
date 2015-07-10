@@ -39,7 +39,6 @@
      :show-registration-form             user/show-registration-form
      :register-user                      user/register-user
      :show-sign-in-form                  user/show-sign-in-form
-     :show-authorise-form                user/show-authorise-form
      :sign-in                            user/sign-in
      :sign-out                           user/sign-out
      :show-profile                       user/show-profile
@@ -47,8 +46,10 @@
      :show-profile-deleted               user/show-profile-deleted
      :show-delete-account-confirmation   user/show-confirm-account-confirmation
      :delete-account                     user/delete-account
+     :show-authorise-form                oauth/show-authorise-form
      :authorise                          oauth/authorise
-     :authorise-client                   oauth/authorise-client}
+     :authorise-client                   oauth/authorise-client
+     :show-authorise-failure             oauth/show-authorise-failure}
     (m/wrap-handlers m/wrap-disable-caching #{:show-sign-in-form :home})
     (m/wrap-handlers m/wrap-signed-in #{:show-registration-form :register-user
                                         :show-sign-in-form      :sign-in
