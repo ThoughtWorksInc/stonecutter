@@ -43,12 +43,15 @@
                                (r/header "accept" "text/html")
                                (assoc-in [:session :access_token] (:token access-token))
                                (assoc-in [:session :user :email] user-email)
-                               (assoc-in [:context :translator] {}))
+                               (assoc-in [:context :translator] {})
+                               ;the csrf-token key in session will stop clauth from refreshing the csrf-token in request
+                               (assoc-in [:session :csrf-token] "staleCSRFtoken"))
                    response (oauth/authorise request)]
                (:status response) => 200
                (get-in response [:session :access_token]) => (:token access-token)
                (get response :body) => (contains "Share Profile Card")
-               (get-in response [:session :user :email]) => user-email))
+               (get-in response [:session :user :email]) => user-email
+               (get-in response [:session :csrf-token]) =not=> "staleCSRFtoken"))
 
        (fact "posting to authorisation endpoint redirects to callback with auth code"
              (let [user-email "email@user.com"
