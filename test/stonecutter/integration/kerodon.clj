@@ -36,6 +36,7 @@
 
 (def sign-out-link :.func--sign-out__link)
 
+(def delete-account-link :.func--delete-account__link)
 (def delete-account-button :.func--delete-account__button)
 
 (defn register [state email]
@@ -133,7 +134,8 @@
 (facts "User can delete account"
       (-> (k/session h/app)
           (register "account_to_be@deleted.com")
-          (k/visit "/delete-account")
+          (k/visit "/profile")
+          (k/follow delete-account-link)
           (kh/page-uri-is "/delete-account")
           (kh/response-status-is 200)
           (k/press delete-account-button)

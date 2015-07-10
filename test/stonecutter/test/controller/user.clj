@@ -146,7 +146,7 @@
           (s/store-user! "valid@email.com" "password") => ...user...)))
 
 (fact "account can be deleted, user is redirected to profile-deleted and session is cleared"
-      (-> (create-request :get "/delete-account" nil)
+      (-> (create-request :post "/delete-account" nil)
           (assoc-in [:session :user :login] "account_to_be@deleted.com")
           (assoc-in [:session :access_token] ...token...)
           c/delete-account) => (contains {:status 302 :headers {"Location" "/profile-deleted"} :session nil})
