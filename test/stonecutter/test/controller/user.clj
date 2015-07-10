@@ -1,14 +1,13 @@
 (ns stonecutter.test.controller.user
   (:require [midje.sweet :refer :all]
-            [stonecutter.controller.user :as c]
             [ring.mock.request :as mock]
+            [clauth.token :as cl-token]
+            [clauth.client :as cl-client]
+            [clauth.user :as cl-user]
+            [net.cgrand.enlive-html :as html]
+            [stonecutter.controller.user :as c]
             [stonecutter.db.storage :as s]
-            [stonecutter.validation :as v]
-            [clauth.client :as client]
-            [clauth.token :as token]
-            [clauth.user :as user-store]
-            [clauth.store :as clauth-store]
-            [net.cgrand.enlive-html :as html]))
+            [stonecutter.validation :as v]))
 
 (def email "valid@email.com")
 (def password "password")
@@ -26,7 +25,7 @@
    :name     nil
    :url      nil})
 
-(background (before :facts (user-store/reset-user-store!)))
+(background (before :facts (cl-user/reset-user-store!)))
 
 (fact "user can sign in with valid credentials and is redirected to profile, with user and access_token added to session"
       (-> (create-request :post "/sign-in" sign-in-user-params)
@@ -35,7 +34,7 @@
                                              :access_token ...token...}})
       (provided
         (s/authenticate-and-retrieve-user email password) => ...user...
-        (token/create-token nil ...user...) => {:token ...token...}))
+        (cl-token/create-token nil ...user...) => {:token ...token...}))
 
 (fact "user can register with valid credentials and is redirected to profile-created page, with user added to session"
       (-> (create-request :post "/register" register-user-params)
@@ -45,7 +44,7 @@
       (provided
         (v/validate-registration register-user-params s/is-duplicate-user?) => {}
         (s/store-user! email password) => ...user...
-        (token/create-token nil ...user...) => {:token ...token...}))
+        (cl-token/create-token nil ...user...) => {:token ...token...}))
 
 (fact "signed-in? returns true only when user and access_token are in the session"
       (tabular
@@ -81,8 +80,8 @@
                                     :session {:access_token ...token... :user ...user...}})
         (provided
           (s/authenticate-and-retrieve-user email password) => ...user...
-          (client/fetch-client "client-id") => ...client...
-          (token/create-token ...client... ...user...) => {:token ...token...})))
+          (cl-client/fetch-client "client-id") => ...client...
+          (cl-token/create-token ...client... ...user...) => {:token ...token...})))
 
 (fact "if user logged out, access token and user email are removed from session"
       (let [return-to-url "/authorisation?client-id=whatever"]
@@ -94,8 +93,8 @@
             :session) => empty?
         (provided
           (s/authenticate-and-retrieve-user email password) => ...user...
-          (client/fetch-client "client-id") => ...client...
-          (token/create-token ...client... ...user...) => {:token ...token...})))
+          (cl-client/fetch-client "client-id") => ...client...
+          (cl-token/create-token ...client... ...user...) => {:token ...token...})))
 
 (fact "if user has client id but no return-to in session, throws an exception"
       (-> (create-request :post "/sign-in" sign-in-user-params)
@@ -112,7 +111,7 @@
             c/sign-in) => (throws Exception)
         (provided
           (s/authenticate-and-retrieve-user email password) => ...user...
-          (client/fetch-client "client-id") => nil)))
+          (cl-client/fetch-client "client-id") => nil)))
 
 (facts "about sign-in validation errors"
        (fact "user cannot sign in with blank password"
@@ -168,15 +167,15 @@
             :class)) => (contains "clj--registration-email")
       (provided
         (v/validate-registration register-user-params s/is-duplicate-user?) => {:email :duplicate}
-        (user-store/new-user anything anything) => anything :times 0
-        (user-store/store-user anything) => anything :times 0))
+        (cl-user/new-user anything anything) => anything :times 0
+        (cl-user/store-user anything) => anything :times 0))
 
 (facts "about registration validation errors"
        (fact "user isn't saved to the database if email is invalid"
              (-> (create-request :post "/register" {:email "invalid"}) c/register-user) => anything
              (provided
-               (user-store/new-user anything anything) => anything :times 0
-               (user-store/store-user anything) => anything :times 0))
+               (cl-user/new-user anything anything) => anything :times 0
+               (cl-user/store-user anything) => anything :times 0))
        (facts "registration page is rendered with errors"
               (let [html-response (-> (create-request :post "/register" {:email "invalid"})
                                       c/register-user
