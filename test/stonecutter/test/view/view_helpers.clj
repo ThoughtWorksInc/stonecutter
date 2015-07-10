@@ -54,6 +54,5 @@
               (fact "applies each supplied transformation in turn"
                     (transform-template default-context file-name
                                         (fn [m] (html/at m [:.a] (html/content "Hello")))
-                                        (fn [m] (html/at m [:p] (html/set-attr :class "b")))
-                                        )
+                                        (fn [m] (html/at m [:p] (html/set-attr :class "b"))))
                     => "<html><body><p class=\"b\">Hello</p></body></html>"))))

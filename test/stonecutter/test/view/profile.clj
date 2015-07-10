@@ -2,29 +2,25 @@
   (:require [midje.sweet :refer :all]
             [net.cgrand.enlive-html :as html]
             [stonecutter.routes :as r]
-            [stonecutter.test.view.test-helpers :refer [create-request]]
+            [stonecutter.test.view.test-helpers :as th]
             [stonecutter.view.profile :refer [profile]]
             [stonecutter.translation :as t]))
 
-(def no-untranslated-strings
-  (let [untranslated-string-regex #"(?!!DOCTYPE|!IEMobile)!\w+"]
-    (chatty-checker [response-body] (empty? (re-seq untranslated-string-regex response-body)))))
-
 (fact "profile should return some html"
-      (let [page (-> (create-request {} nil {})
+      (let [page (-> (th/create-request {} nil {})
                      profile
                      html/html-snippet)]
         (html/select page [:body]) =not=> empty?))
 
 (fact "work in progress should be removed from page"
-      (let [page (-> (create-request {} nil {}) profile html/html-snippet)]
-        (-> page (html/select [:.clj-wip])) => empty?))
+      (let [page (-> (th/create-request {} nil {}) profile html/html-snippet)]
+        page => th/work-in-progress-removed))
 
 (fact "sign out link should go to correct endpoint"
-      (let [page (-> (create-request {} nil {}) profile html/html-snippet)]
+      (let [page (-> (th/create-request {} nil {}) profile html/html-snippet)]
         (-> page (html/select [:.func--sign-out__link]) first :attrs :href) => (r/path :sign-out)))
 
 (fact "there are no missing translations"
       (let [translator (t/translations-fn t/translation-map)
-            page (-> (create-request translator nil {}) profile)]
-        page => no-untranslated-strings))
+            page (-> (th/create-request translator nil {}) profile)]
+        page => th/no-untranslated-strings))
