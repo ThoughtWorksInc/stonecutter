@@ -1,9 +1,8 @@
 (ns stonecutter.client
   (:require [clj-yaml.core :as yaml]
-            [clauth.client :as client-store]
-            [environ.core :refer [env]]
+            [clauth.client :as cl-client]
             [schema.core :as schema]
-            [clojure.java.io :refer [resource]]
+            [clojure.java.io :as io]
             [clojure.string :as s]))
 
 (def not-blank? (complement s/blank?))
@@ -20,7 +19,7 @@
 
 (defn load-client-credentials-from-resource [resource-name]
   (-> resource-name
-      resource
+      io/resource
       slurp
       load-client-credentials-from-string))
 
@@ -30,7 +29,7 @@
       load-client-credentials-from-string))
 
 (defn load-client-credentials [resource-or-file]
-  (if (resource resource-or-file)
+  (if (io/resource resource-or-file)
     (load-client-credentials-from-resource resource-or-file)
     (load-client-credentials-from-file resource-or-file)))
 
@@ -49,14 +48,14 @@
       (let [name (:name client-entry)
             client-id (:client-id client-entry)
             client-secret (:client-secret client-entry)]
-        (when (is-not-duplicate-client-id? (client-store/clients) client-id)
-          (client-store/store-client {:name          name
-                                      :client-id     client-id
-                                      :client-secret client-secret
-                                      :url           nil}))))))
+        (when (is-not-duplicate-client-id? (cl-client/clients) client-id)
+          (cl-client/store-client {:name          name
+                                   :client-id     client-id
+                                   :client-secret client-secret
+                                   :url           nil}))))))
 
 (defn load-client-credentials-and-store-clients [resource-or-file]
   (store-clients-from-map (load-client-credentials resource-or-file)))
 
 (defn delete-clients![]
-  (client-store/reset-client-store!))
+  (cl-client/reset-client-store!))
