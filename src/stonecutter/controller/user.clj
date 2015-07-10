@@ -1,9 +1,9 @@
 (ns stonecutter.controller.user
-  (:require [clauth.client :as client]
-            [clauth.token :as token]
+  (:require [clauth.client :as cl-client]
+            [clauth.token :as cl-token]
+            [clauth.endpoints :as cl-ep]
             [ring.util.response :as r]
-            [clauth.endpoints :as ep]
-            [stonecutter.routes :refer [routes path]]
+            [stonecutter.routes :as routes]
             [stonecutter.view.sign-in :as sign-in]
             [stonecutter.validation :as v]
             [stonecutter.db.storage :as s]
@@ -12,7 +12,7 @@
             [stonecutter.view.profile :as profile]
             [stonecutter.view.delete-account :as delete-account]
             [stonecutter.view.authorise :as authorise]
-            [stonecutter.helper :refer :all]))
+            [stonecutter.helper :as sh]))
 
 (declare redirect-to-profile redirect-to-profile-created redirect-to-profile-deleted)
 
@@ -21,8 +21,8 @@
     (and (:user session) (:access_token session))))
 
 (defn redirect-to-authorisation [return-to user client-id]
-  (if-let [client (client/fetch-client client-id)]
-    (assoc (r/redirect return-to) :session {:user user :access_token (:token (token/create-token client user))})
+  (if-let [client (cl-client/fetch-client client-id)]
+    (assoc (r/redirect return-to) :session {:user user :access_token (:token (cl-token/create-token client user))})
     (throw (Exception. "Invalid client"))))
 
 (defn register-user [request]
@@ -34,7 +34,7 @@
     (if (empty? err)
       (-> (s/store-user! email password)
           redirect-to-profile-created)
-      (html-response (register/registration-form request)))))
+      (sh/html-response (register/registration-form request)))))
 
 (defn sign-in [request]
   (let [client-id (get-in request [:session :client-id])
@@ -52,16 +52,16 @@
         (->> {:credentials :invalid}
              (assoc-in request [:context :errors])
              sign-in/sign-in-form
-             html-response))
-      (html-response (sign-in/sign-in-form request)))))
+             sh/html-response))
+      (sh/html-response (sign-in/sign-in-form request)))))
 
 (defn sign-out [request]
   (-> request
       (update-in [:session] dissoc :user)
-      ep/logout-handler))
+      cl-ep/logout-handler))
 
 (defn show-confirm-account-confirmation [request]
-  (html-response (delete-account/delete-account-confirmation request)))
+  (sh/html-response (delete-account/delete-account-confirmation request)))
 
 (defn delete-account [request]
   (let [email (get-in request [:session :user :login])]
@@ -69,18 +69,18 @@
     (redirect-to-profile-deleted)))
 
 (defn redirect-to-profile [user]
-  (assoc (r/redirect (path :show-profile)) :session {:user user
-                                                     :access_token (:token (token/create-token nil user))}))
+  (assoc (r/redirect (routes/path :show-profile)) :session {:user user
+                                                            :access_token (:token (cl-token/create-token nil user))}))
 
 (defn redirect-to-profile-created [user]
-  (assoc (r/redirect (path :show-profile-created)) :session {:user user
-                                                             :access_token (:token (token/create-token nil user))}))
+  (assoc (r/redirect (routes/path :show-profile-created)) :session {:user user
+                                                                    :access_token (:token (cl-token/create-token nil user))}))
 
 (defn redirect-to-profile-deleted []
-  (assoc (r/redirect (path :show-profile-deleted)) :session nil))
+  (assoc (r/redirect (routes/path :show-profile-deleted)) :session nil))
 
 (defn show-registration-form [request]
-  (html-response (register/registration-form request)))
+  (sh/html-response (register/registration-form request)))
 
 (defn preserve-session [response request]
   (-> response
@@ -88,20 +88,20 @@
 
 (defn show-sign-in-form [request]
   (if (signed-in? request)
-    (-> (r/redirect (path :home)) (preserve-session request))
-    (html-response (sign-in/sign-in-form request))))
+    (-> (r/redirect (routes/path :home)) (preserve-session request))
+    (sh/html-response (sign-in/sign-in-form request))))
 
 (defn show-profile [request]
-  (html-response (profile/profile request)))
+  (sh/html-response (profile/profile request)))
 
 (defn show-profile-created [request]
-  (html-response (profile-created/profile-created request)))
+  (sh/html-response (profile-created/profile-created request)))
 
 (defn show-profile-deleted [request]
-  (html-response (delete-account/profile-deleted request)))
+  (sh/html-response (delete-account/profile-deleted request)))
 
 (defn show-authorise-form [request]
-  (html-response (authorise/authorise-form request)))
+  (sh/html-response (authorise/authorise-form request)))
 
 (defn home [request]
-  (r/redirect (path :show-profile)))
+  (r/redirect (routes/path :show-profile)))
