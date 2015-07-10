@@ -1,14 +1,11 @@
 (ns stonecutter.integration.kerodon
   (:require [midje.sweet :refer :all]
-            [ring.middleware.defaults :refer [wrap-defaults site-defaults]]
             [kerodon.core :as k]
-            [net.cgrand.enlive-html :as html]
             [stonecutter.integration.kerodon-helpers :as kh]
             [stonecutter.handler :as h]
             [stonecutter.db.storage :as s]
             [stonecutter.logging :as l]
-            [stonecutter.view.register :refer [registration-form]]
-            [stonecutter.middleware :as m]))
+            [stonecutter.view.register :as register-view]))
 
 (l/init-logger!)
 
@@ -175,7 +172,7 @@
 
 (fact "Error page is shown if an exception is thrown"
       (against-background
-        (registration-form anything) =throws=> (Exception.))
+        (register-view/registration-form anything) =throws=> (Exception.))
       (-> (k/session (h/create-app :dev-mode? false))
           (k/visit "/register")
            (kh/response-status-is 500)
