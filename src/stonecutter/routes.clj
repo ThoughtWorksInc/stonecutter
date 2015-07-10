@@ -1,8 +1,8 @@
 (ns stonecutter.routes
-  (:require [scenic.routes :refer [load-routes-from-file]]
-            [bidi.bidi :refer [path-for]]))
+  (:require [scenic.routes :as scenic]
+            [bidi.bidi :as bidi]))
 
-(def routes (load-routes-from-file "routes.txt"))
+(def routes (scenic/load-routes-from-file "routes.txt"))
 
 (defn path [action & params]
-  (apply path-for routes action params))
+  (apply bidi/path-for routes action params))
