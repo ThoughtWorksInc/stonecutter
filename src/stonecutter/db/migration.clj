@@ -22,8 +22,7 @@
 
 ;; IMPORTANT DO *NOT* MODIFY THE EXISTING MIGRATION IDS IN THIS LIST
 (def migrations
-  [{:id "add-user-uid" :up add-user-uids}]
-  )
+  [{:id "add-user-uid" :up add-user-uids}])
 
 (defn run-migrations
   ([db]
@@ -31,5 +30,3 @@
   ([db migrations]
    (let [index (ragtime/into-index migrations)]
      (ragtime/migrate-all db index migrations))))
-
-

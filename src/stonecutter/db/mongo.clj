@@ -1,5 +1,5 @@
 (ns stonecutter.db.mongo
-  (:require [clauth.store :as s]
+  (:require [clauth.store :as cl-s]
             [monger.collection :as mc]
             [monger.core :as mongo]
             [clojure.tools.logging :as log]))
@@ -10,7 +10,7 @@
 (def client-collection "clients")
 
 (defrecord MongoStore [mongo-db coll]
-  s/Store
+  cl-s/Store
   (fetch [this t]
     (when t
       (-> (mc/find-map-by-id mongo-db coll t)
