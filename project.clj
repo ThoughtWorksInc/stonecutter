@@ -25,7 +25,8 @@
                                               [prone "0.8.2"]
                                               [kerodon "0.6.1"]]
                              :plugins        [[lein-ring "0.9.6"]
-                                              [lein-midje "3.1.3"]]
+                                              [lein-midje "3.1.3"]
+                                              [lein-kibit "0.1.2"]]
                              :ring {:handler stonecutter.handler/lein-app
                                     :init    stonecutter.handler/lein-ring-init
                                     :stacktrace-middleware prone.middleware/wrap-exceptions}
@@ -33,4 +34,5 @@
                              :aliases        {"unit"        ["midje" "stonecutter.test.*"]
                                               "integration" ["midje" "stonecutter.integration.*"]
                                               "auto-unit"   ["midje" ":autotest" "test/stonecutter/test/" "src/"]
-                                              "gencred"     ["run" "-m" "stonecutter.util.gencred"]}}})
+                                              "gencred"     ["run" "-m" "stonecutter.util.gencred"]
+                                              "lint"        ["eastwood" "{:exclude-namespaces [\"stonecutter.integration\" \"stonecutter.test\"]}"]}}})
