@@ -3,8 +3,8 @@
             [net.cgrand.enlive-html :as html]
             [stonecutter.routes :as r]
             [stonecutter.test.view.test-helpers :as th]
-            [stonecutter.view.authorise :refer [authorise-form]]
-            [stonecutter.translation :as t]))
+            [stonecutter.translation :as t]  
+            [stonecutter.view.authorise :refer [authorise-form]]))
 
 (fact "authorise should return some html"
       (let [page (-> (th/create-request {} nil {})

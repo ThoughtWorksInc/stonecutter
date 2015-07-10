@@ -3,8 +3,8 @@
             [net.cgrand.enlive-html :as html]
             [stonecutter.routes :as r]
             [stonecutter.test.view.test-helpers :as th]
-            [stonecutter.view.profile-created :refer [profile-created]]
-            [stonecutter.translation :as t]))
+            [stonecutter.translation :as t]  
+            [stonecutter.view.profile-created :refer [profile-created]]))
 
 (fact "profile-created should return some html"
       (let [page (-> (th/create-request {} nil {})

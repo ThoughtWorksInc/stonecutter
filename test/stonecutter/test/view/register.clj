@@ -2,9 +2,9 @@
   (:require [midje.sweet :refer :all]
             [net.cgrand.enlive-html :as html]
             [stonecutter.routes :as r]
-            [stonecutter.view.register :refer [registration-form]]
             [stonecutter.test.view.test-helpers :as th]
-            [stonecutter.translation :as t]))
+            [stonecutter.translation :as t]  
+            [stonecutter.view.register :refer [registration-form]]))
 
 (fact "registration-form should return some html"
       (let [page (-> (th/create-request {} nil {})

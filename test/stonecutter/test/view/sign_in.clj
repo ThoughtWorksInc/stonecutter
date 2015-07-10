@@ -2,9 +2,9 @@
   (:require [midje.sweet :refer :all]
             [net.cgrand.enlive-html :as html]
             [stonecutter.routes :as r]
-            [stonecutter.view.sign-in :refer [sign-in-form]]
             [stonecutter.test.view.test-helpers :as th]
-            [stonecutter.translation :as t]))
+            [stonecutter.translation :as t]  
+            [stonecutter.view.sign-in :refer [sign-in-form]]))
 
 (fact "sign-in-form should return some html"
       (let [page (-> (th/create-request {} nil {}) sign-in-form html/html-snippet)]

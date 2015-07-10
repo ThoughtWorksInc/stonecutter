@@ -2,9 +2,9 @@
   (:require [midje.sweet :refer :all]
             [net.cgrand.enlive-html :as html]
             [stonecutter.test.view.test-helpers :as th]
+            [stonecutter.translation :as t]  
             [stonecutter.view.delete-account :refer [delete-account-confirmation
-                                                     profile-deleted]]
-            [stonecutter.translation :as t]))
+                                                     profile-deleted]]))
 
 (facts "about delete-account-confirmation page"
        (fact "should return some html"
