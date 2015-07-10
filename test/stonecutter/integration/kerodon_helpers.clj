@@ -23,16 +23,20 @@
         (-> state :response :status) => status)
   state)
 
-(defn selector-has-content [state selector content]
-  (fact {:midje/name "Check content of element"}
-        (-> state :enlive (html/select selector) first html/text) => content)
+(defn selector-exists [state selector]
+  (fact {:midje/name "Check element exists"}
+        (-> state :enlive (html/select selector)) =not=> empty?)
+  state)
+
+(defn selector-includes-content [state selector content]
+  (fact {:midje/name "Check if element contains string"}
+        (-> state :enlive (html/select selector) first html/text) => (contains content))
   state)
 
 (defn location-contains [state path]
   (fact {:midje/name "Checking location in header:"}
         (-> state :response (get-in [:headers "Location"])) => (contains path))
-  state
-  )
+  state)
 
 (defn response-has-access-token [state]
   (fact {:midje/name "Checking if response has access bearer token"}
@@ -41,7 +45,7 @@
                                 :body
                                 (json/parse-string keyword))]
           (:access_token response-body) => (just #"[A-Z0-9]{32}")
-          (:token_type response-body) => "bearer")) 
+          (:token_type response-body) => "bearer"))
   state)
 
 (defn response-has-user-email [state email]
@@ -50,7 +54,7 @@
                                 :response
                                 :body
                                 (json/parse-string keyword))]
-          (:user-email response-body) => email)) 
+          (:user-email response-body) => email))
   state)
 
 (defn response-has-id [state]
