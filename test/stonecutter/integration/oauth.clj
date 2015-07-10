@@ -1,13 +1,11 @@
 (ns stonecutter.integration.oauth
   (:require [midje.sweet :refer :all]
             [kerodon.core :as k]
+            [ring.mock.request :as r]
+            [clojure.string :as string]
+            [clauth.client :as cl-client]
             [stonecutter.handler :as h]
             [stonecutter.db.storage :as s]
-            [ring.mock.request :as r]
-            [clojure.string :as str]
-            [clauth.client :as client]
-            [clauth.token :as token]
-            [clauth.user :as user]
             [stonecutter.integration.kerodon-helpers :as kh]
             [stonecutter.db.storage :as storage]))
 
@@ -44,7 +42,7 @@
                           :response
                           (get-in [:headers "Location"]))]
     (let [query-string (-> location
-                           (str/split #"\?")
+                           (string/split #"\?")
                            (peek))
           auth-code (-> {:query-string query-string}
                         (ring.middleware.params/params-request)
@@ -69,10 +67,10 @@
 
 (defn setup []
   (s/reset-mongo-stores! "mongodb://localhost:27017/stonecutter-test")
-  (let [client (client/register-client "myclient" "myclient.com")
+  (let [client (cl-client/register-client "myclient" "myclient.com")
         client-id (:client-id client)
         client-secret (:client-secret client)
-        invalid-client-secret (str/reverse client-secret)
+        invalid-client-secret (string/reverse client-secret)
         user (storage/store-user! email password)]
     {:client-id             client-id
      :client-secret         client-secret
