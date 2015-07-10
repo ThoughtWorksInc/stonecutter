@@ -1,6 +1,6 @@
 (ns stonecutter.translation
   (:require [clj-yaml.core :as yaml]
-            [clojure.java.io :refer [resource]]
+            [clojure.java.io :as io]
             [clojure.tools.logging :as log]
             [traduki.core :as t]))
 
@@ -9,7 +9,7 @@
 
 (defn load-translations-from-file [file-name]
   (-> file-name
-      resource
+      io/resource
       slurp
       load-translations-from-string))
 
