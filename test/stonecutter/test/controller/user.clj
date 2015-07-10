@@ -145,13 +145,17 @@
         (provided
           (s/store-user! "valid@email.com" "password") => ...user...)))
 
-(fact "account can be deleted and user is signed-out"
+(fact "account can be deleted, user is redirected to profile-deleted and session is cleared"
       (-> (create-request :get "/delete-account" nil)
           (assoc-in [:session :user :login] "account_to_be@deleted.com")
           (assoc-in [:session :access_token] ...token...)
-          c/delete-account) => (contains {:status 302 :headers {"Location" "/sign-out"}})
+          c/delete-account) => (contains {:status 302 :headers {"Location" "/profile-deleted"} :session nil})
       (provided
         (s/delete-user! "account_to_be@deleted.com") => anything))
+
+(fact "user can access profile-deleted page when not signed in"
+      (-> (create-request :get "/profile-deleted" nil)
+          c/show-profile-deleted) => (contains {:status 200}))
 
 (fact "email must not be a duplicate"
       (let [html-response (-> (create-request :post "/register" register-user-params)

@@ -67,7 +67,7 @@ profile-created:
 profile-deleted:
   title: Profile deleted
   page-header: Your Profile has been deleted
-  intro: All you Profile Cards and data have been completely removed.
+  intro: All your Profile Cards and data have been completely removed.
   action-button: Register
 
 authorise:

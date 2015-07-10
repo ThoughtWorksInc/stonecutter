@@ -17,3 +17,12 @@
          (t/translate translator)
          html/emit*
          (apply str))))
+
+(defn profile-deleted [request]
+  (let [context (:context request)
+        translator (:translator context)]
+    (->> (vh/load-template "public/profile-deleted.html")
+         vh/remove-work-in-progress
+         (t/translate translator)
+         html/emit*
+         (apply str))))

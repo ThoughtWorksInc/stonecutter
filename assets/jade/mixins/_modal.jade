@@ -2,7 +2,7 @@ mixin modal(title, titleTranslationKey, modalCssClass)
   .modal__content.clj-modal-contents.js-modal(class="#{modalCssClass}")
     block
     .modal__header
-      h2.modal__title(data-l8n="content:#{titleTranslationKey}")
+      h2.modal__title(data-l8n="#{titleTranslationKey}")
         if blocks.modalTitle
           - blocks.modalTitle()
         else

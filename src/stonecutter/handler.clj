@@ -43,6 +43,7 @@
      :sign-out                           user/sign-out
      :show-profile                       user/show-profile
      :show-profile-created               user/show-profile-created
+     :show-profile-deleted               user/show-profile-deleted
      :show-delete-account-confirmation   user/show-confirm-account-confirmation
      :delete-account                     user/delete-account
      :authorise                          oauth/authorise
@@ -51,6 +52,7 @@
     (m/wrap-handlers m/wrap-signed-in #{:show-registration-form :register-user
                                         :show-sign-in-form      :sign-in
                                         :sign-out
+                                        :show-profile-deleted
                                         :authorise})))
 
 (def api-handlers

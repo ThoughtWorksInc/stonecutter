@@ -17,4 +17,3 @@
          (t/translate translator)
          html/emit*
          (apply str))))
-

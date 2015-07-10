@@ -6,6 +6,7 @@ POST    /sign-in                sign-in
 GET     /sign-out               sign-out
 GET     /profile                show-profile
 GET     /profile-created        show-profile-created
+GET     /profile-deleted        show-profile-deleted
 GET     /delete-account         show-delete-account-confirmation
 POST    /delete-account         delete-account
 GET     /authorisation          authorise

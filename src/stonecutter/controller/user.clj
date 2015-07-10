@@ -14,7 +14,7 @@
             [stonecutter.view.authorise :as authorise]
             [stonecutter.helper :refer :all]))
 
-(declare redirect-to-profile redirect-to-profile-created)
+(declare redirect-to-profile redirect-to-profile-created redirect-to-profile-deleted)
 
 (defn signed-in? [request]
   (let [session (:session request)]
@@ -60,14 +60,13 @@
       (update-in [:session] dissoc :user)
       ep/logout-handler))
 
-
 (defn show-confirm-account-confirmation [request]
   (html-response (delete-account/delete-account-confirmation request)))
 
 (defn delete-account [request]
   (let [email (get-in request [:session :user :login])]
     (s/delete-user! email)
-    (r/redirect (path :sign-out))))
+    (redirect-to-profile-deleted)))
 
 (defn redirect-to-profile [user]
   (assoc (r/redirect (path :show-profile)) :session {:user user
@@ -76,6 +75,9 @@
 (defn redirect-to-profile-created [user]
   (assoc (r/redirect (path :show-profile-created)) :session {:user user
                                                              :access_token (:token (token/create-token nil user))}))
+
+(defn redirect-to-profile-deleted []
+  (assoc (r/redirect (path :show-profile-deleted)) :session nil))
 
 (defn show-registration-form [request]
   (html-response (register/registration-form request)))
@@ -94,6 +96,9 @@
 
 (defn show-profile-created [request]
   (html-response (profile-created/profile-created request)))
+
+(defn show-profile-deleted [request]
+  (html-response (delete-account/profile-deleted request)))
 
 (defn show-authorise-form [request]
   (html-response (authorise/authorise-form request)))

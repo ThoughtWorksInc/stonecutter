@@ -34,6 +34,10 @@
 (def registration-confirm-input :.func--confirm-password__input)
 (def registration-submit :.func--create-profile__button)
 
+(def sign-out-link :.func--sign-out__link)
+
+(def delete-account-button :.func--delete-account__button)
+
 (defn register [state email]
   (-> state
       (k/visit "/register")
@@ -106,7 +110,7 @@
        (-> (k/session h/app)
            (sign-in "email@server.com")
            (k/visit "/profile")
-           (k/follow :.func--sign-out__link)
+           (k/follow sign-out-link)
            (k/follow-redirect)
            (kh/page-uri-is "/")
            (k/follow-redirect)
@@ -132,9 +136,10 @@
           (k/visit "/delete-account")
           (kh/page-uri-is "/delete-account")
           (kh/response-status-is 200)
-          (k/press :.func--delete-account__button)
+          (k/press delete-account-button)
           (k/follow-redirect)
-          (kh/page-uri-is "/sign-out")))
+          (kh/page-uri-is "/profile-deleted")
+          (kh/response-status-is 200)))
 
 (facts "Not found page is shown for unknown url"
        (-> (k/session h/app)
