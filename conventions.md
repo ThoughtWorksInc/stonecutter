@@ -54,3 +54,12 @@ Bad:
             [net.cgrand.enlive-html :as html]
             [stonecutter.db.storage :as storage]))
 ```
+
+## Code Structure
+
+### Put route handler functions into controller namespaces
+
+
+## Tests
+
+### Create global defs for css selectors
