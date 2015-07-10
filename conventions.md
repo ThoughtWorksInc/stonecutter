@@ -19,3 +19,17 @@ Less good:
 
 (do-thing)
 ```
+
+### Prefix clauth aliases with cl-
+
+Good:
+```
+(ns mynamespace
+  (:require [clauth.user :as cl-user]))
+```
+
+Bad:
+```
+(ns mynamespace
+  (:require [clauth.user :as user]))
+```
