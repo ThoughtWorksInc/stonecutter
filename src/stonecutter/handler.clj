@@ -95,6 +95,8 @@
 
 (def port (Integer. (get env/env :port "3000")))
 
+(def host (get env/env :host "127.0.0.1"))
+
 (defn -main [& args]
   (log-config/init-logger!)
   (vh/enable-template-caching!)
@@ -102,7 +104,7 @@
     (s/setup-mongo-stores! db)
     (migration/run-migrations db))
   (client/load-client-credentials-and-store-clients (get env/env :client-credentials-file-path "client-credentials.yml"))
-  (ring-jetty/run-jetty app {:port port}))
+  (ring-jetty/run-jetty app {:port port :host host}))
 
 (defn lein-ring-init
   "Function called when running app with 'lein ring server'"
