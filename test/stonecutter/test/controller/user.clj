@@ -5,6 +5,7 @@
             [clauth.client :as cl-client]
             [clauth.user :as cl-user]
             [net.cgrand.enlive-html :as html]
+            [stonecutter.routes :as routes]
             [stonecutter.controller.user :as c]
             [stonecutter.db.storage :as s]
             [stonecutter.validation :as v]))
@@ -188,3 +189,21 @@
                           first
                           :attrs
                           :value) => "invalid"))))
+
+(facts "about profile created"
+       (fact "view defaults with link to view profile"
+             (let [html-response (-> (create-request :get (routes/path :show-profile-created) nil)
+                                     (c/show-profile-created)
+                                     :body
+                                     html/html-snippet)]
+             (-> (html/select html-response [:.clj--profile-created-next__button]) first :attrs :href)
+               => (contains (routes/path :show-profile))))
+
+       (fact "coming from an app, view will link to show authorisation form"
+             (let [html-response (-> (create-request :get (routes/path :show-profile-created) nil)
+                                     (assoc :session {:client-id "123" :return-to "/somewhere"})
+                                     (c/show-profile-created)
+                                     :body
+                                     html/html-snippet)]
+             (-> (html/select html-response [:.clj--profile-created-next__button]) first :attrs :href)
+               => (contains (routes/path :show-authorise-form)))))

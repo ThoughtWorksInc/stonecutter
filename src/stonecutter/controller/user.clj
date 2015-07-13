@@ -94,8 +94,16 @@
 (defn show-profile [request]
   (sh/html-response (profile/profile request)))
 
+(defn get-in-session [request key]
+  (get-in request [:session key]))
+
+(defn from-app? [request]
+      (and (get-in-session request :client-id)
+           (get-in-session request :return-to)))
+
 (defn show-profile-created [request]
-  (sh/html-response (profile-created/profile-created request)))
+  (let [request (assoc request :params {:from-app (from-app? request)})]
+    (sh/html-response (profile-created/profile-created request))))
 
 (defn show-profile-deleted [request]
   (sh/html-response (delete-account/profile-deleted request)))
