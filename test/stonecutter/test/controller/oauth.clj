@@ -14,11 +14,6 @@
           :after (storage/reset-in-memory-stores!)))
 
 (facts "about authorisation end-point"
-       (future-fact "request with no parameters returns 403"
-             (let [request (r/request :get "/authorisation")
-                   response (oauth/authorise request)]
-               (:status response) => 403))
-
        (fact "request with client-id, response_type and redirect_uri returns redirect to login page if there is no user session"
              (let [client-details (cl-client/register-client "ClientTestApp" "localhost:3001") ;FORMAT => {:client-secret "XLFCQRKJXSV3T6YQJL5ZJJVGFUJNT6LD", :client-id "RXBX6ZXAER5KPDSZ3ZCZJDOBS27FLDE7", :name "ClientTestApp", :url "localhost:3001"}
                    request (-> (r/request :get "/authorisation" {:client_id (:client-id client-details) :response_type "code" :redirect_uri "callback"})
