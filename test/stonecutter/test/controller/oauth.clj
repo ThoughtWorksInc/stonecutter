@@ -61,18 +61,19 @@
                (:status response) => 302
                (get-in response [:headers "Location"]) => (contains "callback?code=")))
 
-       (future-fact "valid request redirects to callback with auth code when there is an existing user session and the user has previously authorised the app"
+       (fact "valid request redirects to callback with auth code when there is an existing user session and the user has previously authorised the app"
              (let [user-email "email@user.com"
                    user (storage/store-user! user-email "password")
                    client-details (cl-client/register-client "MYAPP" "myapp.com")
-                   _ (storage/add-authorised-client-for-user! user-email (:client-id client-details))
-                   access-token (cl-token/create-token client-details user)]
-               (-> (r/request :get "/authorisation")
-                   (assoc :params {:client_id (:client-id client-details) :response_type "code" :redirect_uri "callback"})
-                   (assoc-in [:session :access_token] (:token access-token))
-                   (assoc-in [:session :user] user)
-                   oauth/authorise)) => (contains {:status 302
-                                                   :headers (contains "callback?code=")}))
+                   updated-user (storage/add-authorised-client-for-user! user-email (:client-id client-details))
+                   access-token (cl-token/create-token client-details user)
+                   request (-> (r/request :get "/authorisation")
+                               (assoc :params {:client_id (:client-id client-details) :response_type "code" :redirect_uri "callback"})
+                               (assoc-in [:session :access_token] (:token access-token))
+                               (assoc-in [:session :user] user))
+                   response (oauth/authorise request)]
+               (:status response) => 302
+               (get-in response [:headers "Location"]) => (contains "callback?code=")))
 
        (fact "user-email and access_token in session stay in session if user is logged in"
              (let [user-email "email@user.com"
@@ -137,15 +138,15 @@
        (fact "returns true if client-id is in the users authorised-clients list"
              (-> (r/request :get "/authorisation")
                  (assoc :params {:client_id ...client-id...})
-                 (assoc-in [:session :user :email] ...email...)
+                 (assoc-in [:session :user :login] ...email...)
                  oauth/auto-approver) => true
              (provided
-               (storage/retrieve-user ...email...) => {:authorised-clients [...client-id...]})) 
+               (storage/retrieve-user ...email...) => {:authorised-clients [...client-id...]}))
 
        (fact "returns false if client-id is in not in the users authorised-clients list"
              (-> (r/request :get "/authorisation")
                  (assoc :params {:client_id ...client-id...})
-                 (assoc-in [:session :user :email] ...email...)
+                 (assoc-in [:session :user :login] ...email...)
                  oauth/auto-approver) => false
              (provided
                (storage/retrieve-user ...email...) => {:authorised-clients [...a-different-client-id...]})))
