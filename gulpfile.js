@@ -107,7 +107,7 @@ gulp.task('browser-sync', ['nodemon'], function () {
     proxy: "localhost:7069",  // local node app address
     port: dev_path.port,  // use *different* port than above
     notify: true,
-    open: false,
+    open: true,
     ui: {
       port: 7079
     }
