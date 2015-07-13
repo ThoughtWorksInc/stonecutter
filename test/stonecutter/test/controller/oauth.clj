@@ -72,7 +72,7 @@
                    (assoc-in [:session :access_token] (:token access-token))
                    (assoc-in [:session :user] user)
                    oauth/authorise)) => (contains {:status 302
-                                                  :headers (contains "callback?code=")}))
+                                                   :headers (contains "callback?code=")}))
 
        (fact "user-email and access_token in session stay in session if user is logged in"
              (let [user-email "email@user.com"
@@ -132,3 +132,20 @@
 
          (fact "user email stays in the session after validating token"
                (get-in response [:session :user :email]) => user-email)))
+
+(facts "about auto-approver"
+       (fact "returns true if client-id is in the users authorised-clients list"
+             (-> (r/request :get "/authorisation")
+                 (assoc :params {:client_id ...client-id...})
+                 (assoc-in [:session :user :email] ...email...)
+                 oauth/auto-approver) => true
+             (provided
+               (storage/retrieve-user ...email...) => {:authorised-clients [...client-id...]})) 
+
+       (fact "returns false if client-id is in not in the users authorised-clients list"
+             (-> (r/request :get "/authorisation")
+                 (assoc :params {:client_id ...client-id...})
+                 (assoc-in [:session :user :email] ...email...)
+                 oauth/auto-approver) => false
+             (provided
+               (storage/retrieve-user ...email...) => {:authorised-clients [...a-different-client-id...]})))

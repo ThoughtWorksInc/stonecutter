@@ -6,7 +6,7 @@
             [stonecutter.client :as client]
             [stonecutter.db.storage :as s]))
 
-(fact "can store, authenticate/retrieve and delete users - in memory store is used here"
+(fact "can store, authenticate/retrieve, retrieve and delete users - in memory store is used here"
       (s/setup-in-memory-stores!)
       (s/store-user! "email@server.com" "password") => (contains {:login "email@server.com"
                                                                   :name nil
@@ -14,6 +14,9 @@
       (s/authenticate-and-retrieve-user "email@server.com" "password") => (contains {:login "email@server.com"
                                                                                      :name nil
                                                                                      :url nil})
+      (s/retrieve-user "email@server.com") => (contains {:login "email@server.com"
+                                                         :name nil
+                                                         :url nil})
       (s/delete-user! "email@server.com") => {}
       (s/authenticate-and-retrieve-user "email@server.com" "password") => nil)
 
@@ -26,14 +29,12 @@
        (fact "duplicate email is a duplicate"
              (s/is-duplicate-user? "valid@email.com") => true
              (provided
-               (cl-user/fetch-user "valid@email.com") => :a-user))
+               (cl-user/fetch-user "valid@email.com") => ...a-user...))
 
        (fact "the email is always lower-cased"
              (s/is-duplicate-user? "VALID@EMAIL.COM") => true
              (provided
-               (cl-user/fetch-user "valid@email.com") => :a-user)))
-
-(def a-user {:login "email@server.com" :name nil :url nil})
+               (cl-user/fetch-user "valid@email.com") => ...a-user...)))
 
 (fact "about creating a user record"
       (let [id-gen (constantly "id")]
@@ -45,10 +46,10 @@
 
 (facts "about storing users"
        (fact "users are stored in the user-store"
-             (s/store-user! "email@server.com" "password") => a-user
+             (s/store-user! "email@server.com" "password") => {...a-user-key... ...a-user-value...} 
              (provided
                (s/create-user s/uuid "email@server.com" "password") => ...user...
-               (cl-user/store-user ...user...) => a-user))
+               (cl-user/store-user ...user...) => {...a-user-key... ...a-user-value...}))
 
        (fact "password is removed before returning user"
              (-> (s/store-user! "email@server.com" "password")
@@ -59,9 +60,9 @@
 
 (facts "about authenticating and retrieving users"
        (fact "with valid credentials"
-             (s/authenticate-and-retrieve-user "email@server.com" "password") => a-user
+             (s/authenticate-and-retrieve-user "email@server.com" "password") => {...a-user-key... ...a-user-value...} 
              (provided
-               (cl-user/authenticate-user "email@server.com" "password") => a-user))
+               (cl-user/authenticate-user "email@server.com" "password") => {...a-user-key... ...a-user-value...}))
 
        (fact "password is removed before returning user"
              (-> (s/authenticate-and-retrieve-user "email@server.com" "password")
@@ -73,6 +74,11 @@
              (s/authenticate-and-retrieve-user "invalid@credentials.com" "password") => nil
              (provided
                (cl-user/authenticate-user "invalid@credentials.com" "password") => nil)))
+
+(fact "can retrieve user without authentication"
+      (s/retrieve-user "email@server.com") => ...a-user...
+      (provided
+        (cl-user/fetch-user "email@server.com") => ...a-user...))
 
 (fact "can retrieve user using auth-code"
       (let [auth-code-record (cl-auth-code/create-auth-code ...client... ...user... ...redirect-uri...)]

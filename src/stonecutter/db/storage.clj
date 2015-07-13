@@ -56,6 +56,9 @@
       cl-user/store-user
       (dissoc :password)))
 
+(defn retrieve-user [email]
+  (cl-user/fetch-user email))
+
 (defn delete-user! [email]
   (cl-store/revoke! @cl-user/user-store email))
 
