@@ -10,21 +10,19 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link href="stylesheets/application.css" media="screen" rel="stylesheet" type="text/css"/>
   </head>
-  <body><a href="#main" class="skip-link">Skip navigation</a>
+  <body class="func--delete-account-page"><a href="#main" class="skip-link">Skip navigation</a>
     <div role="banner" class="header">
       <div class="header__inner middle-container">
         <div class="header__logo"><span class="visuallyhidden">Stonecutter</span></div>
         <nav role="navigation" class="tabs">
-          <li class="tabs__item"><a href="./profile" data-l8n="content:profile/profile-link" class="tabs__link">Profile</a></li>
-          <li class="tabs__item"><a href="./sign-out" data-l8n="content:profile/sign-out-link" class="tabs__link clj--sign-out__link func--sign-out__link">Sign out</a></li>
         </nav>
       </div>
     </div>
     <div id="main" role="main" class="main-content">
       <div class="middle-container">
-        <div class="modal__content clj-modal-contents js-modal clj-wip">
+        <div class="modal__content clj-modal-contents js-modal undefined">
           <div class="modal__header">
-            <h2 data-l8n="content:content:delete-account/modal-delete-title" class="modal__title">Are you sure you want to delete your account?
+            <h2 data-l8n="content:delete-account/modal-delete-title" class="modal__title">Are you sure you want to delete your account?
             </h2>
           </div>
           <div class="modal__body">
@@ -32,8 +30,8 @@
           </div>
           <div class="modal-buttons">
         <div class="modal-buttons__primary">
-          <form action="./register" method="post" class="delete-account clj-delete-account-form">
-            <button type="submit" data-l8n="content:delete-account/modal-delete-ok-button" class="button button--full-width">Delete account</button>
+          <form action="./profile-deleted" method="post" class="delete-account clj-delete-account-form">
+            <button type="submit" data-l8n="content:delete-account/modal-delete-ok-button" class="button button--full-width func--delete-account__button">Delete account</button>
           </form>
         </div>
         <div class="modal-buttons__secondary"><a href="./profile" data-l8n="content:delete-account/modal-delete-cancel-button" class="button button--full-width button--secondary">Cancel</a></div>

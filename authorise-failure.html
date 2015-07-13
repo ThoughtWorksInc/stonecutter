@@ -4,13 +4,13 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title data-l8n="content:profile-created/title">Your Profile Card has been created</title>
+    <title data-l8n="content:authorise-fail/title">Authorise failed</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
     <link rel="icon" type="image/png" href="favicon.png">
     <link href="stylesheets/application.css" media="screen" rel="stylesheet" type="text/css"/>
   </head>
-  <body class="func--profile-created-page"><a href="#main" class="skip-link">Skip navigation</a>
+  <body class="func--authorise-failure-page"><a href="#main" class="skip-link">Skip navigation</a>
     <div role="banner" class="header">
       <div class="header__inner middle-container">
         <div class="header__logo"><span class="visuallyhidden">Stonecutter</span></div>
@@ -20,12 +20,10 @@
     </div>
     <div id="main" role="main" class="main-content">
       <div class="middle-container">
-        <h1 data-l8n="content:profile-created/page-header" class="page-title">Your Profile Card has been created</h1>
-        <div class="card-demo">
-          <div class="card-demo__created"></div>
-        </div>
-        <p class="clj-wip"><span data-l8n="content:profile-created/intro">Your Profile Card can be used to sign in to supported applications like</span> <span class="clj-app-name">Green Party Voting.</span>
-        </p><a href="./profile" data-l8n="content:profile-created/action-button" class="button button--primary func--profile-created-next__button clj--profile-created-next__button">View your profile</a>
+        <h1 data-l8n="content:authorise-fail/page-title" class="page-title">You have not signed in to <span class="clj--app-name">Green Party Voting</span>
+        </h1>
+        <p><span class="clj--app-name">Green Party Voting</span> <span data-l8n="content:authorise-fail/lede">can not have access to your Profile Card and cannot sign in.</span>
+        </p><a href="http://thoughtworksinc.github.io/stonecutter-client" class="button button--secondary clj--redirect-to-client-home__link func--redirect-to-client-home__link">Return to <span class="clj--app-name">Green Party Voting</span></a>
       </div>
     </div>
     <script>document.addEventListener("touchstart", function(){}, true);</script>
