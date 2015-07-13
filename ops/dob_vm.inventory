@@ -1,0 +1,4 @@
+default ansible_ssh_host=127.0.0.1 ansible_ssh_port=2223
+
+[dob_vm]
+default site_address="http://192.168.50.61" cert_location="stonecutter.crt" cert_key_location="stonecutter.key"

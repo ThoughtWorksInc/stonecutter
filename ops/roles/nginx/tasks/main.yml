@@ -1,0 +1,27 @@
+---
+ - name: install nginx
+   apt: name=nginx state=present
+
+ - name: install fail2ban
+   apt: name=fail2ban state=present
+
+ - name: create SSL folder
+   file: path="/etc/nginx/ssl" state=directory
+
+ - name: copy SSL cert
+   copy: src={{ cert_location }} dest="/etc/nginx/ssl/stonecutter.crt"
+
+ - name: copy SSL key
+   copy: src={{ cert_key_location }} dest="/etc/nginx/ssl/stonecutter.key"
+
+ - name: copy over stonecutter nginx config
+   template: src="stonecutter.j2" dest="/etc/nginx/sites-available/stonecutter" mode=0644
+
+ - name: create symbolic link to nginx helsinki config
+   file: src="/etc/nginx/sites-available/stonecutter" dest="/etc/nginx/sites-enabled/stonecutter" state=link
+
+ - name: remove default nginx symbolic link from sites-enabled
+   file: path="/etc/nginx/sites-enabled/default" state=absent
+
+ - name: restart nginx
+   service: name=nginx state=restarted

@@ -17,7 +17,8 @@
             [stonecutter.translation :as t]
             [stonecutter.middleware :as m]
             [stonecutter.db.migration :as migration]
-            [stonecutter.db.mongo :as mongo]))
+            [stonecutter.db.mongo :as mongo])
+  (:gen-class))
 
 (def default-context {:translator (t/translations-fn t/translation-map)})
 
@@ -97,10 +98,20 @@
 
 (def host (get env/env :host "127.0.0.1"))
 
+(defn get-docker-mongo-uri []
+  (when-let [mongo-ip (get env/env :mongo-port-27017-tcp-addr)]
+    (format "mongodb://%s:27017/stonecutter" mongo-ip)))
+
+(def mongo-uri
+  (or
+    (get-docker-mongo-uri)
+    (get env/env :mongo-uri)
+    "mongodb://localhost:27017/stonecutter"))
+
 (defn -main [& args]
   (log-config/init-logger!)
   (vh/enable-template-caching!)
-  (let [db (mongo/get-mongo-db (get env/env :mongo-uri "mongodb://localhost:27017/stonecutter"))]
+  (let [db (mongo/get-mongo-db mongo-uri)]
     (s/setup-mongo-stores! db)
     (migration/run-migrations db))
   (client/load-client-credentials-and-store-clients (get env/env :client-credentials-file-path "client-credentials.yml"))

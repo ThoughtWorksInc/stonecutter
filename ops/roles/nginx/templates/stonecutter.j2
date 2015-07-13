@@ -1,0 +1,21 @@
+server {
+  listen 80;
+  return 301 {{ site_address }}$request_uri;
+}
+
+
+server {
+  listen 443 ssl;
+
+  ssl_certificate /etc/nginx/ssl/stonecutter.crt;
+  ssl_certificate_key /etc/nginx/ssl/stonecutter.key;
+
+  ssl_session_cache shared:SSL:32m;
+  ssl_session_timeout 10m;
+
+  ssl_protocols TLSv1.2 TLSv1.1 TLSv1;
+
+  location / {
+    proxy_pass http://localhost:5000;
+  }
+}
