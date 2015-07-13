@@ -65,3 +65,5 @@
 
 (defn retrieve-user-with-auth-code [code]
   (-> (cl-auth-code/fetch-auth-code code) :subject))
+
+(defn add-authorised-client-for-user! [email client-id])

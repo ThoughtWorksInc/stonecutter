@@ -7,6 +7,7 @@
             [stonecutter.handler :as h]
             [stonecutter.db.storage :as s]
             [stonecutter.integration.kerodon-helpers :as kh]
+            [stonecutter.integration.kerodon-selectors :as ks]
             [stonecutter.db.storage :as storage]))
 
 ;; CLIENT => AUTH    /authorisation?client-id=123&response_type=code&redirect_uri=callback-url
@@ -82,6 +83,12 @@
 
 (defn print-debug [v] (prn "Kerodon:" v) v)
 
+(defn sign-in [state]
+  (-> state 
+      (k/fill-in ks/sign-in-email-input email) 
+      (k/fill-in ks/sign-in-password-input password) 
+      (k/press ks/sign-in-submit)))
+
 (facts "user authorising client-apps"
        (facts "user can sign in through client"
               (let [{:keys [client-id client-secret]} (setup)]
@@ -90,13 +97,33 @@
                     (k/follow-redirect)
                     ;; login
                     (kh/page-uri-is "/sign-in")
-                    (k/fill-in :.func--email__input email)
-                    (k/fill-in :.func--password__input password)
-                    (k/press :.func--sign-in__button)
+                    sign-in
                     ;; check redirect - should have auth_code
                     (k/follow-redirect)
                     (kh/page-uri-is "/authorisation")
-                    (k/press :.func--authorise-share-profile__button)
+                    (k/press ks/authorise-share-profile-button)
+                    (kh/location-contains "callback?code=")
+                    (client-sends-http-token-request client-id client-secret)
+                    ; return 200 with new access_token
+                    (kh/response-has-access-token)
+                    (kh/response-has-user-email email)
+                    (kh/response-has-id))))
+
+       (future-facts "user who has already authorised client does not need to authorise client again"
+              (let [{:keys [client-id client-secret]} (setup)]
+                (-> (k/session h/app)
+                    ;; authorise client for the first time
+                    (browser-sends-authorisation-request-from-client-redirect client-id)
+                    (k/follow-redirect)
+                    ;; login
+                    (kh/page-uri-is "/sign-in")
+                    sign-in
+                    ;; check redirect - should have auth_code
+                    (k/follow-redirect)
+                    (kh/page-uri-is "/authorisation")
+                    (k/press ks/authorise-share-profile-button)
+                    ;; send authorisation request for the second time
+                    (browser-sends-authorisation-request-from-client-redirect client-id)
                     (kh/location-contains "callback?code=")
                     (client-sends-http-token-request client-id client-secret)
                     ; return 200 with new access_token
@@ -111,13 +138,11 @@
                     (k/follow-redirect)
                     ;; login
                     (kh/page-uri-is "/sign-in")
-                    (k/fill-in :.func--email__input email)
-                    (k/fill-in :.func--password__input password)
-                    (k/press :.func--sign-in__button)
+                    sign-in
                     ;; check redirect - should have auth_code
                     (k/follow-redirect)
                     (kh/page-uri-is "/authorisation")
-                    (k/follow :.func--authorise-cancel__link)
+                    (k/follow ks/authorise-cancel-link)
                     (kh/page-uri-is "/authorise-failure")
                     :response
                     :status)) => 200))
@@ -130,13 +155,11 @@
                     (k/follow-redirect)
                     ;; login
                     (kh/page-uri-is "/sign-in")
-                    (k/fill-in :.func--email__input email)
-                    (k/fill-in :.func--password__input password)
-                    (k/press :.func--sign-in__button)
+                    sign-in
                     ;; check redirect - should have auth_code
                     (k/follow-redirect)
                     (kh/page-uri-is "/authorisation")
-                    (k/press :.func--authorise-share-profile__button)
+                    (k/press ks/authorise-share-profile-button)
                     (kh/location-contains "callback?code=")
                     (client-sends-http-token-request client-id invalid-client-secret)
                     :response
@@ -149,8 +172,8 @@
                     (k/follow-redirect)
                     ;; login
                     (kh/page-uri-is "/sign-in")
-                    (k/fill-in :.func--email__input email)
-                    (k/fill-in :.func--password__input "invalid-password")
-                    (k/press :.func--sign-in__button)
+                    (k/fill-in ks/sign-in-email-input email)
+                    (k/fill-in ks/sign-in-password-input "invalid-password")
+                    (k/press ks/sign-in-submit)
                     :response
                     :body)) => (contains "Invalid email address or password")))

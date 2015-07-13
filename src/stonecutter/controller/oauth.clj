@@ -19,12 +19,13 @@
         request (assoc-in request [:session :client-name] client-name)]
  (sh/html-response (authorise-failure/show-authorise-failure request))))
 
-(defn authorisation-form []
-  (fn [req] (show-authorise-form req)))
 
-(def auth-handler (cl-ep/authorization-handler {:auto-approver                  (constantly false)
+(defn auto-approver [request]
+  false)
+
+(def auth-handler (cl-ep/authorization-handler {:auto-approver                  auto-approver
                                                 :user-session-required-redirect (routes/path :show-sign-in-form)
-                                                :authorization-form             (authorisation-form)}))
+                                                :authorization-form             show-authorise-form}))
 
 (def token-handler (cl-ep/token-handler))
 
