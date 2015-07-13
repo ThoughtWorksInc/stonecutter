@@ -28,16 +28,16 @@
     (swap! cl-client/client-store (constantly (m/create-client-store db)))))
 
 (defn setup-in-memory-stores! []
-  (swap! cl-user/user-store (constantly (cl-store/create-memory-store)))
-  (swap! cl-token/token-store (constantly (cl-store/create-memory-store)))
-  (swap! cl-auth-code/auth-code-store (constantly (cl-store/create-memory-store)))
-  (swap! cl-client/client-store (constantly (cl-store/create-memory-store))))
+  (swap! cl-user/user-store (constantly (m/create-memory-store)))
+  (swap! cl-token/token-store (constantly (m/create-memory-store)))
+  (swap! cl-auth-code/auth-code-store (constantly (m/create-memory-store)))
+  (swap! cl-client/client-store (constantly (m/create-memory-store))))
 
 (defn reset-in-memory-stores! []
-  (reset! cl-user/user-store (cl-store/create-memory-store))
-  (reset! cl-token/token-store (cl-store/create-memory-store))
-  (reset! cl-auth-code/auth-code-store (cl-store/create-memory-store))
-  (reset! cl-client/client-store (cl-store/create-memory-store)))
+  (reset! cl-user/user-store (m/create-memory-store))
+  (reset! cl-token/token-store (m/create-memory-store))
+  (reset! cl-auth-code/auth-code-store (m/create-memory-store))
+  (reset! cl-client/client-store (m/create-memory-store)))
 
 (defn is-duplicate-user? [email]
   (not (nil? (cl-user/fetch-user (s/lower-case email)))))
@@ -69,4 +69,9 @@
 (defn retrieve-user-with-auth-code [code]
   (-> (cl-auth-code/fetch-auth-code code) :subject))
 
-(defn add-authorised-client-for-user! [email client-id])
+(defn add-client-id [client-id]
+  (fn [user]
+    (update-in user [:authorised-clients] conj client-id)))
+
+(defn add-authorised-client-for-user! [email client-id]
+  (-> (m/update! @cl-user/user-store email (add-client-id client-id))))

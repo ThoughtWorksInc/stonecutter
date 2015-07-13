@@ -6,19 +6,31 @@
             [stonecutter.client :as client]
             [stonecutter.db.storage :as s]))
 
-(fact "can store, authenticate/retrieve, retrieve and delete users - in memory store is used here"
-      (s/setup-in-memory-stores!)
-      (s/store-user! "email@server.com" "password") => (contains {:login "email@server.com"
-                                                                  :name nil
-                                                                  :url nil})
-      (s/authenticate-and-retrieve-user "email@server.com" "password") => (contains {:login "email@server.com"
-                                                                                     :name nil
-                                                                                     :url nil})
-      (s/retrieve-user "email@server.com") => (contains {:login "email@server.com"
-                                                         :name nil
-                                                         :url nil})
-      (s/delete-user! "email@server.com") => {}
-      (s/authenticate-and-retrieve-user "email@server.com" "password") => nil)
+;; The following tests do not mock the database
+(facts "about storage of users"
+       (s/setup-in-memory-stores!)
+       (fact "can store a user"
+             (s/store-user! "email@server.com" "password") => (contains {:login "email@server.com"
+                                                                         :name nil
+                                                                         :url nil}))
+       (fact "can authenticate a user"
+             (s/authenticate-and-retrieve-user "email@server.com" "password") => (contains {:login "email@server.com"
+                                                                                            :name nil
+                                                                                            :url nil}))
+       (fact "can retrieve a user"
+             (s/retrieve-user "email@server.com") => (contains {:login "email@server.com"
+                                                                :name nil
+                                                                :url nil}))
+       (fact "can add authorised client for user"
+             (s/add-authorised-client-for-user! "email@server.com" "a-client-id") => (contains
+                                                                                       {:login "email@server.com"
+                                                                                        :name nil
+                                                                                        :url nil
+                                                                                        :authorised-clients ["a-client-id"]}))
+
+       (fact "can delete a user"
+             (s/delete-user! "email@server.com") => {}
+             (s/authenticate-and-retrieve-user "email@server.com" "password") => nil))
 
 (facts "about is-duplicate-user?"
        (fact "unique email in not a duplicate"
@@ -46,7 +58,7 @@
 
 (facts "about storing users"
        (fact "users are stored in the user-store"
-             (s/store-user! "email@server.com" "password") => {...a-user-key... ...a-user-value...} 
+             (s/store-user! "email@server.com" "password") => {...a-user-key... ...a-user-value...}
              (provided
                (s/create-user s/uuid "email@server.com" "password") => ...user...
                (cl-user/store-user ...user...) => {...a-user-key... ...a-user-value...}))
@@ -60,7 +72,7 @@
 
 (facts "about authenticating and retrieving users"
        (fact "with valid credentials"
-             (s/authenticate-and-retrieve-user "email@server.com" "password") => {...a-user-key... ...a-user-value...} 
+             (s/authenticate-and-retrieve-user "email@server.com" "password") => {...a-user-key... ...a-user-value...}
              (provided
                (cl-user/authenticate-user "email@server.com" "password") => {...a-user-key... ...a-user-value...}))
 
