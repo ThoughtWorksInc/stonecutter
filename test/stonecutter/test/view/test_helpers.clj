@@ -3,6 +3,12 @@
             [net.cgrand.enlive-html :as html]))
 
 (defn create-request
+  ([]
+   (create-request {} nil {} {}))
+
+  ([translator]
+   (create-request translator nil {} {}))
+
   ([translator err params]
    (create-request translator err params {}))
 

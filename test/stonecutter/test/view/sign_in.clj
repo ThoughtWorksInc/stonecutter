@@ -3,32 +3,32 @@
             [net.cgrand.enlive-html :as html]
             [stonecutter.routes :as r]
             [stonecutter.test.view.test-helpers :as th]
-            [stonecutter.translation :as t]  
+            [stonecutter.translation :as t]
             [stonecutter.view.sign-in :refer [sign-in-form]]))
 
 (fact "sign-in-form should return some html"
-      (let [page (-> (th/create-request {} nil {}) sign-in-form html/html-snippet)]
+      (let [page (-> (th/create-request) sign-in-form html/html-snippet)]
         (html/select page [:form]) =not=> empty?))
 
 (fact "work in progress should be removed from page"
-      (let [page (-> (th/create-request {} nil {}) sign-in-form html/html-snippet)]
+      (let [page (-> (th/create-request) sign-in-form html/html-snippet)]
         page => th/work-in-progress-removed))
 
 (fact "register link should go to correct endpoint"
-      (let [page (-> (th/create-request {} nil {}) sign-in-form html/html-snippet)]
+      (let [page (-> (th/create-request) sign-in-form html/html-snippet)]
         (-> page (html/select [:.func--register__link]) first :attrs :href) => (r/path :show-registration-form)))
 
 (fact "sign in form posts to correct endpoint"
-      (let [page (-> (th/create-request {} nil {}) sign-in-form html/html-snippet)]
+      (let [page (-> (th/create-request) sign-in-form html/html-snippet)]
         (-> page (html/select [:form]) first :attrs :action) => (r/path :sign-in)))
 
 (fact "there are no missing translations"
       (let [translator (t/translations-fn t/translation-map)
-            page (-> (th/create-request translator nil {}) sign-in-form)]
+            page (-> (th/create-request translator) sign-in-form)]
         page => th/no-untranslated-strings))
 
 (facts "about removing elements when there are no errors"
-       (let [page (-> (th/create-request {} nil {})
+       (let [page (-> (th/create-request)
                       sign-in-form
                       html/html-snippet)]
          (fact "no elements have class for styling errors"
