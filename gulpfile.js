@@ -7,7 +7,7 @@ var gulp = require('gulp'),
     autoprefixer = require('gulp-autoprefixer'),
     minifyCSS = require('gulp-minify-css'),
     imagemin = require('gulp-imagemin'),
-    browsersync = require('browser-sync'),
+    browsersync = require('browser-sync').create(),
     del = require('del'),
     runSequence = require('run-sequence'),
     nodemon = require('gulp-nodemon'),
@@ -119,14 +119,14 @@ gulp.task('clean-deployed', function (cb) {
 });
 
 gulp.task('watch', function () {
-  gulp.watch('assets/jade/**/*.jade', browsersync.reload());
+  gulp.watch('assets/jade/**/*.jade', browsersync.reload);
   gulp.watch('assets/stylesheets/**/*.scss', ['sass']);
   gulp.watch(dev_path.images, ['images']);
   gulp.watch(dev_path.js, ['js']);
 });
 
 gulp.task('clj', function () {
-  gulp.watch('assets/jade/**/*.jade', ['jade']);
+  gulp.watch('assets/jade/**/*.jade', browsersync.reload);
   gulp.watch('assets/stylesheets/**/*.scss', ['sass']);
   gulp.watch(dev_path.images, ['images']);
   gulp.watch(dev_path.favicons, ['favicons']);
