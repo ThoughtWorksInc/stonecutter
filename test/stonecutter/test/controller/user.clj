@@ -37,15 +37,29 @@
         (s/authenticate-and-retrieve-user email password) => ...user...
         (cl-token/create-token nil ...user...) => {:token ...token...}))
 
-(fact "user can register with valid credentials and is redirected to profile-created page, with user added to session"
-      (-> (create-request :post "/register" register-user-params)
-          c/register-user) => (contains {:status 302 :headers {"Location" "/profile-created"}
-                                         :session {:user ...user...
-                                                   :access_token ...token...}})
-      (provided
-        (v/validate-registration register-user-params s/is-duplicate-user?) => {}
-        (s/store-user! email password) => ...user...
-        (cl-token/create-token nil ...user...) => {:token ...token...}))
+(facts "about registration"
+       (fact "user can register with valid credentials and is redirected to profile-created page, with user added to session"
+             (-> (create-request :post "/register" register-user-params)
+                 c/register-user) => (contains {:status 302 :headers {"Location" "/profile-created"}
+                                                :session {:user ...user...
+                                                          :access_token ...token...}})
+             (provided
+               (v/validate-registration register-user-params s/is-duplicate-user?) => {}
+               (s/store-user! email password) => ...user...
+               (cl-token/create-token nil ...user...) => {:token ...token...}))
+
+       (fact "session is not lost when redirecting from registration"
+            (-> (create-request :post (routes/path :register-user) register-user-params)
+                (assoc :session {:some "data"})
+                c/register-user) => (contains {:status 302
+                                               :headers {"Location" "/profile-created"}
+                                               :session {:some "data"
+                                                         :user ...user...
+                                                         :access_token ...token...}})
+             (provided
+               (v/validate-registration register-user-params s/is-duplicate-user?) => {}
+               (s/store-user! email password) => ...user...
+               (cl-token/create-token nil ...user...) => {:token ...token...})))
 
 (fact "signed-in? returns true only when user and access_token are in the session"
       (tabular
@@ -206,4 +220,4 @@
                                      :body
                                      html/html-snippet)]
              (-> (html/select html-response [:.clj--profile-created-next__button]) first :attrs :href)
-               => (contains (routes/path :show-authorise-form)))))
+               => (contains "/somewhere"))))

@@ -33,7 +33,7 @@
         request (assoc-in request [:context :errors] err)]
     (if (empty? err)
       (-> (s/store-user! email password)
-          redirect-to-profile-created)
+          (redirect-to-profile-created request))
       (sh/html-response (register/registration-form request)))))
 
 (defn sign-in [request]
@@ -72,19 +72,21 @@
   (assoc (r/redirect (routes/path :show-profile)) :session {:user user
                                                             :access_token (:token (cl-token/create-token nil user))}))
 
-(defn redirect-to-profile-created [user]
-  (assoc (r/redirect (routes/path :show-profile-created)) :session {:user user
-                                                                    :access_token (:token (cl-token/create-token nil user))}))
+(defn preserve-session [response request]
+  (-> response
+      (assoc :session (:session request))))
+
+(defn redirect-to-profile-created [user request]
+  (-> (r/redirect (routes/path :show-profile-created))
+      (preserve-session request)
+      (assoc-in [:session :user] user)
+      (assoc-in [:session :access_token] (:token (cl-token/create-token nil user)))))
 
 (defn redirect-to-profile-deleted []
   (assoc (r/redirect (routes/path :show-profile-deleted)) :session nil))
 
 (defn show-registration-form [request]
   (sh/html-response (register/registration-form request)))
-
-(defn preserve-session [response request]
-  (-> response
-      (assoc :session (:session request))))
 
 (defn show-sign-in-form [request]
   (if (signed-in? request)

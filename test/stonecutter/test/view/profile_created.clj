@@ -28,8 +28,8 @@
         (-> page (html/select [:.func--profile-created-next__button]) first :attrs :href) => (r/path :show-profile)))
 
 (fact "when coming from authorisation flow, next button should go to authorisation form"
-      (let [page (-> (th/create-request {} nil {:from-app true})
+      (let [page (-> (th/create-request {} nil {:from-app true} {:return-to "land of milk and honey"})
                      profile-created
                      html/html-snippet)]
-        (-> page (html/select [:.func--profile-created-next__button]) first :attrs :href) => (r/path :show-authorise-form)))
+        (-> page (html/select [:.func--profile-created-next__button]) first :attrs :href) => "land of milk and honey"))
 

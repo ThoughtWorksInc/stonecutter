@@ -2,10 +2,15 @@
   (:require [midje.sweet :refer :all]
             [net.cgrand.enlive-html :as html]))
 
-(defn create-request [translator err params]
-  {:context {:translator translator
-             :errors err}
-   :params params})
+(defn create-request
+  ([translator err params]
+   (create-request translator err params {}))
+
+  ([translator err params session]
+   {:context {:translator translator
+              :errors err}
+    :params params
+    :session session}))
 
 (def no-untranslated-strings
   (let [untranslated-string-regex #"(?!!DOCTYPE|!IEMobile)!\w+"]
