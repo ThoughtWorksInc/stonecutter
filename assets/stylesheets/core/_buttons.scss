@@ -39,7 +39,7 @@
   // secondary action
   &--secondary {
     background-color: $light_grey;
-    color: $dark_grey;
+    color: $card_background;
     &:hover {
       background-color: lighten($light_grey, 2%);
     }

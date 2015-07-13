@@ -14,19 +14,34 @@
 .wrapper__card {
   perspective: 1000px;
   padding: 40px 20px;
-  background-color: darken($white,2%);
+  background-color: $card_background;
 }
 
 .card {
   $card_guttering: 25px;
-  background-color: #fcfcfc;
+  position: relative;
   max-width: 480px;
   min-height: 270px;
   margin: 0 auto;
-  padding: $card_guttering;
+  padding: ($card_guttering + 15px) $card_guttering $card_guttering $card_guttering;
+  background-color: #fcfcfc;
   border: 1px solid $light_grey;
+  border-radius: 10px;
   box-shadow: 0 30px 30px -5px rgba($black, 0.35);
   transition: box-shadow 200ms linear, transform 200ms linear, background-color 200ms linear;
+  &:after {
+    $width: 68px;
+    content: '';
+    display: block;
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    z-index: 1;
+    @include size($width, 10px);
+    margin-left: -($width / 2);
+    border-radius: 20px;
+    background: $card_background;
+  }
   &:hover {
     background-color: $white;
     transform: translateY(-4px) translateZ(5px);
@@ -89,9 +104,9 @@
     }
   }
   &__details {
-    margin-right: 100px;
+    margin-left: 100px;
     @include width-from($smallish_device) {
-      margin-right: 180px;
+      margin-left: 180px;
     }
   }
 
@@ -99,14 +114,14 @@
 
   &__photo {
     position: relative;
-    float: right;
+    float: left;
   }
   &__image {
-    @include circle(75px);
+    @include size(75px);
     background: lighten($light_grey, 5%);
     border: 1px solid $light_grey;
     @include width-from($smallish_device) {
-      @include circle(150px);
+      @include size(150px);
     }
     img {
       display: block;
@@ -150,7 +165,7 @@
   max-height: 210px;
   margin-bottom: 16px;
   padding: 32px;
-  background-color: #404040;
+  background-color: $card_background;
   text-align: center;
   &:after {
     content: '';
