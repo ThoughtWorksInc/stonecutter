@@ -1,0 +1,10 @@
+---
+ - hosts: dob
+   sudo: true
+   remote_user: root
+
+   roles:
+    - common
+    - nginx
+    - ferm
+    - docker
