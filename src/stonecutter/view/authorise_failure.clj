@@ -14,14 +14,8 @@
            [:.clj--app-name] (html/content (:client-name session))))
 
 (defn show-authorise-failure [request]
-  (let [context (:context request)
-        translator (:translator context)
-        session (:session request)
-        client-name (:client-name session)]
+  (let [session (:session request)]
     (->> (vh/load-template "public/authorise-failure.html")
          vh/remove-work-in-progress
          (set-redirect-to-client-home-link session)
-         (set-client-app-name session)
-         (t/translate translator)
-         html/emit*
-         (apply str))))
+         (set-client-app-name session))))

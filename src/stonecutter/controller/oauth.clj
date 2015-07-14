@@ -3,21 +3,20 @@
             [cheshire.core :as json]
             [stonecutter.routes :as routes]
             [stonecutter.db.storage :as s]
-            [stonecutter.controller.user :as user]
             [stonecutter.client :as client]
             [stonecutter.view.authorise :as authorise]
             [stonecutter.view.authorise-failure :as authorise-failure]
             [stonecutter.helper :as sh]))
 
 (defn show-authorise-form [request]
-  (sh/html-response (authorise/authorise-form request)))
+  (sh/enlive-response (authorise/authorise-form request) (:context request)))
 
 (defn show-authorise-failure [request]
   (let [client-id (get-in request [:session :client-id])
         client (client/retrieve-client client-id)
         client-name (:name client)
         request (assoc-in request [:session :client-name] client-name)]
- (sh/html-response (authorise-failure/show-authorise-failure request))))
+ (sh/enlive-response (authorise-failure/show-authorise-failure request) (:context request))))
 
 
 (defn auto-approver [request]

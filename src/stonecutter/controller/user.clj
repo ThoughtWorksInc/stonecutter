@@ -61,7 +61,7 @@
       cl-ep/logout-handler))
 
 (defn show-confirm-account-confirmation [request]
-  (sh/html-response (delete-account/delete-account-confirmation request)))
+  (sh/enlive-response (delete-account/delete-account-confirmation request) (:context request)))
 
 (defn delete-account [request]
   (let [email (get-in request [:session :user :login])]
@@ -114,7 +114,7 @@
     (sh/html-response (profile-created/profile-created request))))
 
 (defn show-profile-deleted [request]
-  (sh/html-response (delete-account/profile-deleted request)))
+  (sh/enlive-response (delete-account/profile-deleted request) (:context request)))
 
 (defn home [request]
   (r/redirect (routes/path :show-profile)))
