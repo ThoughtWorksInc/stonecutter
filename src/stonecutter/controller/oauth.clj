@@ -14,7 +14,7 @@
 
 (defn show-authorise-failure [request]
   (let [client-id (get-in request [:session :client-id])
-        client (client/retrieve-client-with-client-id client-id)
+        client (client/retrieve-client client-id)
         client-name (:name client)
         request (assoc-in request [:session :client-name] client-name)]
  (sh/html-response (authorise-failure/show-authorise-failure request))))

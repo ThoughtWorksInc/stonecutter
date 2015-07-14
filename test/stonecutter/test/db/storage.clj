@@ -104,4 +104,4 @@
                           :client-secret  "client-secret"
                           :url            nil}]
         (cl-client/store-client client-entry)
-        (client/retrieve-client-with-client-id "client-id") => client-entry))
+        (client/retrieve-client "client-id") => client-entry))

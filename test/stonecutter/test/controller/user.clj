@@ -6,8 +6,10 @@
             [clauth.user :as cl-user]
             [net.cgrand.enlive-html :as html]
             [stonecutter.routes :as routes]
-            [stonecutter.controller.user :as c]
+            [stonecutter.client :as c]
+            [stonecutter.controller.user :as u]
             [stonecutter.db.storage :as s]
+            [stonecutter.view.profile :as profile]
             [stonecutter.validation :as v]))
 
 (def email "valid@email.com")
@@ -30,7 +32,7 @@
 
 (fact "user can sign in with valid credentials and is redirected to profile, with user and access_token added to session"
       (-> (create-request :post "/sign-in" sign-in-user-params)
-          c/sign-in) => (contains {:status 302 :headers {"Location" "/profile"}
+          u/sign-in) => (contains {:status 302 :headers {"Location" "/profile"}
                                    :session {:user ...user...
                                              :access_token ...token...}})
       (provided
@@ -40,7 +42,7 @@
 (facts "about registration"
        (fact "user can register with valid credentials and is redirected to profile-created page, with user added to session"
              (-> (create-request :post "/register" register-user-params)
-                 c/register-user) => (contains {:status 302 :headers {"Location" "/profile-created"}
+                 u/register-user) => (contains {:status 302 :headers {"Location" "/profile-created"}
                                                 :session {:user ...user...
                                                           :access_token ...token...}})
              (provided
@@ -51,7 +53,7 @@
        (fact "session is not lost when redirecting from registration"
             (-> (create-request :post (routes/path :register-user) register-user-params)
                 (assoc :session {:some "data"})
-                c/register-user) => (contains {:status 302
+                u/register-user) => (contains {:status 302
                                                :headers {"Location" "/profile-created"}
                                                :session {:some "data"
                                                          :user ...user...
@@ -63,7 +65,7 @@
 
 (fact "signed-in? returns true only when user and access_token are in the session"
       (tabular
-        (c/signed-in? ?request) => ?expected-result
+        (u/signed-in? ?request) => ?expected-result
        ?request                                                  ?expected-result
        {:session {:user ...user... :access_token ...token...}}   truthy
        {:session {:user nil        :access_token ...token...}}   falsey
@@ -76,13 +78,13 @@
 (facts "accessing sign-in form"
        (fact "without user and access_token in session shows the sign-in form"
              (-> (create-request :get "/sign-in" nil)
-                 c/show-sign-in-form) => (contains {:status 200}))
+                 u/show-sign-in-form) => (contains {:status 200}))
 
        (fact "with user and access_token in session redirects to /")
              (-> (create-request :get "/sign-in" nil)
                  (assoc-in [:session :user] ...user...)
                  (assoc-in [:session :access_token] ...token...)
-                 c/show-sign-in-form) => (contains {:status 302 :headers {"Location" "/"}
+                 u/show-sign-in-form) => (contains {:status 302 :headers {"Location" "/"}
                                                     :session {:user ...user...
                                                               :access_token ...token...}}))
 
@@ -91,7 +93,7 @@
         (-> (create-request :post "/sign-in" sign-in-user-params)
             (assoc-in [:session :client-id] "client-id")
             (assoc-in [:session :return-to] return-to-url)
-            c/sign-in) => (contains {:status  302 :headers {"Location" return-to-url}
+            u/sign-in) => (contains {:status  302 :headers {"Location" return-to-url}
                                     :session {:access_token ...token... :user ...user...}})
         (provided
           (s/authenticate-and-retrieve-user email password) => ...user...
@@ -103,8 +105,8 @@
         (-> (create-request :post "/sign-in" sign-in-user-params)
             (assoc-in [:session :client-id] "client-id")
             (assoc-in [:session :return-to] return-to-url)
-            c/sign-in
-            c/sign-out
+            u/sign-in
+            u/sign-out
             :session) => empty?
         (provided
           (s/authenticate-and-retrieve-user email password) => ...user...
@@ -114,7 +116,7 @@
 (fact "if user has client id but no return-to in session, throws an exception"
       (-> (create-request :post "/sign-in" sign-in-user-params)
           (assoc-in [:session :client-id] "client-id")
-          c/sign-in) => (throws Exception)
+          u/sign-in) => (throws Exception)
       (provided
         (s/authenticate-and-retrieve-user email password) => ...user...))
 
@@ -123,7 +125,7 @@
         (-> (create-request :post "/sign-in" sign-in-user-params)
             (assoc-in [:session :client-id] "client-id")
             (assoc-in [:session :return-to] return-to-url)
-            c/sign-in) => (throws Exception)
+            u/sign-in) => (throws Exception)
         (provided
           (s/authenticate-and-retrieve-user email password) => ...user...
           (cl-client/fetch-client "client-id") => nil)))
@@ -131,16 +133,16 @@
 (facts "about sign-in validation errors"
        (fact "user cannot sign in with blank password"
              (-> (create-request :post "/sign-in" {:email "email@credentials.com" :password ""})
-                 c/sign-in) => (contains {:status 200}))
+                 u/sign-in) => (contains {:status 200}))
        (fact "user cannot sign in with invalid credentials"
              (-> (create-request :post "/sign-in" {:email "invalid@credentials.com" :password "password"})
-                 c/sign-in) => (contains {:status 200})
+                 u/sign-in) => (contains {:status 200})
              (provided
                (s/authenticate-and-retrieve-user "invalid@credentials.com" "password") => nil))
        (facts "sign-in page is rendered with errors when invalid credentials are used"
               (let [html-response (-> (create-request :post "/sign-in" {:email    "invalid@credentials.com"
                                                                         :password "password"})
-                                      c/sign-in
+                                      u/sign-in
                                       :body
                                       html/html-snippet)]
                 (fact "form should include validation error class"
@@ -154,7 +156,7 @@
 (fact "user data is saved"
       (let [user-registration-data (create-user "valid@email.com" "password")]
         (-> (create-request :post "/register" register-user-params)
-            c/register-user
+            u/register-user
             :status) => 302
         (provided
           (s/store-user! "valid@email.com" "password") => ...user...)))
@@ -163,17 +165,17 @@
       (-> (create-request :post "/delete-account" nil)
           (assoc-in [:session :user :login] "account_to_be@deleted.com")
           (assoc-in [:session :access_token] ...token...)
-          c/delete-account) => (contains {:status 302 :headers {"Location" "/profile-deleted"} :session nil})
+          u/delete-account) => (contains {:status 302 :headers {"Location" "/profile-deleted"} :session nil})
       (provided
         (s/delete-user! "account_to_be@deleted.com") => anything))
 
 (fact "user can access profile-deleted page when not signed in"
       (-> (create-request :get "/profile-deleted" nil)
-          c/show-profile-deleted) => (contains {:status 200}))
+          u/show-profile-deleted) => (contains {:status 200}))
 
 (fact "email must not be a duplicate"
       (let [html-response (-> (create-request :post "/register" register-user-params)
-                              c/register-user
+                              u/register-user
                               :body
                               html/html-snippet)]
         (-> (html/select html-response [:.form-row--validation-error])
@@ -187,13 +189,13 @@
 
 (facts "about registration validation errors"
        (fact "user isn't saved to the database if email is invalid"
-             (-> (create-request :post "/register" {:email "invalid"}) c/register-user) => anything
+             (-> (create-request :post "/register" {:email "invalid"}) u/register-user) => anything
              (provided
                (cl-user/new-user anything anything) => anything :times 0
                (cl-user/store-user anything) => anything :times 0))
        (facts "registration page is rendered with errors"
               (let [html-response (-> (create-request :post "/register" {:email "invalid"})
-                                      c/register-user
+                                      u/register-user
                                       :body
                                       html/html-snippet)]
                 (fact "email field should have validation error class"
@@ -207,7 +209,7 @@
 (facts "about profile created"
        (fact "view defaults with link to view profile"
              (let [html-response (-> (create-request :get (routes/path :show-profile-created) nil)
-                                     (c/show-profile-created)
+                                     u/show-profile-created
                                      :body
                                      html/html-snippet)]
              (-> (html/select html-response [:.clj--profile-created-next__button]) first :attrs :href)
@@ -216,8 +218,20 @@
        (fact "coming from an app, view will link to show authorisation form"
              (let [html-response (-> (create-request :get (routes/path :show-profile-created) nil)
                                      (assoc :session {:client-id "123" :return-to "/somewhere"})
-                                     (c/show-profile-created)
+                                     u/show-profile-created
                                      :body
                                      html/html-snippet)]
              (-> (html/select html-response [:.clj--profile-created-next__button]) first :attrs :href)
                => (contains "/somewhere"))))
+
+(facts "about show-profile"
+       (future-fact "user's authorised clients passed to html-response"
+             (-> (create-request :get (routes/path :show-profile) nil)
+                 (assoc :session {:user {:login ...email...}})
+                 u/show-profile
+                 :body) => (contains #"CLIENT 1.+CLIENT 2")
+             (provided
+               (s/retrieve-user ...email...) => {:login ...email...
+                                                 :authorised-clients [...client-id-1... ...client-id-2...]}
+               (c/retrieve-client ...client-id-1...) => {:client-name "CLIENT 1"}
+               (c/retrieve-client ...client-id-2...) => {:client-name "CLIENT 2"})))

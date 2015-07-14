@@ -1,12 +1,12 @@
 (ns stonecutter.controller.user
-  (:require [clauth.client :as cl-client]
-            [clauth.token :as cl-token]
+  (:require [clauth.token :as cl-token]
             [clauth.endpoints :as cl-ep]
             [ring.util.response :as r]
             [stonecutter.routes :as routes]
             [stonecutter.view.sign-in :as sign-in]
             [stonecutter.validation :as v]
             [stonecutter.db.storage :as s]
+            [stonecutter.client :as c]
             [stonecutter.view.register :as register]
             [stonecutter.view.profile-created :as profile-created]
             [stonecutter.view.profile :as profile]
@@ -21,7 +21,7 @@
     (and (:user session) (:access_token session))))
 
 (defn redirect-to-authorisation [return-to user client-id]
-  (if-let [client (cl-client/fetch-client client-id)]
+  (if-let [client (c/retrieve-client client-id)]
     (assoc (r/redirect return-to) :session {:user user :access_token (:token (cl-token/create-token client user))})
     (throw (Exception. "Invalid client"))))
 
@@ -94,7 +94,13 @@
     (sh/html-response (sign-in/sign-in-form request))))
 
 (defn show-profile [request]
-  (sh/html-response (profile/profile request)))
+  (let [email (get-in request [:session :user :login])
+        user (s/retrieve-user email)
+        authorised-client-ids (set (:authorised-clients user))
+        authorised-clients (map c/retrieve-client authorised-client-ids)]
+    (-> (assoc-in request [:context :authorised-clients] authorised-clients)
+        profile/profile
+        sh/html-response)))
 
 (defn get-in-session [request key]
   (get-in request [:session key]))
