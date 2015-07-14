@@ -63,7 +63,8 @@
                                 :response
                                 :body
                                 (json/parse-string keyword))]
-          (:user-id response-body) =not=> string/blank?)))
+          (:user-id response-body) =not=> string/blank?))
+  state)
 
 ;; FIXME can't reuse the body because it's a buffered input stream
 (defn replay-last-request [state]

@@ -96,7 +96,7 @@
 (defn show-profile [request]
   (let [email (get-in request [:session :user :login])
         user (s/retrieve-user email)
-        authorised-client-ids (set (:authorised-clients user))
+        authorised-client-ids (:authorised-clients user)
         authorised-clients (map c/retrieve-client authorised-client-ids)]
     (-> (assoc-in request [:context :authorised-clients] authorised-clients)
         profile/profile

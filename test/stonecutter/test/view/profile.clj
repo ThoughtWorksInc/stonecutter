@@ -24,3 +24,21 @@
       (let [translator (t/translations-fn t/translation-map)
             page (-> (th/create-request translator) profile)]
         page => th/no-untranslated-strings))
+
+(facts "about displaying authorised clients"
+       (fact "names of authorised clients are displayed"
+             (let [page (-> (th/create-request)
+                            (assoc-in [:context :authorised-clients] [{:name "Bloc Party"} {:name "Tabletennis Party"}])
+                            profile
+                            html/html-snippet)]
+               (-> page 
+                   (html/select [:.func--app__list])
+                   first
+                   html/text) => (contains #"Bloc Party[\s\S]+Tabletennis Party"))) 
+
+       (fact "empty application-list item is used when there are no authorised clients"
+             (let [page (-> (th/create-request)
+                            profile
+                            html/html-snippet)]
+                (html/select page [:.clj--authorised-app__list-item--empty]) =not=> empty?
+                (html/select page [:.clj--authorised-app__list-item]) => empty?))) 

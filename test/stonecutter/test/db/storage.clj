@@ -105,3 +105,28 @@
                           :url            nil}]
         (cl-client/store-client client-entry)
         (client/retrieve-client "client-id") => client-entry))
+
+(facts "about add-client-id"
+       (fact "returns a function which adds client-id to a user's authorised clients"
+             (let [client-id "client-id"
+                   add-client-id-function (s/add-client-id client-id)
+                   user {:some-key "some-value"}]
+               (add-client-id-function user) => {:some-key "some-value" :authorised-clients [client-id]}))
+
+       (fact "does not add duplicates"
+             (let [client-id "client-id"
+                   add-client-id-function (s/add-client-id client-id)
+                   user {:some-key "some-value"}]
+               (-> user
+                   add-client-id-function 
+                   add-client-id-function) => {:some-key "some-value" :authorised-clients [client-id]}))
+
+       (fact "removes any duplicates"
+             (let [client-id "client-id"
+                   add-client-id-function (s/add-client-id client-id)
+                   user {:some-key "some-value"
+                         :authorised-clients [client-id client-id]}]
+               (-> user
+                   add-client-id-function 
+                   add-client-id-function) => {:some-key "some-value" 
+                                               :authorised-clients [client-id]})))

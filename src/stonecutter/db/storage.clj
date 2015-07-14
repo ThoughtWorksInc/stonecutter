@@ -69,9 +69,16 @@
 (defn retrieve-user-with-auth-code [code]
   (-> (cl-auth-code/fetch-auth-code code) :subject))
 
+(defn unique-conj [things thing]
+  (let [unique-things (set things)
+        unique-things-list (into [] unique-things)]
+    (if (unique-things thing)
+      unique-things-list 
+      (conj unique-things-list thing))))
+
 (defn add-client-id [client-id]
   (fn [user]
-    (update-in user [:authorised-clients] conj client-id)))
+    (update-in user [:authorised-clients] unique-conj client-id)))
 
 (defn add-authorised-client-for-user! [email client-id]
   (-> (m/update! @cl-user/user-store email (add-client-id client-id))))
