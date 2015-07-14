@@ -2,7 +2,6 @@
   (:require [ring.middleware.defaults :as ring-mw]
             [ring.util.response :as r]
             [ring.adapter.jetty :as ring-jetty]
-            [environ.core :as env]
             [scenic.routes :as scenic]
             [clojure.tools.logging :as log]
             [stonecutter.view.error :as error]
@@ -17,7 +16,8 @@
             [stonecutter.translation :as t]
             [stonecutter.middleware :as m]
             [stonecutter.db.migration :as migration]
-            [stonecutter.db.mongo :as mongo])
+            [stonecutter.db.mongo :as mongo]
+            [stonecutter.config :as config])
   (:gen-class))
 
 (def default-context {:translator (t/translations-fn t/translation-map)})
@@ -94,28 +94,14 @@
 
 (def app (create-app :dev-mode? false))
 
-(def port (Integer. (get env/env :port "3000")))
-
-(def host (get env/env :host "127.0.0.1"))
-
-(defn get-docker-mongo-uri []
-  (when-let [mongo-ip (get env/env :mongo-port-27017-tcp-addr)]
-    (format "mongodb://%s:27017/stonecutter" mongo-ip)))
-
-(def mongo-uri
-  (or
-    (get-docker-mongo-uri)
-    (get env/env :mongo-uri)
-    "mongodb://localhost:27017/stonecutter"))
-
 (defn -main [& args]
   (log-config/init-logger!)
   (vh/enable-template-caching!)
-  (let [db (mongo/get-mongo-db mongo-uri)]
+  (let [db (mongo/get-mongo-db (config/mongo-uri))]
     (s/setup-mongo-stores! db)
     (migration/run-migrations db))
-  (client/load-client-credentials-and-store-clients (get env/env :client-credentials-file-path "client-credentials.yml"))
-  (ring-jetty/run-jetty app {:port port :host host}))
+  (client/load-client-credentials-and-store-clients (config/client-credentials-file-path))
+  (ring-jetty/run-jetty app {:port (config/port) :host (config/host)}))
 
 (defn lein-ring-init
   "Function called when running app with 'lein ring server'"
@@ -123,7 +109,7 @@
   (log-config/init-logger!)
   (vh/disable-template-caching!)
   (s/setup-in-memory-stores!)
-  (client/load-client-credentials-and-store-clients (get env/env :client-credentials-file-path "client-credentials.yml"))
+  (client/load-client-credentials-and-store-clients (config/client-credentials-file-path))
   (let [user (clauth.user/register-user "user@email.com" "password")
         client-details (clauth.client/register-client "MYAPP" "myapp.com")]
     (log/info (str "TEST USER DETAILS:" user))
