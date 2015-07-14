@@ -21,15 +21,24 @@
             page (-> (th/create-request translator) profile-created)]
         page => th/no-untranslated-strings))
 
-(fact "when registering on stonecutter, next button should default to profile page"
-      (let [page (-> (th/create-request)
-                     profile-created
-                     html/html-snippet)]
-        (-> page (html/select [:.func--profile-created-next__button]) first :attrs :href) => (r/path :show-profile)))
+(facts "when registering on stonecutter"
+       (let [page (-> (th/create-request)
+                      profile-created
+                      html/html-snippet)]
 
-(fact "when coming from authorisation flow, next button should go to authorisation form"
-      (let [page (-> (th/create-request {} nil {:from-app true} {:return-to "land of milk and honey"})
-                     profile-created
-                     html/html-snippet)]
-        (-> page (html/select [:.func--profile-created-next__button]) first :attrs :href) => "land of milk and honey"))
+         (fact "next button should default to profile page"
+               (-> page (html/select [:.func--profile-created-next__button]) first :attrs :href) => (r/path :show-profile))
 
+         (fact "next button should use default button text"
+               (-> page (html/select [:.func--profile-created-next__button]) first :attrs :data-l8n) => "content:profile-created/action-button-default")))
+
+(facts "when coming from authorisation flow"
+       (let [page (-> (th/create-request {} nil {:from-app true} {:return-to "land of milk and honey"})
+                      profile-created
+                      html/html-snippet)]
+
+         (fact "when coming from authorisation flow, next button should go to authorisation form"
+               (-> page (html/select [:.func--profile-created-next__button]) first :attrs :href) => "land of milk and honey")
+
+         (fact "when coming from authorisation flow, next button should use from-app text"
+               (-> page (html/select [:.func--profile-created-next__button]) first :attrs :data-l8n) => "content:profile-created/action-button-from-app")))
