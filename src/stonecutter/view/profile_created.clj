@@ -25,15 +25,10 @@
   (if from-app (get-in request [:session :return-to]) (r/path :show-profile)))
 
 (defn profile-created [request]
-  (let [context (:context request)
-        translator (:translator context)
-        from-app (get-in request [:params :from-app])
+  (let [from-app (get-in request [:params :from-app])
         next-url (get-next-url from-app request)]
 
     (->> (vh/load-template "public/profile-created.html")
          (set-next-link next-url)
          (set-button-text from-app)
-         vh/remove-work-in-progress
-         (t/translate translator)
-         html/emit*
-         (apply str))))
+         vh/remove-work-in-progress)))
