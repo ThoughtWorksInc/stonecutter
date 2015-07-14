@@ -10,6 +10,7 @@
 (def profile-created-page-body :.func--profile-created-page)
 (def profile-page-body :.func--profile-page)
 (def profile-deleted-page-body :.func--profile-deleted-page)
+(def profile-authorised-client-list :.func--app__list)
 
 (def sign-in-email-input :.func--email__input)
 (def sign-in-password-input :.func--password__input)

@@ -75,6 +75,7 @@
         user (storage/store-user! email password)]
     {:client-id             client-id
      :client-secret         client-secret
+     :client-name           (:name client)
      :invalid-client-secret invalid-client-secret}))
 
 (background
@@ -109,27 +110,28 @@
                     (kh/response-has-user-email email)
                     (kh/response-has-id))))
 
-       (facts "user who has already authorised client does not need to authorise client again"
-              (let [{:keys [client-id client-secret]} (setup)]
+       (future-facts "user who has already authorised client does not need to authorise client again"
+              (let [{:keys [client-id client-secret client-name]} (setup)]
                 (-> (k/session h/app)
                     ;; authorise client for the first time
                     (browser-sends-authorisation-request-from-client-redirect client-id)
                     (k/follow-redirect)
-                    ;; login
-                    (kh/page-uri-is "/sign-in")
                     sign-in
-                    ;; check redirect - should have auth_code
                     (k/follow-redirect)
-                    (kh/page-uri-is "/authorisation")
                     (k/press ks/authorise-share-profile-button)
+
                     ;; send authorisation request for the second time
                     (browser-sends-authorisation-request-from-client-redirect client-id)
                     (kh/location-contains "callback?code=")
                     (client-sends-http-token-request client-id client-secret)
-                    ; return 200 with new access_token
+                    ;; return 200 with new access_token
                     (kh/response-has-access-token)
                     (kh/response-has-user-email email)
-                    (kh/response-has-id))))
+                    (kh/response-has-id)
+                    
+                    ;; check client appears on user profile page
+                    (k/visit "/profile")
+                    (kh/selector-includes-content ks/profile-authorised-client-list client-name))))
 
        (facts "user is redirected to authorisation-failure page when cancelling authorisation"
               (let [{:keys [client-id client-secret]} (setup)]
