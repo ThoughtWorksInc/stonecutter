@@ -109,7 +109,7 @@
                     (kh/response-has-user-email email)
                     (kh/response-has-id))))
 
-       (future-facts "user who has already authorised client does not need to authorise client again"
+       (facts "user who has already authorised client does not need to authorise client again"
               (let [{:keys [client-id client-secret]} (setup)]
                 (-> (k/session h/app)
                     ;; authorise client for the first time

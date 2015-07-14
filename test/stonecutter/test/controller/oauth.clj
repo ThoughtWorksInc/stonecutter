@@ -34,7 +34,7 @@
                                (assoc :params {:client_id (:client-id client-details) :response_type "code" :redirect_uri "callback"})
                                (r/header "accept" "text/html")
                                (assoc-in [:session :access_token] (:token access-token))
-                               (assoc-in [:session :user :email] user-email)
+                               (assoc-in [:session :user] user)
                                (assoc-in [:context :translator] {})
                                ;the csrf-token key in session will stop clauth from refreshing the csrf-token in request
                                (assoc-in [:session :csrf-token] "staleCSRFtoken"))
@@ -42,12 +42,13 @@
                (:status response) => 200
                (get-in response [:session :access_token]) => (:token access-token)
                (get response :body) => (contains "Share Profile Card")
-               (get-in response [:session :user :email]) => user-email
+               (get-in response [:session :user]) => user
                (get-in response [:session :csrf-token]) =not=> "staleCSRFtoken"))
 
-       (fact "posting to authorisation endpoint redirects to callback with auth code"
-             (let [user-email "email@user.com"
-                   user (storage/store-user! user-email "password")
+       (def user-email "email@user.com")
+
+       (fact "posting to authorisation endpoint redirects to callback with auth code and adds the client to the user's authorised clients"
+             (let [user (storage/store-user! user-email "password")
                    client-details (cl-client/register-client "MYAPP" "myapp.com")
                    access-token (cl-token/create-token client-details user)
                    csrf-token "CSRF-TOKEN"
@@ -56,10 +57,11 @@
                                (assoc-in [:session :access_token] (:token access-token))
                                (assoc-in [:session :csrf-token] csrf-token)
                                (assoc :content-type "application/x-www-form-urlencoded") ;To mock a form post
-                               (assoc-in [:session :user :email] user-email))
+                               (assoc-in [:session :user :login] user-email))
                    response (oauth/authorise-client request)]
-               (:status response) => 302
-               (get-in response [:headers "Location"]) => (contains "callback?code=")))
+               (oauth/authorise-client request) => (contains {:status 302 :headers (contains {"Location" (contains "callback?code=" )} )})
+               (provided
+                 (storage/add-authorised-client-for-user! user-email anything) => ...user...)))
 
        (fact "valid request redirects to callback with auth code when there is an existing user session and the user has previously authorised the app"
              (let [user-email "email@user.com"
@@ -132,7 +134,7 @@
                (:uid user) =not=> nil?)
 
          (fact "user email stays in the session after validating token"
-               (get-in response [:session :user :email]) => user-email)))
+               (get-in response [:session :user :login]) => user-email)))
 
 (facts "about auto-approver"
        (fact "returns true if client-id is in the users authorised-clients list"

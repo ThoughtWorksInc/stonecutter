@@ -34,7 +34,10 @@
 (def token-handler (cl-ep/token-handler))
 
 (defn authorise-client [request]
-  (let [response (auth-handler request)]
+  (let [client-id (get-in request [:params :client_id])
+        user-email (get-in request [:session :user :login])
+        response (auth-handler request)]
+    (s/add-authorised-client-for-user! user-email client-id)
     response))
 
 (defn authorise [request]
@@ -64,4 +67,4 @@
                  (json/generate-string))]
     (-> response
         (assoc :body body)
-        (assoc-in [:session :user :email] user-email))))
+        (assoc-in [:session :user] user))))

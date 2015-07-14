@@ -8,8 +8,8 @@
   (html/at enlive-m field-row-selector (html/add-class "form-row--validation-error")))
 
 (def error-translations
-  { :email {:invalid "content:sign-in-form/email-address-invalid-validation-message"
-            :too-long "content:sign-in-form/email-address-too-long-validation-message"}
+  {:email {:invalid "content:sign-in-form/email-address-invalid-validation-message"
+           :too-long "content:sign-in-form/email-address-too-long-validation-message"}
    :password {:blank "content:sign-in-form/password-blank-validation-message"
               :too-long "content:sign-in-form/password-too-long-validation-message"
               :too-short "content:sign-in-form/password-too-short-validation-message"}
@@ -61,12 +61,12 @@
         params (:params request)
         err (:errors context)
         translator (:translator context)]
-  (->> (vh/load-template "public/sign-in.html")
-       set-registration-link
-       set-form-action
-       vh/add-anti-forgery
-       (add-sign-in-errors err)
-       (add-params params)
-       (t/translate translator)
-       html/emit*
-       (apply str))))
+    (->> (vh/load-template "public/sign-in.html")
+         set-registration-link
+         set-form-action
+         vh/add-anti-forgery
+         (add-sign-in-errors err)
+         (add-params params)
+         (t/translate translator)
+         html/emit*
+         (apply str))))
