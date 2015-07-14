@@ -4,36 +4,35 @@
             [stonecutter.test.view.test-helpers :as th]
             [stonecutter.translation :as t]
             [stonecutter.view.delete-account :refer [delete-account-confirmation
-                                                     profile-deleted]]))
+                                                     profile-deleted]]
+            [stonecutter.helper :as helper]))
 
 (facts "about delete-account-confirmation page"
        (fact "should return some html"
              (let [page (-> (th/create-request)
-                            delete-account-confirmation
-                            html/html-snippet)]
+                            delete-account-confirmation)]
                (html/select page [:body]) =not=> empty?))
 
        (fact "work in progress should be removed from page"
-             (let [page (-> (th/create-request) delete-account-confirmation html/html-snippet)]
+             (let [page (-> (th/create-request) delete-account-confirmation)]
                page => th/work-in-progress-removed))
 
        (fact "there are no missing translations"
              (let [translator (t/translations-fn t/translation-map)
-                   page (-> (th/create-request translator) delete-account-confirmation)]
+                   page (-> (th/create-request) delete-account-confirmation (helper/enlive-response {:translator translator}) :body)]
                page => th/no-untranslated-strings)))
 
 (facts "about show-profile-deleted page"
        (fact "should return some html"
              (let [page (-> (th/create-request)
-                            profile-deleted
-                            html/html-snippet)]
+                            profile-deleted)]
                (html/select page [:body]) =not=> empty?))
 
        (fact "work in progress should be removed from page"
-             (let [page (-> (th/create-request) profile-deleted html/html-snippet)]
+             (let [page (-> (th/create-request) profile-deleted)]
                page => th/work-in-progress-removed))
 
        (fact "there are no missing translations"
              (let [translator (t/translations-fn t/translation-map)
-                   page (-> (th/create-request translator) profile-deleted)]
+                   page (-> (th/create-request) profile-deleted (helper/enlive-response {:translator translator}) :body)]
                page => th/no-untranslated-strings)))
