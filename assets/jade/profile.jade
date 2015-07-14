@@ -7,28 +7,6 @@ block vars
 
 block headerScripts
 
-mixin button(buttonClass, iconClass)
-  button.button(type="submit", class=buttonClass)
-    if iconClass != null
-      i.fa.button__icon(class=iconClass)
-    span.button__text
-      block
-
-
-mixin removeButton(buttonClass, iconClass)
-  +button("button--remove", "fa-remove")
-    block
-
-
-mixin authorisedAppItem(appName)
-  li.app__item
-    .app__title #{appName}
-    .app__remove
-      form(action="./unshare-profile-card", method="post")
-        // hidden inputs here
-        +removeButton() Unshare Card
-
-
 block headerContent
   li.tabs__item.tabs__item--active: a.tabs__link(href="./profile", data-l8n="content:profile/profile-link") !Profile
   li.tabs__item: a.tabs__link.clj--sign-out__link.func--sign-out__link(href="./sign-out", data-l8n="content:profile/sign-out-link") !Sign out
@@ -65,8 +43,8 @@ block content
 
 
     .authorised-apps.clj-wip
-      h2.authorised-apps__title(aria-describedby="authorised-apps-lede") Applications
-      p.lede#authorised-apps-lede Manage the applications that you've shared your Profile Card with.
+      h2.authorised-apps__title(aria-describedby="authorised-apps-lede", data-l8n="content:applications/title") !Applications
+      p.lede#authorised-apps-lede(data-l8n="content:applications/intro") !Manage the applications that you've shared your Profile Card with.
       ul.app__list.func--app__list
         +authorisedAppItem("Green Party")
         +authorisedAppItem("A really long name that will break this")

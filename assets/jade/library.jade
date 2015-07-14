@@ -6,10 +6,26 @@ block vars
 //  - pageTitleDataL8n = ""
 
 block headerScripts
+  style.
+    .library-item {
+      margin-bottom: 2rem;
+    }
+
 
 block content
 
   .middle-container
 
-    h2 Loader icon
-    i.fa.fa-cog.fa-spin
+    h2 Applications
+
+    .library-item
+      h3.library-title Empty
+      .library__demo
+        ul.app__list
+          +authorisedAppItemEmpty()
+
+    .library-item
+      h3.library-title Populated
+      .library__demo
+        ul.app__list
+          +authorisedAppItem("Green Party")

@@ -1,0 +1,24 @@
+mixin button(buttonClass, iconClass)
+  button.button(type="submit", class=buttonClass)
+    if iconClass != null
+      i.fa.button__icon(class=iconClass)
+    span.button__text
+      block
+
+
+mixin removeButton(buttonClass, iconClass)
+  +button("button--remove clj--authorised-app__remove-button", "fa-remove")
+    block
+
+
+mixin authorisedAppItemEmpty()
+  li.app__item.clj--authorised-app__list-item--empty
+    .app__title(data-l8n="content:applications/list-empty") !No applications use your Profile Card
+
+mixin authorisedAppItem(appName)
+  li.app__item.clj--authorised-app__list-item
+    .app__title.clj--authorised-app__title #{appName}
+    .app__remove
+      form(action="./unshare-profile-card", method="post")
+        // hidden inputs here
+        +removeButton() Unshare Card
