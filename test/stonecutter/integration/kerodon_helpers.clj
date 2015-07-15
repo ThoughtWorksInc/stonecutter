@@ -29,6 +29,9 @@
   state)
 
 (defn selector-includes-content [state selector content]
+  (prn "STATE" state)
+  (prn "SELECTOR" selector)
+  (prn "CONTENT" (-> state :enlive (html/select selector) first html/text))
   (fact {:midje/name "Check if element contains string"}
         (-> state :enlive (html/select selector) first html/text) => (contains content))
   state)

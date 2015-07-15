@@ -85,9 +85,9 @@
 (defn print-debug [v] (prn "Kerodon:" v) v)
 
 (defn sign-in [state]
-  (-> state 
-      (k/fill-in ks/sign-in-email-input email) 
-      (k/fill-in ks/sign-in-password-input password) 
+  (-> state
+      (k/fill-in ks/sign-in-email-input email)
+      (k/fill-in ks/sign-in-password-input password)
       (k/press ks/sign-in-submit)))
 
 (facts "user authorising client-apps"
@@ -110,7 +110,7 @@
                     (kh/response-has-user-email email)
                     (kh/response-has-id))))
 
-       (future-facts "user who has already authorised client does not need to authorise client again"
+       (facts "user who has already authorised client does not need to authorise client again"
               (let [{:keys [client-id client-secret client-name]} (setup)]
                 (-> (k/session h/app)
                     ;; authorise client for the first time
@@ -127,11 +127,14 @@
                     ;; return 200 with new access_token
                     (kh/response-has-access-token)
                     (kh/response-has-user-email email)
-                    (kh/response-has-id)
-                    
-                    ;; check client appears on user profile page
-                    (k/visit "/profile")
-                    (kh/selector-includes-content ks/profile-authorised-client-list client-name))))
+                    (kh/response-has-id))
+
+                ;; check client appears on user profile page
+                (-> (k/session h/app)
+                    (k/visit "/sign-in")
+                    sign-in
+                    (k/follow-redirect)
+                    (kh/selector-includes-content [ks/profile-authorised-client-list] client-name))))
 
        (facts "user is redirected to authorisation-failure page when cancelling authorisation"
               (let [{:keys [client-id client-secret]} (setup)]
