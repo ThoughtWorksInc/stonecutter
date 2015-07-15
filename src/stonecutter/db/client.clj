@@ -21,7 +21,7 @@
   (cl-client/reset-client-store!))
 
 (defn retrieve-client [client-id]
-  (cl-client/fetch-client client-id))
+  (dissoc (cl-client/fetch-client client-id) :client-secret))
 
 (defn unique-client-id? [client-id]
   (nil? (retrieve-client client-id)))
