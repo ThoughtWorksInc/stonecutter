@@ -4,15 +4,19 @@
             [stonecutter.view.view-helpers :as vh]
             [net.cgrand.enlive-html :as html]))
 
-(defn enlive-to-str [nodes]
-  (->> nodes
-       html/emit*
-       (apply str)))
+(defn update-theme [enlive-m context]
+  (prn context)
+  (if-let [theme (:theme context)]
+    (-> enlive-m
+        (html/at [(html/attr= :data-clojure-id "theme-link")] (html/set-attr :href (format "stylesheets/%s_theme.css" theme)))
+        (vh/remove-attribute-globally :data-clojure-id))
+    enlive-m))
 
 (defn enlive-response [enlive-m context]
   (-> enlive-m
+      (update-theme context)
       (t/context-translate context)
-      enlive-to-str
+      vh/enlive-to-str
       r/response
       (r/content-type "text/html")))
 

@@ -85,6 +85,7 @@
   (-> (scenic/scenic-handler routes/routes site-handlers not-found)
       (ring-mw/wrap-defaults wrap-defaults-config)
       m/wrap-translator
+      (m/wrap-theme (config/theme))
       (m/wrap-error-handling err-handler dev-mode?)))
 
 (defn create-api-app [dev-mode?]

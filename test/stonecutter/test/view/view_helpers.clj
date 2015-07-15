@@ -56,3 +56,9 @@
                                         (fn [m] (html/at m [:.a] (html/content "Hello")))
                                         (fn [m] (html/at m [:p] (html/set-attr :class "b"))))
                     => "<html><body><p class=\"b\">Hello</p></body></html>"))))
+
+
+(fact "helper function for removing attributes"
+      (let [page-html "<html a=\"b\"><body a=\"b\"></body></html>"]
+        (-> page-html html/html-snippet (vh/remove-attribute [:body] :a) vh/enlive-to-str) => "<html a=\"b\"><body></body></html>"
+        (-> page-html html/html-snippet (vh/remove-attribute-globally :a) vh/enlive-to-str) => "<html><body></body></html>"))

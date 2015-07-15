@@ -19,3 +19,6 @@
 
 (defn client-credentials-file-path []
   (get env/env :client-credentials-file-path "client-credentials.yml"))
+
+(defn theme []
+  (get env/env :theme))

@@ -14,6 +14,12 @@
 (defn remove-element [enlive-m selector]
   (html/at enlive-m selector nil))
 
+(defn remove-attribute [enlive-m selector attr]
+  (html/at enlive-m selector (html/remove-attr attr)))
+
+(defn remove-attribute-globally [enlive-m attr]
+  (remove-attribute enlive-m [(html/attr? attr)] attr))
+
 (defn remove-work-in-progress [enlive-m]
   (remove-element enlive-m [:.clj-wip]))
 

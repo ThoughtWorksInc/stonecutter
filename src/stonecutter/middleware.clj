@@ -22,6 +22,12 @@
         (assoc-in [:context :translator] (translation/translations-fn translation/translation-map))
         handler)))
 
+(defn wrap-theme [handler theme]
+  (fn [request]
+    (-> request
+        (assoc-in [:context :theme] theme)
+        handler)))
+
 (defn wrap-handlers [handlers wrap-function exclusions]
   (into {} (for [[k v] handlers]
              [k (if (k exclusions) v (wrap-function v))])))
