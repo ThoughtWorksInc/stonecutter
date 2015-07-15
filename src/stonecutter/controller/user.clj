@@ -6,7 +6,7 @@
             [stonecutter.view.sign-in :as sign-in]
             [stonecutter.validation :as v]
             [stonecutter.db.user :as user]
-            [stonecutter.client :as c]
+            [stonecutter.db.client :as c]
             [stonecutter.view.register :as register]
             [stonecutter.view.profile-created :as profile-created]
             [stonecutter.view.profile :as profile]

@@ -3,7 +3,7 @@
             [cheshire.core :as json]
             [stonecutter.routes :as routes]
             [stonecutter.db.user :as user]
-            [stonecutter.client :as client]
+            [stonecutter.db.client :as client]
             [stonecutter.view.authorise :as authorise]
             [stonecutter.view.authorise-failure :as authorise-failure]
             [stonecutter.helper :as sh]))

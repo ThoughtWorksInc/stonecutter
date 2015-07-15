@@ -2,7 +2,7 @@
   (:require [midje.sweet :refer :all]
             [clauth.client :as cl-client]
             [stonecutter.db.storage :as storage]
-            [stonecutter.client :as c]))
+            [stonecutter.db.client :as c]))
 
 (background
   (before :facts (storage/setup-in-memory-stores!)

@@ -1,4 +1,4 @@
-(ns stonecutter.client
+(ns stonecutter.db.client
   (:require [clj-yaml.core :as yaml]
             [clauth.client :as cl-client]
             [schema.core :as schema]

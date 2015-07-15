@@ -3,7 +3,7 @@
             [clauth.user :as cl-user]
             [clauth.client :as cl-client]
             [clauth.auth-code :as cl-auth-code]
-            [stonecutter.client :as client]
+            [stonecutter.db.client :as client]
             [stonecutter.db.storage :as s]
             [stonecutter.db.user :as user]))
 

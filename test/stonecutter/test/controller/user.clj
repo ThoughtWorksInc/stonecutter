@@ -6,8 +6,8 @@
             [clauth.user :as cl-user]
             [net.cgrand.enlive-html :as html]
             [stonecutter.routes :as routes]
-            [stonecutter.client :as c]
             [stonecutter.controller.user :as u]
+            [stonecutter.db.client :as c]
             [stonecutter.db.user :as user]
             [stonecutter.view.profile :as profile]
             [stonecutter.validation :as v]))
