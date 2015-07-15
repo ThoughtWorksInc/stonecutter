@@ -18,6 +18,11 @@
         (-> state :request :uri) => uri)
   state)
 
+(defn page-uri-contains [state uri]
+  (fact {:midje/name "Checking if page uri contains:"}
+        (-> state :request :uri) => (contains uri))
+  state)
+
 (defn response-status-is [state status]
   (fact {:midje/name "Checking response status"}
         (-> state :response :status) => status)
@@ -31,6 +36,11 @@
 (defn selector-includes-content [state selector content]
   (fact {:midje/name "Check if element contains string"}
         (-> state :enlive (html/select selector) first html/text) => (contains content))
+  state)
+
+(defn selector-does-not-include-content [state selector content]
+  (fact {:midje/name "Check if element does not contain string"}
+        (-> state :enlive (html/select selector) first html/text) =not=> (contains content))
   state)
 
 (defn location-contains [state path]

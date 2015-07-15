@@ -1,14 +1,21 @@
 (ns stonecutter.integration.kerodon
   (:require [midje.sweet :refer :all]
             [kerodon.core :as k]
+            [clauth.client :as cl-client]
             [stonecutter.integration.kerodon-helpers :as kh]
             [stonecutter.integration.kerodon-selectors :as ks]
             [stonecutter.handler :as h]
             [stonecutter.db.storage :as s]
             [stonecutter.logging :as l]
+            [stonecutter.db.user :as user]
             [stonecutter.view.register :as register-view]))
 
 (l/init-logger!)
+
+(defn setup-add-client-to-user! [email client-name]
+  (let [client (cl-client/register-client client-name "myclient.com")
+        client-id (:client-id client)]
+    (user/add-authorised-client-for-user! email client-id)))
 
 (defn print-enlive [state]
   (prn (-> state :enlive))
@@ -126,19 +133,40 @@
            (k/follow-redirect)
            (kh/page-uri-is "/profile")))
 
+(facts "Clients appear on user profile page"
+       (-> (k/session h/app)
+           (register "user@withclient.com"))
+       (setup-add-client-to-user! "user@withclient.com" "myapp")
+       (-> (k/session h/app)
+           (sign-in "user@withclient.com")
+           (k/visit "/profile")
+           (kh/selector-includes-content [ks/profile-authorised-client-list] "myapp")))
+
+(future-facts "User can unshare profile card"
+       (-> (k/session h/app)
+           (sign-in "user@withclient.com")
+           (k/visit "/profile")
+           (kh/selector-includes-content [ks/profile-authorised-client-list] "myapp")
+           (k/follow [ks/profile-authorised-client-unshare-link])
+           (kh/page-uri-contains "/unshare-profile-card")
+           (k/press ks/unshare-profile-card-confirm-button)
+           (k/follow-redirect)
+           (kh/page-uri-is "/profile")
+           (kh/selector-does-not-include-content [ks/profile-authorised-client-list] "myapp")))
+
 (facts "User can delete account"
-      (-> (k/session h/app)
-          (register "account_to_be@deleted.com")
-          (k/visit "/profile")
-          (k/follow ks/delete-account-link)
-          (kh/page-uri-is "/delete-account")
-          (kh/response-status-is 200)
-          (kh/selector-exists [ks/delete-account-page-body])
-          (k/press ks/delete-account-button)
-          (k/follow-redirect)
-          (kh/page-uri-is "/profile-deleted")
-          (kh/response-status-is 200)
-          (kh/selector-exists [ks/profile-deleted-page-body])))
+       (-> (k/session h/app)
+           (register "account_to_be@deleted.com")
+           (k/visit "/profile")
+           (k/follow ks/delete-account-link)
+           (kh/page-uri-is "/delete-account")
+           (kh/response-status-is 200)
+           (kh/selector-exists [ks/delete-account-page-body])
+           (k/press ks/delete-account-button)
+           (k/follow-redirect)
+           (kh/page-uri-is "/profile-deleted")
+           (kh/response-status-is 200)
+           (kh/selector-exists [ks/profile-deleted-page-body])))
 
 (facts "Not found page is shown for unknown url"
        (-> (k/session h/app)
@@ -151,15 +179,15 @@
         (register-view/registration-form anything) =throws=> (Exception.))
       (-> (k/session (h/create-app :dev-mode? false))
           (k/visit "/register")
-           (kh/response-status-is 500)
-           (kh/selector-exists [ks/error-500-page-body]))
+          (kh/response-status-is 500)
+          (kh/selector-exists [ks/error-500-page-body]))
       (fact "if dev mode is enabled then error middleware isn't invoked (exception not caught)"
             (-> (k/session (h/create-app :dev-mode? true))
                 (k/visit "/register")) => (throws Exception)))
 
 (future-fact "Replaying the same post will generate a 403 from the csrf handling"
-      (-> (k/session h/app)
-          (register "csrf@email.com")
-          (sign-in "csrf@email.com")
-          (kh/replay-last-request)
-          (kh/response-status-is 403)))
+             (-> (k/session h/app)
+                 (register "csrf@email.com")
+                 (sign-in "csrf@email.com")
+                 (kh/replay-last-request)
+                 (kh/response-status-is 403)))

@@ -11,6 +11,9 @@
 (def profile-page-body :.func--profile-page)
 (def profile-deleted-page-body :.func--profile-deleted-page)
 (def profile-authorised-client-list :.func--app__list)
+(def profile-authorised-client-unshare-link :.func--app-item__unshare-link)
+
+(def unshare-profile-card-confirm-button :.func--unshare-profile-card__button)
 
 (def sign-in-email-input :.func--email__input)
 (def sign-in-password-input :.func--password__input)
