@@ -2,7 +2,6 @@
   (:require [midje.sweet :refer :all]
             [ring.mock.request :as mock]
             [clauth.token :as cl-token]
-            [clauth.client :as cl-client]
             [clauth.user :as cl-user]
             [net.cgrand.enlive-html :as html]
             [stonecutter.routes :as routes]
@@ -97,7 +96,7 @@
                                     :session {:access_token ...token... :user ...user...}})
         (provided
           (user/authenticate-and-retrieve-user email password) => ...user...
-          (cl-client/fetch-client "client-id") => ...client...
+          (c/retrieve-client "client-id") => ...client...
           (cl-token/create-token ...client... ...user...) => {:token ...token...})))
 
 (fact "if user logged out, access token and user email are removed from session"
@@ -110,7 +109,7 @@
             :session) => empty?
         (provided
           (user/authenticate-and-retrieve-user email password) => ...user...
-          (cl-client/fetch-client "client-id") => ...client...
+          (c/retrieve-client "client-id") => ...client...
           (cl-token/create-token ...client... ...user...) => {:token ...token...})))
 
 (fact "if user has client id but no return-to in session, throws an exception"
@@ -128,7 +127,7 @@
             u/sign-in) => (throws Exception)
         (provided
           (user/authenticate-and-retrieve-user email password) => ...user...
-          (cl-client/fetch-client "client-id") => nil)))
+          (c/retrieve-client "client-id") => nil)))
 
 (facts "about sign-in validation errors"
        (fact "user cannot sign in with blank password"

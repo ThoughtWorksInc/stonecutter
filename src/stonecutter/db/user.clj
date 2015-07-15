@@ -6,9 +6,6 @@
             [stonecutter.db.storage :as storage]
             [stonecutter.db.mongo :as m]))
 
-(defn is-duplicate-user? [email]
-  (not (nil? (cl-user/fetch-user (s/lower-case email)))))
-
 (defn create-user [id-gen email password]
   (let [lower-email (s/lower-case email)]
     (->
@@ -22,6 +19,9 @@
 
 (defn retrieve-user [email]
   (cl-user/fetch-user email))
+
+(defn is-duplicate-user? [email]
+  (not (nil? (retrieve-user (s/lower-case email)))))
 
 (defn delete-user! [email]
   (cl-store/revoke! @cl-user/user-store email))

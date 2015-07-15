@@ -36,17 +36,17 @@
        (fact "unique email in not a duplicate"
              (user/is-duplicate-user? "unique@email.com") => false
              (provided
-               (cl-user/fetch-user "unique@email.com") => nil))
+               (user/retrieve-user "unique@email.com") => nil))
 
        (fact "duplicate email is a duplicate"
              (user/is-duplicate-user? "valid@email.com") => true
              (provided
-               (cl-user/fetch-user "valid@email.com") => ...a-user...))
+               (user/retrieve-user "valid@email.com") => ...a-user...))
 
        (fact "the email is always lower-cased"
              (user/is-duplicate-user? "VALID@EMAIL.COM") => true
              (provided
-               (cl-user/fetch-user "valid@email.com") => ...a-user...)))
+               (user/retrieve-user "valid@email.com") => ...a-user...)))
 
 (fact "about creating a user record"
       (let [id-gen (constantly "id")]
