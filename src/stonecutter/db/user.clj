@@ -46,3 +46,9 @@
 
 (defn add-authorised-client-for-user! [email client-id]
   (-> (m/update! @cl-user/user-store email (add-client-id client-id))))
+
+(defn remove-client-id [client-id]
+  (fn [user]
+    user))
+
+(defn remove-authorised-client-for-user! [email client-id])

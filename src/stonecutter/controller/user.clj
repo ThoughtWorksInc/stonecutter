@@ -116,5 +116,7 @@
 (defn show-profile-deleted [request]
   (sh/enlive-response (delete-account/profile-deleted request) (:context request)))
 
+(defn unshare-profile-card [request])
+
 (defn home [request]
   (r/redirect (routes/path :show-profile)))

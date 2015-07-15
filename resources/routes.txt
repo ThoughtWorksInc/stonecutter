@@ -13,4 +13,5 @@ GET     /authorisation          authorise
 POST    /authorisation          authorise-client
 GET     /authorise-form         show-authorise-form
 GET     /authorise-failure      show-authorise-failure
+POST    /unshare-profile-card   unshare-profile-card
 POST    /api/token              validate-token

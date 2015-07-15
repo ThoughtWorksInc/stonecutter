@@ -122,3 +122,12 @@
                    add-client-id-function
                    add-client-id-function) => {:some-key "some-value"
                                                :authorised-clients [client-id]})))
+
+(future-facts "about removing client ids from users with remove-client-id"
+       (fact "returns a function which removes client-id from a user's authorised clients"
+             (let [client-id "client-id"
+                   user {:some-key           "some-value"
+                         :authorised-clients [client-id]}
+                   remove-client-id-function (user/remove-client-id client-id)]
+               (remove-client-id-function user) => {:some-key "some-value"
+                                                    :authorised-clients []})))

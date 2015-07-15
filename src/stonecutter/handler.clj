@@ -49,6 +49,7 @@
      :show-profile-created               user/show-profile-created
      :show-profile-deleted               user/show-profile-deleted
      :show-delete-account-confirmation   user/show-confirm-account-confirmation
+     :unshare-profile-card               user/unshare-profile-card
      :delete-account                     user/delete-account
      :show-authorise-form                oauth/show-authorise-form
      :authorise                          oauth/authorise
