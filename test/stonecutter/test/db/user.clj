@@ -1,7 +1,6 @@
 (ns stonecutter.test.db.user
   (:require [midje.sweet :refer :all]
             [clauth.user :as cl-user]
-            [clauth.client :as cl-client]
             [clauth.auth-code :as cl-auth-code]
             [stonecutter.db.client :as client]
             [stonecutter.db.storage :as s]
