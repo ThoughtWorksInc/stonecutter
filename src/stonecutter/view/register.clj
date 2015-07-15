@@ -59,16 +59,11 @@
   (html/at enlive-m [:form] (html/set-attr :action (r/path :register-user))))
 
 (defn registration-form [request]
-  (let [context (:context request)
-        err (:errors context)
-        translator (:translator context)
+  (let [err (get-in request [:context :errors])
         params (:params request)]
     (->> (vh/load-template "public/register.html")
          set-sign-in-link
          set-form-action
          vh/add-anti-forgery
          (add-registration-errors err)
-         (add-params params)
-         (t/translate translator)
-         html/emit*
-         (apply str))))
+         (add-params params))))

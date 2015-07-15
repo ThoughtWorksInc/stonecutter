@@ -1,6 +1,5 @@
 (ns stonecutter.logging
-  (:require [clj-logging-config.log4j :as c]
-            [clojure.tools.logging :as log]))
+  (:require [clj-logging-config.log4j :as c]))
 
 (defn init-logger! []
   (c/set-loggers!

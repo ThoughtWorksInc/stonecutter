@@ -59,14 +59,10 @@
 (defn sign-in-form [request]
   (let [context (:context request)
         params (:params request)
-        err (:errors context)
-        translator (:translator context)]
+        err (:errors context)]
     (->> (vh/load-template "public/sign-in.html")
          set-registration-link
          set-form-action
          vh/add-anti-forgery
          (add-sign-in-errors err)
-         (add-params params)
-         (t/translate translator)
-         html/emit*
-         (apply str))))
+         (add-params params))))

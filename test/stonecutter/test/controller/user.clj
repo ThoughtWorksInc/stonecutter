@@ -9,7 +9,6 @@
             [stonecutter.client :as c]
             [stonecutter.controller.user :as u]
             [stonecutter.db.storage :as s]
-            [stonecutter.view.profile :as profile]
             [stonecutter.validation :as v]))
 
 (def email "valid@email.com")

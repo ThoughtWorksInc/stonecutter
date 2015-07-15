@@ -4,33 +4,31 @@
             [stonecutter.routes :as r]
             [stonecutter.test.view.test-helpers :as th]
             [stonecutter.translation :as t]
-            [stonecutter.view.profile :refer [profile]]))
+            [stonecutter.view.profile :refer [profile]]
+            [stonecutter.helper :as helper]))
 
 (fact "profile should return some html"
-      (let [page (-> (th/create-request)
-                     profile
-                     html/html-snippet)]
+      (let [page (-> (th/create-request) profile)]
         (html/select page [:body]) =not=> empty?))
 
 (fact "work in progress should be removed from page"
-      (let [page (-> (th/create-request) profile html/html-snippet)]
+      (let [page (-> (th/create-request) profile)]
         page => th/work-in-progress-removed))
 
 (fact "sign out link should go to correct endpoint"
-      (let [page (-> (th/create-request) profile html/html-snippet)]
+      (let [page (-> (th/create-request) profile)]
         (-> page (html/select [:.func--sign-out__link]) first :attrs :href) => (r/path :sign-out)))
 
 (fact "there are no missing translations"
       (let [translator (t/translations-fn t/translation-map)
-            page (-> (th/create-request translator) profile)]
+            page (-> (th/create-request translator) profile (helper/enlive-response {:translator translator}) :body)]
         page => th/no-untranslated-strings))
 
 (facts "about displaying authorised clients"
        (fact "names of authorised clients are displayed"
              (let [page (-> (th/create-request)
                             (assoc-in [:context :authorised-clients] [{:name "Bloc Party"} {:name "Tabletennis Party"}])
-                            profile
-                            html/html-snippet)]
+                            profile)]
                (-> page
                    (html/select [:.func--app__list])
                    first
@@ -43,7 +41,6 @@
 
        (fact "empty application-list item is used when there are no authorised clients"
              (let [page (-> (th/create-request)
-                            profile
-                            html/html-snippet)]
+                            profile)]
                 (html/select page [:.clj--authorised-app__list-item--empty]) =not=> empty?
                 (html/select page [:.clj--authorised-app__list-item]) => empty?)))

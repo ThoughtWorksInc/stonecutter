@@ -34,7 +34,7 @@
     (if (empty? err)
       (-> (s/store-user! email password)
           (redirect-to-profile-created request))
-      (sh/html-response (register/registration-form request)))))
+      (sh/enlive-response (register/registration-form request) (:context request)))))
 
 (defn sign-in [request]
   (let [client-id (get-in request [:session :client-id])
@@ -49,11 +49,11 @@
         (cond (and client-id return-to) (redirect-to-authorisation return-to user client-id)
               client-id (throw (Exception. "Missing return-to value"))
               :default (redirect-to-profile user))
-        (->> {:credentials :invalid}
-             (assoc-in request [:context :errors])
-             sign-in/sign-in-form
-             sh/html-response))
-      (sh/html-response (sign-in/sign-in-form request)))))
+        (-> request
+            (assoc-in [:context :errors] {:credentials :invalid})
+            sign-in/sign-in-form
+            (sh/enlive-response (:context request))))
+        (sh/enlive-response (sign-in/sign-in-form request) (:context request)))))
 
 (defn sign-out [request]
   (-> request
@@ -69,7 +69,7 @@
     (redirect-to-profile-deleted)))
 
 (defn redirect-to-profile [user]
-  (assoc (r/redirect (routes/path :show-profile)) :session {:user user
+  (assoc (r/redirect (routes/path :show-profile)) :session {:user         user
                                                             :access_token (:token (cl-token/create-token nil user))}))
 
 (defn preserve-session [response request]
@@ -86,12 +86,12 @@
   (assoc (r/redirect (routes/path :show-profile-deleted)) :session nil))
 
 (defn show-registration-form [request]
-  (sh/html-response (register/registration-form request)))
+  (sh/enlive-response (register/registration-form request) (:context request)))
 
 (defn show-sign-in-form [request]
   (if (signed-in? request)
     (-> (r/redirect (routes/path :home)) (preserve-session request))
-    (sh/html-response (sign-in/sign-in-form request))))
+    (sh/enlive-response (sign-in/sign-in-form request) (:context request))))
 
 (defn show-profile [request]
   (let [email (get-in request [:session :user :login])
@@ -100,14 +100,14 @@
         authorised-clients (map c/retrieve-client authorised-client-ids)]
     (-> (assoc-in request [:context :authorised-clients] authorised-clients)
         profile/profile
-        sh/html-response)))
+        (sh/enlive-response (:context request)))))
 
 (defn get-in-session [request key]
   (get-in request [:session key]))
 
 (defn from-app? [request]
-      (and (get-in-session request :client-id)
-           (get-in-session request :return-to)))
+  (and (get-in-session request :client-id)
+       (get-in-session request :return-to)))
 
 (defn show-profile-created [request]
   (let [request (assoc request :params {:from-app (from-app? request)})]

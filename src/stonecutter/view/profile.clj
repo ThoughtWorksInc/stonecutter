@@ -32,13 +32,8 @@
            [:.clj--sign-out__link] (html/set-attr :href (r/path :sign-out))))
 
 (defn profile [request]
-  (let [context (:context request)
-        translator (:translator context)]
-    (->> (vh/load-template "public/profile.html")
-         (add-username request)
-         (add-application-list request)
-         add-sign-out-link
-         vh/remove-work-in-progress
-         (t/translate translator)
-         html/emit*
-         (apply str))))
+  (->> (vh/load-template "public/profile.html")
+       (add-username request)
+       (add-application-list request)
+       add-sign-out-link
+       vh/remove-work-in-progress))
