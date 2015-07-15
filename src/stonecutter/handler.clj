@@ -13,7 +13,7 @@
             [stonecutter.controller.oauth :as oauth]
             [stonecutter.translation :as t]
             [stonecutter.middleware :as m]
-            [stonecutter.db.client :as client]
+            [stonecutter.db.client-seed :as client-seed]
             [stonecutter.db.storage :as s]
             [stonecutter.db.migration :as migration]
             [stonecutter.db.mongo :as mongo]
@@ -103,7 +103,7 @@
   (let [db (mongo/get-mongo-db (config/mongo-uri))]
     (s/setup-mongo-stores! db)
     (migration/run-migrations db))
-  (client/load-client-credentials-and-store-clients (config/client-credentials-file-path))
+  (client-seed/load-client-credentials-and-store-clients (config/client-credentials-file-path))
   (ring-jetty/run-jetty app {:port (config/port) :host (config/host)}))
 
 (defn lein-ring-init
@@ -112,7 +112,7 @@
   (log-config/init-logger!)
   (vh/disable-template-caching!)
   (s/setup-in-memory-stores!)
-  (client/load-client-credentials-and-store-clients (config/client-credentials-file-path))
+  (client-seed/load-client-credentials-and-store-clients (config/client-credentials-file-path))
   (let [user (clauth.user/register-user "user@email.com" "password")
         client-details (clauth.client/register-client "MYAPP" "myapp.com")]
     (log/info (str "TEST USER DETAILS:" user))
