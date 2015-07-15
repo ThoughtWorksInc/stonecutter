@@ -4,11 +4,6 @@
             [stonecutter.view.view-helpers :as vh]
             [net.cgrand.enlive-html :as html]))
 
-(defn html-response [s]
-  (-> s
-      r/response
-      (r/content-type "text/html")))
-
 (defn enlive-to-str [nodes]
   (->> nodes
        html/emit*

@@ -4,5 +4,5 @@
             [stonecutter.view.error :as e]))
 
 (fact "csrf error has correct page-intro translation key"
-      (let [page (html/html-snippet (e/csrf-error {:translator identity}))]
+      (let [page (e/csrf-error)]
         (-> (html/select page [:.clj--error-info]) first :attrs :data-l8n) => "content:error-403/page-intro"))

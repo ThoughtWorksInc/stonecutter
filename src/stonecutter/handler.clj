@@ -23,15 +23,18 @@
 (def default-context {:translator (t/translations-fn t/translation-map)})
 
 (defn not-found [request]
-  (-> (sh/html-response (error/not-found-error default-context))
+  (-> (error/not-found-error)
+      (sh/enlive-response default-context)
       (r/status 404)))
 
 (defn err-handler [request]
-  (-> (sh/html-response (error/internal-server-error default-context))
+  (-> (error/internal-server-error)
+      (sh/enlive-response default-context)
       (r/status 500)))
 
 (defn csrf-err-handler [req]
-  (-> (sh/html-response (error/csrf-error default-context))
+  (-> (error/csrf-error)
+      (sh/enlive-response default-context)
       (r/status 403)))
 
 (def site-handlers
