@@ -99,15 +99,7 @@
         (provided
           (cl-auth-code/fetch-auth-code "code") => auth-code-record)))
 
-(fact "can retrieve client using client-id"
-      (let [client-entry {:name           "name"
-                          :client-id      "client-id"
-                          :client-secret  "client-secret"
-                          :url            nil}]
-        (cl-client/store-client client-entry)
-        (client/retrieve-client "client-id") => client-entry))
-
-(facts "about add-client-id"
+(facts "about adding client ids to users with add-client-id"
        (fact "returns a function which adds client-id to a user's authorised clients"
              (let [client-id "client-id"
                    add-client-id-function (user/add-client-id client-id)

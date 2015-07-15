@@ -42,3 +42,11 @@
       (cl-client/clients) =not=> empty?
       (c/delete-clients!)
       (cl-client/clients) => empty?)
+
+(fact "can retrieve client using client-id"
+      (let [client-entry {:name           "name"
+                          :client-id      "client-id"
+                          :client-secret  "client-secret"
+                          :url            nil}]
+        (cl-client/store-client client-entry)
+        (c/retrieve-client "client-id") => client-entry))
