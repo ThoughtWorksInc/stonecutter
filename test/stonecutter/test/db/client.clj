@@ -1,4 +1,4 @@
-(ns stonecutter.test.client
+(ns stonecutter.test.db.client
   (:require [midje.sweet :refer :all]
             [clauth.client :as cl-client]
             [stonecutter.db.storage :as storage]
