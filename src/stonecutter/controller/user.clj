@@ -5,7 +5,7 @@
             [stonecutter.routes :as routes]
             [stonecutter.view.sign-in :as sign-in]
             [stonecutter.validation :as v]
-            [stonecutter.db.storage :as s]
+            [stonecutter.db.user :as user]
             [stonecutter.client :as c]
             [stonecutter.view.register :as register]
             [stonecutter.view.profile-created :as profile-created]
@@ -29,10 +29,10 @@
   (let [params (:params request)
         email (:email params)
         password (:password params)
-        err (v/validate-registration params s/is-duplicate-user?)
+        err (v/validate-registration params user/is-duplicate-user?)
         request (assoc-in request [:context :errors] err)]
     (if (empty? err)
-      (-> (s/store-user! email password)
+      (-> (user/store-user! email password)
           (redirect-to-profile-created request))
       (sh/enlive-response (register/registration-form request) (:context request)))))
 
@@ -45,7 +45,7 @@
         err (v/validate-sign-in params)
         request (assoc-in request [:context :errors] err)]
     (if (empty? err)
-      (if-let [user (s/authenticate-and-retrieve-user email password)]
+      (if-let [user (user/authenticate-and-retrieve-user email password)]
         (cond (and client-id return-to) (redirect-to-authorisation return-to user client-id)
               client-id (throw (Exception. "Missing return-to value"))
               :default (redirect-to-profile user))
@@ -65,7 +65,7 @@
 
 (defn delete-account [request]
   (let [email (get-in request [:session :user :login])]
-    (s/delete-user! email)
+    (user/delete-user! email)
     (redirect-to-profile-deleted)))
 
 (defn redirect-to-profile [user]
@@ -95,7 +95,7 @@
 
 (defn show-profile [request]
   (let [email (get-in request [:session :user :login])
-        user (s/retrieve-user email)
+        user (user/retrieve-user email)
         authorised-client-ids (:authorised-clients user)
         authorised-clients (map c/retrieve-client authorised-client-ids)]
     (-> (assoc-in request [:context :authorised-clients] authorised-clients)

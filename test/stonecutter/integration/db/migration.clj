@@ -21,8 +21,7 @@
 (def migrations [{:id "migration1"
                   :up test-migration-1}
                  {:id "migration2"
-                  :up test-migration-2}
-                 ])
+                  :up test-migration-2}])
 
 (facts "About running migrations"
        (do "each migration is only run once"
@@ -56,11 +55,3 @@
          (monger-c/count db "users") => 2
          (-> (monger-c/find-map-by-id db "users" "email1") :uid) => valid-uuid?
          (-> (monger-c/find-map-by-id db "users" "email2") :uid) => "a-uid"))
-
-
-
-
-
-
-
-

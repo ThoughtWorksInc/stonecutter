@@ -2,7 +2,7 @@
   (:require [clauth.endpoints :as cl-ep]
             [cheshire.core :as json]
             [stonecutter.routes :as routes]
-            [stonecutter.db.storage :as s]
+            [stonecutter.db.user :as user]
             [stonecutter.client :as client]
             [stonecutter.view.authorise :as authorise]
             [stonecutter.view.authorise-failure :as authorise-failure]
@@ -22,7 +22,7 @@
 (defn auto-approver [request]
   (let [client-id (get-in request [:params :client_id])
         user-email (get-in request [:session :user :login])
-        user (s/retrieve-user user-email)
+        user (user/retrieve-user user-email)
         authorised-clients (set (:authorised-clients user))]
     (boolean (authorised-clients client-id))))
 
@@ -36,7 +36,7 @@
   (let [client-id (get-in request [:params :client_id])
         user-email (get-in request [:session :user :login])
         response (auth-handler request)]
-    (s/add-authorised-client-for-user! user-email client-id)
+    (user/add-authorised-client-for-user! user-email client-id)
     response))
 
 (defn authorise [request]
@@ -54,7 +54,7 @@
 
 (defn validate-token [request]
   (let [auth-code (get-in request [:params :code])
-        user (s/retrieve-user-with-auth-code auth-code)
+        user (user/retrieve-user-with-auth-code auth-code)
         user-email (:login user)
         user-id (:uid user)
         response (token-handler request)

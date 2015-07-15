@@ -8,7 +8,8 @@
             [stonecutter.routes :as routes]
             [stonecutter.client :as c]
             [stonecutter.controller.user :as u]
-            [stonecutter.db.storage :as s]
+            [stonecutter.db.user :as user]
+            [stonecutter.view.profile :as profile]
             [stonecutter.validation :as v]))
 
 (def email "valid@email.com")
@@ -35,7 +36,7 @@
                                    :session {:user ...user...
                                              :access_token ...token...}})
       (provided
-        (s/authenticate-and-retrieve-user email password) => ...user...
+        (user/authenticate-and-retrieve-user email password) => ...user...
         (cl-token/create-token nil ...user...) => {:token ...token...}))
 
 (facts "about registration"
@@ -45,8 +46,8 @@
                                                 :session {:user ...user...
                                                           :access_token ...token...}})
              (provided
-               (v/validate-registration register-user-params s/is-duplicate-user?) => {}
-               (s/store-user! email password) => ...user...
+               (v/validate-registration register-user-params user/is-duplicate-user?) => {}
+               (user/store-user! email password) => ...user...
                (cl-token/create-token nil ...user...) => {:token ...token...}))
 
        (fact "session is not lost when redirecting from registration"
@@ -58,8 +59,8 @@
                                                          :user ...user...
                                                          :access_token ...token...}})
              (provided
-               (v/validate-registration register-user-params s/is-duplicate-user?) => {}
-               (s/store-user! email password) => ...user...
+               (v/validate-registration register-user-params user/is-duplicate-user?) => {}
+               (user/store-user! email password) => ...user...
                (cl-token/create-token nil ...user...) => {:token ...token...})))
 
 (fact "signed-in? returns true only when user and access_token are in the session"
@@ -95,7 +96,7 @@
             u/sign-in) => (contains {:status  302 :headers {"Location" return-to-url}
                                     :session {:access_token ...token... :user ...user...}})
         (provided
-          (s/authenticate-and-retrieve-user email password) => ...user...
+          (user/authenticate-and-retrieve-user email password) => ...user...
           (cl-client/fetch-client "client-id") => ...client...
           (cl-token/create-token ...client... ...user...) => {:token ...token...})))
 
@@ -108,7 +109,7 @@
             u/sign-out
             :session) => empty?
         (provided
-          (s/authenticate-and-retrieve-user email password) => ...user...
+          (user/authenticate-and-retrieve-user email password) => ...user...
           (cl-client/fetch-client "client-id") => ...client...
           (cl-token/create-token ...client... ...user...) => {:token ...token...})))
 
@@ -117,7 +118,7 @@
           (assoc-in [:session :client-id] "client-id")
           u/sign-in) => (throws Exception)
       (provided
-        (s/authenticate-and-retrieve-user email password) => ...user...))
+        (user/authenticate-and-retrieve-user email password) => ...user...))
 
 (fact "if user has invalid client id, then throws an exception"
       (let [return-to-url "/authorisation?client-id=whatever"]
@@ -126,7 +127,7 @@
             (assoc-in [:session :return-to] return-to-url)
             u/sign-in) => (throws Exception)
         (provided
-          (s/authenticate-and-retrieve-user email password) => ...user...
+          (user/authenticate-and-retrieve-user email password) => ...user...
           (cl-client/fetch-client "client-id") => nil)))
 
 (facts "about sign-in validation errors"
@@ -137,7 +138,7 @@
              (-> (create-request :post "/sign-in" {:email "invalid@credentials.com" :password "password"})
                  u/sign-in) => (contains {:status 200})
              (provided
-               (s/authenticate-and-retrieve-user "invalid@credentials.com" "password") => nil))
+               (user/authenticate-and-retrieve-user "invalid@credentials.com" "password") => nil))
        (facts "sign-in page is rendered with errors when invalid credentials are used"
               (let [html-response (-> (create-request :post "/sign-in" {:email    "invalid@credentials.com"
                                                                         :password "password"})
@@ -158,7 +159,7 @@
             u/register-user
             :status) => 302
         (provided
-          (s/store-user! "valid@email.com" "password") => ...user...)))
+          (user/store-user! "valid@email.com" "password") => ...user...)))
 
 (fact "account can be deleted, user is redirected to profile-deleted and session is cleared"
       (-> (create-request :post "/delete-account" nil)
@@ -166,7 +167,7 @@
           (assoc-in [:session :access_token] ...token...)
           u/delete-account) => (contains {:status 302 :headers {"Location" "/profile-deleted"} :session nil})
       (provided
-        (s/delete-user! "account_to_be@deleted.com") => anything))
+        (user/delete-user! "account_to_be@deleted.com") => anything))
 
 (fact "user can access profile-deleted page when not signed in"
       (-> (create-request :get "/profile-deleted" nil)
@@ -182,7 +183,7 @@
             :attrs
             :class)) => (contains "clj--registration-email")
       (provided
-        (v/validate-registration register-user-params s/is-duplicate-user?) => {:email :duplicate}
+        (v/validate-registration register-user-params user/is-duplicate-user?) => {:email :duplicate}
         (cl-user/new-user anything anything) => anything :times 0
         (cl-user/store-user anything) => anything :times 0))
 
@@ -230,7 +231,7 @@
                  u/show-profile
                  :body) => (contains #"CLIENT 1[\s\S]+CLIENT 2")
              (provided
-               (s/retrieve-user ...email...) => {:login ...email...
-                                                 :authorised-clients [...client-id-1... ...client-id-2...]}
+               (user/retrieve-user ...email...) => {:login ...email...
+                                                    :authorised-clients [...client-id-1... ...client-id-2...]}
                (c/retrieve-client ...client-id-1...) => {:name "CLIENT 1"}
                (c/retrieve-client ...client-id-2...) => {:name "CLIENT 2"})))
