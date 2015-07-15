@@ -1,4 +1,4 @@
-(ns stonecutter.view.profile 
+(ns stonecutter.view.profile
   (:require [traduki.core :as t]
             [net.cgrand.enlive-html :as html]
             [stonecutter.routes :as r]
@@ -17,7 +17,7 @@
 
 (defn application-list-items [authorised-clients]
   (html/at application-list-item
-           [:.clj--authorised-app__list-item] 
+           [:.clj--authorised-app__list-item]
            (html/clone-for [client authorised-clients]
                            [:.clj--authorised-app__title] (html/content (:name client)))))
 
@@ -28,7 +28,7 @@
       (html/at enlive-m [:.clj--app__list] (html/content empty-application-list-item)))))
 
 (defn add-sign-out-link [enlive-m]
-  (html/at enlive-m 
+  (html/at enlive-m
            [:.clj--sign-out__link] (html/set-attr :href (r/path :sign-out))))
 
 (defn profile [request]

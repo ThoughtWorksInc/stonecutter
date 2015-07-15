@@ -31,14 +31,19 @@
                             (assoc-in [:context :authorised-clients] [{:name "Bloc Party"} {:name "Tabletennis Party"}])
                             profile
                             html/html-snippet)]
-               (-> page 
+               (-> page
                    (html/select [:.func--app__list])
                    first
-                   html/text) => (contains #"Bloc Party[\s\S]+Tabletennis Party"))) 
+                   html/text) => (contains #"Bloc Party[\s\S]+Tabletennis Party")
+               ;; Unshare card should not appear yet
+               (-> page
+                   (html/select [:.func--app__list])
+                   first
+                   html/text) =not=> (contains "Unshare")))
 
        (fact "empty application-list item is used when there are no authorised clients"
              (let [page (-> (th/create-request)
                             profile
                             html/html-snippet)]
                 (html/select page [:.clj--authorised-app__list-item--empty]) =not=> empty?
-                (html/select page [:.clj--authorised-app__list-item]) => empty?))) 
+                (html/select page [:.clj--authorised-app__list-item]) => empty?)))
