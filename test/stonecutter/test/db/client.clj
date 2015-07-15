@@ -49,4 +49,5 @@
                           :client-secret  "client-secret"
                           :url            nil}]
         (cl-client/store-client client-entry)
-        (c/retrieve-client "client-id") => client-entry))
+        (c/retrieve-client "client-id") => client-entry
+        (c/retrieve-client "non-existent-client-id") => nil))

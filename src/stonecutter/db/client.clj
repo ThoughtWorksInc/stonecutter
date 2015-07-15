@@ -17,8 +17,14 @@
     Client
     client-entry))
 
-(defn is-not-duplicate-client-id? [clients client-id]
-  (not-any? #(= client-id (:client-id %)) clients))
+(defn delete-clients![]
+  (cl-client/reset-client-store!))
+
+(defn retrieve-client [client-id]
+  (cl-client/fetch-client client-id))
+
+(defn unique-client-id? [client-id]
+  (nil? (retrieve-client client-id)))
 
 (defn store-clients-from-map [client-credentials-map]
   (let [client-credentials-seq (seq client-credentials-map)]
@@ -27,14 +33,8 @@
       (let [name (:name client-entry)
             client-id (:client-id client-entry)
             client-secret (:client-secret client-entry)]
-        (when (is-not-duplicate-client-id? (cl-client/clients) client-id)
+        (when (unique-client-id? client-id)
           (cl-client/store-client {:name          name
                                    :client-id     client-id
                                    :client-secret client-secret
                                    :url           nil}))))))
-
-(defn delete-clients![]
-  (cl-client/reset-client-store!))
-
-(defn retrieve-client [client-id]
-  (cl-client/fetch-client client-id))
