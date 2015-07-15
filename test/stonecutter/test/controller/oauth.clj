@@ -95,6 +95,19 @@
                (get-in response [:session :access_token]) => (:token access-token)
                (get-in response [:session :user]) => user)))
 
+(fact "when authorisation failure is rendered will add error=access_denied in the querystring of the callback uri"
+      (let [request (-> (r/request :get "/authorise-failure")
+                        (assoc-in [:context :translator] {})
+                        (assoc-in [:session :redirect-uri] "http://where.do.we.go.now"))
+            response (oauth/show-authorise-failure request)]
+        (:status response)) => 200
+
+      (provided
+        (oauth/add-error-to-uri "http://where.do.we.go.now") => anything))
+
+(fact "add-error-to-uri adds oauth error message to callback uri"
+      (oauth/add-error-to-uri "https://client.com/callback") => "https://client.com/callback?error=access_denied")
+
 (defn encode-client-info [client]
   (format "Basic %s"
           (.encodeAsString

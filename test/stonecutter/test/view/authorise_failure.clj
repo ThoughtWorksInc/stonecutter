@@ -23,9 +23,9 @@
 (fact "redirect-uri from session is set as return to client link"
       (let [translator (t/translations-fn t/translation-map)
             page (-> (th/create-request translator)
-                     (assoc-in [:session :redirect-uri] "redirect-uri")
+                     (assoc-in [:params :callback-uri-with-error] "redirect-uri?error=access_denied")
                      show-authorise-failure)]
-        (-> page (html/select [:.func--redirect-to-client-home__link]) first :attrs :href) => "redirect-uri"))
+        (-> page (html/select [:.func--redirect-to-client-home__link]) first :attrs :href) => "redirect-uri?error=access_denied"))
 
 (fact "client name is set on the page"
       (let [translator (t/translations-fn t/translation-map)

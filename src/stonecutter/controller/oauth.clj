@@ -11,12 +11,20 @@
 (defn show-authorise-form [request]
   (sh/enlive-response (authorise/authorise-form request) (:context request)))
 
+(defn add-error-to-uri [uri]
+  (str uri "?error=access_denied"))
+
 (defn show-authorise-failure [request]
   (let [client-id (get-in request [:session :client-id])
         client (client/retrieve-client client-id)
         client-name (:name client)
-        request (assoc-in request [:session :client-name] client-name)]
- (sh/enlive-response (authorise-failure/show-authorise-failure request) (:context request))))
+        redirect-uri (get-in request [:session :redirect-uri])
+        callback-uri-with-error (add-error-to-uri redirect-uri)
+        request (-> request
+                     (assoc-in [:session :client-name] client-name)
+                     (assoc-in [:params :callback-uri-with-error] callback-uri-with-error))]
+
+    (sh/enlive-response (authorise-failure/show-authorise-failure request) (:context request))))
 
 
 (defn auto-approver [request]
