@@ -113,10 +113,6 @@
   (log-config/init-logger!)
   (vh/disable-template-caching!)
   (s/setup-in-memory-stores!)
-  (client-seed/load-client-credentials-and-store-clients (config/client-credentials-file-path))
-  (let [user (clauth.user/register-user "user@email.com" "password")
-        client-details (clauth.client/register-client "MYAPP" "myapp.com")]
-    (log/info (str "TEST USER DETAILS:" user))
-    (log/info (str "TEST CLIENT DETAILS:" client-details))))
+  (client-seed/load-client-credentials-and-store-clients (config/client-credentials-file-path)))
 
 (def lein-app (create-app :dev-mode? true))
