@@ -234,3 +234,10 @@
                                                     :authorised-clients [...client-id-1... ...client-id-2...]}
                (c/retrieve-client ...client-id-1...) => {:name "CLIENT 1"}
                (c/retrieve-client ...client-id-2...) => {:name "CLIENT 2"})))
+
+(facts "about unsharing profile cards"
+       (fact "posting to /unshare-profile-card with the client-id in the form params should remove the client-id from the user's authorised clients and then redirect the user to the profile page")
+
+       (fact "posting to /unshare-profile-card with a client id that is not in the user's list of authorised clients") 
+
+       )
