@@ -19,7 +19,10 @@
   (html/at application-list-item
            [:.clj--authorised-app__list-item]
            (html/clone-for [client authorised-clients]
-                           [:.clj--authorised-app__title] (html/content (:name client)))))
+                           [:.clj--authorised-app__title] (html/content (:name client))
+                           [:.clj--app-item__unshare-link] (html/set-attr :href (str (r/path :show-unshare-profile-card)
+                                                                                     "?client_id="
+                                                                                     (:client-id client))))))
 
 (defn add-application-list [request enlive-m]
   (let [authorised-clients (get-in request [:context :authorised-clients])]

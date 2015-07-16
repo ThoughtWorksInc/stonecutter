@@ -27,17 +27,23 @@
 (facts "about displaying authorised clients"
        (fact "names of authorised clients are displayed"
              (let [page (-> (th/create-request)
-                            (assoc-in [:context :authorised-clients] [{:name "Bloc Party"} {:name "Tabletennis Party"}])
+                            (assoc-in [:context :authorised-clients] [{:name "Bloc Party"}
+                                                                      {:name "Tabletennis Party"}])
                             profile)]
                (-> page
                    (html/select [:.func--app__list])
                    first
-                   html/text) => (contains #"Bloc Party[\s\S]+Tabletennis Party")
-               ;; Unshare card should not appear yet
-               (-> page
-                   (html/select [:.func--app__list])
+                   html/text) => (contains #"Bloc Party[\s\S]+Tabletennis Party")))
+
+       (fact "unshare card button links include the client_id query param"
+             (let [client-id "bloc_party_client-id"
+                   page (-> (th/create-request)
+                            (assoc-in [:context :authorised-clients] [{:name "Bloc Party" :client-id client-id}])
+                            profile)]
+               (-> page (html/select [:.clj--app-item__unshare-link])
                    first
-                   html/text) =not=> (contains "Unshare")))
+                   :attrs
+                   :href) => (str (r/path :show-unshare-profile-card) "?client_id=" client-id)))
 
        (fact "empty application-list item is used when there are no authorised clients"
              (let [page (-> (th/create-request)

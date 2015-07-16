@@ -18,8 +18,6 @@ mixin authorisedAppItemEmpty()
 mixin authorisedAppItem(appName)
   li.app__item.clj--authorised-app__list-item
     .app__title.clj--authorised-app__title #{appName}
-    .app__remove.clj-wip
-      form(action="./unshare-profile-card", method="post")
-      a.func--app-item__unshare-link(href="./unshare-profile-card")
-        // hidden inputs here
-        +removeButton() Unshare Card
+    .app__remove
+      a.clj--app-item__unshare-link.func--app-item__unshare-link(href="./unshare-profile-card")
+        +removeButton() !Unshare Card
