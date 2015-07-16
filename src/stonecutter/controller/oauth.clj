@@ -29,10 +29,8 @@
 
 (defn auto-approver [request]
   (let [client-id (get-in request [:params :client_id])
-        user-email (get-in request [:session :user-login])
-        user (user/retrieve-user user-email)
-        authorised-clients (set (:authorised-clients user))]
-    (boolean (authorised-clients client-id))))
+        user-email (get-in request [:session :user-login])]
+    (user/is-authorised-client-for-user? user-email client-id)))
 
 (def auth-handler (cl-ep/authorization-handler {:auto-approver                  auto-approver
                                                 :user-session-required-redirect (routes/path :show-sign-in-form)

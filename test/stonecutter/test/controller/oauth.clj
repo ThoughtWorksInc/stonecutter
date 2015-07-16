@@ -147,18 +147,18 @@
                (get-in response [:session :user-login]) => user-email)))
 
 (facts "about auto-approver"
-       (fact "returns true if client-id is in the users authorised-clients list"
+       (fact "returns true if user has authorised the client"
              (-> (r/request :get "/authorisation")
                  (assoc :params {:client_id ...client-id...})
                  (assoc-in [:session :user-login] ...email...)
                  oauth/auto-approver) => true
              (provided
-               (user/retrieve-user ...email...) => {:authorised-clients [...client-id...]}))
+               (user/is-authorised-client-for-user? ...email... ...client-id...) => true))
 
-       (fact "returns false if client-id is in not in the users authorised-clients list"
+       (fact "returns false if user has not authorised the client"
              (-> (r/request :get "/authorisation")
                  (assoc :params {:client_id ...client-id...})
                  (assoc-in [:session :user-login] ...email...)
                  oauth/auto-approver) => false
              (provided
-               (user/retrieve-user ...email...) => {:authorised-clients [...a-different-client-id...]})))
+               (user/is-authorised-client-for-user? ...email... ...client-id...) => false)))

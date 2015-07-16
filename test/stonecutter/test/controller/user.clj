@@ -237,21 +237,29 @@
 
 (facts "about unsharing profile cards"
        (facts "about get requests to /unshare-profile-card"
-              (future-fact "client_id from query params is used in the form"
+              (fact "client_id from query params is used in the form"
                     (-> (create-request :get (routes/path :show-unshare-profile-card) {:client_id "client-id"})
+                        (assoc-in [:session :user-login] ...email...)
                         u/show-unshare-profile-card
                         :body
                         html/html-snippet
                         (html/select [:.clj--client-id__input])
                         first
                         :attrs
-                        :value) => "client-id")
+                        :value) => "client-id"
+                    (provided
+                      (user/is-authorised-client-for-user? ...email... "client-id") => true))
 
+              (fact "missing client_id query param throws exception"
+                    (-> (create-request :get (routes/path :show-unshare-profile-card) nil)
+                        u/show-unshare-profile-card) => (throws Exception))
 
-              (fact "missing client_id query param throws exception")
-              (fact "client_id must be in the user's list of authorised clients")
-              
-              ) 
+              (fact "user is redirected to /profile if client_id is not in user's list of authorised clients"
+                    (-> (create-request :get (routes/path :show-unshare-profile-card) {:client_id ...client-id...})
+                        (assoc-in [:session :user-login] ...email...)
+                        u/show-unshare-profile-card) => (contains {:status 302 :headers {"Location" "/profile"}})
+                    (provided
+                      (user/is-authorised-client-for-user? ...email... ...client-id...) => false)))
 
        (facts "about post requests to /unshare-profile-card"
               (fact "posting to /unshare-profile-card with client-id in the form params should remove client-id from the user's authorised clients and then redirect the user to the profile page"

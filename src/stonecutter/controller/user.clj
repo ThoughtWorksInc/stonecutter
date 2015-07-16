@@ -12,6 +12,7 @@
             [stonecutter.view.profile :as profile]
             [stonecutter.view.delete-account :as delete-account]
             [stonecutter.view.authorise :as authorise]
+            [stonecutter.view.unshare-profile-card :as unshare-profile-card]
             [stonecutter.helper :as sh]))
 
 (declare redirect-to-profile-from-sign-in redirect-to-profile-created redirect-to-profile-deleted)
@@ -120,7 +121,14 @@
 (defn show-profile-deleted [request]
   (sh/enlive-response (delete-account/profile-deleted request) (:context request)))
 
-(defn show-unshare-profile-card [request])
+(defn show-unshare-profile-card [request]
+  (if-let [client-id (get-in request [:params :client_id])]
+    (if (user/is-authorised-client-for-user? (get-in request [:session :user-login]) client-id)
+      (-> (assoc-in request [:context :client-id] client-id)
+          unshare-profile-card/unshare-profile-card
+          (sh/enlive-response (:context request)))
+      (r/redirect (routes/path :show-profile)))
+    (throw (Exception. "Missing client_id parameter"))))
 
 (defn unshare-profile-card [request]
   (let [email (get-in request [:session :user-login])

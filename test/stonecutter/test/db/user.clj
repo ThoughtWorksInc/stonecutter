@@ -144,3 +144,14 @@
                    remove-client-id-function (user/remove-client-id client-id)]
                (remove-client-id-function user) => {:some-key "some-value"
                                                     :authorised-clients ["another-client-id"]})))
+
+(facts "about is-authorised-client-for-user?"
+       (fact "returns true if client-id is in the users authorised-clients list"
+             (user/is-authorised-client-for-user? ...email... ...client-id...) => true
+             (provided
+               (user/retrieve-user ...email...) => {:authorised-clients [...client-id...]}))
+
+       (fact "returns false if client-id is in not in the users authorised-clients list"
+             (user/is-authorised-client-for-user? ...email... ...client-id...) => false
+             (provided
+               (user/retrieve-user ...email...) => {:authorised-clients [...a-different-client-id...]})))
