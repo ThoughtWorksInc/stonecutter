@@ -248,7 +248,20 @@
                         :attrs
                         :value) => "client-id"
                     (provided
-                      (user/is-authorised-client-for-user? ...email... "client-id") => true))
+                      (user/is-authorised-client-for-user? ...email... "client-id") => true
+                      (c/retrieve-client "client-id") => {:client-id "client-id" :name "CLIENT_NAME"}))
+
+              (fact "client name is correctly shown on the page"
+                    (let [element-has-correct-client-name-fn (fn [element] (= (html/text element) "CLIENT_NAME"))]
+                      (-> (create-request :get (routes/path :show-unshare-profile-card) {:client_id "client-id"})
+                          (assoc-in [:session :user-login] ...email...)
+                          u/show-unshare-profile-card
+                          :body
+                          html/html-snippet
+                          (html/select [:.clj--app-name])) => (has every? element-has-correct-client-name-fn)
+                      (provided
+                        (user/is-authorised-client-for-user? ...email... "client-id") => true
+                        (c/retrieve-client "client-id") => {:client-id "client-id" :name "CLIENT_NAME"})))
 
               (fact "missing client_id query param throws exception"
                     (-> (create-request :get (routes/path :show-unshare-profile-card) nil)

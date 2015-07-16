@@ -124,9 +124,10 @@
 (defn show-unshare-profile-card [request]
   (if-let [client-id (get-in request [:params :client_id])]
     (if (user/is-authorised-client-for-user? (get-in request [:session :user-login]) client-id)
-      (-> (assoc-in request [:context :client-id] client-id)
-          unshare-profile-card/unshare-profile-card
-          (sh/enlive-response (:context request)))
+      (let [client (c/retrieve-client client-id)]
+        (-> (assoc-in request [:context :client] client)
+            unshare-profile-card/unshare-profile-card
+            (sh/enlive-response (:context request))))
       (r/redirect (routes/path :show-profile)))
     (throw (Exception. "Missing client_id parameter"))))
 

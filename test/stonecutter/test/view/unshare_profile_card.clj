@@ -27,12 +27,21 @@
 
 (fact "client_id is included in the form as a hidden parameter"
       (let [client-id-element (-> (th/create-request)
-                                  (assoc-in [:context :client-id] "SOME_CLIENT_ID")
+                                  (assoc-in [:context :client] {:client-id "SOME_CLIENT_ID"})
                                   unshare-profile-card
                                   (html/select [:.clj--client-id__input])
                                   first)]
         (-> client-id-element :attrs :value) => "SOME_CLIENT_ID"
         (-> client-id-element :attrs :type) => "hidden"))
+
+(fact "app name is injected"
+      (let [client-name "CLIENT_NAME"
+            app-name-elements (-> (th/create-request)
+                                  (assoc-in [:context :client] {:name client-name})
+                                  unshare-profile-card
+                                  (html/select [:.clj--app-name]))
+            app-name-is-correct-fn (fn [element] (= (html/text element) client-name))]
+        app-name-elements => (has every? app-name-is-correct-fn)))
 
 (fact "cancel link should go to correct endpoint"
       (let [page (-> (th/create-request) unshare-profile-card)]

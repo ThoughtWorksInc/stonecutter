@@ -13,11 +13,18 @@
            [:.clj--unshare-profile-card-cancel__link] (html/set-attr :href (r/path :show-profile))))
 
 (defn set-form-action [enlive-m]
-  (html/at enlive-m [:.clj--unshare-profile-card__form] (html/set-attr :action (r/path :unshare-profile-card))))
+  (html/at enlive-m
+           [:.clj--unshare-profile-card__form] (html/set-attr :action (r/path :unshare-profile-card))))
+
+(defn set-client-name [client-name enlive-m]
+  (html/at enlive-m
+           [:.clj--app-name] (html/content client-name)))
 
 (defn unshare-profile-card [request]
-  (let [client-id (get-in request [:context :client-id])]
+  (let [client-id (get-in request [:context :client :client-id])
+        client-name (get-in request [:context :client :name])]
     (->> (vh/load-template "public/unshare-profile-card.html")
+         (set-client-name client-name)
          set-form-action
          (set-client-id client-id)
          set-cancel-link
