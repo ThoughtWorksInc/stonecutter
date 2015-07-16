@@ -20,4 +20,5 @@
     (->> (vh/load-template "public/unshare-profile-card.html")
          set-form-action
          (set-client-id client-id)
-         set-cancel-link)))
+         set-cancel-link
+         vh/add-anti-forgery)))

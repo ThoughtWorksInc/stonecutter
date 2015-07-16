@@ -48,6 +48,7 @@
      :show-profile                       user/show-profile
      :show-profile-created               user/show-profile-created
      :show-profile-deleted               user/show-profile-deleted
+     :show-unshare-profile-card          user/show-unshare-profile-card
      :unshare-profile-card               user/unshare-profile-card
      :show-delete-account-confirmation   user/show-delete-account-confirmation
      :delete-account                     user/delete-account

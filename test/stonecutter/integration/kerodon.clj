@@ -141,17 +141,20 @@
            (k/visit "/profile")
            (kh/selector-includes-content [ks/profile-authorised-client-list] "myapp")))
 
-(future-facts "User can unshare profile card"
+(facts "User can unshare profile card"
+              (let [user (user/retrieve-user "user@withclient.com")
+                    client-id (first (:authorised-clients user))]
        (-> (k/session h/app)
            (sign-in "user@withclient.com")
-           (k/visit "/profile")
-           (kh/selector-includes-content [ks/profile-authorised-client-list] "myapp")
-           (k/follow [ks/profile-authorised-client-unshare-link])
+           ;(k/visit "/profile")
+           ;(kh/selector-includes-content [ks/profile-authorised-client-list] "myapp")
+           ;(k/follow [ks/profile-authorised-client-unshare-link])
+           (k/visit (str "/unshare-profile-card?client_id=" client-id))
            (kh/page-uri-contains "/unshare-profile-card")
            (k/press ks/unshare-profile-card-confirm-button)
            (k/follow-redirect)
            (kh/page-uri-is "/profile")
-           (kh/selector-does-not-include-content [ks/profile-authorised-client-list] "myapp")))
+           (kh/selector-does-not-include-content [ks/profile-authorised-client-list] "myapp"))))
 
 (facts "User can delete account"
        (-> (k/session h/app)
