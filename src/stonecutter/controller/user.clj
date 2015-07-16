@@ -61,7 +61,7 @@
       (update-in [:session] dissoc :user-login)
       cl-ep/logout-handler))
 
-(defn show-confirm-account-confirmation [request]
+(defn show-delete-account-confirmation [request]
   (sh/enlive-response (delete-account/delete-account-confirmation request) (:context request)))
 
 (defn delete-account [request]
@@ -119,6 +119,8 @@
 
 (defn show-profile-deleted [request]
   (sh/enlive-response (delete-account/profile-deleted request) (:context request)))
+
+(defn show-unshare-profile-card [request])
 
 (defn unshare-profile-card [request]
   (let [email (get-in request [:session :user-login])

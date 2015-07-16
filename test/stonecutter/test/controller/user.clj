@@ -236,11 +236,27 @@
                (c/retrieve-client ...client-id-2...) => {:name "CLIENT 2"})))
 
 (facts "about unsharing profile cards"
-       (fact "posting to /unshare-profile-card with the client-id in the form params should remove the client-id from the user's authorised clients and then redirect the user to the profile page"
-             (-> (create-request :post "/unshare-profile-card" {:client_id "client-id"})
-                 (assoc-in [:session :user-login] "user@email.com")
-                 u/unshare-profile-card) => (contains {:status 302 :headers {"Location" "/profile"}})
-             (provided
-               (user/remove-authorised-client-for-user! "user@email.com" "client-id") => anything))
+       (facts "about get requests to /unshare-profile-card"
+              (future-fact "client_id from query params is used in the form"
+                    (-> (create-request :get (routes/path :show-unshare-profile-card) {:client_id "client-id"})
+                        u/show-unshare-profile-card
+                        :body
+                        html/html-snippet
+                        (html/select [:.clj--client-id__input])
+                        first
+                        :attrs
+                        :value) => "client-id")
 
-       (fact "posting to /unshare-profile-card with a client id that is not in the user's list of authorised clients"))
+
+              (fact "missing client_id query param throws exception")
+              (fact "client_id must be in the user's list of authorised clients")
+              
+              ) 
+
+       (facts "about post requests to /unshare-profile-card"
+              (fact "posting to /unshare-profile-card with client-id in the form params should remove client-id from the user's authorised clients and then redirect the user to the profile page"
+                    (-> (create-request :post "/unshare-profile-card" {:client_id "client-id"})
+                        (assoc-in [:session :user-login] "user@email.com")
+                        u/unshare-profile-card) => (contains {:status 302 :headers {"Location" "/profile"}})
+                    (provided
+                      (user/remove-authorised-client-for-user! "user@email.com" "client-id") => anything))))

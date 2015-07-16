@@ -3,6 +3,7 @@
             [net.cgrand.enlive-html :as html]
             [stonecutter.test.view.test-helpers :as th]
             [stonecutter.translation :as t]
+            [stonecutter.routes :as r]
             [stonecutter.view.delete-account :refer [delete-account-confirmation
                                                      profile-deleted]]
             [stonecutter.helper :as helper]))
@@ -20,7 +21,15 @@
        (fact "there are no missing translations"
              (let [translator (t/translations-fn t/translation-map)
                    page (-> (th/create-request) delete-account-confirmation (helper/enlive-response {:translator translator}) :body)]
-               page => th/no-untranslated-strings)))
+               page => th/no-untranslated-strings))
+
+       (fact "form posts to correct endpoint"
+             (let [page (-> (th/create-request) delete-account-confirmation)]
+               (-> page (html/select [:form]) first :attrs :action) => (r/path :delete-account)))
+
+       (fact "cancel link should go to correct endpoint"
+             (let [page (-> (th/create-request) delete-account-confirmation)]
+               (-> page (html/select [:.clj--delete-account-cancel__link]) first :attrs :href) => (r/path :show-profile))))
 
 (facts "about show-profile-deleted page"
        (fact "should return some html"

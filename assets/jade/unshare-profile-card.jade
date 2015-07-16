@@ -7,21 +7,23 @@ block vars
 
 block content
   .middle-container
-    +modal(null,'','clj-wip')
-      +set('modalTitle')
-        span(data-l8n="content:unshare/modal-unshare-title") Are you sure you want to unshare your Profile Card with
-        = " "
-        span.clj--app-name Green Party
-        |?
-      +set('modalBody')
+    .modal__content.clj-modal-contents.js-modal
+      .modal__header
+        h2.modal__title
+          span(data-l8n="content:unshare/modal-unshare-title") !Are you sure you want to unshare your Profile Card with
+          = " "
+          span.clj--app-name Green Party
+          |?
+      .modal__body
         p(data-l8n="content:unshare/modal-unshare-lede")
-          | If you unshare you will need to approve <span class="clj-app-name">Green Party</a> again to sign in.
-      +set('modalButtons')
+          | !If you unshare you will need to approve <span class="clj-app-name">Green Party</a> again to sign in.
+      .modal-buttons
         .modal-buttons__primary
-          form.unshare-card.clj-unshare-card-form(action="./profile",method="post")
+          form.unshare-card.clj--unshare-profile-card__form(action="./profile",method="post")
+            input.clj--client-id__input(type="hidden" name="client_id" value="1234")
             button.button.button--full-width.func--unshare-profile-card__button(type="submit", data-l8n="content:unshare/modal-unshare-ok-button") !Unshare Profile Card
         .modal-buttons__secondary
-          a.button.button--full-width.button--secondary(href="./profile", data-l8n="content:unshare/modal-unshare-cancel-button") !Cancel
+          a.button.button--full-width.button--secondary.clj--unshare-profile-card-cancel__link(href="./profile", data-l8n="content:unshare/modal-unshare-cancel-button") !Cancel
 
 block footerScripts
   if staticMode
