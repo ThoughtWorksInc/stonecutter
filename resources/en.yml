@@ -48,6 +48,7 @@ applications:
   title: Applications
   intro: Manage the applications that you've shared your Profile Card with.
   list-empty: No applications use your Profile Card
+  unshare-button: Unshare Profile Card
 
 unshare:
   title: Unshare your Profile Card

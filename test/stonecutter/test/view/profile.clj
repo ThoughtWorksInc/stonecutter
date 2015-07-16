@@ -21,7 +21,9 @@
 
 (fact "there are no missing translations"
       (let [translator (t/translations-fn t/translation-map)
-            page (-> (th/create-request translator) profile (helper/enlive-response {:translator translator}) :body)]
+            page (-> (th/create-request translator)
+                     (assoc-in [:context :authorised-clients] [{:name "Bloc Party" :client-id "some-client-id"}])
+                     profile (helper/enlive-response {:translator translator}) :body)]
         page => th/no-untranslated-strings))
 
 (facts "about displaying authorised clients"

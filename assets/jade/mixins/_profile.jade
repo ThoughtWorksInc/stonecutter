@@ -1,13 +1,13 @@
-mixin button(buttonClass, iconClass)
+mixin button(buttonClass, iconClass, l8nKey)
   button.button(type="submit", class=buttonClass)
     if iconClass != null
       i.fa.button__icon(class=iconClass)
-    span.button__text
+    span.button__text(data-l8n=l8nKey)
       block
 
 
-mixin removeButton(buttonClass, iconClass)
-  +button("button--remove clj--authorised-app__remove-button", "fa-remove")
+mixin removeButton(buttonClass, iconClass, l8nKey)
+  +button("button--remove clj--authorised-app__remove-button", "fa-remove", l8nKey)
     block
 
 
@@ -20,4 +20,4 @@ mixin authorisedAppItem(appName)
     .app__title.clj--authorised-app__title #{appName}
     .app__remove
       a.clj--app-item__unshare-link.func--app-item__unshare-link(href="./unshare-profile-card")
-        +removeButton() !Unshare Card
+        +removeButton(null, null, "content:applications/unshare-button") !Unshare Card
