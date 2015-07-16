@@ -53,7 +53,8 @@ applications:
 unshare:
   title: Unshare your Profile Card
   modal-unshare-title: Are you sure you want to unshare your Profile Card with
-  modal-unshare-lede: 'If you unshare you will need to approve <span class="clj-app-name">Green Party</a> again to sign in.'
+  modal-unshare-lede-begin: If you unshare you will need to approve
+  modal-unshare-lede-end: again to sign in.
   modal-unshare-ok-button: Unshare Profile Card
   modal-unshare-cancel-button: Cancel
 

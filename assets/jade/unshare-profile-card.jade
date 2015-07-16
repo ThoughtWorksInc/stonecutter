@@ -15,8 +15,12 @@ block content
           span.clj--app-name Green Party
           |?
       .modal__body
-        p(data-l8n="content:unshare/modal-unshare-lede")
-          | !If you unshare you will need to approve <span class="clj-app-name">Green Party</a> again to sign in.
+        p
+          span(data-l8n="content:unshare/modal-unshare-lede-begin") !If you unshare you will need to approve
+          = " "
+          span.clj--app-name Green Party Example
+          = " "
+          span(data-l8n="content:unshare/modal-unshare-lede-end") !again to sign in.
       .modal-buttons
         .modal-buttons__primary
           form.unshare-card.clj--unshare-profile-card__form(action="./profile",method="post")
