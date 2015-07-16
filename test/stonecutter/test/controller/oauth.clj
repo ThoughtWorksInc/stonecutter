@@ -14,6 +14,8 @@
   (before :facts (storage/setup-in-memory-stores!)
           :after (storage/reset-in-memory-stores!)))
 
+(def user-email "email@user.com")
+
 (facts "about authorisation end-point"
        (fact "request with client-id, response_type and redirect_uri returns redirect to login page if there is no user session"
              (let [client-details (cl-client/register-client "ClientTestApp" "localhost:3001") ;FORMAT => {:client-secret "XLFCQRKJXSV3T6YQJL5ZJJVGFUJNT6LD", :client-id "RXBX6ZXAER5KPDSZ3ZCZJDOBS27FLDE7", :name "ClientTestApp", :url "localhost:3001"}
@@ -27,15 +29,14 @@
                (-> response (get-in [:session :client-id])) => (:client-id client-details)))
 
        (fact "valid request goes to authorisation page with auth_code and email when there is an existing user session"
-             (let [user-email "email@user.com"
-                   user (user/store-user! user-email "password")
+             (let [user (user/store-user! user-email "password")
                    client-details (cl-client/register-client "MYAPP" "myapp.com") ; NB this saves into the client store
                    access-token (cl-token/create-token client-details user) ; NB this saves into the token store
                    request (-> (r/request :get "/authorisation")
                                (assoc :params {:client_id (:client-id client-details) :response_type "code" :redirect_uri "callback"})
                                (r/header "accept" "text/html")
                                (assoc-in [:session :access_token] (:token access-token))
-                               (assoc-in [:session :user] user)
+                               (assoc-in [:session :user-login] (:login user))
                                (assoc-in [:context :translator] {})
                                ;the csrf-token key in session will stop clauth from refreshing the csrf-token in request
                                (assoc-in [:session :csrf-token] "staleCSRFtoken"))
@@ -43,10 +44,8 @@
                (:status response) => 200
                (get-in response [:session :access_token]) => (:token access-token)
                (get response :body) => (contains "Share Profile Card")
-               (get-in response [:session :user]) => user
+               (get-in response [:session :user-login]) => user-email
                (get-in response [:session :csrf-token]) =not=> "staleCSRFtoken"))
-
-       (def user-email "email@user.com")
 
        (fact "posting to authorisation endpoint redirects to callback with auth code and adds the client to the user's authorised clients"
              (let [user (user/store-user! user-email "password")
@@ -58,42 +57,40 @@
                                (assoc-in [:session :access_token] (:token access-token))
                                (assoc-in [:session :csrf-token] csrf-token)
                                (assoc :content-type "application/x-www-form-urlencoded") ;To mock a form post
-                               (assoc-in [:session :user :login] user-email))
+                               (assoc-in [:session :user-login] user-email))
                    response (oauth/authorise-client request)]
                (oauth/authorise-client request) => (contains {:status 302 :headers (contains {"Location" (contains "callback?code=" )} )})
                (provided
                  (user/add-authorised-client-for-user! user-email anything) => ...user...)))
 
        (fact "valid request redirects to callback with auth code when there is an existing user session and the user has previously authorised the app"
-             (let [user-email "email@user.com"
-                   user (user/store-user! user-email "password")
+             (let [user (user/store-user! user-email "password")
                    client-details (cl-client/register-client "MYAPP" "myapp.com")
                    updated-user (user/add-authorised-client-for-user! user-email (:client-id client-details))
                    access-token (cl-token/create-token client-details user)
                    request (-> (r/request :get "/authorisation")
                                (assoc :params {:client_id (:client-id client-details) :response_type "code" :redirect_uri "callback"})
                                (assoc-in [:session :access_token] (:token access-token))
-                               (assoc-in [:session :user] user))
+                               (assoc-in [:session :user-login] (:login user)))
                    response (oauth/authorise request)]
                (:status response) => 302
                (get-in response [:headers "Location"]) => (contains "callback?code=")))
 
-       (fact "user-email and access_token in session stay in session if user is logged in"
-             (let [user-email "email@user.com"
-                   user (user/store-user! user-email "password")
+       (fact "user-login and access_token in session stay in session if user is logged in"
+             (let [user (user/store-user! user-email "password")
                    client-details (cl-client/register-client "MYAPP" "myapp.com")
                    access-token (cl-token/create-token client-details user)
                    request (-> (r/request :post "/authorisation")
                                (assoc :params {:client_id (:client-id client-details) :response_type "code" :redirect_uri "callback"})
                                (assoc-in [:session :access_token] (:token access-token))
-                               (assoc-in [:session :user] user)
+                               (assoc-in [:session :user-login] (:login user))
                                ;; stale csrf token can cause session to be lost
                                (assoc-in [:session :csrf-token] "staleCSRFtoken"))
                    response (oauth/authorise request)]
                (:status response) => 302
                (get-in response [:headers "Location"]) => (contains "callback?code=")
                (get-in response [:session :access_token]) => (:token access-token)
-               (get-in response [:session :user]) => user)))
+               (get-in response [:session :user-login]) => user-email)))
 
 (fact "when authorisation failure is rendered will add error=access_denied in the querystring of the callback uri"
       (let [request (-> (r/request :get "/authorise-failure")
@@ -123,8 +120,7 @@
             (encode-client-info client)))
 
 (facts "about token endpoint"
-       (let [user-email "email@user.com"
-             user (user/store-user! user-email "password")
+       (let [user (user/store-user! user-email "password")
              client-details (cl-client/register-client "MYAPP" "myapp.com")
              auth-code (cl-auth-code/create-auth-code client-details user "callback")
              request (-> (r/request :get "/token")
@@ -148,13 +144,13 @@
                (:uid user) =not=> nil?)
 
          (fact "user email stays in the session after validating token"
-               (get-in response [:session :user :login]) => user-email)))
+               (get-in response [:session :user-login]) => user-email)))
 
 (facts "about auto-approver"
        (fact "returns true if client-id is in the users authorised-clients list"
              (-> (r/request :get "/authorisation")
                  (assoc :params {:client_id ...client-id...})
-                 (assoc-in [:session :user :login] ...email...)
+                 (assoc-in [:session :user-login] ...email...)
                  oauth/auto-approver) => true
              (provided
                (user/retrieve-user ...email...) => {:authorised-clients [...client-id...]}))
@@ -162,7 +158,7 @@
        (fact "returns false if client-id is in not in the users authorised-clients list"
              (-> (r/request :get "/authorisation")
                  (assoc :params {:client_id ...client-id...})
-                 (assoc-in [:session :user :login] ...email...)
+                 (assoc-in [:session :user-login] ...email...)
                  oauth/auto-approver) => false
              (provided
                (user/retrieve-user ...email...) => {:authorised-clients [...a-different-client-id...]})))

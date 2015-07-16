@@ -76,9 +76,8 @@
            (kh/response-status-is 200)
            (kh/selector-exists [ks/registration-page-body])))
 
-(facts "Register page redirects to profile-created page when registered
-       and
-       user is correctly in the session so that email address is displayed on profile card"
+(facts "Register page redirects to profile-created page when registered and
+       user-login is in the session so that email address is displayed on profile card"
        (-> (k/session h/app)
            (register "email@server.com")
            (k/follow-redirect)

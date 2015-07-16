@@ -5,9 +5,9 @@
             [stonecutter.view.view-helpers :as vh]))
 
 (defn add-username [request enlive-m]
-  (let [email (get-in request [:session :user :login])]
-    (-> enlive-m
-        (html/at [:.clj--card--name] (html/content email)))))
+  (let [email (get-in request [:session :user-login])]
+    (html/at enlive-m
+             [:.clj--card--name] (html/content email))))
 
 (def library-template (vh/load-template "public/library.html"))
 

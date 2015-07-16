@@ -29,25 +29,25 @@
 
 (background (before :facts (cl-user/reset-user-store!)))
 
-(fact "user can sign in with valid credentials and is redirected to profile, with user and access_token added to session"
+(fact "user can sign in with valid credentials and is redirected to profile, with user-login and access_token added to session"
       (-> (create-request :post "/sign-in" sign-in-user-params)
           u/sign-in) => (contains {:status 302 :headers {"Location" "/profile"}
-                                   :session {:user ...user...
+                                   :session {:user-login ...user-login...
                                              :access_token ...token...}})
       (provided
-        (user/authenticate-and-retrieve-user email password) => ...user...
-        (cl-token/create-token nil ...user...) => {:token ...token...}))
+        (user/authenticate-and-retrieve-user email password) => {:login ...user-login...}
+        (cl-token/create-token nil {:login ...user-login...}) => {:token ...token...}))
 
 (facts "about registration"
-       (fact "user can register with valid credentials and is redirected to profile-created page, with user added to session"
+       (fact "user can register with valid credentials and is redirected to profile-created page, with user-login and access_token added to session"
              (-> (create-request :post "/register" register-user-params)
                  u/register-user) => (contains {:status 302 :headers {"Location" "/profile-created"}
-                                                :session {:user ...user...
+                                                :session {:user-login ...user-login...
                                                           :access_token ...token...}})
              (provided
                (v/validate-registration register-user-params user/is-duplicate-user?) => {}
-               (user/store-user! email password) => ...user...
-               (cl-token/create-token nil ...user...) => {:token ...token...}))
+               (user/store-user! email password) => {:login ...user-login...}
+               (cl-token/create-token nil {:login ...user-login...}) => {:token ...token...}))
 
        (fact "session is not lost when redirecting from registration"
             (-> (create-request :post (routes/path :register-user) register-user-params)
@@ -55,36 +55,36 @@
                 u/register-user) => (contains {:status 302
                                                :headers {"Location" "/profile-created"}
                                                :session {:some "data"
-                                                         :user ...user...
+                                                         :user-login ...user-login...
                                                          :access_token ...token...}})
              (provided
                (v/validate-registration register-user-params user/is-duplicate-user?) => {}
-               (user/store-user! email password) => ...user...
-               (cl-token/create-token nil ...user...) => {:token ...token...})))
+               (user/store-user! email password) => {:login ...user-login...}
+               (cl-token/create-token nil {:login ...user-login...}) => {:token ...token...})))
 
-(fact "signed-in? returns true only when user and access_token are in the session"
+(fact "signed-in? returns true only when user-login and access_token are in the session"
       (tabular
         (u/signed-in? ?request) => ?expected-result
-       ?request                                                  ?expected-result
-       {:session {:user ...user... :access_token ...token...}}   truthy
-       {:session {:user nil        :access_token ...token...}}   falsey
-       {:session {:user ...user... :access_token nil}}           falsey
-       {:session {:user nil        :access_token nil}}           falsey
-       {:session {}}                                             falsey
-       {:session nil}                                            falsey
-       {}                                                        falsey))
+       ?request                                                              ?expected-result
+       {:session {:user-login ...user-login... :access_token ...token...}}   truthy
+       {:session {:user-login nil              :access_token ...token...}}   falsey
+       {:session {:user-login ...user-login... :access_token nil}}           falsey
+       {:session {:user-login nil              :access_token nil}}           falsey
+       {:session {}}                                                         falsey
+       {:session nil}                                                        falsey
+       {}                                                                    falsey))
 
 (facts "accessing sign-in form"
-       (fact "without user and access_token in session shows the sign-in form"
+       (fact "without user-login and access_token in session shows the sign-in form"
              (-> (create-request :get "/sign-in" nil)
                  u/show-sign-in-form) => (contains {:status 200}))
 
-       (fact "with user and access_token in session redirects to /")
+       (fact "with user-login and access_token in session redirects to /")
              (-> (create-request :get "/sign-in" nil)
-                 (assoc-in [:session :user] ...user...)
+                 (assoc-in [:session :user-login] ...user-login...)
                  (assoc-in [:session :access_token] ...token...)
                  u/show-sign-in-form) => (contains {:status 302 :headers {"Location" "/"}
-                                                    :session {:user ...user...
+                                                    :session {:user-login ...user-login...
                                                               :access_token ...token...}}))
 
 (fact "if user has session client id, then create an access token and add to user session"
@@ -93,11 +93,11 @@
             (assoc-in [:session :client-id] "client-id")
             (assoc-in [:session :return-to] return-to-url)
             u/sign-in) => (contains {:status  302 :headers {"Location" return-to-url}
-                                    :session {:access_token ...token... :user ...user...}})
+                                    :session {:access_token ...token... :user-login ...user-login...}})
         (provided
-          (user/authenticate-and-retrieve-user email password) => ...user...
+          (user/authenticate-and-retrieve-user email password) => {:login ...user-login...}
           (c/retrieve-client "client-id") => ...client...
-          (cl-token/create-token ...client... ...user...) => {:token ...token...})))
+          (cl-token/create-token ...client... {:login ...user-login...}) => {:token ...token...})))
 
 (fact "if user logged out, access token and user email are removed from session"
       (let [return-to-url "/authorisation?client-id=whatever"]
@@ -162,7 +162,7 @@
 
 (fact "account can be deleted, user is redirected to profile-deleted and session is cleared"
       (-> (create-request :post "/delete-account" nil)
-          (assoc-in [:session :user :login] "account_to_be@deleted.com")
+          (assoc-in [:session :user-login] "account_to_be@deleted.com")
           (assoc-in [:session :access_token] ...token...)
           u/delete-account) => (contains {:status 302 :headers {"Location" "/profile-deleted"} :session nil})
       (provided
@@ -226,7 +226,7 @@
 (facts "about show-profile"
        (fact "user's authorised clients passed to html-response"
              (-> (create-request :get (routes/path :show-profile) nil)
-                 (assoc :session {:user {:login ...email...}})
+                 (assoc :session {:user-login ...email...})
                  u/show-profile
                  :body) => (contains #"CLIENT 1[\s\S]+CLIENT 2")
              (provided
@@ -235,10 +235,10 @@
                (c/retrieve-client ...client-id-1...) => {:name "CLIENT 1"}
                (c/retrieve-client ...client-id-2...) => {:name "CLIENT 2"})))
 
-(future-facts "about unsharing profile cards"
+(facts "about unsharing profile cards"
        (fact "posting to /unshare-profile-card with the client-id in the form params should remove the client-id from the user's authorised clients and then redirect the user to the profile page"
              (-> (create-request :post "/unshare-profile-card" {:client_id "client-id"})
-                 (assoc-in [:session :user :login] "user@email.com")
+                 (assoc-in [:session :user-login] "user@email.com")
                  u/unshare-profile-card) => (contains {:status 302 :headers {"Location" "/profile"}})
              (provided
                (user/remove-authorised-client-for-user! "user@email.com" "client-id") => anything))

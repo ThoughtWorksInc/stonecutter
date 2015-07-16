@@ -29,7 +29,7 @@
 
 (defn auto-approver [request]
   (let [client-id (get-in request [:params :client_id])
-        user-email (get-in request [:session :user :login])
+        user-email (get-in request [:session :user-login])
         user (user/retrieve-user user-email)
         authorised-clients (set (:authorised-clients user))]
     (boolean (authorised-clients client-id))))
@@ -42,13 +42,13 @@
 
 (defn authorise-client [request]
   (let [client-id (get-in request [:params :client_id])
-        user-email (get-in request [:session :user :login])
+        user-email (get-in request [:session :user-login])
         response (auth-handler request)]
     (user/add-authorised-client-for-user! user-email client-id)
     response))
 
 (defn authorise [request]
-  (let [user (get-in request [:session :user])
+  (let [user-login (get-in request [:session :user-login])
         request (update-in request [:session] dissoc :csrf-token)
         access-token (get-in request [:session :access_token])
         client-id (get-in request [:params :client_id])
@@ -56,22 +56,22 @@
         response (auth-handler (assoc-in request [:headers "accept"] "text/html"))]
     (-> response
         (assoc-in [:session :client-id] client-id)
-        (assoc-in [:session :user] user)
+        (assoc-in [:session :user-login] user-login)
         (assoc-in [:session :redirect-uri] redirect-uri)
         (assoc-in [:session :access_token] access-token))))
 
 (defn validate-token [request]
   (let [auth-code (get-in request [:params :code])
         user (user/retrieve-user-with-auth-code auth-code)
-        user-email (:login user)
+        user-login (:login user)
         user-id (:uid user)
         response (token-handler request)
         body (-> response
                  :body
                  (json/parse-string keyword)
-                 (assoc :user-email user-email)
+                 (assoc :user-email user-login)
                  (assoc :user-id user-id)
                  (json/generate-string))]
     (-> response
         (assoc :body body)
-        (assoc-in [:session :user] user))))
+        (assoc-in [:session :user-login] user-login))))

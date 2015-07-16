@@ -6,27 +6,40 @@
             [stonecutter.db.storage :as s]
             [stonecutter.db.user :as user]))
 
-;; The following tests do not mock the database
 (facts "about storage of users"
+       ;; These facts do not mock the database
        (s/setup-in-memory-stores!)
        (fact "can store a user"
-             (user/store-user! "email@server.com" "password") => (contains {:login "email@server.com"
-                                                                         :name nil
-                                                                         :url nil}))
+             (user/store-user! "email@server.com" "password")
+             => (contains {:login "email@server.com"
+                           :name nil
+                           :url nil}))
+
        (fact "can authenticate a user"
-             (user/authenticate-and-retrieve-user "email@server.com" "password") => (contains {:login "email@server.com"
-                                                                                            :name nil
-                                                                                            :url nil}))
+             (user/authenticate-and-retrieve-user "email@server.com" "password")
+             => (contains {:login "email@server.com"
+                           :name nil
+                           :url nil}))
+
        (fact "can retrieve a user"
-             (user/retrieve-user "email@server.com") => (contains {:login "email@server.com"
-                                                                :name nil
-                                                                :url nil}))
+             (user/retrieve-user "email@server.com")
+             => (contains {:login "email@server.com"
+                           :name nil
+                           :url nil}))
+
        (fact "can add authorised client for user"
-             (user/add-authorised-client-for-user! "email@server.com" "a-client-id") => (contains
-                                                                                       {:login "email@server.com"
-                                                                                        :name nil
-                                                                                        :url nil
-                                                                                        :authorised-clients ["a-client-id"]}))
+             (user/add-authorised-client-for-user! "email@server.com" "a-client-id")
+             => (contains {:login "email@server.com"
+                           :name nil
+                           :url nil
+                           :authorised-clients ["a-client-id"]}))
+
+       (fact "can remove authorised client for user"
+             (user/remove-authorised-client-for-user! "email@server.com" "a-client-id")
+             => (contains {:login "email@server.com"
+                           :name nil
+                           :url nil
+                           :authorised-clients []}))
 
        (fact "can delete a user"
              (user/delete-user! "email@server.com") => {}
@@ -123,11 +136,11 @@
                    add-client-id-function) => {:some-key "some-value"
                                                :authorised-clients [client-id]})))
 
-(future-facts "about removing client ids from users with remove-client-id"
+(facts "about removing client ids from users with remove-client-id"
        (fact "returns a function which removes client-id from a user's authorised clients"
              (let [client-id "client-id"
                    user {:some-key           "some-value"
-                         :authorised-clients [client-id]}
+                         :authorised-clients [client-id "another-client-id"]}
                    remove-client-id-function (user/remove-client-id client-id)]
                (remove-client-id-function user) => {:some-key "some-value"
-                                                    :authorised-clients []})))
+                                                    :authorised-clients ["another-client-id"]})))

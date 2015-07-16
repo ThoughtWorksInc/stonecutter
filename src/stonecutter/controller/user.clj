@@ -14,15 +14,16 @@
             [stonecutter.view.authorise :as authorise]
             [stonecutter.helper :as sh]))
 
-(declare redirect-to-profile redirect-to-profile-created redirect-to-profile-deleted)
+(declare redirect-to-profile-from-sign-in redirect-to-profile-created redirect-to-profile-deleted)
 
 (defn signed-in? [request]
   (let [session (:session request)]
-    (and (:user session) (:access_token session))))
+    (and (:user-login session) (:access_token session))))
 
 (defn redirect-to-authorisation [return-to user client-id]
   (if-let [client (c/retrieve-client client-id)]
-    (assoc (r/redirect return-to) :session {:user user :access_token (:token (cl-token/create-token client user))})
+    (assoc (r/redirect return-to) :session {:user-login (:login user)
+                                            :access_token (:token (cl-token/create-token client user))})
     (throw (Exception. "Invalid client"))))
 
 (defn register-user [request]
@@ -48,7 +49,7 @@
       (if-let [user (user/authenticate-and-retrieve-user email password)]
         (cond (and client-id return-to) (redirect-to-authorisation return-to user client-id)
               client-id (throw (Exception. "Missing return-to value"))
-              :default (redirect-to-profile user))
+              :default (redirect-to-profile-from-sign-in user))
         (-> request
             (assoc-in [:context :errors] {:credentials :invalid})
             sign-in/sign-in-form
@@ -57,20 +58,23 @@
 
 (defn sign-out [request]
   (-> request
-      (update-in [:session] dissoc :user)
+      (update-in [:session] dissoc :user-login)
       cl-ep/logout-handler))
 
 (defn show-confirm-account-confirmation [request]
   (sh/enlive-response (delete-account/delete-account-confirmation request) (:context request)))
 
 (defn delete-account [request]
-  (let [email (get-in request [:session :user :login])]
+  (let [email (get-in request [:session :user-login])]
     (user/delete-user! email)
     (redirect-to-profile-deleted)))
 
-(defn redirect-to-profile [user]
-  (assoc (r/redirect (routes/path :show-profile)) :session {:user         user
-                                                            :access_token (:token (cl-token/create-token nil user))}))
+(defn generate-login-access-token [user]
+  (:token (cl-token/create-token nil user)))
+
+(defn redirect-to-profile-from-sign-in [user]
+  (assoc (r/redirect (routes/path :show-profile)) :session {:user-login (:login user)
+                                                            :access_token (generate-login-access-token user)}))
 
 (defn preserve-session [response request]
   (-> response
@@ -79,8 +83,8 @@
 (defn redirect-to-profile-created [user request]
   (-> (r/redirect (routes/path :show-profile-created))
       (preserve-session request)
-      (assoc-in [:session :user] user)
-      (assoc-in [:session :access_token] (:token (cl-token/create-token nil user)))))
+      (assoc-in [:session :user-login] (:login user))
+      (assoc-in [:session :access_token] (generate-login-access-token user))))
 
 (defn redirect-to-profile-deleted []
   (assoc (r/redirect (routes/path :show-profile-deleted)) :session nil))
@@ -94,7 +98,7 @@
     (sh/enlive-response (sign-in/sign-in-form request) (:context request))))
 
 (defn show-profile [request]
-  (let [email (get-in request [:session :user :login])
+  (let [email (get-in request [:session :user-login])
         user (user/retrieve-user email)
         authorised-client-ids (:authorised-clients user)
         authorised-clients (map c/retrieve-client authorised-client-ids)]
@@ -116,7 +120,11 @@
 (defn show-profile-deleted [request]
   (sh/enlive-response (delete-account/profile-deleted request) (:context request)))
 
-(defn unshare-profile-card [request])
+(defn unshare-profile-card [request]
+  (let [email (get-in request [:session :user-login])
+        client-id (get-in request [:params :client_id])]
+    (user/remove-authorised-client-for-user! email client-id)
+    (r/redirect (routes/path :show-profile))))
 
 (defn home [request]
   (r/redirect (routes/path :show-profile)))
