@@ -35,4 +35,4 @@
                                               "integration" ["midje" "stonecutter.integration.*"]
                                               "auto-unit"   ["midje" ":autotest" "test/stonecutter/test/" "src/"]
                                               "gencred"     ["run" "-m" "stonecutter.util.gencred"]
-                                              "lint"        ["eastwood" "{:exclude-namespaces [\"stonecutter.integration\" \"stonecutter.test\"]}"]}}})
+                                              "lint"        ["eastwood" "{:namespaces [:source-paths]}"]}}})
