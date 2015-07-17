@@ -51,18 +51,24 @@
     (user/add-authorised-client-for-user! user-email client-id)
     response))
 
+(defn is-redirect-uri-valid? [client-id redirect-uri]
+  (.startsWith redirect-uri ((client/retrieve-client client-id) :url)))
+   
 (defn authorise [request]
   (let [user-login (get-in request [:session :user-login])
         request (update-in request [:session] dissoc :csrf-token)
         access-token (get-in request [:session :access_token])
         client-id (get-in request [:params :client_id])
-        redirect-uri (get-in request [:params :redirect_uri])
-        response (auth-handler (assoc-in request [:headers "accept"] "text/html"))]
-    (-> response
-        (assoc-in [:session :client-id] client-id)
-        (assoc-in [:session :user-login] user-login)
-        (assoc-in [:session :redirect-uri] redirect-uri)
-        (assoc-in [:session :access_token] access-token))))
+        redirect-uri (get-in request [:params :redirect_uri])]
+   (if (is-redirect-uri-valid? client-id redirect-uri) 
+     (-> request
+         (assoc-in [:headers "accept"] "text/html")
+         auth-handler
+         (assoc-in [:session :client-id] client-id)
+         (assoc-in [:session :redirect-uri] redirect-uri)
+         (assoc-in [:session :user-login] user-login)
+         (assoc-in [:session :access_token] access-token))
+     {:status 500})))
 
 (defn validate-token [request]
   (let [auth-code (get-in request [:params :code])
