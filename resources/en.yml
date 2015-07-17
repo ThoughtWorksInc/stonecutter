@@ -86,19 +86,19 @@ authorise-fail:
   lede: can not have access to your Profile Card and cannot sign in.
 
 error-403:
-  page-intro: "CSRF Forbidden Response.  Click the link below to try again."
+  page-intro: "CSRF Forbidden Response."
 
 error-404:
   title: Error-404
   page-header: "Sorry the page you requested can't be found."
   page-intro: "The page you were trying to reach at this address doesn't seem to exist. This is usually the result of a bad or outdated link. We apologise for any inconvenience."
-  page-content: '<h2>What can I do now?</h2><ul><li>Please return to the <a href="/register" title="Go to Sign in">sign-in page</a>.</li></ul>'
+  page-content: '<h2>What can I do now?</h2><ul><li>Please return to the <a href="/" title="Return to Home">home page</a>.</li></ul>'
 
 error-500:
   title: Error-500
   page-header: "Sorry something went wrong"
   page-intro: "An unexpected error has occured, please try again. We apologise for any inconvenience."
-  page-content: '<h2>What can I do now?</h2><ul><li>Please return to the <a href="/register" title="Go to Sign in">sign-in page</a>.</li></ul>'
+  page-content: '<h2>What can I do now?</h2><ul><li>Please return to the <a href="/" title="Return to Home">home page</a>.</li></ul>'
 
 modal:
   modal-dismiss: Close
