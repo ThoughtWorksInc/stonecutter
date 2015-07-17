@@ -72,7 +72,7 @@
                                (assoc :content-type "application/x-www-form-urlencoded") ;To mock a form post
                                (assoc-in [:session :user-login] user-email))
                    response (oauth/authorise-client request)]
-               (oauth/authorise-client request) => (contains {:status 302 :headers (contains {"Location" (contains "callback?code=" )} )})
+               (oauth/authorise-client request) => (contains {:status 302 :headers (contains {"Location" (contains "callback?code=")})})
                (provided
                  (user/add-authorised-client-for-user! user-email anything) => ...user...)))
 

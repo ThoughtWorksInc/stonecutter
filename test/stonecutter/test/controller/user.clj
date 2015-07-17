@@ -267,9 +267,9 @@
                         (user/is-authorised-client-for-user? ...email... "client-id") => true
                         (c/retrieve-client "client-id") => {:client-id "client-id" :name "CLIENT_NAME"})))
 
-              (fact "missing client_id query param throws exception"
+              (fact "missing client_id query param responds with 404"
                     (-> (create-request :get (routes/path :show-unshare-profile-card) nil)
-                        u/show-unshare-profile-card) => (throws Exception))
+                        u/show-unshare-profile-card) => {:status 404})
 
               (fact "user is redirected to /profile if client_id is not in user's list of authorised clients"
                     (-> (create-request :get (routes/path :show-unshare-profile-card) {:client_id ...client-id...})

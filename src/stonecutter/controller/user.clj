@@ -127,7 +127,7 @@
             unshare-profile-card/unshare-profile-card
             (sh/enlive-response (:context request))))
       (r/redirect (routes/path :show-profile)))
-    (throw (Exception. "Missing client_id parameter"))))
+    {:status 404}))
 
 (defn unshare-profile-card [request]
   (let [email (get-in request [:session :user-login])
