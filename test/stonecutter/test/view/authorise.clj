@@ -27,3 +27,13 @@
 (fact "cancel link should go to correct endpoint"
       (let [page (-> (th/create-request) authorise-form)]
         (-> page (html/select [:.func--authorise-cancel__link]) first :attrs :href) => (r/path :show-authorise-failure)))
+
+(fact "app name is injected"
+      (let [client-name "CLIENT_NAME"
+            app-name-elements (-> (th/create-request)
+                                  (assoc-in [:context :client :name] client-name)
+                                  authorise-form
+                                  (html/select [:.clj--app-name]))
+            app-name-is-correct-fn (fn [element] (= (html/text element) client-name))]
+        app-name-elements =not=> empty?
+        app-name-elements => (has every? app-name-is-correct-fn)))

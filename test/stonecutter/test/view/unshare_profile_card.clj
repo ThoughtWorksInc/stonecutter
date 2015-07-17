@@ -41,6 +41,7 @@
                                   unshare-profile-card
                                   (html/select [:.clj--app-name]))
             app-name-is-correct-fn (fn [element] (= (html/text element) client-name))]
+        app-name-elements =not=> empty?
         app-name-elements => (has every? app-name-is-correct-fn)))
 
 (fact "cancel link should go to correct endpoint"

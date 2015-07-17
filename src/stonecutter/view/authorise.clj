@@ -16,18 +16,23 @@
       (html/at [:.clj--authorise-response-type__input] (html/set-attr :value (:response_type params)))
       (html/at [:.clj--authorise-redirect-uri__input] (html/set-attr :value (:redirect_uri params)))))
 
+(defn set-client-name [client-name enlive-m]
+  (html/at enlive-m
+           [:.clj--app-name] (html/content client-name)))
+
 (defn set-hidden-clauth-csrf-token [csrf-token enlive-m]
   (-> enlive-m
       (html/at [:.clj--authorise-csrf__input] (html/set-attr :value csrf-token))))
 
 (defn authorise-form [request]
   (let [params (:params request)
+        client-name (get-in request [:context :client :name])
         csrf-token (or (request :csrf-token) ((request :session {}) :csrf-token))]
     (->> (vh/load-template "public/authorise.html")
          set-form-action
          set-cancel-link
-         vh/add-anti-forgery
+         (set-client-name client-name)
          (set-hidden-params params)
          (set-hidden-clauth-csrf-token csrf-token)
-         vh/remove-work-in-progress
-         )))
+         vh/add-anti-forgery
+         vh/remove-work-in-progress)))

@@ -1,14 +1,22 @@
 (ns stonecutter.test.controller.oauth
   (:require [midje.sweet :refer :all]
+            [net.cgrand.enlive-html :as html]
             [ring.mock.request :as r]
             [clauth.client :as cl-client]
             [clauth.token :as cl-token]
             [clauth.auth-code :as cl-auth-code]
             [cheshire.core :as json]
+            [stonecutter.routes :as routes]
             [stonecutter.controller.oauth :as oauth]
             [stonecutter.db.storage :as storage]
+            [stonecutter.db.client :as client]
             [stonecutter.db.user :as user])
   (:import (org.apache.commons.codec.binary Base64)))
+
+(defn create-request [method url params]
+  (-> (r/request method url)
+      (assoc :params params)
+      (assoc-in [:context :translator] {})))
 
 (background
   (before :facts (storage/setup-in-memory-stores!)
@@ -91,6 +99,15 @@
                (get-in response [:headers "Location"]) => (contains "callback?code=")
                (get-in response [:session :access_token]) => (:token access-token)
                (get-in response [:session :user-login]) => user-email)))
+
+(fact "authorise form is rendered with client name"
+      (let [element-has-correct-client-name-fn (fn [element] (= (html/text element) "CLIENT_NAME"))]
+        (-> (create-request :get (routes/path :show-authorise-form) {:client_id "CLIENT_ID"})
+            oauth/show-authorise-form
+            :body
+            html/html-snippet
+            (html/select [:.clj--app-name])) => (has some element-has-correct-client-name-fn)
+        (provided (client/retrieve-client "CLIENT_ID") => {:client-id "CLIENT_ID" :name "CLIENT_NAME"})))
 
 (fact "when authorisation failure is rendered will add error=access_denied in the querystring of the callback uri"
       (let [request (-> (r/request :get "/authorise-failure")

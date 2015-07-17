@@ -11,7 +11,6 @@
             [stonecutter.view.profile-created :as profile-created]
             [stonecutter.view.profile :as profile]
             [stonecutter.view.delete-account :as delete-account]
-            [stonecutter.view.authorise :as authorise]
             [stonecutter.view.unshare-profile-card :as unshare-profile-card]
             [stonecutter.helper :as sh]))
 
