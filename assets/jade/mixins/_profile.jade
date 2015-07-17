@@ -17,7 +17,7 @@ mixin authorisedAppItemEmpty()
 
 mixin authorisedAppItem(appName)
   li.app__item.clj--authorised-app__list-item
-    .app__title.clj--authorised-app__title #{appName}
+    .app__title.clj--app-name #{appName}
     .app__remove
       a.clj--app-item__unshare-link.func--app-item__unshare-link(href="./unshare-profile-card")
         +removeButton(null, null, "content:applications/unshare-button") !Unshare Card
