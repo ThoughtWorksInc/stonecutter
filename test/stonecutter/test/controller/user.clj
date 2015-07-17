@@ -112,12 +112,16 @@
           (c/retrieve-client "client-id") => ...client...
           (cl-token/create-token ...client... ...user...) => {:token ...token...})))
 
-(fact "if user has client id but no return-to in session, throws an exception"
+(fact "if user has client id but no return-to in session, should remove client-id from the session and redirect to profile"
+      (def user {:login ...user-login...})
       (-> (create-request :post "/sign-in" sign-in-user-params)
           (assoc-in [:session :client-id] "client-id")
-          u/sign-in) => (throws Exception)
+          u/sign-in) => (contains {:status 302 :headers {"Location" (routes/path :show-profile)}
+                                   :session {:user-login ...user-login...
+                                             :access_token ...token...}})
       (provided
-        (user/authenticate-and-retrieve-user email password) => ...user...))
+        (user/authenticate-and-retrieve-user email password) => user
+        (u/generate-login-access-token user) => ...token...))
 
 (fact "if user has invalid client id, then throws an exception"
       (let [return-to-url "/authorisation?client-id=whatever"]

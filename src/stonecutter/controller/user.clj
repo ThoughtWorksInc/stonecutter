@@ -49,7 +49,6 @@
     (if (empty? err)
       (if-let [user (user/authenticate-and-retrieve-user email password)]
         (cond (and client-id return-to) (redirect-to-authorisation return-to user client-id)
-              client-id (throw (Exception. "Missing return-to value"))
               :default (redirect-to-profile-from-sign-in user))
         (-> request
             (assoc-in [:context :errors] {:credentials :invalid})
