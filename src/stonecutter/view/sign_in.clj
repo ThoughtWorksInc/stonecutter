@@ -16,7 +16,7 @@
    :credentials {:invalid "content:sign-in-form/invalid-credentials-validation-message"}})
 
 (defn set-registration-link [enlive-m]
-  (html/at enlive-m 
+  (html/at enlive-m
            [:.clj--register__link] (html/set-attr :href (r/path :show-registration-form))))
 
 (defn add-email-error [enlive-m err]
@@ -63,6 +63,6 @@
     (->> (vh/load-template "public/sign-in.html")
          set-registration-link
          set-form-action
-         vh/add-anti-forgery
          (add-sign-in-errors err)
-         (add-params params))))
+         (add-params params)
+         vh/add-anti-forgery)))

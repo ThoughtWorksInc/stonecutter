@@ -17,6 +17,6 @@
   (let [client-name (get-in request [:context :client-name])
         params (:params request)]
     (->> (vh/load-template "public/authorise-failure.html")
-         vh/remove-work-in-progress
          (set-redirect-to-client-home-link params)
-         (set-client-name client-name))))
+         (set-client-name client-name)
+         vh/remove-work-in-progress)))
