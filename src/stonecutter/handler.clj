@@ -56,6 +56,7 @@
      :authorise                          oauth/authorise
      :authorise-client                   oauth/authorise-client
      :show-authorise-failure             oauth/show-authorise-failure}
+    (m/wrap-handlers #(m/wrap-handle-404 % not-found) #{})
     (m/wrap-handlers m/wrap-disable-caching #{})
     (m/wrap-handlers m/wrap-signed-in #{:show-registration-form :register-user
                                         :show-sign-in-form      :sign-in

@@ -9,12 +9,13 @@
             [stonecutter.helper :as sh]))
 
 (defn show-authorise-form [request]
-  (let [client-id (get-in request [:params :client_id])
-        client (client/retrieve-client client-id)
-        context (assoc (:context request) :client client)]
-    (-> (assoc request :context context)
-        authorise/authorise-form
-        (sh/enlive-response context))))
+  (let [client-id (get-in request [:params :client_id])]
+    (if-let [client (client/retrieve-client client-id)]
+      (let [context (assoc (:context request) :client client)]
+        (-> (assoc request :context context)
+            authorise/authorise-form
+            (sh/enlive-response context)))
+      {:status 404})))
 
 (defn add-error-to-uri [uri]
   (str uri "?error=access_denied"))

@@ -100,14 +100,20 @@
                (get-in response [:session :access_token]) => (:token access-token)
                (get-in response [:session :user-login]) => user-email)))
 
-(fact "authorise form is rendered with client name"
-      (let [element-has-correct-client-name-fn (fn [element] (= (html/text element) "CLIENT_NAME"))]
-        (-> (create-request :get (routes/path :show-authorise-form) {:client_id "CLIENT_ID"})
-            oauth/show-authorise-form
-            :body
-            html/html-snippet
-            (html/select [:.clj--app-name])) => (has some element-has-correct-client-name-fn)
-        (provided (client/retrieve-client "CLIENT_ID") => {:client-id "CLIENT_ID" :name "CLIENT_NAME"})))
+(facts "about show-authorise-form"
+       (fact "authorise form is rendered with client name"
+             (let [element-has-correct-client-name-fn (fn [element] (= (html/text element) "CLIENT_NAME"))]
+               (-> (create-request :get (routes/path :show-authorise-form) {:client_id "CLIENT_ID"})
+                   oauth/show-authorise-form
+                   :body
+                   html/html-snippet
+                   (html/select [:.clj--app-name])) => (has some element-has-correct-client-name-fn)
+               (provided (client/retrieve-client "CLIENT_ID") => {:client-id "CLIENT_ID" :name "CLIENT_NAME"})))
+       
+       (fact "redirects to error 404 page if client_id doesn't match a registered client"
+               (-> (create-request :get (routes/path :show-authorise-form) {:client_id "CLIENT_ID"})
+                   oauth/show-authorise-form) => (contains {:status 404})
+               (provided (client/retrieve-client "CLIENT_ID") => nil)))
 
 (fact "when authorisation failure is rendered will add error=access_denied in the querystring of the callback uri"
       (let [request (-> (r/request :get "/authorise-failure")
