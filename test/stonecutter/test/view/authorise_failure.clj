@@ -27,9 +27,12 @@
                      show-authorise-failure)]
         (-> page (html/select [:.func--redirect-to-client-home__link]) first :attrs :href) => "redirect-uri?error=access_denied"))
 
-(fact "client name is set on the page"
-      (let [translator (t/translations-fn t/translation-map)
-            page (-> (th/create-request translator)
-                     (assoc-in [:session :client-name] "Super Client App")
-                     show-authorise-failure)]
-        (-> page (html/select [:.clj--app-name]) first :content) => (contains "Super Client App")))
+(fact "app name is injected"
+      (let [client-name "CLIENT_NAME"
+            app-name-is-correct-fn (fn [element] (= (html/text element) client-name))
+            app-name-elements (-> (th/create-request)
+                                  (assoc-in [:context :client-name] client-name)
+                                  show-authorise-failure
+                                  (html/select [:.clj--app-name]))]
+        app-name-elements =not=> empty?
+        app-name-elements => (has every? app-name-is-correct-fn)))

@@ -115,15 +115,25 @@
                    oauth/show-authorise-form) => (contains {:status 404})
                (provided (client/retrieve-client "CLIENT_ID") => nil)))
 
-(fact "when authorisation failure is rendered will add error=access_denied in the querystring of the callback uri"
-      (let [request (-> (r/request :get "/authorise-failure")
-                        (assoc-in [:context :translator] {})
-                        (assoc-in [:session :redirect-uri] "http://where.do.we.go.now"))
-            response (oauth/show-authorise-failure request)]
-        (:status response)) => 200
-
-      (provided
-        (oauth/add-error-to-uri "http://where.do.we.go.now") => anything))
+(facts "about show-authorise-failure"
+       (fact "when authorisation failure is rendered will add error=access_denied in the querystring of the callback uri"
+             (let [request (-> (r/request :get "/authorise-failure")
+                               (assoc-in [:context :translator] {})
+                               (assoc-in [:session :redirect-uri] "http://where.do.we.go.now"))
+                   response (oauth/show-authorise-failure request)]
+               (:status response)) => 200
+             (provided
+               (oauth/add-error-to-uri "http://where.do.we.go.now") => anything))
+       
+       (fact "authorisation failure page is rendered with client name"
+             (let [element-has-correct-client-name-fn (fn [element] (= (html/text element) "CLIENT_NAME"))]
+               (-> (create-request :get (routes/path :show-authorise-failure) nil)
+                   (assoc-in [:session :client-id] "CLIENT_ID")
+                   oauth/show-authorise-failure
+                   :body
+                   html/html-snippet
+                   (html/select [:.clj--app-name])) => (has some element-has-correct-client-name-fn)
+               (provided (client/retrieve-client "CLIENT_ID") => {:client-id "CLIENT_ID" :name "CLIENT_NAME"}))))
 
 (fact "add-error-to-uri adds oauth error message to callback uri"
       (oauth/add-error-to-uri "https://client.com/callback") => "https://client.com/callback?error=access_denied")

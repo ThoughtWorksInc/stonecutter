@@ -27,7 +27,7 @@
         redirect-uri (get-in request [:session :redirect-uri])
         callback-uri-with-error (add-error-to-uri redirect-uri)
         request (-> request
-                     (assoc-in [:session :client-name] client-name)
+                     (assoc-in [:context :client-name] client-name)
                      (assoc-in [:params :callback-uri-with-error] callback-uri-with-error))]
 
     (sh/enlive-response (authorise-failure/show-authorise-failure request) (:context request))))
