@@ -83,7 +83,8 @@ authorise:
 
 authorise-fail:
   title: Authorise failure
-  lede: can not have access to your Profile Card and cannot sign in.
+  page-intro: You have not signed in to
+  page-intro-ending: can not have access to your Profile Card and cannot sign in.
 
 error-403:
   page-intro: "CSRF Forbidden Response."

@@ -9,14 +9,14 @@ block headerScripts
 
 block content
   .middle-container
-    h1.page-title(data-l8n="content:authorise-fail/page-title")
-      | !You have not signed in to
+    h1.page-title
+      span(data-l8n="content:authorise-fail/page-intro") !You have not signed in to
       = " "
       span.clj--app-name Green Party Voting
     p
       span.clj--app-name Green Party Voting
       = " "
-      span(data-l8n="content:authorise-fail/lede") !can not have access to your Profile Card and cannot sign in.
+      span(data-l8n="content:authorise-fail/page-intro-ending") !can not have access to your Profile Card and cannot sign in.
 
     a.button.button--secondary.clj--redirect-to-client-home__link.func--redirect-to-client-home__link(href="#{demoAppURL}")
       | Return to
