@@ -12,8 +12,15 @@
    :client-secret (schema/both schema/Str (schema/pred not-blank?))
    :url           (schema/both schema/Str (schema/pred not-blank?))})
 
+(defn validate-url-format [client-entry]
+ (let [url (:url client-entry)]
+  (if (re-find #"https?://" url)
+    client-entry
+    (throw Exception "missing resource prefix e.g. https://"))))
+
 (defn validate-client-entry [client-entry]
-  (schema/validate Client client-entry))
+  (-> (schema/validate Client client-entry)
+      validate-url-format))
 
 (defn delete-clients![]
   (cl-client/reset-client-store!))

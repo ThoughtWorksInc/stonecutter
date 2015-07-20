@@ -43,6 +43,7 @@
   "valid-id"            "valid-name"    "valid-secret"  ""
   ""                    ""              ""              "http://test.com"
   "  "                  "valid-name"    "valid-secret"  "http://test.com"
+  "valid-id"            "valid-name"    "valid-secret"  "test.com"
   "\t\t"                "valid-name"    "valid-secret"  "http://test.com")
 
 (fact "can drop the collection of clients"
