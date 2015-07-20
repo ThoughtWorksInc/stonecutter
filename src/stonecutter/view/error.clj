@@ -12,4 +12,7 @@
   (vh/load-template "public/error-500.html"))
 
 (defn csrf-error []
-  (-> (internal-server-error) (modify-error-message-key "content:error-403/page-intro")))
+  (-> (internal-server-error) (modify-error-message-key "content:error-csrf/page-intro")))
+
+(defn forbidden-error []
+  (-> (internal-server-error) (modify-error-message-key "content:error-forbidden/page-intro")))

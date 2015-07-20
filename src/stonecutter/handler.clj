@@ -37,6 +37,11 @@
       (sh/enlive-response default-context)
       (r/status 403)))
 
+(defn forbidden-err-handler [req]
+  (-> (error/forbidden-error)
+      (sh/enlive-response default-context)
+      (r/status 403)))
+
 (def site-handlers
   (->
     {:home                               user/home
@@ -57,6 +62,7 @@
      :authorise-client                   oauth/authorise-client
      :show-authorise-failure             oauth/show-authorise-failure}
     (m/wrap-handlers #(m/wrap-handle-404 % not-found) #{})
+    (m/wrap-handlers #(m/wrap-handle-403 % forbidden-err-handler) #{})
     (m/wrap-handlers m/wrap-disable-caching #{})
     (m/wrap-handlers m/wrap-signed-in #{:show-registration-form :register-user
                                         :show-sign-in-form      :sign-in

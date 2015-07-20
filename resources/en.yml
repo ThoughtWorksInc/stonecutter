@@ -86,8 +86,11 @@ authorise-fail:
   page-intro: You have not signed in to
   page-intro-ending: can not have access to your Profile Card and cannot sign in.
 
-error-403:
+error-csrf:
   page-intro: "CSRF Forbidden Response."
+
+error-forbidden:
+  page-intro: "Request Forbidden Response."
 
 error-404:
   title: Error-404

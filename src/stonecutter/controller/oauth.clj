@@ -70,7 +70,7 @@
          (assoc-in [:session :redirect-uri] redirect-uri)
          (assoc-in [:session :user-login] user-login)
          (assoc-in [:session :access_token] access-token))
-     {:status 404})))
+     {:status 403})))
 
 (defn validate-token [request]
   (let [auth-code (get-in request [:params :code])

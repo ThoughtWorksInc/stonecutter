@@ -5,4 +5,8 @@
 
 (fact "csrf error has correct page-intro translation key"
       (let [page (e/csrf-error)]
-        (-> (html/select page [:.clj--error-info]) first :attrs :data-l8n) => "content:error-403/page-intro"))
+        (-> (html/select page [:.clj--error-info]) first :attrs :data-l8n) => "content:error-csrf/page-intro"))
+
+(fact "forbidden error has correct page-intro translation key"
+(let [page (e/forbidden-error)]
+  (-> (html/select page [:.clj--error-info]) first :attrs :data-l8n) => "content:error-forbidden/page-intro"))
