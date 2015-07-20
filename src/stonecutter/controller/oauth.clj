@@ -1,6 +1,7 @@
 (ns stonecutter.controller.oauth
   (:require [clauth.endpoints :as cl-ep]
             [cheshire.core :as json]
+            [cemerick.url :as url]
             [stonecutter.routes :as routes]
             [stonecutter.db.user :as user]
             [stonecutter.db.client :as client]
@@ -54,7 +55,7 @@
 (defn is-redirect-uri-valid? [client-id redirect-uri]
   (let [client-url (:url (client/retrieve-client client-id))]
     (when (and client-url redirect-uri)
-      (.startsWith redirect-uri client-url))))
+      (= (:host (url/url client-url)) (:host (url/url redirect-uri))))))
    
 (defn authorise [request]
   (let [user-login (get-in request [:session :user-login])

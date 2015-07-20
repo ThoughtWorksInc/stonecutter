@@ -36,7 +36,7 @@
   (-> state
       (k/visit "/authorisation" :headers {"accept" "text/html"} :params {:client_id     client-id
                                                                          :response_type "code"
-                                                                         :redirect_uri  "myclient.com/callback"})))
+                                                                         :redirect_uri  "http://myclient.com/callback"})))
 
 (defn get-auth-code [state]
   (when-let [location (-> state
@@ -57,7 +57,7 @@
         (k/visit "/api/token"
                  :request-method :post
                  :params {:grant_type    "authorization_code"
-                          :redirect_uri  "myclient.com/callback"
+                          :redirect_uri  "http://myclient.com/callback"
                           :code          auth-code
                           :client_id     client-id
                           :client_secret client-secret}))
@@ -68,7 +68,7 @@
 
 (defn setup []
   (s/reset-mongo-stores! "mongodb://localhost:27017/stonecutter-test")
-  (let [client (cl-client/register-client "myclient" "myclient.com")
+  (let [client (cl-client/register-client "myclient" "http://myclient.com")
         client-id (:client-id client)
         client-secret (:client-secret client)
         invalid-client-secret (string/reverse client-secret)

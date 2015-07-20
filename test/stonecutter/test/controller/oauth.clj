@@ -230,15 +230,28 @@
              (provided
                (client/retrieve-client ...client-id...) => {:url correct-url}))
 
+       (tabular
+         (fact "returns true as long as host is the same"
+             (oauth/is-redirect-uri-valid? ...client-id... ?client-url) => true
+             (provided
+               (client/retrieve-client ...client-id...) => {:url correct-url}))
+
+             ?client-url
+             "https://test.com"
+             "http://test.com"
+             "http://test.com"
+             "https://test.com/callback"
+             "https://test.com/callback?params=1")
+
        (fact "returns true if redirect uri has the same root as url in stored client"
              (oauth/is-redirect-uri-valid? ...client-id... (str correct-url "/callback")) => true
              (provided
                (client/retrieve-client ...client-id...) => {:url correct-url}))
-       
+
        (fact "returns nil when client-id or redirect-uri does not exist"
              (oauth/is-redirect-uri-valid? nil correct-url) => nil
              (oauth/is-redirect-uri-valid? "123" nil) => nil)
-       
+
        (fact "returns nil when client does not have url"
              (oauth/is-redirect-uri-valid? ...client-id... correct-url) => nil
              (provided
