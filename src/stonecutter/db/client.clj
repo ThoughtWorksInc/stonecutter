@@ -32,9 +32,10 @@
       (validate-client-entry client-entry)
       (let [name (:name client-entry)
             client-id (:client-id client-entry)
-            client-secret (:client-secret client-entry)]
+            client-secret (:client-secret client-entry)
+            url (:url client-entry)]
         (when (unique-client-id? client-id)
           (cl-client/store-client {:name          name
                                    :client-id     client-id
                                    :client-secret client-secret
-                                   :url           nil}))))))
+                                   :url           url}))))))

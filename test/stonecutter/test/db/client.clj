@@ -9,26 +9,26 @@
           :after (storage/reset-in-memory-stores!)))
 
 (def client-credentials-map
-  '({:client-id "ABCDEFGHIJKLM", :name "Green Party", :client-secret "NOPQRSTUVWXYZ", :url "nil"}
-    {:client-id "NOPQRSTUVWXYZ", :name "Red Party", :client-secret "ABCDEFGHIJKLM", :url "nil"}))
+  '({:client-id "ABCDEFGHIJKLM", :name "Green Party", :client-secret "NOPQRSTUVWXYZ", :url "http://greenparty.org"}
+    {:client-id "NOPQRSTUVWXYZ", :name "Red Party", :client-secret "ABCDEFGHIJKLM", :url "http://redparty.org"}))
 
 (fact "can store clients using credentials from the map"
       (c/store-clients-from-map client-credentials-map)
-      (cl-client/clients) => '({:client-id "NOPQRSTUVWXYZ" :client-secret "ABCDEFGHIJKLM" :name "Red Party"   :url nil}
-                               {:client-id "ABCDEFGHIJKLM" :client-secret "NOPQRSTUVWXYZ" :name "Green Party" :url nil}))
+      (cl-client/clients) => '({:client-id "NOPQRSTUVWXYZ" :client-secret "ABCDEFGHIJKLM" :name "Red Party"   :url "http://redparty.org"}
+                               {:client-id "ABCDEFGHIJKLM" :client-secret "NOPQRSTUVWXYZ" :name "Green Party" :url "http://greenparty.org"}))
 
 (fact "will not store clients with duplicate client-ids"
       (c/store-clients-from-map client-credentials-map)
       (c/store-clients-from-map client-credentials-map)
-      (cl-client/clients) => '({:client-id "NOPQRSTUVWXYZ" :client-secret "ABCDEFGHIJKLM" :name "Red Party"   :url nil}
-                               {:client-id "ABCDEFGHIJKLM" :client-secret "NOPQRSTUVWXYZ" :name "Green Party" :url nil}))
+      (cl-client/clients) => '({:client-id "NOPQRSTUVWXYZ" :client-secret "ABCDEFGHIJKLM" :name "Red Party"   :url "http://redparty.org"}
+                               {:client-id "ABCDEFGHIJKLM" :client-secret "NOPQRSTUVWXYZ" :name "Green Party" :url "http://greenparty.org"}))
 
 (tabular
   (fact "will throw exception if user credentials are invalid"
         (c/validate-client-entry {:client-id     ?client-id
                                   :name          ?name
                                   :client-secret ?client-secret
-                                  :url           nil}) => (throws Exception))
+                                  :url           "random.org"}) => (throws Exception))
   ?client-id            ?name           ?client-secret
   ""                    "valid-name"    "valid-secret"
   "valid-id"            ""              "valid-secret"
@@ -47,9 +47,9 @@
       (let [client-entry {:name           "name"
                           :client-id      "client-id"
                           :client-secret  "client-secret"
-                          :url            nil}]
+                          :url            "url"}]
         (cl-client/store-client client-entry)
         (c/retrieve-client "client-id") => {:name "name"
                                             :client-id "client-id"
-                                            :url nil}
+                                            :url "url"}
         (c/retrieve-client "non-existent-client-id") => nil))

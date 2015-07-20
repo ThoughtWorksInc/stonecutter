@@ -52,7 +52,9 @@
     response))
 
 (defn is-redirect-uri-valid? [client-id redirect-uri]
-  (.startsWith redirect-uri ((client/retrieve-client client-id) :url)))
+  (let [client-url (:url (client/retrieve-client client-id))]
+    (when (and client-url redirect-uri)
+      (.startsWith redirect-uri client-url))))
    
 (defn authorise [request]
   (let [user-login (get-in request [:session :user-login])
@@ -68,7 +70,7 @@
          (assoc-in [:session :redirect-uri] redirect-uri)
          (assoc-in [:session :user-login] user-login)
          (assoc-in [:session :access_token] access-token))
-     {:status 500})))
+     {:status 404})))
 
 (defn validate-token [request]
   (let [auth-code (get-in request [:params :code])

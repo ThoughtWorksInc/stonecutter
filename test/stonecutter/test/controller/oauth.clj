@@ -214,3 +214,32 @@
                  oauth/auto-approver) => false
              (provided
                (user/is-authorised-client-for-user? ...email... ...client-id...) => false)))
+
+(facts "about is-redirect-uri-valid?"
+
+       (def correct-url "http://test.com")
+       (def incorrect-url "http://danger-zone.com")
+
+       (fact "returns true if redirect uri is the same as url in stored client"
+             (oauth/is-redirect-uri-valid? ...client-id... correct-url) => true
+             (provided
+               (client/retrieve-client ...client-id...) => {:url correct-url}))
+
+       (fact "returns false if redirect uri is NOT the same as url in stored client"
+             (oauth/is-redirect-uri-valid? ...client-id... incorrect-url) => false
+             (provided
+               (client/retrieve-client ...client-id...) => {:url correct-url}))
+
+       (fact "returns true if redirect uri has the same root as url in stored client"
+             (oauth/is-redirect-uri-valid? ...client-id... (str correct-url "/callback")) => true
+             (provided
+               (client/retrieve-client ...client-id...) => {:url correct-url}))
+       
+       (fact "returns nil when client-id or redirect-uri does not exist"
+             (oauth/is-redirect-uri-valid? nil correct-url) => nil
+             (oauth/is-redirect-uri-valid? "123" nil) => nil)
+       
+       (fact "returns nil when client does not have url"
+             (oauth/is-redirect-uri-valid? ...client-id... correct-url) => nil
+             (provided
+               (client/retrieve-client ...client-id...) => {})))
