@@ -176,10 +176,10 @@
 
 (facts "about token endpoint"
        (let [user (user/store-user! user-email "password")
-             client-details (cl-client/register-client "MYAPP" "myapp.com")
-             auth-code (cl-auth-code/create-auth-code client-details user "callback")
+             client-details (cl-client/register-client "MYAPP" "http://myapp.com")
+             auth-code (cl-auth-code/create-auth-code client-details user "http://myapp.com/callback")
              request (-> (create-request :get (routes/path :validate-token) {:grant_type   "authorization_code"
-                                                                             :redirect_uri "callback"
+                                                                             :redirect_uri  "http://myapp.com/callback"
                                                                              :code         (:code auth-code)})
                          (create-auth-header client-details))
              response (oauth/validate-token request)
