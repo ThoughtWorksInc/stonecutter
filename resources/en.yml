@@ -87,10 +87,10 @@ authorise-fail:
   page-intro-ending: can not have access to your Profile Card and cannot sign in.
 
 error-csrf:
-  page-intro: "CSRF Forbidden Response."
+  page-intro: "CSRF forbidden response."
 
 error-forbidden:
-  page-intro: "Request Forbidden Response."
+  page-intro: "Request forbidden response."
 
 error-404:
   title: Error-404
@@ -99,7 +99,7 @@ error-404:
   page-content: '<h2>What can I do now?</h2><ul><li>Please return to the <a href="/" title="Return to Home">home page</a>.</li></ul>'
 
 error-500:
-  title: Error-500
+  title: "D'Oh! Something went wrong"
   page-header: "Sorry something went wrong"
   page-intro: "An unexpected error has occured, please try again. We apologise for any inconvenience."
   page-content: '<h2>What can I do now?</h2><ul><li>Please return to the <a href="/" title="Return to Home">home page</a>.</li></ul>'
