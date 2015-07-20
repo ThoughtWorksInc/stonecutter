@@ -10,12 +10,10 @@
   {:name          (schema/both schema/Str (schema/pred not-blank?))
    :client-id     (schema/both schema/Str (schema/pred not-blank?))
    :client-secret (schema/both schema/Str (schema/pred not-blank?))
-   :url           schema/Any})
+   :url           (schema/both schema/Str (schema/pred not-blank?))})
 
 (defn validate-client-entry [client-entry]
-  (schema/validate
-    Client
-    client-entry))
+  (schema/validate Client client-entry))
 
 (defn delete-clients![]
   (cl-client/reset-client-store!))
