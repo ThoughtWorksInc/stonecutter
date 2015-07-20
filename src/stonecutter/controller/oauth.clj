@@ -2,6 +2,7 @@
   (:require [clauth.endpoints :as cl-ep]
             [cheshire.core :as json]
             [cemerick.url :as url]
+            [clojure.tools.logging :as log]
             [stonecutter.routes :as routes]
             [stonecutter.db.user :as user]
             [stonecutter.db.client :as client]
@@ -56,14 +57,14 @@
   (let [client-url (:url (client/retrieve-client client-id))]
     (when (and client-url redirect-uri)
       (= (:host (url/url client-url)) (:host (url/url redirect-uri))))))
-   
+
 (defn authorise [request]
   (let [user-login (get-in request [:session :user-login])
         request (update-in request [:session] dissoc :csrf-token)
         access-token (get-in request [:session :access_token])
         client-id (get-in request [:params :client_id])
         redirect-uri (get-in request [:params :redirect_uri])]
-   (if (is-redirect-uri-valid? client-id redirect-uri) 
+   (if (is-redirect-uri-valid? client-id redirect-uri)
      (-> request
          (assoc-in [:headers "accept"] "text/html")
          auth-handler
@@ -71,7 +72,9 @@
          (assoc-in [:session :redirect-uri] redirect-uri)
          (assoc-in [:session :user-login] user-login)
          (assoc-in [:session :access_token] access-token))
-     {:status 403})))
+     (do
+       (log/warn "Invalid query params for authorisation request")
+       {:status 403}))))
 
 (defn validate-token [request]
   (let [auth-code (get-in request [:params :code])
