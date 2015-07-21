@@ -35,6 +35,7 @@ sign-in-form:
   password-too-long-validation-message: Password is too long
   password-too-short-validation-message: Password should be at least 8 characters long
   sign-in: Sign in to Profile
+  forgot-password: Forgot password?
 
 profile:
   title: Profile
