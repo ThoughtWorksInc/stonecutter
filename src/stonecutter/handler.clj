@@ -85,7 +85,7 @@
   (csrf-err-handler req))
 
 (defn wrap-defaults-config [http-allowed?]
-  (-> (if http-allowed? ring-mw/site-defaults ring-mw/secure-site-defaults)
+  (-> (if http-allowed? ring-mw/site-defaults (assoc ring-mw/secure-site-defaults :proxy true))
       (assoc-in [:session :cookie-attrs :max-age] 3600)
       (assoc-in [:session :cookie-name] "stonecutter-session")
       (assoc-in [:security :anti-forgery] {:error-handler handle-anti-forgery-error})))
@@ -101,7 +101,7 @@
   (-> (scenic/scenic-handler routes/routes api-handlers not-found)
       (ring-mw/wrap-defaults (if (config/http-allowed?)
                                ring-mw/api-defaults
-                               ring-mw/secure-api-defaults))
+                               (assoc ring-mw/secure-api-defaults :proxy true)))
       (m/wrap-error-handling err-handler dev-mode?))) ;; TODO create json error handler
 
 (defn create-app [& {dev-mode? :dev-mode?}]
