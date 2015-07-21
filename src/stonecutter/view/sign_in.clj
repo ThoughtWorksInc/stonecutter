@@ -65,4 +65,5 @@
          set-form-action
          (add-sign-in-errors err)
          (add-params params)
+         vh/remove-work-in-progress
          vh/add-anti-forgery)))
