@@ -37,8 +37,12 @@ block content
           span.form-row__validation.clj--sign-in-password__validation(data-l8n="content:sign-in-form/password-invalid-validation-message")
             | !Cannot be blank
         input.form-row__input.func--password__input(type="password", id="password", name="password")
-      button.button.button--full-width.func--sign-in__button(type="submit", data-l8n="content:sign-in-form/sign-in")
-        | !Sign in to Profile
+      .button-actions
+        .button-actions__primary
+          button.button.button--full-width.func--sign-in__button(type="submit", data-l8n="content:sign-in-form/sign-in")
+            | !Sign in to Profile
+        .button-actions__secondary.clj-wip
+          a.button.button--link.button--full-width(href="#") Forgot password?
 
     .register-now
       h2.register-now__title(data-l8n="content:register-now/title")

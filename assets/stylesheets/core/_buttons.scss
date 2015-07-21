@@ -1,3 +1,14 @@
+.button-actions {
+  @include columns;
+  &__primary {
+    @include column-one-half($medium_device);
+  }
+  &__secondary {
+    @include column-one-half($medium_device);
+  }
+}
+
+
 .button {
   display: inline-block;
   appearance: none;
@@ -45,6 +56,20 @@
     }
     &:focus {
       background-color: darken($light_grey, 5%);
+    }
+  }
+
+  // Less prominent
+  &--link {
+    background: transparent;
+    color: $card_background;
+    font-size: 16px;
+    line-height: 1.4;
+    &:hover {
+      background: transparent;
+    }
+    &:focus {
+      background: transparent;
     }
   }
 
