@@ -26,6 +26,7 @@
                                               [prone "0.8.2"]
                                               [kerodon "0.6.1"]]
                              :plugins        [[lein-ring "0.9.6"]
+                                              [lein-environ "1.0.0"]
                                               [lein-midje "3.1.3"]
                                               [lein-kibit "0.1.2"]]
                              :ring {:handler stonecutter.handler/lein-app
@@ -36,4 +37,5 @@
                                               "integration" ["midje" "stonecutter.integration.*"]
                                               "auto-unit"   ["midje" ":autotest" "test/stonecutter/test/" "src/"]
                                               "gencred"     ["run" "-m" "stonecutter.util.gencred"]
-                                              "lint"        ["eastwood" "{:namespaces [:source-paths]}"]}}})
+                                              "lint"        ["eastwood" "{:namespaces [:source-paths]}"]}
+                             :env {:http-allowed "true"}}})

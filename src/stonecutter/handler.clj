@@ -84,28 +84,32 @@
   (log/warn "ANTI_FORGERY_ERROR - headers: " (:headers req))
   (csrf-err-handler req))
 
-(def wrap-defaults-config
-  (-> ring-mw/site-defaults
+(defn wrap-defaults-config [http-allowed?]
+  (-> (if http-allowed? ring-mw/site-defaults ring-mw/secure-site-defaults)
       (assoc-in [:session :cookie-attrs :max-age] 3600)
       (assoc-in [:session :cookie-name] "stonecutter-session")
       (assoc-in [:security :anti-forgery] {:error-handler handle-anti-forgery-error})))
 
 (defn create-site-app [dev-mode?]
   (-> (scenic/scenic-handler routes/routes site-handlers not-found)
-      (ring-mw/wrap-defaults wrap-defaults-config)
+      (ring-mw/wrap-defaults (wrap-defaults-config (config/http-allowed?)))
       m/wrap-translator
       (m/wrap-theme (config/theme))
       (m/wrap-error-handling err-handler dev-mode?)))
 
 (defn create-api-app [dev-mode?]
   (-> (scenic/scenic-handler routes/routes api-handlers not-found)
-      (ring-mw/wrap-defaults ring-mw/api-defaults)
-      (m/wrap-error-handling err-handler dev-mode?)))                   ;; TODO create json error handler
+      (ring-mw/wrap-defaults (if (config/http-allowed?)
+                               ring-mw/api-defaults
+                               ring-mw/secure-api-defaults))
+      (m/wrap-error-handling err-handler dev-mode?))) ;; TODO create json error handler
 
 (defn create-app [& {dev-mode? :dev-mode?}]
   (splitter (create-site-app dev-mode?) (create-api-app dev-mode?)))
 
 (def app (create-app :dev-mode? false))
+
+(def lein-app (create-app :dev-mode? true))
 
 (defn -main [& args]
   (log-config/init-logger!)
@@ -124,4 +128,3 @@
   (s/setup-in-memory-stores!)
   (client-seed/load-client-credentials-and-store-clients (config/client-credentials-file-path)))
 
-(def lein-app (create-app :dev-mode? true))

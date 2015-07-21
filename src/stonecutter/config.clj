@@ -22,3 +22,6 @@
 
 (defn theme []
   (get env/env :theme))
+
+(defn http-allowed? []
+  (= "true" (get env/env :http-allowed)))
