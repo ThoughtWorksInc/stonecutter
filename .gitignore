@@ -18,3 +18,4 @@ npm-debug.log
 *.iml
 *.swp
 */.vagrant/*
+ops/roles/nginx/files/secure**
