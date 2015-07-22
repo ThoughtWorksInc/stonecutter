@@ -1,0 +1,17 @@
+.settings {
+  margin-bottom: 45px;
+}
+
+.settings__list {
+  @include reset-list;
+}
+
+.settings__item {
+  @include font-size(18px);
+  margin-top: 0;
+  line-height: 1.3;
+}
+
+.settings__link {
+  text-decoration: none;
+}

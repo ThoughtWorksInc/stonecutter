@@ -1,10 +1,14 @@
 .flash-message {
   padding: 16px;
-  margin-bottom: 16px;
-  >:last-of-type {
-    margin-bottom: 0;
-  }
+  margin-bottom: 32px;
   &--success {
-
+    background-color: #ceedea;
+  }
+  &--fail {
+    background-color: $light_pink;
+  }
+  .flash-message__title {
+    margin-top: 0;
+    margin-bottom: 0;
   }
 }
