@@ -1,0 +1,10 @@
+.flash-message {
+  padding: 16px;
+  margin-bottom: 16px;
+  >:last-of-type {
+    margin-bottom: 0;
+  }
+  &--success {
+
+  }
+}

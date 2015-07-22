@@ -7,8 +7,17 @@ block vars
 
 block headerScripts
   style.
+    .section {
+      margin-bottom: 4rem;
+    }
+    .section-title {
+      /*margin-top: 3rem;*/
+    }
     .library-item {
       margin-bottom: 2rem;
+    }
+    .library-item:last-of-type {
+      margin-bottom: 0;
     }
 
 
@@ -16,16 +25,26 @@ block content
 
   .middle-container
 
-    h2 Applications
+    .section
+      h2.section-title Applications
 
-    .library-item
-      h3.library-title Empty
-      .library__demo
-        ul.app__list
-          +authorisedAppItemEmpty()
+      .library-item
+        h3.library-title Empty
+        .library__demo
+          ul.app__list
+            +authorisedAppItemEmpty()
 
-    .library-item
-      h3.library-title Populated
-      .library__demo
-        ul.app__list
-          +authorisedAppItem("Green Party")
+      .library-item
+        h3.library-title Populated
+        .library__demo
+          ul.app__list
+            +authorisedAppItem("Green Party")
+
+    .section
+      h2.section-title Flash message
+
+      .library-item
+        h3.library-title Success
+        .library__demo
+          .flash-message.flash-message--success
+            p Your password was saved successfully.
