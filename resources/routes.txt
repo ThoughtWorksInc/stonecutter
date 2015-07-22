@@ -1,4 +1,5 @@
 GET     /                       home
+GET     /ping                   ping
 GET     /register               show-registration-form
 POST    /register               register-user
 GET     /sign-in                show-sign-in-form

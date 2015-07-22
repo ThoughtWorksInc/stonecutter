@@ -42,9 +42,15 @@
       (sh/enlive-response default-context)
       (r/status 403)))
 
+(defn ping [request]
+  (log/debug "PING REQUEST: " request)
+  (-> (r/response "pong")
+      (r/content-type "text/plain")))
+
 (def site-handlers
   (->
     {:home                               user/home
+     :ping                               ping
      :show-registration-form             user/show-registration-form
      :register-user                      user/register-user
      :show-sign-in-form                  user/show-sign-in-form
@@ -68,7 +74,8 @@
                                         :show-sign-in-form      :sign-in
                                         :sign-out
                                         :show-profile-deleted
-                                        :authorise})))
+                                        :authorise
+                                        :ping})))
 
 (def api-handlers
   {:validate-token         oauth/validate-token})
