@@ -156,14 +156,6 @@
                           :attrs
                           :value) => "invalid@credentials.com"))))
 
-(fact "user data is saved"
-      (let [user-registration-data (create-user "valid@email.com" "password")]
-        (-> (create-request :post "/register" register-user-params)
-            u/register-user
-            :status) => 302
-        (provided
-          (user/store-user! "valid@email.com" "password") => ...user...)))
-
 (fact "account can be deleted, user is redirected to profile-deleted and session is cleared"
       (-> (create-request :post "/delete-account" nil)
           (assoc-in [:session :user-login] "account_to_be@deleted.com")
@@ -175,6 +167,14 @@
 (fact "user can access profile-deleted page when not signed in"
       (-> (create-request :get "/profile-deleted" nil)
           u/show-profile-deleted) => (contains {:status 200}))
+
+(fact "user data is saved"
+      (let [user-registration-data (create-user "valid@email.com" "password")]
+        (-> (create-request :post "/register" register-user-params)
+            u/register-user
+            :status) => 302
+        (provided
+          (user/store-user! "valid@email.com" "password") => ...user...)))
 
 (fact "email must not be a duplicate"
       (let [html-response (-> (create-request :post "/register" register-user-params)
@@ -208,6 +208,59 @@
                           first
                           :attrs
                           :value) => "invalid"))))
+
+(facts "about changing password"
+       (fact "the user's password is updated if current password is correct and new password is confirmed"
+             (-> (create-request :post "/change-password" {:current_password "foo"
+                                                           :new_password "bar"
+                                                           :confirm_new_password "bar"})
+                 (assoc-in [:session :user-login] "user_who_is@changing_password.com")
+                 u/change-password
+                 :status) => 302
+             (provided
+               (user/authenticate-and-retrieve-user "user_who_is@changing_password.com" "foo") => ...user...
+               (user/change-password! "user_who_is@changing_password.com" "bar") => ...updated-user...))
+
+       (fact "user is returned to change-password page and user's password is not changed if there are validation errors"
+             (-> (create-request :post "/change-password" ...invalid-params...)
+                 (assoc-in [:session :user-login] "user_who_is@changing_password.com")
+                 u/change-password
+                 :status) => 200
+             (provided
+               (v/validate-change-password ...invalid-params...) => {:some-validation-key "some-value"}
+               (user/change-password! anything anything) => anything :times 0))
+
+       (fact "user cannot change password if current-password is invalid"
+             (-> (create-request :post "/change-password" {:current_password "wrong-password"})
+                 (assoc-in [:session :user-login] "user_who_is@changing_password.com")
+                 u/change-password
+                 :status) => 200
+             (provided
+               (v/validate-change-password anything) => {}
+               (user/authenticate-and-retrieve-user "user_who_is@changing_password.com" "wrong-password") => nil
+               (user/change-password! anything anything) => anything :times 0))
+
+       (future-facts "change-password page is rendered with errors"
+              (fact "when validation fails"
+                    (-> (create-request :post "/change-password" ...invalid-params...)
+                        (assoc-in [:session :user-login] "user_who_is@changing_password.com")
+                        u/change-password
+                        :body
+                        html/html-snippet
+                        (html/select [:.clj--validation-summary__item])) =not=> empty?
+                    (provided
+                      (v/validate-change-password ...invalid-params...) => {:some-validation-key "some-value"}))
+
+              (fact "when authorisation fails"
+                    (-> (create-request :post "/change-password" ...params-with-wrong-current-password...)
+                        u/change-password
+                        :body
+                        html/html-snippet
+                        (html/select [:.clj--validation-summary__item])) =not=> empty?
+                    (provided
+                      (v/validate-change-password ...params-with-wrong-current-password...) => {}
+                      (user/authenticate-and-retrieve-user anything anything) => nil))))
+
 
 (facts "about profile created"
        (fact "view defaults with link to view profile"

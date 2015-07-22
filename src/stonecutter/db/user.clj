@@ -45,16 +45,23 @@
     (update-in user [:authorised-clients] unique-conj client-id)))
 
 (defn add-authorised-client-for-user! [email client-id]
-  (-> (m/update! @cl-user/user-store email (add-client-id client-id))))
+  (m/update! @cl-user/user-store email (add-client-id client-id)))
 
 (defn remove-client-id [client-id]
   (fn [user]
     (update-in user [:authorised-clients] (partial remove #(= % client-id)))))
 
 (defn remove-authorised-client-for-user! [email client-id]
-  (-> (m/update! @cl-user/user-store email (remove-client-id client-id))))
+  (m/update! @cl-user/user-store email (remove-client-id client-id)))
 
 (defn is-authorised-client-for-user? [email client-id]
   (let [user (retrieve-user email)
         authorised-clients (set (:authorised-clients user))]
     (boolean (authorised-clients client-id))))
+
+(defn update-password [password]
+  (fn [user]
+    (assoc user :password (cl-user/bcrypt password))))
+
+(defn change-password! [email new-password]
+  (m/update! @cl-user/user-store email (update-password new-password)))

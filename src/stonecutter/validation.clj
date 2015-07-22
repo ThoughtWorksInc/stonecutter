@@ -64,3 +64,5 @@
        (map (partial run-validation params))
        (remove (comp nil? second))
        (into {})))
+
+(defn validate-change-password [params])

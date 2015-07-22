@@ -37,6 +37,19 @@
           (redirect-to-profile-created request))
       (sh/enlive-response (register/registration-form request) (:context request)))))
 
+(defn change-password [request]
+  (let [email (get-in request [:session :user-login])
+        params (:params request)
+        current-password (:current_password params)
+        new-password (:new_password params)
+        err (v/validate-change-password params)]
+    (if (empty? err)
+      (if (user/authenticate-and-retrieve-user email current-password)
+        (do (user/change-password! email new-password)
+            {:status 302})
+        {:status 200})
+      {:status 200})))
+
 (defn sign-in [request]
   (let [client-id (get-in request [:session :client-id])
         return-to (get-in request [:session :return-to])

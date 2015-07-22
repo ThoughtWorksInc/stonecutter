@@ -6,7 +6,7 @@
             [stonecutter.db.storage :as s]
             [stonecutter.db.user :as user]))
 
-(facts "about storage of users"
+(facts "about storage of users - user storage journey"
        ;; These facts do not mock the database
        (s/setup-in-memory-stores!)
        (fact "can store a user"
@@ -40,6 +40,13 @@
                            :name nil
                            :url nil
                            :authorised-clients []}))
+
+       (fact "can change user's password"
+             (user/change-password! "email@server.com" "new-password")
+             (user/authenticate-and-retrieve-user "email@server.com" "password") => nil
+             (user/authenticate-and-retrieve-user "email@server.com" "new-password")
+             => (contains {:login "email@server.com" :name nil :url nil}))
+
 
        (fact "can delete a user"
              (user/delete-user! "email@server.com") => {}
@@ -155,3 +162,12 @@
              (user/is-authorised-client-for-user? ...email... ...client-id...) => false
              (provided
                (user/retrieve-user ...email...) => {:authorised-clients [...a-different-client-id...]})))
+
+(facts "about changing password"
+       (fact "update-password returns a function that hashes and updates the user's password"
+            (let [password "new-raw-password"
+                  update-password-function (user/update-password password)
+                  user {:password "current-hashed-password" :some-key "some-value"}]
+              (update-password-function user) => {:password "new-hashed-password" :some-key "some-value"}
+              (provided
+                (cl-user/bcrypt "new-raw-password") => "new-hashed-password"))))
