@@ -25,7 +25,9 @@ change-password:
   password-blank-validation-message: Password cannot be blank
   password-too-long-validation-message: Password is too long
   password-too-short-validation-message: Password should be at least 8 characters long
-  confirm-password: Confirm password
+  current-password: Current password
+  new-password: New password
+  verify-password: Verify password
   confirm-password-invalid-validation-message: Ensure your passwords match
   unknown-error: Whoops! Unknown error
   form-button: Save changes
