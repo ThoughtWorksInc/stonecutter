@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
     <link rel="icon" type="image/png" href="favicon.png">
-    <link href="stylesheets/application.css" media="screen" rel="stylesheet" type="text/css"/>
+    <link href="stylesheets/application.css" data-clojure-id="theme-link" media="screen" rel="stylesheet" type="text/css"/>
   </head>
   <body class="func--profile-page"><a href="#main" class="skip-link">Skip navigation</a>
     <div role="banner" class="header">
@@ -56,39 +56,27 @@
             </div>
           </div>
         </div>
-        <div class="authorised-apps clj-wip">
-          <h2 aria-describedby="authorised-apps-lede" class="authorised-apps__title">Applications</h2>
-          <p id="authorised-apps-lede" class="lede">Manage the applications that you've shared your Profile Card with.</p>
-          <ul class="app__list">
-            <li class="app__item">
-              <div class="app__title">Green Party</div>
-              <div class="app__remove">
-                <form action="./unshare-profile-card" method="post">
-                  <!-- hidden inputs here-->
-                  <button type="submit" class="button button--remove"><i class="fa button__icon fa-remove"></i><span class="button__text">Unshare Card</span>
-                  </button>
-                </form>
-              </div>
+        <div class="authorised-apps">
+          <h2 aria-describedby="authorised-apps-lede" data-l8n="content:applications/title" class="authorised-apps__title">Applications</h2>
+          <p id="authorised-apps-lede" data-l8n="content:applications/intro" class="lede">Manage the applications that you've shared your Profile Card with.</p>
+          <ul class="app__list clj--app__list func--app__list">
+            <li class="app__item clj--authorised-app__list-item">
+              <div class="app__title clj--app-name">Green Party</div>
+              <div class="app__remove"><a href="./unshare-profile-card" class="clj--app-item__unshare-link func--app-item__unshare-link">
+                  <button type="submit" class="button button--remove clj--authorised-app__remove-button"><i class="fa button__icon fa-remove"></i><span data-l8n="content:applications/unshare-button" class="button__text">Unshare Card</span>
+                  </button></a></div>
             </li>
-            <li class="app__item">
-              <div class="app__title">A really long name that will break this</div>
-              <div class="app__remove">
-                <form action="./unshare-profile-card" method="post">
-                  <!-- hidden inputs here-->
-                  <button type="submit" class="button button--remove"><i class="fa button__icon fa-remove"></i><span class="button__text">Unshare Card</span>
-                  </button>
-                </form>
-              </div>
+            <li class="app__item clj--authorised-app__list-item">
+              <div class="app__title clj--app-name">A really long name that will break this</div>
+              <div class="app__remove"><a href="./unshare-profile-card" class="clj--app-item__unshare-link func--app-item__unshare-link">
+                  <button type="submit" class="button button--remove clj--authorised-app__remove-button"><i class="fa button__icon fa-remove"></i><span data-l8n="content:applications/unshare-button" class="button__text">Unshare Card</span>
+                  </button></a></div>
             </li>
-            <li class="app__item">
-              <div class="app__title">Anotherapp</div>
-              <div class="app__remove">
-                <form action="./unshare-profile-card" method="post">
-                  <!-- hidden inputs here-->
-                  <button type="submit" class="button button--remove"><i class="fa button__icon fa-remove"></i><span class="button__text">Unshare Card</span>
-                  </button>
-                </form>
-              </div>
+            <li class="app__item clj--authorised-app__list-item">
+              <div class="app__title clj--app-name">Anotherapp</div>
+              <div class="app__remove"><a href="./unshare-profile-card" class="clj--app-item__unshare-link func--app-item__unshare-link">
+                  <button type="submit" class="button button--remove clj--authorised-app__remove-button"><i class="fa button__icon fa-remove"></i><span data-l8n="content:applications/unshare-button" class="button__text">Unshare Card</span>
+                  </button></a></div>
             </li>
           </ul>
         </div>

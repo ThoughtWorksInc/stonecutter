@@ -8,7 +8,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
     <link rel="icon" type="image/png" href="favicon.png">
-    <link href="stylesheets/application.css" media="screen" rel="stylesheet" type="text/css"/>
+    <link href="stylesheets/application.css" data-clojure-id="theme-link" media="screen" rel="stylesheet" type="text/css"/>
+    <style>
+      .library-item {
+        margin-bottom: 2rem;
+      }
+      
+      
+    </style>
   </head>
   <body class="func--library-page"><a href="#main" class="skip-link">Skip navigation</a>
     <div role="banner" class="header">
@@ -20,7 +27,30 @@
     </div>
     <div id="main" role="main" class="main-content">
       <div class="middle-container">
-        <h2>Loader icon</h2><i class="fa fa-cog fa-spin"></i>
+        <h2>Applications</h2>
+        <div class="library-item">
+          <h3 class="library-title">Empty</h3>
+          <div class="library__demo">
+            <ul class="app__list">
+              <li class="app__item clj--authorised-app__list-item--empty">
+                <div data-l8n="content:applications/list-empty" class="app__title">No applications use your Profile Card</div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="library-item">
+          <h3 class="library-title">Populated</h3>
+          <div class="library__demo">
+            <ul class="app__list">
+              <li class="app__item clj--authorised-app__list-item">
+                <div class="app__title clj--app-name">Green Party</div>
+                <div class="app__remove"><a href="./unshare-profile-card" class="clj--app-item__unshare-link func--app-item__unshare-link">
+                    <button type="submit" class="button button--remove clj--authorised-app__remove-button"><i class="fa button__icon fa-remove"></i><span data-l8n="content:applications/unshare-button" class="button__text">Unshare Card</span>
+                    </button></a></div>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
     <script>document.addEventListener("touchstart", function(){}, true);</script>

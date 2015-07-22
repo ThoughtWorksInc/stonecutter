@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
     <link rel="icon" type="image/png" href="favicon.png">
-    <link href="stylesheets/application.css" media="screen" rel="stylesheet" type="text/css"/>
+    <link href="stylesheets/application.css" data-clojure-id="theme-link" media="screen" rel="stylesheet" type="text/css"/>
   </head>
   <body class="func--unshare-profile-card-page"><a href="#main" class="skip-link">Skip navigation</a>
     <div role="banner" class="header">
@@ -20,21 +20,23 @@
     </div>
     <div id="main" role="main" class="main-content">
       <div class="middle-container">
-        <div class="modal__content clj-modal-contents js-modal clj-wip">
+        <div class="modal__content clj-modal-contents js-modal">
           <div class="modal__header">
-            <h2 data-l8n="" class="modal__title"><span data-l8n="content:unshare/modal-unshare-title">Are you sure you want to unshare your Profile Card with</span> <span class="clj--app-name">Green Party</span>?
+            <h2 class="modal__title"><span data-l8n="content:unshare/modal-unshare-title">Are you sure you want to unshare your Profile Card with</span> <span class="clj--app-name">Green Party</span>?
             </h2>
           </div>
           <div class="modal__body">
-        <p data-l8n="content:unshare/modal-unshare-lede">If you unshare you will need to approve <span class="clj-app-name">Green Party</a> again to sign in.</p>
+            <p><span data-l8n="content:unshare/modal-unshare-lede-begin">If you unshare you will need to approve</span> <span class="clj--app-name">Green Party</span> <span data-l8n="content:unshare/modal-unshare-lede-end">again to sign in.</span>
+            </p>
           </div>
           <div class="modal-buttons">
-        <div class="modal-buttons__primary">
-          <form action="./profile" method="post" class="unshare-card clj-unshare-card-form">
-            <button type="submit" data-l8n="content:unshare/modal-unshare-ok-button" class="button button--full-width">Unshare Profile Card</button>
-          </form>
-        </div>
-        <div class="modal-buttons__secondary"><a href="./profile" data-l8n="content:unshare/modal-unshare-cancel-button" class="button button--full-width button--secondary">Cancel</a></div>
+            <div class="modal-buttons__primary">
+              <form action="./profile" method="post" class="unshare-card clj--unshare-profile-card__form">
+                <input type="hidden" name="client_id" value="1234" class="clj--client-id__input">
+                <button type="submit" data-l8n="content:unshare/modal-unshare-ok-button" class="button button--full-width func--unshare-profile-card__button">Unshare Profile Card</button>
+              </form>
+            </div>
+            <div class="modal-buttons__secondary"><a href="./profile" data-l8n="content:unshare/modal-unshare-cancel-button" class="button button--full-width button--secondary clj--unshare-profile-card-cancel__link">Cancel</a></div>
           </div>
         </div>
       </div>
