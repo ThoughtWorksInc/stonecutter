@@ -5,9 +5,19 @@
 (defn string-of-length [n]
   (apply str (repeat n "x")))
 
+(def not-duplicate-user (fn [email] false))
+
+(def is-duplicate-user (fn [email] true))
+
+(def email-of-length-254
+  (str (string-of-length 250) "@x.y"))
+
+(def email-of-length-255
+  (str (string-of-length 251) "@x.y"))
+
 (tabular
   (fact "testing email format"
-        (v/is-email-valid? {:email ?email}) => ?is-valid?)
+        (v/is-email-valid? ?email) => ?is-valid?)
 
   ?email                        ?is-valid?
   nil                           falsey
@@ -21,19 +31,9 @@
   "very123.v0alid@email.co.uk"  truthy
   "valid@email.averylongdsn"    truthy)
 
-(def not-duplicate-user (fn [email] false))
-
-(def is-duplicate-user (fn [email] true))
-
-(def email-of-length-254 
-  (str (string-of-length 250) "@x.y"))
-
-(def email-of-length-255 
-  (str (string-of-length 251) "@x.y"))
-
 (tabular
   (fact "testing email validation"
-        (v/validate-registration-email not-duplicate-user {:email ?email})=> ?error)
+        (v/validate-registration-email ?email not-duplicate-user)=> ?error)
 
   ?email                        ?error
   "valid@email.com"             nil
@@ -43,10 +43,10 @@
 
 (tabular
   (fact "testing password validation"
-        (v/validate-password {:password ?password}) => ?error)
+        (v/validate-password ?password) => ?error)
 
   ?password                     ?error
-  "some-valid-password"         nil 
+  "some-valid-password"         nil
   nil                           :blank
   ""                            :blank
   "                "            :blank
@@ -86,3 +86,20 @@
   "valid@email.com"        ""                   {:password :blank}
   "invalid-email"          ""                   {:email :invalid
                                                  :password :blank})
+
+(tabular
+ (fact "validating change-password"
+       (v/validate-change-password {
+                                    :current-password ?current-password
+                                    :new-password ?new-password
+                                    :confirm-new-password ?confirm-new-password}) => ?validations)
+
+  ?current-password         ?new-password       ?confirm-new-password       ?validations
+  "currentPassword"         "newPassword"       "newPassword"               {}
+  ""                        "newPassword"       "newPassword"               {:current-password :blank}
+  "currentPassword"         ""                  ""                          {:new-password :blank}
+  "currentPassword"         "currentPassword"   "currentPassword"           {:new-password :unchanged}
+  "currentPassword"         "newPassword"       "nonMatchingNewPassword"    {:confirm-new-password :invalid}
+  ""                        ""                  "newPassword"               {:current-password :blank
+                                                                             :new-password :blank
+                                                                             :confirm-new-password :invalid})

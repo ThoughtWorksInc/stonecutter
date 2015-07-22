@@ -211,15 +211,16 @@
 
 (facts "about changing password"
        (fact "the user's password is updated if current password is correct and new password is confirmed"
-             (-> (create-request :post "/change-password" {:current_password "foo"
-                                                           :new_password "bar"
-                                                           :confirm_new_password "bar"})
+             (-> (create-request :post "/change-password" {:current-password "currentPassword"
+                                                           :new-password "newPassword"
+                                                           :confirm-new-password "newPassword"})
                  (assoc-in [:session :user-login] "user_who_is@changing_password.com")
                  u/change-password
                  :status) => 302
              (provided
-               (user/authenticate-and-retrieve-user "user_who_is@changing_password.com" "foo") => ...user...
-               (user/change-password! "user_who_is@changing_password.com" "bar") => ...updated-user...))
+               (user/authenticate-and-retrieve-user "user_who_is@changing_password.com"
+                                                    "currentPassword") => ...user...
+               (user/change-password! "user_who_is@changing_password.com" "newPassword") => ...updated-user...))
 
        (fact "user is returned to change-password page and user's password is not changed if there are validation errors"
              (-> (create-request :post "/change-password" ...invalid-params...)
@@ -231,7 +232,7 @@
                (user/change-password! anything anything) => anything :times 0))
 
        (fact "user cannot change password if current-password is invalid"
-             (-> (create-request :post "/change-password" {:current_password "wrong-password"})
+             (-> (create-request :post "/change-password" {:current-password "wrong-password"})
                  (assoc-in [:session :user-login] "user_who_is@changing_password.com")
                  u/change-password
                  :status) => 200

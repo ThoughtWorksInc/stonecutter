@@ -7,7 +7,7 @@
 
 (def password-max-length 254)
 
-(defn is-email-valid? [{email :email}]
+(defn is-email-valid? [email]
   (when email
     (re-matches #"\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+\b" email)))
 
@@ -17,52 +17,62 @@
 (defn is-too-short? [string min-length]
   (< (count string) min-length))
 
-(defn validate-registration-email [is-duplicate-user-fn params]
-  (cond (is-too-long? (:email params) email-max-length) :too-long
-        (not (is-email-valid? params)) :invalid
-        (is-duplicate-user-fn (:email params)) :duplicate
+(defn validate-registration-email [email is-duplicate-user-fn]
+  (cond (is-too-long? email email-max-length) :too-long
+        (not (is-email-valid? email)) :invalid
+        (is-duplicate-user-fn email) :duplicate
         :default nil))
 
-(defn validate-sign-in-email [params]
-  (cond (is-too-long? (:email params) email-max-length) :too-long
-        (not (is-email-valid? params)) :invalid
+(defn validate-sign-in-email [email]
+  (cond (is-too-long? email email-max-length) :too-long
+        (not (is-email-valid? email)) :invalid
         :default nil))
 
-(defn validate-password [params]
-  (cond (s/blank? (:password params)) :blank
-        (is-too-long? (:password params) password-max-length) :too-long
-        (is-too-short? (:password params) password-min-length) :too-short
+(defn validate-password [password]
+  (cond (s/blank? password) :blank
+        (is-too-long? password password-max-length) :too-long
+        (is-too-short? password password-min-length) :too-short
         :default nil))
 
-(defn do-passwords-match? [{:keys [password confirm-password]}]
-  (= confirm-password password))
+(defn validate-passwords-match [password-1 password-2]
+  (if (= password-1 password-2)
+    nil
+    :invalid))
 
-(defn validate-if-passwords-match [params]
-  (cond (not (do-passwords-match? params)) :invalid
-        :default nil))
+(defn validate-passwords-are-different [password-1 password-2]
+  (if (= password-1 password-2)
+    :unchanged
+    nil))
 
-(defn run-validation [params [validation-key validation-fn]]
-  [validation-key (validation-fn params)])
-
-(defn registration-validations [is-duplicate-user-fn]
-  {:email            (partial validate-registration-email is-duplicate-user-fn)
-   :password         validate-password
-   :confirm-password validate-if-passwords-match})
+(defn registration-validations [params is-duplicate-user-fn]
+  (let [{:keys [email password confirm-password]} params]
+    {:email            (validate-registration-email email is-duplicate-user-fn)
+     :password         (validate-password password)
+     :confirm-password (validate-passwords-match password confirm-password)}))
 
 (defn validate-registration [params duplicate-user-fn]
-  (->> (registration-validations duplicate-user-fn)
-       (map (partial run-validation params))
+  (->> (registration-validations params duplicate-user-fn)
        (remove (comp nil? second))
        (into {})))
 
-(def sign-in-validations
-  {:email            validate-sign-in-email
-   :password         validate-password})
+(defn sign-in-validations [params]
+  (let [{:keys [email password]} params]
+    {:email     (validate-sign-in-email email)
+     :password  (validate-password password)}))
 
 (defn validate-sign-in [params]
-  (->> sign-in-validations
-       (map (partial run-validation params))
+  (->> (sign-in-validations params)
        (remove (comp nil? second))
        (into {})))
 
-(defn validate-change-password [params])
+(defn change-password-validations [params]
+  (let [{:keys [current-password new-password confirm-new-password]} params]
+    {:current-password     (validate-password current-password)
+     :new-password         (or (validate-password new-password)
+                               (validate-passwords-are-different current-password new-password))
+     :confirm-new-password (validate-passwords-match new-password confirm-new-password)}))
+
+(defn validate-change-password [params]
+  (->> (change-password-validations params)
+       (remove (comp nil? second))
+       (into {})))

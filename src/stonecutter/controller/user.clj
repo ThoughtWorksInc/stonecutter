@@ -40,8 +40,8 @@
 (defn change-password [request]
   (let [email (get-in request [:session :user-login])
         params (:params request)
-        current-password (:current_password params)
-        new-password (:new_password params)
+        current-password (:current-password params)
+        new-password (:new-password params)
         err (v/validate-change-password params)]
     (if (empty? err)
       (if (user/authenticate-and-retrieve-user email current-password)
