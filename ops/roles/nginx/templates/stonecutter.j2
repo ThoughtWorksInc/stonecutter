@@ -1,10 +1,6 @@
 server {
   listen 80;
-  # return 301 {{ site_address }}$request_uri;
-  # When add SSL certs uncomment the line above and delete the proxy_pass lines below line below
-  location / {
-    proxy_pass http://localhost:5000;
-  }
+  return 301 {{ site_address }}$request_uri;
 }
 
 server {
