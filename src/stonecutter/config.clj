@@ -1,5 +1,6 @@
 (ns stonecutter.config
-  (:require [environ.core :as env]))
+  (:require [environ.core :as env]
+            [clojure.tools.logging :as log]))
 
 (defn port []
   (Integer. (get env/env :port "3000")))
@@ -24,4 +25,4 @@
   (get env/env :theme))
 
 (defn http-allowed? []
-  (= "true" (get env/env :http-allowed)))
+  (= "true" (get env/env :http-allowed "true")))
