@@ -48,6 +48,10 @@ app.all('/register', function (req, res) {
   customRender(res, 'register', pageData);
 });
 
+app.all('/change-password', function (req, res) {
+  customRender(res, 'change-password', pageData);
+});
+
 app.all('/profile-created', function (req, res) {
   customRender(res, 'profile-created', pageData);
 });
