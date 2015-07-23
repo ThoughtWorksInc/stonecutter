@@ -1,5 +1,6 @@
 @mixin h1 {
   margin-top: 0;
+  margin-bottom: 26px;
   @include font-size(28px);
   font-weight: bold;
   line-height: 1.2;
@@ -7,6 +8,7 @@
   color: $dark_cyan;
   @include width-from($medium_device) {
     @include font-size(34px);
+    margin-bottom: 32px;
   }
 }
 @mixin h2 {
@@ -22,7 +24,6 @@
 
 .page-title {
   @include h1;
-  margin-bottom: 18px;
 }
 
 h2 {
