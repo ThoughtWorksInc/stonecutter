@@ -10,6 +10,7 @@ GET     /profile-created        show-profile-created
 GET     /profile-deleted        show-profile-deleted
 GET     /delete-account         show-delete-account-confirmation
 POST    /delete-account         delete-account
+POST    /change-password        change-password
 GET     /authorisation          authorise
 POST    /authorisation          authorise-client
 GET     /authorise-form         show-authorise-form
