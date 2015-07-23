@@ -233,7 +233,7 @@
                         html/html-snippet
                         (html/select [:.clj--validation-summary__item])) => empty?)
 
-              (future-fact "when validation fails"
+              (fact "when validation fails"
                     (-> (create-request :post "/change-password" ...invalid-params...)
                         (assoc-in [:session :user-login] "user_who_is@changing_password.com")
                         u/change-password

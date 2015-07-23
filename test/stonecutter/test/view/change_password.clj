@@ -5,7 +5,8 @@
             [stonecutter.translation :as t]
             [stonecutter.routes :as r]
             [stonecutter.helper :as helper]
-            [stonecutter.view.change-password :refer [change-password-form]]))
+            [stonecutter.view.change-password :refer [change-password-form
+                                                      current-password-error-translation-key]]))
 
 (fact "should return some html"
       (let [page (-> (th/create-request)
@@ -38,18 +39,23 @@
 
 (facts "about displaying errors"
        (tabular
-         (facts "when current-password is incorrect"
-                (let [errors {:current-password ?current-password-error}
-                      page (-> (th/create-request {} errors) change-password-form)]
-                  (fact "validation-summary--show class is added to the validation summary element"
-                        (-> (html/select page [:.clj--validation-summary])
-                            first :attrs :class) => (contains "validation-summary--show"))
-                  (fact "confirm password validation is present as a validation summary item"
-                        (html/select page [:.clj--validation-summary__item]) =not=> empty?)
-                  (fact "correct error message is displayed"
-                        (html/select page [[:.clj--validation-summary__item (html/attr= :data-l8n "content:change-password-form/current-password-invalid-validation-message")]]) =not=> empty?)))
-         ?current-password-error
-         :blank
-         :too-short
-         :too-long
-         :invalid))
+         (let [page (-> (th/create-request {} ?errors) change-password-form)]
+           (fact "validation-summary--show class is added to the validation summary element"
+                 (-> (html/select page [:.clj--validation-summary])
+                     first :attrs :class) => (contains "validation-summary--show"))
+           (fact "validation message is present as a validation summary item"
+                 (html/select page [:.clj--validation-summary__item]) =not=> empty?)
+           (fact "correct error message is displayed"
+                 (-> (html/select page [:.clj--validation-summary__item])
+                     first :attrs :data-l8n) => ?translation-key))
+         ?errors                          ?translation-key
+         {:current-password :blank}       current-password-error-translation-key
+         {:current-password :too-short}   current-password-error-translation-key
+         {:current-password :too-long}    current-password-error-translation-key
+         {:current-password :invalid}     current-password-error-translation-key
+         {:new-password :blank}           "content:change-password-form/new-password-blank-validation-message"
+         {:new-password :too-short}       "content:change-password-form/new-password-too-short-validation-message"
+         {:new-password :too-long}        "content:change-password-form/new-password-too-long-validation-message"
+         {:new-password :unchanged}       "content:change-password-form/new-password-unchanged-validation-message"
+         {:confirm-new-password :invalid} "content:change-password-form/confirm-new-password-invalid-validation-message"
+         ))
