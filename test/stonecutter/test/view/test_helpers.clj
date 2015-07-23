@@ -9,6 +9,9 @@
   ([translator]
    (create-request translator nil {} {}))
 
+  ([translator err]
+   (create-request translator err {} {}))
+
   ([translator err params]
    (create-request translator err params {}))
 

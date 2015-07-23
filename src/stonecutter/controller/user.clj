@@ -27,16 +27,23 @@
                                             :access_token (:token (cl-token/create-token client user))})
     (throw (Exception. "Invalid client"))))
 
+(defn preserve-session [response request]
+  (-> response
+      (assoc :session (:session request))))
+
+(defn show-registration-form [request]
+  (sh/enlive-response (register/registration-form request) (:context request)))
+
 (defn register-user [request]
   (let [params (:params request)
         email (:email params)
         password (:password params)
         err (v/validate-registration params user/is-duplicate-user?)
-        request (assoc-in request [:context :errors] err)]
+        request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
       (-> (user/store-user! email password)
           (redirect-to-profile-created request))
-      (sh/enlive-response (register/registration-form request) (:context request)))))
+      (show-registration-form request-with-validation-errors))))
 
 (defn show-change-password-form [request]
   (sh/enlive-response (change-password/change-password-form request) (:context request)))
@@ -46,13 +53,21 @@
         params (:params request)
         current-password (:current-password params)
         new-password (:new-password params)
-        err (v/validate-change-password params)]
+        err (v/validate-change-password params)
+        request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
       (if (user/authenticate-and-retrieve-user email current-password)
         (do (user/change-password! email new-password)
             (r/redirect (routes/path :show-profile)))
-        {:status 200})
-      {:status 200})))
+        (-> request-with-validation-errors
+            (assoc-in [:context :errors :current-password] :invalid)
+            (show-change-password-form)))
+      (show-change-password-form request-with-validation-errors))))
+
+(defn show-sign-in-form [request]
+  (if (signed-in? request)
+    (-> (r/redirect (routes/path :home)) (preserve-session request))
+    (sh/enlive-response (sign-in/sign-in-form request) (:context request))))
 
 (defn sign-in [request]
   (let [client-id (get-in request [:session :client-id])
@@ -61,16 +76,15 @@
         email (:email params)
         password (:password params)
         err (v/validate-sign-in params)
-        request (assoc-in request [:context :errors] err)]
+        request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
       (if-let [user (user/authenticate-and-retrieve-user email password)]
         (cond (and client-id return-to) (redirect-to-authorisation return-to user client-id)
               :default (redirect-to-profile-from-sign-in user))
-        (-> request
-            (assoc-in [:context :errors] {:credentials :invalid})
-            sign-in/sign-in-form
-            (sh/enlive-response (:context request))))
-        (sh/enlive-response (sign-in/sign-in-form request) (:context request)))))
+        (-> request-with-validation-errors
+            (assoc-in [:context :errors :credentials] :invalid)
+            show-sign-in-form))
+      (show-sign-in-form request-with-validation-errors))))
 
 (defn sign-out [request]
   (-> request
@@ -92,10 +106,6 @@
   (assoc (r/redirect (routes/path :show-profile)) :session {:user-login (:login user)
                                                             :access_token (generate-login-access-token user)}))
 
-(defn preserve-session [response request]
-  (-> response
-      (assoc :session (:session request))))
-
 (defn redirect-to-profile-created [user request]
   (-> (r/redirect (routes/path :show-profile-created))
       (preserve-session request)
@@ -104,14 +114,6 @@
 
 (defn redirect-to-profile-deleted []
   (assoc (r/redirect (routes/path :show-profile-deleted)) :session nil))
-
-(defn show-registration-form [request]
-  (sh/enlive-response (register/registration-form request) (:context request)))
-
-(defn show-sign-in-form [request]
-  (if (signed-in? request)
-    (-> (r/redirect (routes/path :home)) (preserve-session request))
-    (sh/enlive-response (sign-in/sign-in-form request) (:context request))))
 
 (defn show-profile [request]
   (let [email (get-in request [:session :user-login])

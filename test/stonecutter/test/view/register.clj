@@ -43,7 +43,7 @@
 (facts "about displaying errors"
        (facts "when email is invalid"
               (let [errors {:email :invalid}
-                    params {:email "invalid"}
+                    params {:email "invalidEmail"}
                     page (-> (th/create-request {} errors params) registration-form)]
                 (fact "the class for styling errors is added"
                       (html/select page [[:.clj--registration-email :.form-row--validation-error]]) =not=> empty?)
@@ -52,7 +52,7 @@
                 (fact "correct error message is displayed"
                       (html/select page [[:.clj--registration-email__validation (html/attr= :data-l8n "content:registration-form/email-address-invalid-validation-message")]]) =not=> empty?)
                 (fact "invalid value is preserved in input field"
-                      (-> page (html/select [:.registration-email-input]) first :attrs :value) => "invalid")))
+                      (-> page (html/select [:.registration-email-input]) first :attrs :value) => "invalidEmail")))
 
        (facts "when email is a duplicate"
               (let [errors {:email :duplicate}
@@ -117,6 +117,9 @@
              (let [errors {:confirm-password :invalid}
                    params {:password "password" :confirm-password "invalid-password"}
                    page (-> (th/create-request {} errors params) registration-form)]
+               (fact "validation-summary--show class is added to the validation summary element"
+                     (-> (html/select page [:.clj--validation-summary])
+                         first :attrs :class) => (contains "validation-summary--show"))
                (fact "confirm password validation is present as a validation summary item"
                      (html/select page [:.clj--validation-summary__item]) =not=> empty?)
                (fact "correct error message is displayed"

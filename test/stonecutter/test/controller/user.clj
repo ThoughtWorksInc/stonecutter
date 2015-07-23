@@ -11,6 +11,8 @@
             [stonecutter.view.profile :as profile]
             [stonecutter.validation :as v]))
 
+(def check-body-not-blank
+  (checker [response] (not (empty? (:body response)))))
 
 (defn check-redirects-to [path]
   (checker [response] (and
@@ -237,8 +239,8 @@
        (fact "user is returned to change-password page and user's password is not changed if there are validation errors"
              (-> (create-request :post "/change-password" ...invalid-params...)
                  (assoc-in [:session :user-login] "user_who_is@changing_password.com")
-                 u/change-password
-                 :status) => 200
+                 u/change-password) => (every-checker (contains {:status 200})
+                                                      check-body-not-blank)
              (provided
                (v/validate-change-password ...invalid-params...) => {:some-validation-key "some-value"}
                (user/change-password! anything anything) => anything :times 0))
@@ -246,15 +248,22 @@
        (fact "user cannot change password if current-password is invalid"
              (-> (create-request :post "/change-password" {:current-password "wrong-password"})
                  (assoc-in [:session :user-login] "user_who_is@changing_password.com")
-                 u/change-password
-                 :status) => 200
+                 u/change-password) => (every-checker (contains {:status 200})
+                                                      check-body-not-blank)
              (provided
                (v/validate-change-password anything) => {}
                (user/authenticate-and-retrieve-user "user_who_is@changing_password.com" "wrong-password") => nil
                (user/change-password! anything anything) => anything :times 0))
 
-       (future-facts "change-password page is rendered with errors"
-              (fact "when validation fails"
+       (facts "about rendering change-password page with errors"
+              (fact "there are no validation messages by default"
+                    (-> (create-request :get "/change-password" {})
+                        u/show-change-password-form
+                        :body
+                        html/html-snippet
+                        (html/select [:.clj--validation-summary__item])) => empty?)
+
+              (future-fact "when validation fails"
                     (-> (create-request :post "/change-password" ...invalid-params...)
                         (assoc-in [:session :user-login] "user_who_is@changing_password.com")
                         u/change-password
@@ -262,7 +271,7 @@
                         html/html-snippet
                         (html/select [:.clj--validation-summary__item])) =not=> empty?
                     (provided
-                      (v/validate-change-password ...invalid-params...) => {:some-validation-key "some-value"}))
+                      (v/validate-change-password ...invalid-params...) => {:new-password :too-short}))
 
               (fact "when authorisation fails"
                     (-> (create-request :post "/change-password" ...params-with-wrong-current-password...)

@@ -89,8 +89,7 @@
 
 (tabular
  (fact "validating change-password"
-       (v/validate-change-password {
-                                    :current-password ?current-password
+       (v/validate-change-password {:current-password ?current-password
                                     :new-password ?new-password
                                     :confirm-new-password ?confirm-new-password}) => ?validations)
 
