@@ -56,8 +56,7 @@ profile:
   profile-link: Profile
   sign-out-link: Sign out
   settings-title: Settings
-  delete-title: Delete your account
-  delete-intro: Permanently delete your account and Profile Card.
+  change-password-button: Change password
   delete-button: Delete account
 
 applications:

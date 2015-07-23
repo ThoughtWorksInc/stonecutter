@@ -2,6 +2,10 @@
   @include columns;
   &__primary {
     @include column-one-half($medium_device);
+    margin-bottom: 10px;
+    @include width-from($medium_device) {
+      margin-bottom: 0;
+    }
   }
   &__secondary {
     @include column-one-half($medium_device);
@@ -22,7 +26,7 @@
   color: $white;
   font-weight: bold;
   text-decoration: none;
-  transition: background 250ms ease, color 250ms ease, box-shadow 250ms ease, transform 250ms ease;
+  transition: background 250ms ease, color 250ms ease, box-shadow 250ms ease, transform 250ms ease, border 250ms ease;
   outline: 0;
   white-space: nowrap;
   @include no-select;
@@ -63,8 +67,6 @@
   &--link {
     background: transparent;
     color: $card_background;
-    font-size: 16px;
-    line-height: 1.4;
     &:hover {
       background: transparent;
     }
@@ -82,6 +84,13 @@
     }
     &:focus {
       background-color: darken($dark_pink, 5%);
+    }
+  }
+
+  &--list-border {
+    border-left: 5px solid $dark_cyan;
+    &:hover {
+      border-left-color: $medium_cyan;
     }
   }
 }

@@ -54,7 +54,8 @@ block content
         +authorisedAppItem("A really long name that will break this")
         +authorisedAppItem("Anotherapp")
 
-    .delete-account
-      h2(data-l8n="content:profile/delete-title") !Delete your account
-      p(data-l8n="content:profile/delete-intro") !Permanently delete your account and Profile Card.
-      a.button.button--secondary.func--delete-account__link(href="./delete-account", data-l8n="content:profile/delete-button") !Delete account
+    .settings
+      h2(data-l8n="content:profile/settings-title") !Settings
+      ul.settings__list
+        li.settings__item.clj--wip: a.button.button--full-width.button--link.button--list-border.settings__link(href="./change-password", data-l8n="content:profile/change-password-button") !Change password
+        li.settings__item: a.button.button--full-width.button--link.button--list-border.settings__link.func--delete-account__link(href="./delete-account", data-l8n="content:profile/delete-button") !Delete account
