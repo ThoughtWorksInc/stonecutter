@@ -1,4 +1,4 @@
 - name: Dummy Party
   client-id: AAAA
   client-secret: AAAA
-  url: nil
+  url: http://dummyparty.com
