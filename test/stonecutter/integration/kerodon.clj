@@ -153,6 +153,22 @@
            (kh/page-uri-is "/profile")
            (kh/selector-does-not-include-content [ks/profile-authorised-client-list] "myapp")))
 
+(facts "User can change password"
+       (-> (k/session h/app)
+           (sign-in "user@withclient.com")
+           (k/visit "/change-password")
+           (kh/page-uri-is "/change-password")
+           (kh/response-status-is 200)
+           (kh/selector-exists [ks/change-password-page-body])
+           (k/fill-in ks/change-password-current-password-input "valid-password")
+           (k/fill-in ks/change-password-new-password-input "new-valid-password")
+           (k/fill-in ks/change-password-confirm-new-password-input "new-valid-password")
+           (k/press ks/change-password-submit)
+           (k/follow-redirect)
+           (kh/page-uri-is "/profile")
+           (kh/response-status-is 200)
+           (kh/selector-exists [ks/profile-page-body])))
+
 (facts "User can delete account"
        (-> (k/session h/app)
            (register "account_to_be@deleted.com")

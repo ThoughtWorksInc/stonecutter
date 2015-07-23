@@ -11,6 +11,12 @@
             [stonecutter.view.profile :as profile]
             [stonecutter.validation :as v]))
 
+
+(defn check-redirects-to [path]
+  (checker [response] (and
+                        (= (:status response) 302)
+                        (= (get-in response [:headers "Location"]) path))))
+
 (def email "valid@email.com")
 (def password "password")
 (def sign-in-user-params {:email email :password password})
@@ -31,9 +37,10 @@
 
 (fact "user can sign in with valid credentials and is redirected to profile, with user-login and access_token added to session"
       (-> (create-request :post "/sign-in" sign-in-user-params)
-          u/sign-in) => (contains {:status 302 :headers {"Location" "/profile"}
-                                   :session {:user-login ...user-login...
-                                             :access_token ...token...}})
+          u/sign-in) => (every-checker
+                          (check-redirects-to "/profile")
+                          (contains {:session {:user-login ...user-login...
+                                               :access_token ...token...}}))
       (provided
         (user/authenticate-and-retrieve-user email password) => {:login ...user-login...}
         (cl-token/create-token nil {:login ...user-login...}) => {:token ...token...}))
@@ -41,9 +48,10 @@
 (facts "about registration"
        (fact "user can register with valid credentials and is redirected to profile-created page, with user-login and access_token added to session"
              (-> (create-request :post "/register" register-user-params)
-                 u/register-user) => (contains {:status 302 :headers {"Location" "/profile-created"}
-                                                :session {:user-login ...user-login...
-                                                          :access_token ...token...}})
+                 u/register-user) => (every-checker
+                                       (check-redirects-to "/profile-created")
+                                       (contains {:session {:user-login ...user-login...
+                                                            :access_token ...token...}}))
              (provided
                (v/validate-registration register-user-params user/is-duplicate-user?) => {}
                (user/store-user! email password) => {:login ...user-login...}
@@ -52,11 +60,11 @@
        (fact "session is not lost when redirecting from registration"
             (-> (create-request :post (routes/path :register-user) register-user-params)
                 (assoc :session {:some "data"})
-                u/register-user) => (contains {:status 302
-                                               :headers {"Location" "/profile-created"}
-                                               :session {:some "data"
-                                                         :user-login ...user-login...
-                                                         :access_token ...token...}})
+                u/register-user) => (every-checker
+                                      (check-redirects-to "/profile-created")
+                                      (contains {:session {:some "data"
+                                                           :user-login ...user-login...
+                                                           :access_token ...token...}}))
              (provided
                (v/validate-registration register-user-params user/is-duplicate-user?) => {}
                (user/store-user! email password) => {:login ...user-login...}
@@ -83,17 +91,20 @@
              (-> (create-request :get "/sign-in" nil)
                  (assoc-in [:session :user-login] ...user-login...)
                  (assoc-in [:session :access_token] ...token...)
-                 u/show-sign-in-form) => (contains {:status 302 :headers {"Location" "/"}
-                                                    :session {:user-login ...user-login...
-                                                              :access_token ...token...}}))
+                 u/show-sign-in-form) => (every-checker
+                                           (check-redirects-to "/")
+                                           (contains {:session {:user-login ...user-login...
+                                                                :access_token ...token...}})))
 
 (fact "if user has session client id, then create an access token and add to user session"
       (let [return-to-url "/authorisation?client-id=whatever"]
         (-> (create-request :post "/sign-in" sign-in-user-params)
             (assoc-in [:session :client-id] "client-id")
             (assoc-in [:session :return-to] return-to-url)
-            u/sign-in) => (contains {:status  302 :headers {"Location" return-to-url}
-                                    :session {:access_token ...token... :user-login ...user-login...}})
+            u/sign-in) => (every-checker
+                            (check-redirects-to return-to-url)
+                            (contains {:session {:access_token ...token...
+                                                 :user-login ...user-login...}}))
         (provided
           (user/authenticate-and-retrieve-user email password) => {:login ...user-login...}
           (c/retrieve-client "client-id") => ...client...
@@ -116,9 +127,10 @@
       (def user {:login ...user-login...})
       (-> (create-request :post "/sign-in" sign-in-user-params)
           (assoc-in [:session :client-id] "client-id")
-          u/sign-in) => (contains {:status 302 :headers {"Location" (routes/path :show-profile)}
-                                   :session {:user-login ...user-login...
-                                             :access_token ...token...}})
+          u/sign-in) => (every-checker
+                          (check-redirects-to (routes/path :show-profile))
+                          (contains {:session {:user-login ...user-login...
+                                               :access_token ...token...}}))
       (provided
         (user/authenticate-and-retrieve-user email password) => user
         (u/generate-login-access-token user) => ...token...))
@@ -160,7 +172,9 @@
       (-> (create-request :post "/delete-account" nil)
           (assoc-in [:session :user-login] "account_to_be@deleted.com")
           (assoc-in [:session :access_token] ...token...)
-          u/delete-account) => (contains {:status 302 :headers {"Location" "/profile-deleted"} :session nil})
+          u/delete-account) => (every-checker
+                                 (check-redirects-to "/profile-deleted")
+                                 (contains {:session nil}))
       (provided
         (user/delete-user! "account_to_be@deleted.com") => anything))
 
@@ -171,8 +185,7 @@
 (fact "user data is saved"
       (let [user-registration-data (create-user "valid@email.com" "password")]
         (-> (create-request :post "/register" register-user-params)
-            u/register-user
-            :status) => 302
+            u/register-user) => (check-redirects-to "/profile-created")
         (provided
           (user/store-user! "valid@email.com" "password") => ...user...)))
 
@@ -215,8 +228,7 @@
                                                            :new-password "newPassword"
                                                            :confirm-new-password "newPassword"})
                  (assoc-in [:session :user-login] "user_who_is@changing_password.com")
-                 u/change-password
-                 :status) => 302
+                 u/change-password) => (check-redirects-to "/profile")
              (provided
                (user/authenticate-and-retrieve-user "user_who_is@changing_password.com"
                                                     "currentPassword") => ...user...
@@ -328,7 +340,7 @@
               (fact "user is redirected to /profile if client_id is not in user's list of authorised clients"
                     (-> (create-request :get (routes/path :show-unshare-profile-card) {:client_id ...client-id...})
                         (assoc-in [:session :user-login] ...email...)
-                        u/show-unshare-profile-card) => (contains {:status 302 :headers {"Location" "/profile"}})
+                        u/show-unshare-profile-card) => (check-redirects-to "/profile")
                     (provided
                       (user/is-authorised-client-for-user? ...email... ...client-id...) => false)))
 
@@ -336,6 +348,6 @@
               (fact "posting to /unshare-profile-card with client-id in the form params should remove client-id from the user's authorised clients and then redirect the user to the profile page"
                     (-> (create-request :post "/unshare-profile-card" {:client_id "client-id"})
                         (assoc-in [:session :user-login] "user@email.com")
-                        u/unshare-profile-card) => (contains {:status 302 :headers {"Location" "/profile"}})
+                        u/unshare-profile-card) => (check-redirects-to "/profile")
                     (provided
                       (user/remove-authorised-client-for-user! "user@email.com" "client-id") => anything))))

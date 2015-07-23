@@ -11,6 +11,7 @@
             [stonecutter.view.profile-created :as profile-created]
             [stonecutter.view.profile :as profile]
             [stonecutter.view.delete-account :as delete-account]
+            [stonecutter.view.change-password :as change-password]
             [stonecutter.view.unshare-profile-card :as unshare-profile-card]
             [stonecutter.helper :as sh]))
 
@@ -37,6 +38,9 @@
           (redirect-to-profile-created request))
       (sh/enlive-response (register/registration-form request) (:context request)))))
 
+(defn show-change-password-form [request]
+  (sh/enlive-response (change-password/change-password-form request) (:context request)))
+
 (defn change-password [request]
   (let [email (get-in request [:session :user-login])
         params (:params request)
@@ -46,7 +50,7 @@
     (if (empty? err)
       (if (user/authenticate-and-retrieve-user email current-password)
         (do (user/change-password! email new-password)
-            {:status 302})
+            (r/redirect (routes/path :show-profile)))
         {:status 200})
       {:status 200})))
 

@@ -29,5 +29,11 @@
 (def delete-account-button :.func--delete-account__button)
 (def delete-account-page-body :.func--delete-account-page)
 
+(def change-password-current-password-input :.func--current-password__input)
+(def change-password-new-password-input :.func--new-password__input)
+(def change-password-confirm-new-password-input :.func--confirm-new-password__input)
+(def change-password-submit :.func--change-password__button)
+(def change-password-page-body :.func--change-password-page)
+
 (def error-404-page-body :.func--error-404-page)
 (def error-500-page-body :.func--error-500-page)
