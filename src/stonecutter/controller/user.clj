@@ -21,11 +21,9 @@
   (let [session (:session request)]
     (and (:user-login session) (:access_token session))))
 
-(defn redirect-to-authorisation [return-to user client-id]
-  (if-let [client (c/retrieve-client client-id)]
-    (assoc (r/redirect return-to) :session {:user-login (:login user)
-                                            :access_token (:token (cl-token/create-token client user))})
-    (throw (Exception. "Invalid client"))))
+(defn redirect-to-authorisation [return-to user]
+  (assoc (r/redirect return-to) :session {:user-login (:login user)
+                                          :access_token (:token (cl-token/create-token nil user))}))
 
 (defn preserve-session [response request]
   (-> response
@@ -70,8 +68,7 @@
     (sh/enlive-response (sign-in/sign-in-form request) (:context request))))
 
 (defn sign-in [request]
-  (let [client-id (get-in request [:session :client-id])
-        return-to (get-in request [:session :return-to])
+  (let [return-to (get-in request [:session :return-to])
         params (:params request)
         email (:email params)
         password (:password params)
@@ -79,7 +76,7 @@
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
       (if-let [user (user/authenticate-and-retrieve-user email password)]
-        (cond (and client-id return-to) (redirect-to-authorisation return-to user client-id)
+        (cond return-to (redirect-to-authorisation return-to user)
               :default (redirect-to-profile-from-sign-in user))
         (-> request-with-validation-errors
             (assoc-in [:context :errors :credentials] :invalid)
@@ -128,8 +125,7 @@
   (get-in request [:session key]))
 
 (defn from-app? [request]
-  (and (get-in-session request :client-id)
-       (get-in-session request :return-to)))
+  (get-in-session request :return-to))
 
 (defn show-profile-created [request]
   (let [request (assoc request :params {:from-app (from-app? request)})]

@@ -25,8 +25,12 @@
         (-> page (html/select [:.func--authorise__form]) first :attrs :action) => (r/path :authorise-client)))
 
 (fact "cancel link should go to correct endpoint"
-      (let [page (-> (th/create-request) authorise-form)]
-        (-> page (html/select [:.func--authorise-cancel__link]) first :attrs :href) => (r/path :show-authorise-failure)))
+      (let [params {:client_id "CLIENT_ID" :redirect_uri "http://where.to.now"}
+            page (-> (th/create-request {} nil params) authorise-form)]
+        (-> page (html/select [:.func--authorise-cancel__link]) first :attrs :href)
+        => (str (r/path :show-authorise-failure)
+                "?client_id=CLIENT_ID"
+                "&redirect_uri=http://where.to.now")))
 
 (fact "app name is injected"
       (let [client-name "CLIENT_NAME"

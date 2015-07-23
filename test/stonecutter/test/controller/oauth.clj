@@ -37,8 +37,7 @@
                    response (oauth/authorise request)]
                (:status response) => 302
                (-> response (get-in [:headers "Location"])) => "/sign-in"
-               (-> response (get-in [:session :return-to])) => (format "/authorisation?client_id=%s&response_type=code&redirect_uri=%s" (:client-id client-details) (hiccup/url-encode client-url))
-               (-> response (get-in [:session :client-id])) => (:client-id client-details)))
+               (-> response (get-in [:session :return-to])) => (format "/authorisation?client_id=%s&response_type=code&redirect_uri=%s" (:client-id client-details) (hiccup/url-encode client-url))))
 
        (fact "valid request goes to authorisation page with auth_code and email when there is an existing user session"
              (let [user (user/store-user! user-email "password")
@@ -130,18 +129,18 @@
                    :body
                    html/html-snippet
                    (html/select [:.clj--app-name])) => (has some element-has-correct-client-name-fn)
-               (provided (client/retrieve-client "CLIENT_ID") => {:client-id "CLIENT_ID" :name "CLIENT_NAME"})))
+                   (provided (client/retrieve-client "CLIENT_ID") => {:client-id "CLIENT_ID" :name "CLIENT_NAME"})))
 
        (fact "redirects to error 404 page if client_id doesn't match a registered client"
-               (-> (create-request :get (routes/path :show-authorise-form) {:client_id "CLIENT_ID"})
-                   oauth/show-authorise-form) => (contains {:status 404})
-               (provided (client/retrieve-client "CLIENT_ID") => nil)))
+             (-> (create-request :get (routes/path :show-authorise-form) {:client_id "CLIENT_ID"})
+                 oauth/show-authorise-form) => (contains {:status 404})
+                 (provided (client/retrieve-client "CLIENT_ID") => nil)))
 
 (facts "about show-authorise-failure"
        (fact "when authorisation failure is rendered will add error=access_denied in the querystring of the callback uri"
-             (let [request (-> (create-request :get "/authorise-failure" nil)
-                               (assoc-in [:context :translator] {})
-                               (assoc-in [:session :redirect-uri] "http://where.do.we.go.now"))
+             (let [request (-> (create-request :get "/authorise-failure"
+                                               {:redirect_uri "http://where.do.we.go.now"})
+                               (assoc-in [:context :translator] {}))
                    response (oauth/show-authorise-failure request)]
                (:status response)) => 200
              (provided
@@ -149,8 +148,8 @@
 
        (fact "authorisation failure page is rendered with client name"
              (let [element-has-correct-client-name-fn (fn [element] (= (html/text element) "CLIENT_NAME"))]
-               (-> (create-request :get (routes/path :show-authorise-failure) nil)
-                   (assoc-in [:session :client-id] "CLIENT_ID")
+               (-> (create-request :get (routes/path :show-authorise-failure)
+                                   {:client_id "CLIENT_ID"})
                    oauth/show-authorise-failure
                    :body
                    html/html-snippet

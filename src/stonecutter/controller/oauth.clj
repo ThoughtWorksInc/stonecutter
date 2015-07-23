@@ -23,10 +23,10 @@
   (str uri "?error=access_denied"))
 
 (defn show-authorise-failure [request]
-  (let [client-id (get-in request [:session :client-id])
+  (let [client-id (get-in request [:params :client_id])
         client (client/retrieve-client client-id)
         client-name (:name client)
-        redirect-uri (get-in request [:session :redirect-uri])
+        redirect-uri (get-in request [:params :redirect_uri])
         callback-uri-with-error (add-error-to-uri redirect-uri)
         request (-> request
                      (assoc-in [:context :client-name] client-name)
@@ -59,17 +59,15 @@
       (= (:host (url/url client-url)) (:host (url/url redirect-uri))))))
 
 (defn authorise [request]
-  (let [user-login (get-in request [:session :user-login])
+  (let [client-id (get-in request [:params :client_id])
+        redirect-uri (get-in request [:params :redirect_uri])
+        user-login (get-in request [:session :user-login])
         request (update-in request [:session] dissoc :csrf-token)
-        access-token (get-in request [:session :access_token])
-        client-id (get-in request [:params :client_id])
-        redirect-uri (get-in request [:params :redirect_uri])]
+        access-token (get-in request [:session :access_token])]
    (if (is-redirect-uri-valid? client-id redirect-uri)
      (-> request
          (assoc-in [:headers "accept"] "text/html")
          auth-handler
-         (assoc-in [:session :client-id] client-id)
-         (assoc-in [:session :redirect-uri] redirect-uri)
          (assoc-in [:session :user-login] user-login)
          (assoc-in [:session :access_token] access-token))
      (do
