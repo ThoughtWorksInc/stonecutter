@@ -32,10 +32,10 @@
 
 (facts "about removing elements when there are no errors"
        (let [page (-> (th/create-request) change-password-form)]
-        (fact "no elements have class for styling errors"
-            (html/select page [:.form-row--validation-error]) => empty?)
-        (fact "validation summary element is removed"
-            (html/select page [:.clj--validation-summary]) => empty?)))
+         (fact "no elements have class for styling errors"
+               (html/select page [:.form-row--validation-error]) => empty?)
+         (fact "validation summary element is removed"
+               (html/select page [:.clj--validation-summary]) => empty?)))
 
 (facts "about displaying errors"
        (tabular
@@ -47,20 +47,25 @@
                  (html/select page [:.clj--validation-summary__item]) =not=> empty?)
            (fact "correct error messages are displayed"
                  (->> (html/select page [:.clj--validation-summary__item])
-                      (map #(get-in % [:attrs :data-l8n]))) => ?validation-translations))
+                      (map #(get-in % [:attrs :data-l8n]))) => ?validation-translations)
+           (fact "correct elements are highlighted"
+                 (->> (html/select page [:.form-row--validation-error])
+                      (map #(get-in % [:attrs :class]))) => (contains ?highlighted-elements)))
 
-         ?errors                          ?validation-translations
-         {:current-password :blank}       [current-password-error-translation-key]
-         {:current-password :too-short}   [current-password-error-translation-key]
-         {:current-password :too-long}    [current-password-error-translation-key]
-         {:current-password :invalid}     [current-password-error-translation-key]
-         {:new-password :blank}           ["content:change-password-form/new-password-blank-validation-message"]
-         {:new-password :too-short}       ["content:change-password-form/new-password-too-short-validation-message"]
-         {:new-password :too-long}        ["content:change-password-form/new-password-too-long-validation-message"]
-         {:new-password :unchanged}       ["content:change-password-form/new-password-unchanged-validation-message"]
-         {:confirm-new-password :invalid} ["content:change-password-form/confirm-new-password-invalid-validation-message"]
+         ?errors                          ?validation-translations                                                          ?highlighted-elements
+         {:current-password :blank}       [current-password-error-translation-key]                                          [#"clj--current-password"]
+         {:current-password :too-short}   [current-password-error-translation-key]                                          [#"clj--current-password"]
+         {:current-password :too-long}    [current-password-error-translation-key]                                          [#"clj--current-password"]
+         {:current-password :invalid}     [current-password-error-translation-key]                                          [#"clj--current-password"]
+         {:new-password :blank}           ["content:change-password-form/new-password-blank-validation-message"]            [#"clj--new-password"]
+         {:new-password :too-short}       ["content:change-password-form/new-password-too-short-validation-message"]        [#"clj--new-password"]
+         {:new-password :too-long}        ["content:change-password-form/new-password-too-long-validation-message"]         [#"clj--new-password"]
+         {:new-password :unchanged}       ["content:change-password-form/new-password-unchanged-validation-message"]        [#"clj--new-password"]
+         {:confirm-new-password :invalid} ["content:change-password-form/confirm-new-password-invalid-validation-message"]  [#"clj--confirm-new-password"]
          {:current-password :blank
           :new-password :too-short
           :confirm-new-password :invalid} [current-password-error-translation-key
                                            "content:change-password-form/new-password-too-short-validation-message"
-                                           "content:change-password-form/confirm-new-password-invalid-validation-message"]))
+                                           "content:change-password-form/confirm-new-password-invalid-validation-message"]  [#"clj--current-password"
+                                                                                                                             #"clj--new-password"
+                                                                                                                             #"clj--confirm-new-password"]))

@@ -24,12 +24,24 @@
 
 (def error-display-order [:current-password :new-password :confirm-new-password])
 
+(def error-highlight-selectors {:current-password [:.clj--current-password]
+                                :new-password [:.clj--new-password]
+                                :confirm-new-password [:.clj--confirm-new-password]})
+
 (defn get-kv-for-key [a-map a-key]
     (when-let [v (a-key a-map)]
       [a-key v]))
 
 (defn kv-pairs-from-map-ordered-by [the-map ordered-keys]
     (remove nil? (map #(get-kv-for-key the-map %) ordered-keys)))
+
+(defn add-error-class [enlive-m field-row-selector]
+  (html/at enlive-m field-row-selector (html/add-class "form-row--validation-error")))
+
+(defn highlight-errors [enlive-m err selectors]
+  (let [elements-with-errors (keys err)
+        selectors-to-highlight (map #(% selectors) elements-with-errors)]
+    (reduce add-error-class enlive-m selectors-to-highlight)))
 
 (defn add-errors [enlive-m err]
   (if (empty? err)
@@ -41,7 +53,8 @@
           (html/at [:.clj--validation-summary__item]
                    (html/clone-for [error-key-pair ordered-error-key-pairs]
                                    (html/set-attr :data-l8n (or (get-in error-translations error-key-pair)
-                                                                unknown-error-translation-key))))))))
+                                                                unknown-error-translation-key))))
+          (highlight-errors err error-highlight-selectors)))))
 
 (defn add-change-password-errors [err enlive-m]
   (-> enlive-m
