@@ -37,6 +37,15 @@
                      profile (helper/enlive-response {:translator translator}) :body)]
         page => th/no-untranslated-strings))
 
+(facts "about flash messages"
+       (fact "no flash messages are displayed by default"
+             (let [page (-> (th/create-request) profile)]
+               (-> page (html/select [:.clj--flash-message-container])) => empty?))
+
+       (fact "password-changed flash message is displayed on page if it is in the flash of request"
+             (let [page (-> (th/create-request) (assoc :flash :password-changed) profile)]
+               (-> page (html/select [:.clj--flash-message-container])) =not=> empty?)))
+
 (facts "about displaying authorised clients"
        (fact "names of authorised clients are displayed"
              (let [page (-> (th/create-request)

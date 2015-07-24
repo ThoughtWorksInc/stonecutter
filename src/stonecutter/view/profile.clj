@@ -42,8 +42,14 @@
   (html/at enlive-m
            [:.clj--delete-account__link] (html/set-attr :href (r/path :show-delete-account-confirmation))))
 
+(defn add-flash-message [request enlive-m]
+  (if (= (:flash request) :password-changed)
+    enlive-m
+    (vh/remove-element enlive-m [:.clj--flash-message-container])))
+
 (defn profile [request]
   (->> (vh/load-template "public/profile.html")
+       (add-flash-message request)
        (add-username request)
        (add-application-list request)
        set-sign-out-link

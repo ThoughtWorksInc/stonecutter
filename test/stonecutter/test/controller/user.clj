@@ -200,7 +200,8 @@
                                                            :new-password "newPassword"
                                                            :confirm-new-password "newPassword"})
                  (assoc-in [:session :user-login] "user_who_is@changing_password.com")
-                 u/change-password) => (check-redirects-to "/profile")
+                 u/change-password) => (every-checker (check-redirects-to "/profile")
+                                                      (contains {:flash :password-changed}))
              (provided
                (user/authenticate-and-retrieve-user "user_who_is@changing_password.com"
                                                     "currentPassword") => ...user...

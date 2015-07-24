@@ -168,7 +168,8 @@
            (k/follow-redirect)
            (kh/page-uri-is "/profile")
            (kh/response-status-is 200)
-           (kh/selector-exists [ks/profile-page-body])))
+           (kh/selector-exists [ks/profile-page-body])
+           (kh/selector-exists [ks/profile-flash-message])))
 
 (facts "User can delete account"
        (-> (k/session h/app)

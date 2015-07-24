@@ -52,7 +52,8 @@
     (if (empty? err)
       (if (user/authenticate-and-retrieve-user email current-password)
         (do (user/change-password! email new-password)
-            (r/redirect (routes/path :show-profile)))
+            (-> (r/redirect (routes/path :show-profile))
+                (assoc :flash :password-changed)))
         (-> request-with-validation-errors
             (assoc-in [:context :errors :current-password] :invalid)
             (show-change-password-form)))

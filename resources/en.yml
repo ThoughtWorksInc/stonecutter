@@ -123,3 +123,6 @@ error-500:
 
 modal:
   modal-dismiss: Close
+
+flash:
+  password-changed: "Your password has been changed!"
