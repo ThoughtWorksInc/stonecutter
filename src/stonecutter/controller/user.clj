@@ -15,15 +15,11 @@
             [stonecutter.view.unshare-profile-card :as unshare-profile-card]
             [stonecutter.helper :as sh]))
 
-(declare redirect-to-profile-from-sign-in redirect-to-profile-created redirect-to-profile-deleted)
+(declare redirect-to-profile-created redirect-to-profile-deleted)
 
 (defn signed-in? [request]
   (let [session (:session request)]
     (and (:user-login session) (:access_token session))))
-
-(defn redirect-to-authorisation [return-to user]
-  (assoc (r/redirect return-to) :session {:user-login (:login user)
-                                          :access_token (:token (cl-token/create-token nil user))}))
 
 (defn preserve-session [response request]
   (-> response
@@ -67,6 +63,9 @@
     (-> (r/redirect (routes/path :home)) (preserve-session request))
     (sh/enlive-response (sign-in/sign-in-form request) (:context request))))
 
+(defn generate-login-access-token [user]
+  (:token (cl-token/create-token nil user)))
+
 (defn sign-in [request]
   (let [return-to (get-in request [:session :return-to])
         params (:params request)
@@ -76,8 +75,11 @@
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
       (if-let [user (user/authenticate-and-retrieve-user email password)]
-        (cond return-to (redirect-to-authorisation return-to user)
-              :default (redirect-to-profile-from-sign-in user))
+        (let [access-token (generate-login-access-token user)]
+          (-> request
+              (cl-ep/return-to-handler (routes/path :show-profile))
+              (assoc-in [:session :user-login] (:login user))
+              (assoc-in [:session :access_token] access-token)))
         (-> request-with-validation-errors
             (assoc-in [:context :errors :credentials] :invalid)
             show-sign-in-form))
@@ -95,13 +97,6 @@
   (let [email (get-in request [:session :user-login])]
     (user/delete-user! email)
     (redirect-to-profile-deleted)))
-
-(defn generate-login-access-token [user]
-  (:token (cl-token/create-token nil user)))
-
-(defn redirect-to-profile-from-sign-in [user]
-  (assoc (r/redirect (routes/path :show-profile)) :session {:user-login (:login user)
-                                                            :access_token (generate-login-access-token user)}))
 
 (defn redirect-to-profile-created [user request]
   (-> (r/redirect (routes/path :show-profile-created))
