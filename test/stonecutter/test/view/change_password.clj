@@ -45,17 +45,22 @@
                      first :attrs :class) => (contains "validation-summary--show"))
            (fact "validation message is present as a validation summary item"
                  (html/select page [:.clj--validation-summary__item]) =not=> empty?)
-           (fact "correct error message is displayed"
-                 (-> (html/select page [:.clj--validation-summary__item])
-                     first :attrs :data-l8n) => ?translation-key))
-         ?errors                          ?translation-key
-         {:current-password :blank}       current-password-error-translation-key
-         {:current-password :too-short}   current-password-error-translation-key
-         {:current-password :too-long}    current-password-error-translation-key
-         {:current-password :invalid}     current-password-error-translation-key
-         {:new-password :blank}           "content:change-password-form/new-password-blank-validation-message"
-         {:new-password :too-short}       "content:change-password-form/new-password-too-short-validation-message"
-         {:new-password :too-long}        "content:change-password-form/new-password-too-long-validation-message"
-         {:new-password :unchanged}       "content:change-password-form/new-password-unchanged-validation-message"
-         {:confirm-new-password :invalid} "content:change-password-form/confirm-new-password-invalid-validation-message"
-         ))
+           (fact "correct error messages are displayed"
+                 (->> (html/select page [:.clj--validation-summary__item])
+                      (map #(get-in % [:attrs :data-l8n]))) => ?validation-translations))
+
+         ?errors                          ?validation-translations
+         {:current-password :blank}       [current-password-error-translation-key]
+         {:current-password :too-short}   [current-password-error-translation-key]
+         {:current-password :too-long}    [current-password-error-translation-key]
+         {:current-password :invalid}     [current-password-error-translation-key]
+         {:new-password :blank}           ["content:change-password-form/new-password-blank-validation-message"]
+         {:new-password :too-short}       ["content:change-password-form/new-password-too-short-validation-message"]
+         {:new-password :too-long}        ["content:change-password-form/new-password-too-long-validation-message"]
+         {:new-password :unchanged}       ["content:change-password-form/new-password-unchanged-validation-message"]
+         {:confirm-new-password :invalid} ["content:change-password-form/confirm-new-password-invalid-validation-message"]
+         {:current-password :blank
+          :new-password :too-short
+          :confirm-new-password :invalid} [current-password-error-translation-key
+                                           "content:change-password-form/new-password-too-short-validation-message"
+                                           "content:change-password-form/confirm-new-password-invalid-validation-message"]))

@@ -22,21 +22,30 @@
                   :unchanged "content:change-password-form/new-password-unchanged-validation-message"}
    :confirm-new-password {:invalid "content:change-password-form/confirm-new-password-invalid-validation-message"}})
 
-(defn add-error [enlive-m err]
+(def error-display-order [:current-password :new-password :confirm-new-password])
+
+(defn get-kv-for-key [a-map a-key]
+    (when-let [v (a-key a-map)]
+      [a-key v]))
+
+(defn kv-pairs-from-map-ordered-by [the-map ordered-keys]
+    (remove nil? (map #(get-kv-for-key the-map %) ordered-keys)))
+
+(defn add-errors [enlive-m err]
   (if (empty? err)
     (vh/remove-element enlive-m [:.clj--validation-summary])
-    (let [error-key-pair (first err)
-          error-translation (get-in error-translations error-key-pair)]
+    (let [ordered-error-key-pairs (kv-pairs-from-map-ordered-by err error-display-order)]
       (-> enlive-m
           (html/at [:.clj--validation-summary]
                    (html/add-class "validation-summary--show"))
           (html/at [:.clj--validation-summary__item]
-                   (html/set-attr :data-l8n (or error-translation unknown-error-translation-key)))))))
+                   (html/clone-for [error-key-pair ordered-error-key-pairs]
+                                   (html/set-attr :data-l8n (or (get-in error-translations error-key-pair)
+                                                                unknown-error-translation-key))))))))
 
 (defn add-change-password-errors [err enlive-m]
   (-> enlive-m
-      (add-error err)
-      ))
+      (add-errors err)))
 
 (defn set-cancel-link [enlive-m]
   (html/at enlive-m
