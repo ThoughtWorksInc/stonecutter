@@ -124,7 +124,9 @@
 
 (defn show-profile-created [request]
   (let [request (assoc request :params {:from-app (from-app? request)})]
-    (sh/enlive-response (profile-created/profile-created request) (:context request))))
+    (-> (sh/enlive-response (profile-created/profile-created request) (:context request))
+        (preserve-session request)
+        (update-in [:session] #(dissoc % :return-to)))))
 
 (defn show-profile-deleted [request]
   (sh/enlive-response (delete-account/profile-deleted request) (:context request)))

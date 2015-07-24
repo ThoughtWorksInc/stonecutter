@@ -270,7 +270,18 @@
                                      :body
                                      html/html-snippet)]
              (-> (html/select html-response [:.clj--profile-created-next__button]) first :attrs :href)
-               => (contains "/somewhere"))))
+               => (contains "/somewhere")))
+
+       (fact "coming from an app, return-to is removed from the session"
+              (let [session (-> (create-request :get (routes/path :show-profile-created) nil)
+                               (assoc :session {:user-login ...email...
+                                                :access_token ...token...
+                                                :return-to ...url...})
+                               u/show-profile-created
+                               :session)]
+               session =not=> (contains {:return-to anything})
+               session => (contains {:user-login anything})
+               session => (contains {:access_token anything}))))
 
 (facts "about show-profile"
        (fact "user's authorised clients passed to html-response"
