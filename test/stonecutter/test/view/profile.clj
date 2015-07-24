@@ -17,7 +17,18 @@
 
 (fact "sign out link should go to correct endpoint"
       (let [page (-> (th/create-request) profile)]
-        (-> page (html/select [:.func--sign-out__link]) first :attrs :href) => (r/path :sign-out)))
+        (-> page (html/select [:.clj--sign-out__link])
+            first :attrs :href) => (r/path :sign-out)))
+
+(fact "change password link should go to correct endpoint"
+      (let [page (-> (th/create-request) profile)]
+        (-> page (html/select [:.clj--change-password__link])
+            first :attrs :href) => (r/path :show-change-password-form)))
+
+(fact "delete account link should go to correct endpoint"
+      (let [page (-> (th/create-request) profile)]
+        (-> page (html/select [:.clj--delete-account__link])
+            first :attrs :href) => (r/path :show-delete-account-confirmation)))
 
 (fact "there are no missing translations"
       (let [translator (t/translations-fn t/translation-map)

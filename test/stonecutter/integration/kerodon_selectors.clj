@@ -1,4 +1,4 @@
-(ns stonecutter.integration.kerodon-selectors) 
+(ns stonecutter.integration.kerodon-selectors)
 
 (def registration-email-input :.func--email__input)
 (def registration-password-input :.func--password__input)
@@ -12,6 +12,8 @@
 (def profile-deleted-page-body :.func--profile-deleted-page)
 (def profile-authorised-client-list :.func--app__list)
 (def profile-authorised-client-unshare-link :.func--app-item__unshare-link)
+(def profile-change-password-link :.func--change-password__link)
+(def profile-delete-account-link :.func--delete-account__link)
 
 (def unshare-profile-card-confirm-button :.func--unshare-profile-card__button)
 
@@ -25,7 +27,6 @@
 (def authorise-share-profile-button :.func--authorise-share-profile__button)
 (def authorise-cancel-link :.func--authorise-cancel__link)
 
-(def delete-account-link :.func--delete-account__link)
 (def delete-account-button :.func--delete-account__button)
 (def delete-account-page-body :.func--delete-account-page)
 

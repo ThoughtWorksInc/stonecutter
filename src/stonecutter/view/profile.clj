@@ -30,13 +30,23 @@
       (html/at enlive-m [:.clj--app__list] (html/content (application-list-items authorised-clients)))
       (html/at enlive-m [:.clj--app__list] (html/content empty-application-list-item)))))
 
-(defn add-sign-out-link [enlive-m]
+(defn set-sign-out-link [enlive-m]
   (html/at enlive-m
            [:.clj--sign-out__link] (html/set-attr :href (r/path :sign-out))))
+
+(defn set-change-password-link [enlive-m]
+  (html/at enlive-m
+           [:.clj--change-password__link] (html/set-attr :href (r/path :show-change-password-form))))
+
+(defn set-delete-account-link [enlive-m]
+  (html/at enlive-m
+           [:.clj--delete-account__link] (html/set-attr :href (r/path :show-delete-account-confirmation))))
 
 (defn profile [request]
   (->> (vh/load-template "public/profile.html")
        (add-username request)
        (add-application-list request)
-       add-sign-out-link
+       set-sign-out-link
+       set-change-password-link
+       set-delete-account-link
        vh/remove-work-in-progress))
