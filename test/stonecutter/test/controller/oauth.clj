@@ -194,10 +194,7 @@
 
          (fact "user id in session is returned in body after validating token"
                (:user-id response-body) => (:uid user)
-               (:uid user) =not=> nil?)
-
-         (fact "user email stays in the session after validating token"
-               (get-in response [:session :user-login]) => user-email)))
+               (:uid user) =not=> nil?)))
 
 (facts "about auto-approver"
        (fact "returns true if user has authorised the client"

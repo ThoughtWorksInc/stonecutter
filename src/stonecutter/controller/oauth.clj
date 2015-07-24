@@ -44,8 +44,6 @@
                                                 :user-session-required-redirect (routes/path :show-sign-in-form)
                                                 :authorization-form             show-authorise-form}))
 
-(def token-handler (cl-ep/token-handler))
-
 (defn authorise-client [request]
   (let [client-id (get-in request [:params :client_id])
         user-email (get-in request [:session :user-login])
@@ -74,6 +72,8 @@
        (log/warn "Invalid query params for authorisation request")
        {:status 403}))))
 
+(def token-handler (cl-ep/token-handler))
+
 (defn validate-token [request]
   (let [auth-code (get-in request [:params :code])
         user (user/retrieve-user-with-auth-code auth-code)
@@ -87,5 +87,4 @@
                  (assoc :user-id user-id)
                  (json/generate-string))]
     (-> response
-        (assoc :body body)
-        (assoc-in [:session :user-login] user-login))))
+        (assoc :body body))))
