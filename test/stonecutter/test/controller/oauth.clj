@@ -104,6 +104,22 @@
                    response (oauth/authorise request)]
                (:status response) =not=> 302))
 
+       (fact "return-to session key is refreshed when accessing authorisation endpoint without being signed in"
+             (let [client-details (cl-client/register-client "MYAPP" "https://myapp.com")
+                   client-id (:client-id client-details)
+                   redirect-uri "https://myapp.com/callback"
+                   new-return-to-uri (-> {:uri ...new-uri...
+                                          :query-string ...query-string...
+                                          :params {:client_id client-id
+                                                   :response_type "code"
+                                                   :redirect_uri redirect-uri}}
+                                         (assoc :session {:return-to ...old-return-to-uri...})
+                                         oauth/authorise
+                                         :session
+                                         :return-to)]
+               new-return-to-uri => (contains ...new-uri...)
+               new-return-to-uri => (contains ...query-string...)))
+
        (fact "user-login and access_token in session stay in session if user is logged in"
              (let [user (user/store-user! user-email "password")
                    client-details (cl-client/register-client "MYAPP" client-url)
