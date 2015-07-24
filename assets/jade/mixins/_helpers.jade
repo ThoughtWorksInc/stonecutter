@@ -1,11 +1,11 @@
 mixin javascriptIncludeTag(path, type)
   - type = type || 'text/javascript'
-  script(src="#{javascriptsBase}/#{path}.js", type="#{type}")
+  script(src="/#{javascriptsBase}/#{path}.js", type="#{type}")
 
 mixin stylesheetLinkTag(path, media)
-  link(href="#{stylesheetsBase}/#{path}.css", data-clojure-id="theme-link" media="#{media}", rel="stylesheet", type="text/css")
+  link(href="/#{stylesheetsBase}/#{path}.css", data-clojure-id="theme-link" media="#{media}", rel="stylesheet", type="text/css")
 
 mixin imageIncludeTag(path, cssClasses, attrs)
   - cssClasses = cssClasses || ''
   - attrs = attrs || {} //&attributes({ name:'foo', value:'bar', foo:'bad' })
-  img(src="#{imagesBase}/#{path}", class="#{cssClasses}")&attributes(attrs)
+  img(src="/#{imagesBase}/#{path}", class="#{cssClasses}")&attributes(attrs)
