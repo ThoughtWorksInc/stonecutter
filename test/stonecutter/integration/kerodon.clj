@@ -2,6 +2,9 @@
   (:require [midje.sweet :refer :all]
             [kerodon.core :as k]
             [clauth.client :as cl-client]
+            [clojure.java.io :as io]
+            [stonecutter.config :as config]
+            [stonecutter.email :as email]
             [stonecutter.integration.kerodon-helpers :as kh]
             [stonecutter.integration.kerodon-selectors :as ks]
             [stonecutter.handler :as h]
@@ -45,6 +48,7 @@
       (k/press ks/sign-in-submit)))
 
 (s/setup-in-memory-stores!)
+(email/configure-email (config/email-script-path))
 
 (facts "Home url redirects to sign-in page if user is not signed in"
        (-> (k/session h/app)
@@ -75,6 +79,37 @@
            (kh/page-uri-is "/register")
            (kh/response-status-is 200)
            (kh/selector-exists [ks/registration-page-body])))
+
+(defn checks-email-is-sent [state email-address]
+  (fact {:midje/name "Check send email script is called"}
+      (slurp "test-tmp/test-email.txt") => (contains (str "to: " email-address)))
+  state)
+
+(defn delete-directory [directory-path]
+  (->> (io/file directory-path)
+       file-seq
+       reverse
+       (map io/delete-file)
+       doall))
+
+(defn setup-test-directory [state]
+  (fact {:midje/name "setup test tmp directory"}
+        (io/make-parents "test-tmp/dummy.txt")
+        (.exists (io/file "test-tmp")) => true)
+  state)
+
+(defn teardown-test-directory [state]
+  (fact {:midje/name "teardown test tmp directory"}
+        (delete-directory "test-tmp")
+        (.exists (io/file "test-tmp")) => false)
+  state)
+
+(facts "Registering a new user should call out to script to send a confirmation email"
+       (-> (k/session h/app)
+           (setup-test-directory)
+           (register "new-user@email.com")
+           (checks-email-is-sent "new-user@email.com")
+           (teardown-test-directory)))
 
 (facts "Register page redirects to profile-created page when registered and
        user-login is in the session so that email address is displayed on profile card"

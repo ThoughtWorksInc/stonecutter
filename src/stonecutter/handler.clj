@@ -13,6 +13,7 @@
             [stonecutter.controller.oauth :as oauth]
             [stonecutter.translation :as t]
             [stonecutter.middleware :as m]
+            [stonecutter.email :as email]
             [stonecutter.db.client-seed :as client-seed]
             [stonecutter.db.storage :as s]
             [stonecutter.db.migration :as migration]
@@ -126,6 +127,7 @@
   (let [db (mongo/get-mongo-db (config/mongo-uri))]
     (s/setup-mongo-stores! db)
     (migration/run-migrations db))
+  (email/configure-email (config/email-script-path))
   (client-seed/load-client-credentials-and-store-clients (config/client-credentials-file-path))
   (ring-jetty/run-jetty app {:port (config/port) :host (config/host)}))
 
@@ -135,5 +137,6 @@
   (log-config/init-logger!)
   (vh/disable-template-caching!)
   (s/setup-in-memory-stores!)
+  (email/configure-email (config/email-script-path))
   (client-seed/load-client-credentials-and-store-clients (config/client-credentials-file-path)))
 

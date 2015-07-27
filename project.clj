@@ -38,4 +38,5 @@
                                               "auto-unit"   ["midje" ":autotest" "test/stonecutter/test/" "src/"]
                                               "gencred"     ["run" "-m" "stonecutter.util.gencred"]
                                               "lint"        ["eastwood" "{:namespaces [:source-paths]}"]}
-                             :env {:secure "false"}}})
+                             :env {:secure "false"
+                                   :email-script-path "test-resources/mail_stub.sh"}}})

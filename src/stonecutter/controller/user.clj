@@ -7,6 +7,7 @@
             [stonecutter.validation :as v]
             [stonecutter.db.user :as user]
             [stonecutter.db.client :as c]
+            [stonecutter.email :as email]
             [stonecutter.view.register :as register]
             [stonecutter.view.profile-created :as profile-created]
             [stonecutter.view.profile :as profile]
@@ -35,8 +36,9 @@
         err (v/validate-registration params user/is-duplicate-user?)
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
-      (-> (user/store-user! email password)
-          (redirect-to-profile-created request))
+      (do (email/send-confirmation-email! email)
+          (-> (user/store-user! email password)
+              (redirect-to-profile-created request)))
       (show-registration-form request-with-validation-errors))))
 
 (defn show-change-password-form [request]

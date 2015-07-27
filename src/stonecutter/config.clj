@@ -30,3 +30,8 @@
    (secure? env/env))
   ([env-map]
    (not (= "false" (get env-map :secure "true")))))
+
+(defn email-script-path []
+  (if-let [script-path (get env/env :email-script-path)]
+    script-path
+    (log/warn "No email script path provided - Stonecutter will be unable to send emails")))
