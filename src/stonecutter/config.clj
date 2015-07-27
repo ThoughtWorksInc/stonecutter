@@ -24,5 +24,9 @@
 (defn theme []
   (get env/env :theme))
 
-(defn http-allowed? []
-  (= "true" (get env/env :http-allowed "true")))
+(defn secure?
+  "Returns true unless 'secure' environment variable set to 'false'"
+  ([]
+   (secure? env/env))
+  ([env-map]
+   (not (= "false" (get env-map :secure "true")))))

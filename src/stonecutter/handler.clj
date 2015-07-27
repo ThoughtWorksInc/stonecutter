@@ -93,24 +93,24 @@
   (log/warn "ANTI_FORGERY_ERROR - headers: " (:headers req))
   (csrf-err-handler req))
 
-(defn wrap-defaults-config [http-allowed?]
-  (-> (if http-allowed? ring-mw/site-defaults (assoc ring-mw/secure-site-defaults :proxy true))
+(defn wrap-defaults-config [secure?]
+  (-> (if secure? (assoc ring-mw/secure-site-defaults :proxy true) ring-mw/site-defaults)
       (assoc-in [:session :cookie-attrs :max-age] 3600)
       (assoc-in [:session :cookie-name] "stonecutter-session")
       (assoc-in [:security :anti-forgery] {:error-handler handle-anti-forgery-error})))
 
 (defn create-site-app [dev-mode?]
   (-> (scenic/scenic-handler routes/routes site-handlers not-found)
-      (ring-mw/wrap-defaults (wrap-defaults-config (config/http-allowed?)))
+      (ring-mw/wrap-defaults (wrap-defaults-config (config/secure?)))
       m/wrap-translator
       (m/wrap-theme (config/theme))
       (m/wrap-error-handling err-handler dev-mode?)))
 
 (defn create-api-app [dev-mode?]
   (-> (scenic/scenic-handler routes/routes api-handlers not-found)
-      (ring-mw/wrap-defaults (if (config/http-allowed?)
-                               ring-mw/api-defaults
-                               (assoc ring-mw/secure-api-defaults :proxy true)))
+      (ring-mw/wrap-defaults (if (config/secure?)
+                               (assoc ring-mw/secure-api-defaults :proxy true)
+                               ring-mw/api-defaults))
       (m/wrap-error-handling err-handler dev-mode?))) ;; TODO create json error handler
 
 (defn create-app [& {dev-mode? :dev-mode?}]

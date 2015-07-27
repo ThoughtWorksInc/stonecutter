@@ -38,4 +38,4 @@
                                               "auto-unit"   ["midje" ":autotest" "test/stonecutter/test/" "src/"]
                                               "gencred"     ["run" "-m" "stonecutter.util.gencred"]
                                               "lint"        ["eastwood" "{:namespaces [:source-paths]}"]}
-                             :env {:http-allowed "true"}}})
+                             :env {:secure "false"}}})
