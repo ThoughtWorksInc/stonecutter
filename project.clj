@@ -9,7 +9,7 @@
                            [enlive "1.1.6"]
                            [hiccup "1.0.5"]
                            [com.cemerick/url "0.1.1"]
-                           [johncowie/clauth "1.0.1-SNAPSHOT"]
+                           [johncowie/clauth "1.0.1"]
                            [traduki "0.1.1-SNAPSHOT"]
                            [clj-yaml "0.4.0"]
                            [environ "1.0.0"]
@@ -34,7 +34,7 @@
                                     :init    stonecutter.handler/lein-ring-init
                                     :stacktrace-middleware prone.middleware/wrap-exceptions}
                              :resource-paths ["resources" "test-resources"]
-                             :aliases        {"test"        ["midje"]
+                             :aliases        {"test"        "midje"
                                               "unit"        ["midje" "stonecutter.test.*"]
                                               "integration" ["midje" "stonecutter.integration.*"]
                                               "auto-unit"   ["midje" ":autotest" "test/stonecutter/test/" "src/"]
