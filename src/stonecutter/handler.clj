@@ -57,6 +57,7 @@
      :show-sign-in-form                  user/show-sign-in-form
      :sign-in                            user/sign-in
      :sign-out                           user/sign-out
+     :confirm-email                      user/confirm-email
      :show-profile                       user/show-profile
      :show-profile-created               user/show-profile-created
      :show-profile-deleted               user/show-profile-deleted

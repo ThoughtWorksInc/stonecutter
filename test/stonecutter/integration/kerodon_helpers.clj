@@ -29,8 +29,13 @@
   state)
 
 (defn selector-exists [state selector]
-  (fact {:midje/name "Check element exists"}
+  (fact {:midje/name (str "Check element exists with " selector)}
         (-> state :enlive (html/select selector)) =not=> empty?)
+  state)
+
+(defn selector-not-present [state selector]
+  (fact {:midje/name (str "Check element does not exist with " selector)}
+        (-> state :enlive (html/select selector)) => empty?)
   state)
 
 (defn selector-includes-content [state selector content]

@@ -113,9 +113,12 @@
 (defn show-profile [request]
   (let [email (get-in request [:session :user-login])
         user (user/retrieve-user email)
+        confirmed? (:confirmed? user)
         authorised-client-ids (:authorised-clients user)
         authorised-clients (map c/retrieve-client authorised-client-ids)]
-    (-> (assoc-in request [:context :authorised-clients] authorised-clients)
+    (-> request
+        (assoc-in [:context :authorised-clients] authorised-clients)
+        (assoc-in [:context :confirmed?] confirmed?)
         profile/profile
         (sh/enlive-response (:context request)))))
 
@@ -149,6 +152,9 @@
         client-id (get-in request [:params :client_id])]
     (user/remove-authorised-client-for-user! email client-id)
     (r/redirect (routes/path :show-profile))))
+
+(defn confirm-email [request]
+  (r/redirect (routes/path :show-profile)))
 
 (defn home [request]
   (r/redirect (routes/path :show-profile)))

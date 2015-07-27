@@ -71,7 +71,7 @@
 (fact "about creating a user record"
       (let [id-gen (constantly "id")]
         (fact "a uuid is added"
-              (user/create-user id-gen "email" "password") => {:login "email" :password "encrypted_password" :uid "id" :name nil :url nil}
+              (user/create-user id-gen "email" "password") => {:login "email" :password "encrypted_password" :uid "id" :name nil :url nil :confirmed? false :confirmation-id "id"}
               (provided (cl-user/bcrypt "password") => "encrypted_password"))
         (fact "email is lower-cased"
               (user/create-user id-gen "EMAIL" "password") => (contains {:login "email"}))))

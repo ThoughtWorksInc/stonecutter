@@ -7,6 +7,7 @@
             [stonecutter.email :as email]
             [stonecutter.integration.kerodon-helpers :as kh]
             [stonecutter.integration.kerodon-selectors :as ks]
+            [stonecutter.routes :as routes]
             [stonecutter.handler :as h]
             [stonecutter.db.storage :as s]
             [stonecutter.logging :as l]
@@ -125,6 +126,25 @@
            (kh/response-status-is 200)
            (kh/selector-exists [ks/profile-page-body])
            (kh/selector-includes-content [:body] "email@server.com")))
+
+(future-facts "User is not confirmed when first registering for an account; Hitting the confirmation 
+       endpoint confirms the user account when the UUID in the query string matches that 
+       for the signed in user's account"
+       (against-background
+         (s/uuid) => "CONFIRMATION-UUID")
+       (-> (k/session h/app)
+           (register "confirmation-test@email.com")
+
+           (k/visit (routes/path :show-profile))
+           (kh/selector-exists [:.clj--email-not-confirmed-message])
+           (kh/selector-not-present [:.clj--email-confirmed-message])
+
+           (k/visit (str (routes/path :confirm-email) "?id=CONFIRMATION-UUID"))
+           (k/follow-redirect)
+
+           (kh/page-uri-is (routes/path :show-profile))
+           (kh/selector-not-present [:.clj--email-not-confirmed-message])
+           (kh/selector-exists [:.clj--email-confirmed-message])))
 
 (facts "User is redirected to sign-in page when accessing profile page not signed in"
        (-> (k/session h/app)
