@@ -16,7 +16,7 @@
                            [com.novemberain/monger "2.0.0"]
                            [org.clojure/tools.logging "0.3.1"]
                            [clj-logging-config "1.9.12"]
-                           [crypto-random "1.1.0"]
+                           [crypto-random "1.2.0"]
                            [prismatic/schema "0.4.3"]
                            [ragtime "0.4.1"]]
             :main stonecutter.handler
