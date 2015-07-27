@@ -22,7 +22,7 @@
             :main stonecutter.handler
             :aot :all
             :profiles {:dev {:dependencies   [[ring-mock "0.1.5"]
-                                              [midje "1.6.3"]
+                                              [midje "1.7.0"]
                                               [prone "0.8.2"]
                                               [kerodon "0.6.1"]]
                              :plugins        [[lein-ring "0.9.6"]
