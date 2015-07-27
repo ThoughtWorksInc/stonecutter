@@ -6,7 +6,7 @@
                            [ring/ring-defaults "0.1.5"]
                            [ring/ring-jetty-adapter "1.4.0"]
                            [scenic "0.2.3"]
-                           [enlive "1.1.5"]
+                           [enlive "1.1.6"]
                            [hiccup "1.0.5"]
                            [com.cemerick/url "0.1.1"]
                            [johncowie/clauth "1.0.1-SNAPSHOT"]
@@ -28,12 +28,14 @@
                              :plugins        [[lein-ring "0.9.6"]
                                               [lein-environ "1.0.0"]
                                               [lein-midje "3.1.3"]
-                                              [lein-kibit "0.1.2"]]
+                                              [lein-kibit "0.1.2"]
+                                              [lein-ancient "0.6.7"]]
                              :ring {:handler stonecutter.handler/lein-app
                                     :init    stonecutter.handler/lein-ring-init
                                     :stacktrace-middleware prone.middleware/wrap-exceptions}
                              :resource-paths ["resources" "test-resources"]
-                             :aliases        {"unit"        ["midje" "stonecutter.test.*"]
+                             :aliases        {"test"        ["midje"]
+                                              "unit"        ["midje" "stonecutter.test.*"]
                                               "integration" ["midje" "stonecutter.integration.*"]
                                               "auto-unit"   ["midje" ":autotest" "test/stonecutter/test/" "src/"]
                                               "gencred"     ["run" "-m" "stonecutter.util.gencred"]
