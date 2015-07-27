@@ -13,7 +13,7 @@
                            [traduki "0.1.1-SNAPSHOT"]
                            [clj-yaml "0.4.0"]
                            [environ "1.0.0"]
-                           [com.novemberain/monger "2.0.0"]
+                           [com.novemberain/monger "2.1.0"]
                            [org.clojure/tools.logging "0.3.1"]
                            [clj-logging-config "1.9.12"]
                            [crypto-random "1.2.0"]
