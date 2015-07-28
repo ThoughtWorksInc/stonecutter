@@ -154,7 +154,14 @@
     (r/redirect (routes/path :show-profile))))
 
 (defn confirm-email [request]
-  (r/redirect (routes/path :show-profile)))
+  (let [user (user/retrieve-user (get-in request [:session :user-login]))]
+    (if (= (get-in request [:params :confirmation-id] :no-confirmation-id-in-query) (:confirmation-id user))
+      (do  
+        (user/confirm-email! user)
+        (r/redirect (routes/path :show-profile)))
+      (-> (r/redirect (str (:uri request) "?" (:query-string request)))
+          (preserve-session request)
+          (update-in [:session] #(dissoc % :user-login :access_token))))))
 
 (defn home [request]
   (r/redirect (routes/path :show-profile)))

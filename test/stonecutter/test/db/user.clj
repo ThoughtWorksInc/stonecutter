@@ -13,7 +13,9 @@
              (user/store-user! "email@server.com" "password")
              => (contains {:login "email@server.com"
                            :name nil
-                           :url nil}))
+                           :url nil
+                           :confirmed? false
+                           :confirmation-id anything}))
 
        (fact "can authenticate a user"
              (user/authenticate-and-retrieve-user "email@server.com" "password")
@@ -26,6 +28,12 @@
              => (contains {:login "email@server.com"
                            :name nil
                            :url nil}))
+
+       (fact "can confirm user's account"
+             (let [confirmed-user-record (-> (user/store-user! "email@server.com" "password")
+                                             (user/confirm-email!))]
+               confirmed-user-record =not=> (contains {:confirmation-id anything})  
+               confirmed-user-record => (contains {:confirmed? true})))
 
        (fact "can add authorised client for user"
              (user/add-authorised-client-for-user! "email@server.com" "a-client-id")

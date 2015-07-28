@@ -8,6 +8,7 @@
             [stonecutter.controller.user :as u]
             [stonecutter.db.client :as c]
             [stonecutter.db.user :as user]
+            [stonecutter.db.storage :as storage]
             [stonecutter.view.profile :as profile]
             [stonecutter.validation :as v]))
 
@@ -19,6 +20,15 @@
                         (= (:status response) 302)
                         (= (get-in response [:headers "Location"]) path))))
 
+(defn check-signed-in [request user]
+  (let [is-signed-in? #(and (= (:login user) (get-in % [:session :user-login]))
+                            (contains? (:session %) :access_token))]
+    (checker [response] 
+             (let [session-not-changed (not (contains? response :session))]
+               (or (and (is-signed-in? request)
+                        session-not-changed) 
+                   (is-signed-in? response))))))
+
 (def email "valid@email.com")
 (def password "password")
 (def sign-in-user-params {:email email :password password})
@@ -29,13 +39,20 @@
       (assoc :params params)
       (assoc-in [:context :translator] {})))
 
+(defn create-request-with-query-string [method url params]
+  (-> (mock/request method url params)
+      (assoc :params params)
+      (assoc-in [:context :translator] {})))
+
 (defn create-user [login password]
   {:login    login
    :password password
    :name     nil
    :url      nil})
 
-(background (before :facts (cl-user/reset-user-store!)))
+(background (before :facts (do (storage/setup-in-memory-stores!)
+                               (cl-user/reset-user-store!))
+                    :after (storage/reset-in-memory-stores!)))
 
 (facts "about registration"
        (fact "user can register with valid credentials and is redirected to profile-created page, with user-login and access_token added to session"
@@ -152,6 +169,7 @@
        (fact "user cannot sign in with blank password"
              (-> (create-request :post "/sign-in" {:email "email@credentials.com" :password ""})
                  u/sign-in) => (contains {:status 200}))
+
        (fact "user cannot sign in with invalid credentials"
              (-> (create-request :post "/sign-in" {:email "invalid@credentials.com" :password "password"})
                  u/sign-in) => (contains {:status 200})
@@ -283,6 +301,30 @@
                session =not=> (contains {:return-to anything})
                session => (contains {:user-login anything})
                session => (contains {:access_token anything}))))
+
+(facts "about confirm-email"
+       (fact "if the confirmation UUID in the query string matches that of the signed in user's user record"
+             (let [user (user/store-user! "dummy@email.com" "password")
+                   access-token (cl-token/create-token nil user)
+                   request (-> (create-request-with-query-string :get (routes/path :confirm-email) 
+                                                                 {:confirmation-id (:confirmation-id user)})
+                               (assoc-in [:session :access_token] (:token access-token))
+                               (assoc-in [:session :user-login] (:login user)))]
+               (u/confirm-email request) => (check-redirects-to (routes/path :show-profile)) 
+               (user/retrieve-user (:login user)) =not=> (contains {:confirmation-id anything})   
+               (user/retrieve-user (:login user)) => (contains {:confirmed? true})))
+       
+       (fact "when confirmation UUID in the query string does not match that of the signed in user's user record, signs the user out and redirects to confirmation endpoint"
+             (let [signed-in-user (user/store-user! "signed-in@email.com" "password")
+                   confirming-user (user/store-user! "confirming@email.com" "password")
+                   access-token (cl-token/create-token nil signed-in-user)
+                   request (-> (create-request-with-query-string :get (routes/path :confirm-email)
+                                               {:confirmation-id (:confirmation-id confirming-user)})
+                               (assoc-in [:session :access_token] (:token access-token))
+                               (assoc-in [:session :user-login] (:login signed-in-user)))
+                   response (u/confirm-email request)]
+               response =not=> (check-signed-in request signed-in-user)
+               response => (check-redirects-to (str (routes/path :confirm-email) "?confirmation-id=" (:confirmation-id confirming-user))))))
 
 (facts "about show-profile"
        (fact "user's authorised clients passed to html-response"

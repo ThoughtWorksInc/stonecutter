@@ -35,6 +35,12 @@
 (defn retrieve-user-with-auth-code [code]
   (-> (cl-auth-code/fetch-auth-code code) :subject))
 
+(defn confirm-email! [user]
+  (m/update! @cl-user/user-store (:login user)
+             (fn [user] (-> user
+                            (dissoc :confirmation-id)
+                            (assoc :confirmed? true)))))
+
 (defn unique-conj [things thing]
   (let [unique-things (set things)
         unique-things-list (into [] unique-things)]
