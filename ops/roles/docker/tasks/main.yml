@@ -21,7 +21,7 @@
    apt_repository: repo='deb https://get.docker.com/ubuntu docker main' state=present
 
  - name: install lxc-docker
-   apt: name=lxc-docker state=present
+   apt: name=lxc-docker state=latest
 
  - name: restart docker service
    service: name=docker state=restarted
@@ -41,6 +41,6 @@
        - /data/backup:/data/backup
 
  - name: docker java
-   docker: 
+   docker:
      image: java:8
      state: present
