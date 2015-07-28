@@ -34,7 +34,7 @@
                                     :init    stonecutter.handler/lein-ring-init
                                     :stacktrace-middleware prone.middleware/wrap-exceptions}
                              :resource-paths ["resources" "test-resources"]
-                             :aliases        {"test"        "midje"
+                             :aliases        {"test"        ["do" "clean," "midje"]
                                               "unit"        ["midje" "stonecutter.test.*"]
                                               "integration" ["midje" "stonecutter.integration.*"]
                                               "auto-unit"   ["midje" ":autotest" "test/stonecutter/test/" "src/"]
