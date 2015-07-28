@@ -45,10 +45,12 @@ block content
           a.button.button--link.button--full-width(href="#", data-l8n="content:sign-in-form/forgot-password") !Forgot password?
 
     .register-now
-      h2.register-now__title(data-l8n="content:register-now/title")
-        | !New to
-        = " "
-        | #{applicationName}?
+      h2.register-now__title
+        span(data-l8n="content:register-now/title-before-app-name")
+          | !New to
+          | " "
+        span.clj--app-name.func--register-now-app-name #{applicationName}
+        span(data-l8n="content:register-now/title-after-app-name") ?
       a.button.button--secondary.register-now__link(href="./register")
         span.highlight--dark-cyan(data-l8n="content:register-now/link-text-register") !Register now
         = " "

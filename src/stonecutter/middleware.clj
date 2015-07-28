@@ -36,10 +36,11 @@
         (assoc-in [:context :translator] (translation/translations-fn translation/translation-map))
         handler)))
 
-(defn wrap-theme [handler theme]
+(defn wrap-theme [handler theme app-name]
   (fn [request]
     (-> request
         (assoc-in [:context :theme :theme] theme)
+        (assoc-in [:context :theme :app-name] app-name)
         handler)))
 
 (defn wrap-handlers [handlers wrap-function exclusions]

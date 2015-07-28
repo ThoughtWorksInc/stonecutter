@@ -11,7 +11,7 @@
 
 (defn set-client-name [client-name enlive-m]
   (html/at enlive-m
-           [:.clj--app-name] (html/content client-name)))
+           [:.clj--client-name] (html/content client-name)))
 
 (defn show-authorise-failure [request]
   (let [client-name (get-in request [:context :client-name])

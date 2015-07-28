@@ -5,7 +5,7 @@
 (defn create-config []
   (select-keys env/env [:port :host :mongo-port-27017-tcp-addr
                         :mongo-uri :client-credentials-file-path
-                        :theme :secure :email-script-path]))
+                        :theme :secure :email-script-path :app-name]))
 
 (defn port [config-m]
   (Integer. (get config-m :port "3000")))
@@ -28,6 +28,9 @@
 
 (defn theme [config-m]
   (:theme config-m))
+
+(defn app-name [config-m]
+  (get config-m :app-name "Stonecutter"))
 
 (defn secure?
   "Returns true unless 'secure' environment variable set to 'false'"

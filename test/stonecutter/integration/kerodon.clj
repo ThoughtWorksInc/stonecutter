@@ -269,10 +269,15 @@
             (-> (k/session (h/create-app {:secure "false"} :dev-mode? true))
                 (k/visit "/register")) => (throws Exception)))
 
-(fact "Correct css file is used when config/theme returns the theme environment variable"
+(fact "Correct css file is used when config includes a :theme"
       (-> (k/session (h/create-app {:secure "false" :theme "MY_STYLING"} :dev-mode? false))
           (k/visit "/sign-in")
-          (kh/selector-has-attribute-with-content [ks/css-links] :href "stylesheets/MY_STYLING_theme.css")))
+          (kh/selector-has-attribute-with-content [ks/css-link] :href "stylesheets/MY_STYLING_theme.css")))
+
+(fact "Correct app-name is used when config includes an :app-name"
+      (-> (k/session (h/create-app {:secure "false" :app-name "My App Name"} :dev-mode? false))
+          (k/visit "/sign-in")
+          (kh/selector-includes-content [ks/sign-in-app-name] "My App Name")))
 
 (future-fact "Replaying the same post will generate a 403 from the csrf handling"
              (-> (k/session h/app)

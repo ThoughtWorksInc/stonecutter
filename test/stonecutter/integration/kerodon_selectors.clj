@@ -23,6 +23,7 @@
 (def sign-in-password-input :.func--password__input)
 (def sign-in-submit :.func--sign-in__button)
 (def sign-in-page-body :.func--sign-in-page)
+(def sign-in-app-name :.func--register-now-app-name)
 
 (def sign-out-link :.func--sign-out__link)
 
@@ -41,4 +42,4 @@
 (def error-404-page-body :.func--error-404-page)
 (def error-500-page-body :.func--error-500-page)
 
-(def css-links [:link (html/attr= :type "text/css")])
+(def css-link [:link (html/attr= :type "text/css")])

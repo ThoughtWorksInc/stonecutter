@@ -11,9 +11,15 @@
         (vh/remove-attribute-globally :data-clojure-id))
     enlive-m))
 
+(defn update-app-name [enlive-m context]
+  (let [app-name (get-in context [:theme :app-name])]
+    (-> enlive-m
+        (html/at [:.clj--app-name] (html/content app-name)))))
+
 (defn enlive-response [enlive-m context]
   (-> enlive-m
       (update-theme context)
+      (update-app-name context)
       (t/context-translate context)
       vh/enlive-to-str
       r/response

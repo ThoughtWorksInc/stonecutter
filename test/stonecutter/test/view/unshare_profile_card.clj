@@ -34,15 +34,15 @@
         (-> client-id-element :attrs :value) => "SOME_CLIENT_ID"
         (-> client-id-element :attrs :type) => "hidden"))
 
-(fact "app name is injected"
+(fact "client name is injected"
       (let [client-name "CLIENT_NAME"
-            app-name-elements (-> (th/create-request)
-                                  (assoc-in [:context :client] {:name client-name})
-                                  unshare-profile-card
-                                  (html/select [:.clj--app-name]))
-            app-name-is-correct-fn (fn [element] (= (html/text element) client-name))]
-        app-name-elements =not=> empty?
-        app-name-elements => (has every? app-name-is-correct-fn)))
+            client-name-elements (-> (th/create-request)
+                                     (assoc-in [:context :client] {:name client-name})
+                                     unshare-profile-card
+                                     (html/select [:.clj--client-name]))
+            client-name-is-correct-fn (fn [element] (= (html/text element) client-name))]
+        client-name-elements =not=> empty?
+        client-name-elements => (has every? client-name-is-correct-fn)))
 
 (fact "cancel link should go to correct endpoint"
       (let [page (-> (th/create-request) unshare-profile-card)]

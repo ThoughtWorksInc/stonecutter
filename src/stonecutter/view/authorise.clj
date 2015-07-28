@@ -21,7 +21,7 @@
 
 (defn set-client-name [client-name enlive-m]
   (html/at enlive-m
-           [:.clj--app-name] (html/content client-name)))
+           [:.clj--client-name] (html/content client-name)))
 
 (defn set-hidden-clauth-csrf-token [csrf-token enlive-m]
   (-> enlive-m

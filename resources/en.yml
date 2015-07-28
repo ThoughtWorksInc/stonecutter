@@ -35,7 +35,8 @@ change-password-form:
   cancel-button: Cancel
 
 register-now:
-  title: New to Stonecutter?
+  title-before-app-name: "New to "
+  title-after-app-name: "?"
   link-text-register: Register now
   link-text-action: for your Profile Card
 

@@ -144,7 +144,7 @@
                    oauth/show-authorise-form
                    :body
                    html/html-snippet
-                   (html/select [:.clj--app-name])) => (has some element-has-correct-client-name-fn)
+                   (html/select [:.clj--client-name])) => (has some element-has-correct-client-name-fn)
                    (provided (client/retrieve-client "CLIENT_ID") => {:client-id "CLIENT_ID" :name "CLIENT_NAME"})))
 
        (fact "redirects to error 404 page if client_id doesn't match a registered client"
@@ -169,7 +169,7 @@
                    oauth/show-authorise-failure
                    :body
                    html/html-snippet
-                   (html/select [:.clj--app-name])) => (has some element-has-correct-client-name-fn)
+                   (html/select [:.clj--client-name])) => (has some element-has-correct-client-name-fn)
                (provided (client/retrieve-client "CLIENT_ID") => {:client-id "CLIENT_ID" :name "CLIENT_NAME"}))))
 
 (fact "add-error-to-uri adds oauth error message to callback uri"

@@ -18,7 +18,7 @@
 
 (defn set-client-name [client-name enlive-m]
   (html/at enlive-m
-           [:.clj--app-name] (html/content client-name)))
+           [:.clj--client-name] (html/content client-name)))
 
 (defn unshare-profile-card [request]
   (let [client-id (get-in request [:context :client :client-id])

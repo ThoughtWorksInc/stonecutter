@@ -319,7 +319,7 @@
                           u/show-unshare-profile-card
                           :body
                           html/html-snippet
-                          (html/select [:.clj--app-name])) => (has some element-has-correct-client-name-fn)
+                          (html/select [:.clj--client-name])) => (has some element-has-correct-client-name-fn)
                       (provided
                         (user/is-authorised-client-for-user? ...email... "client-id") => true
                         (c/retrieve-client "client-id") => {:client-id "client-id" :name "CLIENT_NAME"})))
