@@ -42,10 +42,10 @@
   (html/at enlive-m
            [:.clj--delete-account__link] (html/set-attr :href (r/path :show-delete-account-confirmation))))
 
-(def feature-toggle? true)
+(def feature-toggle-story-25? true)
 
 (defn display-email-confirmation-status [request enlive-m]
-  (if feature-toggle?
+  (if feature-toggle-story-25?
     (html/at enlive-m
              [:.clj--email-not-confirmed-message] nil
              [:.clj--email-confirmed-message] nil) 

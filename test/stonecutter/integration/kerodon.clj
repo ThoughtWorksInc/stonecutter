@@ -3,6 +3,7 @@
             [kerodon.core :as k]
             [clauth.client :as cl-client]
             [clojure.java.io :as io]
+            [clojure.string :as string]
             [stonecutter.config :as config]
             [stonecutter.email :as email]
             [stonecutter.integration.kerodon-helpers :as kh]
@@ -81,9 +82,12 @@
            (kh/response-status-is 200)
            (kh/selector-exists [ks/registration-page-body])))
 
+(defn parse-test-email []
+  (read-string (slurp "test-tmp/test-email.txt")))
+
 (defn checks-email-is-sent [state email-address]
   (fact {:midje/name "Check send email script is called"}
-      (slurp "test-tmp/test-email.txt") => (contains (str "to: " email-address)))
+      (parse-test-email) => (contains {:email-address email-address}))
   state)
 
 (defn delete-directory [directory-path]
@@ -96,7 +100,7 @@
 (defn setup-test-directory [state]
   (fact {:midje/name "setup test tmp directory"}
         (io/make-parents "test-tmp/dummy.txt")
-        (.exists (io/file "test-tmp")) => true)
+        (.exists (io/file "test-tmp")) => true) 
   state)
 
 (defn teardown-test-directory [state]
@@ -105,12 +109,18 @@
         (.exists (io/file "test-tmp")) => false)
   state)
 
+(defn test-email-renderer [email-data]
+  {:email-address (:email-address email-data) 
+   :subject ""
+   :body (str email-data)})
+
 (facts "Registering a new user should call out to script to send a confirmation email"
-       (-> (k/session h/app)
-           (setup-test-directory)
-           (register "new-user@email.com")
-           (checks-email-is-sent "new-user@email.com")
-           (teardown-test-directory)))
+       (binding [email/email-renderers (assoc email/email-renderers :confirmation-email test-email-renderer)]
+         (-> (k/session h/app)
+             (setup-test-directory)
+             (register "new-user@email.com")
+             (checks-email-is-sent "new-user@email.com")
+             (teardown-test-directory))))
 
 (facts "Register page redirects to profile-created page when registered and
        user-login is in the session so that email address is displayed on profile card"
@@ -127,24 +137,26 @@
            (kh/selector-exists [ks/profile-page-body])
            (kh/selector-includes-content [:body] "email@server.com")))
 
-(future-facts "User is not confirmed when first registering for an account; Hitting the confirmation 
-       endpoint confirms the user account when the UUID in the query string matches that 
-       for the signed in user's account"
-       (against-background
-         (s/uuid) => "CONFIRMATION-UUID")
-       (-> (k/session h/app)
-           (register "confirmation-test@email.com")
+(future-facts "User is not confirmed when first registering for an account; Hitting the confirmation endpoint confirms the user account when the UUID in the query string matches that for the signed in user's account"
+       (binding [email/email-renderers (assoc email/email-renderers :confirmation-email test-email-renderer)]
+         (-> (k/session h/app)
+             
+             (setup-test-directory)
+             
+             (register "confirmation-test@email.com")
 
-           (k/visit (routes/path :show-profile))
-           (kh/selector-exists [:.clj--email-not-confirmed-message])
-           (kh/selector-not-present [:.clj--email-confirmed-message])
+             (k/visit (routes/path :show-profile))
+             (kh/selector-exists [:.clj--email-not-confirmed-message])
+             (kh/selector-not-present [:.clj--email-confirmed-message])
 
-           (k/visit (str (routes/path :confirm-email) "?id=CONFIRMATION-UUID"))
-           (k/follow-redirect)
+             (k/visit (str (routes/path :confirm-email) "?id=" (:confirmation-uuid (parse-test-email))))
+             (k/follow-redirect)
 
-           (kh/page-uri-is (routes/path :show-profile))
-           (kh/selector-not-present [:.clj--email-not-confirmed-message])
-           (kh/selector-exists [:.clj--email-confirmed-message])))
+             (kh/page-uri-is (routes/path :show-profile))
+             (kh/selector-not-present [:.clj--email-not-confirmed-message])
+             (kh/selector-exists [:.clj--email-confirmed-message])
+             
+             (teardown-test-directory))))
 
 (facts "User is redirected to sign-in page when accessing profile page not signed in"
        (-> (k/session h/app)
