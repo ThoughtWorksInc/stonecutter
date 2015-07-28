@@ -24,5 +24,5 @@
               (-> (helper/enlive-response enlive-m {}) get-response-enlive-m get-link-href)
                   => "stylesheets/application.css")
         (fact "theme called dcent in session modifiers the header to point to dcent_theme.css"
-              (-> (helper/enlive-response enlive-m {:theme "dcent"}) get-response-enlive-m get-link-href)
+              (-> (helper/enlive-response enlive-m {:theme {:theme "dcent"}}) get-response-enlive-m get-link-href)
                   => "stylesheets/dcent_theme.css")))

@@ -5,7 +5,7 @@
             [net.cgrand.enlive-html :as html]))
 
 (defn update-theme [enlive-m context]
-  (if-let [theme (:theme context)]
+  (if-let [theme (get-in context [:theme :theme])]
     (-> enlive-m
         (html/at [(html/attr= :data-clojure-id "theme-link")] (html/set-attr :href (format "stylesheets/%s_theme.css" theme)))
         (vh/remove-attribute-globally :data-clojure-id))

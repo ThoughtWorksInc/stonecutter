@@ -43,6 +43,11 @@
         (-> state :enlive (html/select selector) first html/text) => (contains content))
   state)
 
+(defn selector-has-attribute-with-content [state selector attr content]
+  (fact {:midje/name "Check if element contains attribute with string"}
+        (-> state :enlive (html/select selector) first :attrs attr) => content)
+  state)
+
 (defn selector-does-not-include-content [state selector content]
   (fact {:midje/name "Check if element does not contain string"}
         (-> state :enlive (html/select selector) first html/text) =not=> (contains content))

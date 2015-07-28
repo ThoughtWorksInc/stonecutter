@@ -50,7 +50,7 @@
       (k/press ks/sign-in-submit)))
 
 (s/setup-in-memory-stores!)
-(email/configure-email (config/email-script-path))
+(email/configure-email (config/email-script-path {:email-script-path "test-resources/mail_stub.sh"}))
 
 (facts "Home url redirects to sign-in page if user is not signed in"
        (-> (k/session h/app)
@@ -100,7 +100,7 @@
 (defn setup-test-directory [state]
   (fact {:midje/name "setup test tmp directory"}
         (io/make-parents "test-tmp/dummy.txt")
-        (.exists (io/file "test-tmp")) => true) 
+        (.exists (io/file "test-tmp")) => true)
   state)
 
 (defn teardown-test-directory [state]
@@ -110,7 +110,7 @@
   state)
 
 (defn test-email-renderer [email-data]
-  {:email-address (:email-address email-data) 
+  {:email-address (:email-address email-data)
    :subject ""
    :body (str email-data)})
 
@@ -140,9 +140,9 @@
 (future-facts "User is not confirmed when first registering for an account; Hitting the confirmation endpoint confirms the user account when the UUID in the query string matches that for the signed in user's account"
        (binding [email/email-renderers (assoc email/email-renderers :confirmation-email test-email-renderer)]
          (-> (k/session h/app)
-             
+
              (setup-test-directory)
-             
+
              (register "confirmation-test@email.com")
 
              (k/visit (routes/path :show-profile))
@@ -155,7 +155,7 @@
              (kh/page-uri-is (routes/path :show-profile))
              (kh/selector-not-present [:.clj--email-not-confirmed-message])
              (kh/selector-exists [:.clj--email-confirmed-message])
-             
+
              (teardown-test-directory))))
 
 (facts "User is redirected to sign-in page when accessing profile page not signed in"
@@ -261,13 +261,18 @@
 (fact "Error page is shown if an exception is thrown"
       (against-background
         (register-view/registration-form anything) =throws=> (Exception.))
-      (-> (k/session (h/create-app :dev-mode? false))
+      (-> (k/session (h/create-app {:secure "false"} :dev-mode? false))
           (k/visit "/register")
           (kh/response-status-is 500)
           (kh/selector-exists [ks/error-500-page-body]))
       (fact "if dev mode is enabled then error middleware isn't invoked (exception not caught)"
-            (-> (k/session (h/create-app :dev-mode? true))
+            (-> (k/session (h/create-app {:secure "false"} :dev-mode? true))
                 (k/visit "/register")) => (throws Exception)))
+
+(fact "Correct css file is used when config/theme returns the theme environment variable"
+      (-> (k/session (h/create-app {:secure "false" :theme "MY_STYLING"} :dev-mode? false))
+          (k/visit "/sign-in")
+          (kh/selector-has-attribute-with-content [ks/css-links] :href "stylesheets/MY_STYLING_theme.css")))
 
 (future-fact "Replaying the same post will generate a 403 from the csrf handling"
              (-> (k/session h/app)

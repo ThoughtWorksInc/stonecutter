@@ -1,4 +1,5 @@
-(ns stonecutter.integration.kerodon-selectors)
+(ns stonecutter.integration.kerodon-selectors
+  (:require [net.cgrand.enlive-html :as html]))
 
 (def registration-email-input :.func--email__input)
 (def registration-password-input :.func--password__input)
@@ -39,3 +40,5 @@
 
 (def error-404-page-body :.func--error-404-page)
 (def error-500-page-body :.func--error-500-page)
+
+(def css-links [:link (html/attr= :type "text/css")])

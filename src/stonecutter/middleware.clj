@@ -39,7 +39,7 @@
 (defn wrap-theme [handler theme]
   (fn [request]
     (-> request
-        (assoc-in [:context :theme] theme)
+        (assoc-in [:context :theme :theme] theme)
         handler)))
 
 (defn wrap-handlers [handlers wrap-function exclusions]

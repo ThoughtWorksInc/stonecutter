@@ -2,36 +2,39 @@
   (:require [environ.core :as env]
             [clojure.tools.logging :as log]))
 
-(defn port []
-  (Integer. (get env/env :port "3000")))
+(defn create-config []
+  (select-keys env/env [:port :host :mongo-port-27017-tcp-addr
+                        :mongo-uri :client-credentials-file-path
+                        :theme :secure :email-script-path]))
 
-(defn host []
-  (get env/env :host "127.0.0.1"))
+(defn port [config-m]
+  (Integer. (get config-m :port "3000")))
 
-(defn- get-docker-mongo-uri []
-  (when-let [mongo-ip (get env/env :mongo-port-27017-tcp-addr)]
+(defn host [config-m]
+  (get config-m :host "127.0.0.1"))
+
+(defn- get-docker-mongo-uri [config-m]
+  (when-let [mongo-ip (:mongo-port-27017-tcp-addr config-m)]
     (format "mongodb://%s:27017/stonecutter" mongo-ip)))
 
-(defn mongo-uri []
+(defn mongo-uri [config-m]
   (or
-    (get-docker-mongo-uri)
-    (get env/env :mongo-uri)
+    (get-docker-mongo-uri config-m)
+    (get config-m :mongo-uri)
     "mongodb://localhost:27017/stonecutter"))
 
-(defn client-credentials-file-path []
-  (get env/env :client-credentials-file-path "client-credentials.yml"))
+(defn client-credentials-file-path [config-m]
+  (get config-m :client-credentials-file-path "client-credentials.yml"))
 
-(defn theme []
-  (get env/env :theme))
+(defn theme [config-m]
+  (:theme config-m))
 
 (defn secure?
   "Returns true unless 'secure' environment variable set to 'false'"
-  ([]
-   (secure? env/env))
-  ([env-map]
-   (not (= "false" (get env-map :secure "true")))))
+  [config-m]
+  (not (= "false" (get config-m :secure "true"))))
 
-(defn email-script-path []
-  (if-let [script-path (get env/env :email-script-path)]
+(defn email-script-path [config-m]
+  (if-let [script-path (:email-script-path config-m)]
     script-path
     (log/warn "No email script path provided - Stonecutter will be unable to send emails")))
