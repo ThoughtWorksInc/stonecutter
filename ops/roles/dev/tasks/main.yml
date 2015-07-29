@@ -14,6 +14,9 @@
  - name: install node.js
    apt: pkg=nodejs state=latest
 
+ - name: install latest openssl
+   apt: pkg=openssl state=latest
+
  - name: Node.js | Update npm
    command: npm install npm -g
 
