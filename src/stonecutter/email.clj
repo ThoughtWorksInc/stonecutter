@@ -12,9 +12,6 @@
 (defn null-sender [email-address subject body] nil)
 (defn null-renderer [email-data] {:subject nil :body nil})
 
-(defn configure-email [path]
-  (reset! email-script-path path))
-
 (defn send! [template email-address email-data]
   (let [{:keys [subject body]} ((template @template-to-renderer-map) email-data)]
     (@sender email-address subject body)))
@@ -33,3 +30,7 @@
                 (str email-address)
                 (str subject)
                 (str body)))) 
+
+(defn configure-email [path]
+  (initialise! null-sender
+               {:confirmation null-renderer}))
