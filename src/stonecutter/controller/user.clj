@@ -2,6 +2,7 @@
   (:require [clauth.token :as cl-token]
             [clauth.endpoints :as cl-ep]
             [ring.util.response :as r]
+            [stonecutter.util.ring :as util-ring]
             [stonecutter.routes :as routes]
             [stonecutter.view.sign-in :as sign-in]
             [stonecutter.validation :as v]
@@ -154,14 +155,18 @@
     (r/redirect (routes/path :show-profile))))
 
 (defn confirm-email [request]
-  (let [user (user/retrieve-user (get-in request [:session :user-login]))]
+  (if (signed-in? request)
+   (let [user (user/retrieve-user (get-in request [:session :user-login]))]
     (if (= (get-in request [:params :confirmation-id] :no-confirmation-id-in-query) (:confirmation-id user))
       (do  
         (user/confirm-email! user)
         (r/redirect (routes/path :show-profile)))
       (-> (r/redirect (str (:uri request) "?" (:query-string request)))
           (preserve-session request)
-          (update-in [:session] #(dissoc % :user-login :access_token))))))
+          (update-in [:session] #(dissoc % :user-login :access_token)))))
+    (-> (r/redirect (routes/path :show-sign-in-form))
+        (preserve-session request)
+        (assoc-in [:session :return-to] (util-ring/complete-uri-of request)))))
 
 (defn home [request]
   (r/redirect (routes/path :show-profile)))
