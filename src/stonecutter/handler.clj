@@ -79,7 +79,9 @@
                                         :sign-out
                                         :show-profile-deleted
                                         :authorise
-                                        :ping})))
+                                        :ping
+                                        :confirm-email
+                                        })))
 
 (def api-handlers
   {:validate-token         oauth/validate-token})

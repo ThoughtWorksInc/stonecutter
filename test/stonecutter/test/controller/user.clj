@@ -4,6 +4,7 @@
             [clauth.token :as cl-token]
             [clauth.user :as cl-user]
             [net.cgrand.enlive-html :as html]
+            [stonecutter.email :as email]
             [stonecutter.routes :as routes]
             [stonecutter.controller.user :as u]
             [stonecutter.db.client :as c]
@@ -51,8 +52,11 @@
    :url      nil})
 
 (background (before :facts (do (storage/setup-in-memory-stores!)
-                               (cl-user/reset-user-store!))
-                    :after (storage/reset-in-memory-stores!)))
+                               (cl-user/reset-user-store!)
+                               (email/initialise! email/null-sender
+                                                  {:confirmation email/null-renderer}))
+                    :after (do (storage/reset-in-memory-stores!)
+                               (email/reset-email-configuration!))))
 
 (facts "about registration"
        (fact "user can register with valid credentials and is redirected to profile-created page, with user-login and access_token added to session"

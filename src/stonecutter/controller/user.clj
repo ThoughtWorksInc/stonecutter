@@ -37,7 +37,7 @@
         err (v/validate-registration params user/is-duplicate-user?)
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
-      (do (email/send-confirmation-email! email)
+      (do (email/send! :confirmation email {:confirmation-id "to-be-set-from-user-record"})
           (-> (user/store-user! email password)
               (redirect-to-profile-created request)))
       (show-registration-form request-with-validation-errors))))

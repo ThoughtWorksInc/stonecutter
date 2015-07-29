@@ -6,19 +6,30 @@
 
 (def ^:dynamic email-renderers {:confirmation-email identity})
 
+(def sender (atom nil))
+(def template-to-renderer-map (atom nil))
+
+(defn null-sender [email-address subject body] nil)
+(defn null-renderer [email-data] {:subject nil :body nil})
+
 (defn configure-email [path]
   (reset! email-script-path path))
 
-(defn render-email [email-data template-label]
-  (let [renderer (email-renderers template-label)]
-    (renderer email-data)))
+(defn send! [template email-address email-data]
+  (let [{:keys [subject body]} ((template @template-to-renderer-map) email-data)]
+    (@sender email-address subject body)))
 
-(defn send-email [{:keys [email-address subject body] :as email-content}]
-  (if-let [path @email-script-path]
-    (shell/sh @email-script-path (str email-address) (str subject) (str body))
-    (log/info "Email script path not set - unable to send email")))
+(defn initialise! [sender-fn template-to-renderer-config]
+  (reset! sender sender-fn)  
+  (reset! template-to-renderer-map template-to-renderer-config))
 
-(defn send-confirmation-email! [email-address]
-  (-> {:email-address email-address :confirmation-uuid "pass-this-as-an-argument-at-some-point"}
-      (render-email :confirmation-email)
-      send-email))
+(defn reset-email-configuration! []
+  (reset! sender nil)
+  (reset! template-to-renderer-map nil))
+
+(defn bash-sender-factory [email-script-path]
+  (fn [email-address subject body] 
+      (shell/sh email-script-path 
+                (str email-address)
+                (str subject)
+                (str body)))) 
