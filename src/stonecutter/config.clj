@@ -2,16 +2,25 @@
   (:require [environ.core :as env]
             [clojure.tools.logging :as log]))
 
+(def env-vars #{:port :host :mongo-port-27017-tcp-addr
+                :mongo-uri :client-credentials-file-path
+                :theme :secure :email-script-path :app-name})
+
 (defn create-config []
-  (select-keys env/env [:port :host :mongo-port-27017-tcp-addr
-                        :mongo-uri :client-credentials-file-path
-                        :theme :secure :email-script-path :app-name]))
+  (select-keys env/env env-vars))
+
+(defn get-env
+  "Like a normal 'get' except it also ensures the key is in the env-vars set"
+  ([config-m key]
+   (get config-m (env-vars key)))
+  ([config-m key default]
+   (get config-m (env-vars key) default)))
 
 (defn port [config-m]
-  (Integer. (get config-m :port "3000")))
+  (Integer. (get-env config-m :port "3000")))
 
 (defn host [config-m]
-  (get config-m :host "127.0.0.1"))
+  (get-env config-m :host "127.0.0.1"))
 
 (defn- get-docker-mongo-uri [config-m]
   (when-let [mongo-ip (:mongo-port-27017-tcp-addr config-m)]
@@ -20,24 +29,24 @@
 (defn mongo-uri [config-m]
   (or
     (get-docker-mongo-uri config-m)
-    (get config-m :mongo-uri)
+    (get-env config-m :mongo-uri)
     "mongodb://localhost:27017/stonecutter"))
 
 (defn client-credentials-file-path [config-m]
-  (get config-m :client-credentials-file-path "client-credentials.yml"))
+  (get-env config-m :client-credentials-file-path "client-credentials.yml"))
 
 (defn theme [config-m]
-  (:theme config-m))
+  (get-env config-m :theme))
 
 (defn app-name [config-m]
-  (get config-m :app-name "Stonecutter"))
+  (get-env config-m :app-name "Stonecutter"))
 
 (defn secure?
   "Returns true unless 'secure' environment variable set to 'false'"
   [config-m]
-  (not (= "false" (get config-m :secure "true"))))
+  (not (= "false" (get-env config-m :secure "true"))))
 
 (defn email-script-path [config-m]
-  (if-let [script-path (:email-script-path config-m)]
+  (if-let [script-path (get-env config-m :email-script-path)]
     script-path
     (log/warn "No email script path provided - Stonecutter will be unable to send emails")))
