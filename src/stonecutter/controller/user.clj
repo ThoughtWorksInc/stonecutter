@@ -30,6 +30,10 @@
 (defn show-registration-form [request]
   (sh/enlive-response (register/registration-form request) (:context request)))
 
+(defn send-confirmation-email! [user email]
+  (email/send! :confirmation email {:confirmation-id (:confirmation-id user)})
+  user)
+
 (defn register-user [request]
   (let [params (:params request)
         email (:email params)
@@ -37,9 +41,9 @@
         err (v/validate-registration params user/is-duplicate-user?)
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
-      (do (email/send! :confirmation email {:confirmation-id "to-be-set-from-user-record"})
-          (-> (user/store-user! email password)
-              (redirect-to-profile-created request)))
+      (-> (user/store-user! email password)
+          (send-confirmation-email! email)
+          (redirect-to-profile-created request))
       (show-registration-form request-with-validation-errors))))
 
 (defn show-change-password-form [request]
