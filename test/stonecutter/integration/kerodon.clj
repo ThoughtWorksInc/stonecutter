@@ -4,6 +4,7 @@
             [clauth.client :as cl-client]
             [clojure.java.io :as io]
             [clojure.string :as string]
+            [stonecutter.toggles :as toggles]
             [stonecutter.config :as config]
             [stonecutter.email :as email]
             [stonecutter.integration.kerodon-helpers :as kh]
@@ -137,7 +138,8 @@
            (kh/selector-exists [ks/profile-page-body])
            (kh/selector-includes-content [:body] "email@server.com")))
 
-(future-facts "User is not confirmed when first registering for an account; Hitting the confirmation endpoint confirms the user account when the UUID in the query string matches that for the signed in user's account"
+(when (= toggles/story-25 :activated)
+ (facts "User is not confirmed when first registering for an account; Hitting the confirmation endpoint confirms the user account when the UUID in the query string matches that for the signed in user's account"
          (-> (k/session h/app)
 
              (setup-test-directory)
@@ -155,37 +157,36 @@
              (kh/selector-not-present [:.clj--email-not-confirmed-message])
              (kh/selector-exists [:.clj--email-confirmed-message])
 
-             (teardown-test-directory)))
+             (teardown-test-directory))))
 
-(future-fact "The account confirmation flow can be followed by a user who is not signed in when first accessing the confirmation endpoint"
-      (binding [email/email-renderers (assoc email/email-renderers :confirmation-email test-email-renderer)]
-        (-> (k/session h/app)
+(when (= toggles/story-25 :activated)
+ (facts "The account confirmation flow can be followed by a user who is not signed in when first accessing the confirmation endpoint"
+       (-> (k/session h/app)
+           (setup-test-directory)
 
-            (setup-test-directory)
+           (register "confirmation-test-2@email.com")
+           (k/visit "/profile")
+           (k/follow ks/sign-out-link)
+           (k/follow-redirect)
 
-            (register "confirmation-test-2@email.com")
-            (k/visit "/profile")
-            (k/follow ks/sign-out-link)
-            (k/follow-redirect)
+           (k/visit (str (routes/path :confirm-email) "?confirmation-id=" (get-in (parse-test-email) [:body :confirmation-id])))
+           (kh/page-uri-is "/confirm-email")
 
-            (k/visit (str (routes/path :confirm-email) "?confirmation-id=" (get-in (parse-test-email) [:body :confirmation-id])))
-            (kh/page-uri-is "/confirm-email")
+           (k/follow-redirect)
+           (kh/page-uri-is "/sign-in")
+           (k/fill-in ks/sign-in-email-input "confirmation-test-2@email.com")
+           (k/fill-in ks/sign-in-password-input "valid-password")
+           (k/press ks/sign-in-submit)
 
-            (k/follow-redirect)
-            (kh/page-uri-is "/sign-in")
-            (k/fill-in ks/sign-in-email-input "confirmation-test-2@email.com")
-            (k/fill-in ks/sign-in-password-input "valid-password")
-            (k/press ks/sign-in-submit)
+           (k/follow-redirect)
+           (kh/page-uri-is "/confirm-email")
 
-            (k/follow-redirect)
-            (kh/page-uri-is "/confirm-email")
+           (k/follow-redirect)
+           (kh/page-uri-is (routes/path :show-profile))
+           (kh/selector-not-present [:.clj--email-not-confirmed-message])
+           (kh/selector-exists [:.clj--email-confirmed-message])
 
-            (k/follow-redirect)
-            (kh/page-uri-is (routes/path :show-profile))
-            (kh/selector-not-present [:.clj--email-not-confirmed-message])
-            (kh/selector-exists [:.clj--email-confirmed-message])
-
-            (teardown-test-directory))))
+           (teardown-test-directory))))
 
 (facts "User is redirected to sign-in page when accessing profile page not signed in"
        (-> (k/session h/app)

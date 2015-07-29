@@ -4,6 +4,7 @@
             [clauth.token :as cl-token]
             [clauth.user :as cl-user]
             [net.cgrand.enlive-html :as html]
+            [stonecutter.toggles :as toggles]
             [stonecutter.email :as email]
             [stonecutter.routes :as routes]
             [stonecutter.controller.user :as u]
@@ -350,17 +351,38 @@
                response => (contains {:session (contains {:return-to (contains (str (routes/path :confirm-email) "?confirmation-id=" (:confirmation-id confirming-user)))})})
                response => (check-redirects-to (routes/path :show-sign-in-form)))))
 
-(facts "about show-profile"
-       (fact "user's authorised clients passed to html-response"
-             (-> (create-request :get (routes/path :show-profile) nil)
-                 (assoc :session {:user-login ...email...})
-                 u/show-profile
-                 :body) => (contains #"CLIENT 1[\s\S]+CLIENT 2")
-             (provided
-               (user/retrieve-user ...email...) => {:login ...email...
-                                                    :authorised-clients [...client-id-1... ...client-id-2...]}
-               (c/retrieve-client ...client-id-1...) => {:name "CLIENT 1"}
-               (c/retrieve-client ...client-id-2...) => {:name "CLIENT 2"})))
+(when (= toggles/story-25 :activated)
+  (facts "about show-profile"
+         (fact "user's authorised clients passed to html-response"
+               (-> (create-request :get (routes/path :show-profile) nil)
+                   (assoc :session {:user-login ...email...})
+                   u/show-profile
+                   :body) => (contains #"CLIENT 1[\s\S]+CLIENT 2")
+               (provided
+                 (user/retrieve-user ...email...) => {:login ...email...
+                                                      :authorised-clients [...client-id-1... ...client-id-2...]}
+                 (c/retrieve-client ...client-id-1...) => {:name "CLIENT 1"}
+                 (c/retrieve-client ...client-id-2...) => {:name "CLIENT 2"}))
+
+         (tabular
+           (fact "user confirmation status is displayed appropriately"
+                 (against-background
+                   (user/retrieve-user ...email...) => {:login ...email...
+                                                        :confirmed? ?confirmed})
+                 (let [enlive-snippet
+                       (-> (create-request :get (routes/path :show-profile) nil)
+                           (assoc :session {:user-login ...email...})
+                           u/show-profile
+                           :body
+                           html/html-snippet)]
+
+                   (html/select enlive-snippet [?should-show]) => (one-of anything)
+                   (html/select enlive-snippet [?should-hide]) => empty?))
+
+           ?confirmed    ?should-show                        ?should-hide
+           true          :.clj--email-confirmed-message      :.clj--email-not-confirmed-message
+           false         :.clj--email-not-confirmed-message  :.clj--email-confirmed-message)))
+
 
 (facts "about unsharing profile cards"
        (facts "about get requests to /unshare-profile-card"

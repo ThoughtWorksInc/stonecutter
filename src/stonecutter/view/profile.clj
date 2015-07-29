@@ -1,6 +1,7 @@
 (ns stonecutter.view.profile
   (:require [traduki.core :as t]
             [net.cgrand.enlive-html :as html]
+            [stonecutter.toggles :as toggles]
             [stonecutter.routes :as r]
             [stonecutter.view.view-helpers :as vh]))
 
@@ -42,10 +43,8 @@
   (html/at enlive-m
            [:.clj--delete-account__link] (html/set-attr :href (r/path :show-delete-account-confirmation))))
 
-(def feature-toggle-story-25? true)
-
 (defn display-email-confirmation-status [request enlive-m]
-  (if feature-toggle-story-25?
+  (if (not= toggles/story-25 :activated)
     (html/at enlive-m
              [:.clj--email-not-confirmed-message] nil
              [:.clj--email-confirmed-message] nil)

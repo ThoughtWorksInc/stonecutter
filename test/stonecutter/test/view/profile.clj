@@ -1,6 +1,7 @@
 (ns stonecutter.test.view.profile
   (:require [midje.sweet :refer :all]
             [net.cgrand.enlive-html :as html]
+            [stonecutter.toggles :as toggles]
             [stonecutter.routes :as r]
             [stonecutter.test.view.test-helpers :as th]
             [stonecutter.translation :as t]
@@ -46,13 +47,14 @@
              (let [page (-> (th/create-request) (assoc :flash :password-changed) profile)]
                (-> page (html/select [:.clj--flash-message-container])) =not=> empty?)))
 
-(future-facts "about displaying email confirmation status"
+(when (= toggles/story-25 :activated)
+ (facts "about displaying email confirmation status"
        (fact "accounts with unconfirmed email addresses display unconfirmed message and don't display confirmed message"
              (let [page (-> (th/create-request)
                             (assoc-in [:context :confirmed?] false)
                             profile)]
                (-> page (html/select [:.clj--email-not-confirmed-message])) =not=> empty?   
-               (-> page (html/select [:.clj--email-confirmed-message])) => empty?)))
+               (-> page (html/select [:.clj--email-confirmed-message])) => empty?))))
 
 (facts "about displaying authorised clients"
        (fact "names of authorised clients are displayed"
