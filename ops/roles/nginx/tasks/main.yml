@@ -14,6 +14,14 @@
  - name: copy SSL key
    copy: src={{ cert_key_location }} dest="/etc/nginx/ssl/stonecutter.key"
 
+ - name: Create directory for DH parameter file
+   file: path=/etc/nginx/cert state=directory mode=0755
+
+ - name: Create DH parameters file
+   command: openssl dhparam 2048 -out /etc/nginx/cert/dhparam.pem
+   args:
+     creates: /etc/nginx/cert/dhparam.pem
+
  - name: copy over stonecutter nginx config
    template: src="stonecutter.j2" dest="/etc/nginx/sites-available/stonecutter" mode=0644
 
