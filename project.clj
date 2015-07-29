@@ -18,7 +18,9 @@
                            [clj-logging-config "1.9.12"]
                            [crypto-random "1.2.0"]
                            [prismatic/schema "0.4.3"]
-                           [ragtime "0.4.2"]]
+                           [ragtime "0.4.2"]
+                           [garden "1.2.5"]
+                           [com.evocomputing/colors "1.0.2"]]
             :main stonecutter.handler
             :aot :all
             :profiles {:dev {:dependencies   [[ring-mock "0.1.5"]

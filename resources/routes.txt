@@ -20,3 +20,4 @@ GET     /authorise-failure      show-authorise-failure
 GET     /unshare-profile-card   show-unshare-profile-card
 POST    /unshare-profile-card   unshare-profile-card
 POST    /api/token              validate-token
+GET     /stylesheets/theme.css  theme-css

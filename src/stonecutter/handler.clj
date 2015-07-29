@@ -11,6 +11,7 @@
             [stonecutter.logging :as log-config]
             [stonecutter.controller.user :as user]
             [stonecutter.controller.oauth :as oauth]
+            [stonecutter.controller.stylesheets :as stylesheets]
             [stonecutter.translation :as t]
             [stonecutter.middleware :as m]
             [stonecutter.email :as email]
@@ -52,6 +53,7 @@
   (->
     {:home                               user/home
      :ping                               ping
+     :theme-css                          stylesheets/theme-css
      :show-registration-form             user/show-registration-form
      :register-user                      user/register-user
      :show-sign-in-form                  user/show-sign-in-form
@@ -73,15 +75,15 @@
      :show-authorise-failure             oauth/show-authorise-failure}
     (m/wrap-handlers #(m/wrap-handle-404 % not-found) #{})
     (m/wrap-handlers #(m/wrap-handle-403 % forbidden-err-handler) #{})
-    (m/wrap-handlers m/wrap-disable-caching #{})
+    (m/wrap-handlers m/wrap-disable-caching #{:theme-css})
     (m/wrap-handlers m/wrap-signed-in #{:show-registration-form :register-user
                                         :show-sign-in-form      :sign-in
                                         :sign-out
                                         :show-profile-deleted
                                         :authorise
                                         :ping
-                                        :confirm-email
-                                        })))
+                                        :theme-css
+                                        :confirm-email})))
 
 (def api-handlers
   {:validate-token         oauth/validate-token})
