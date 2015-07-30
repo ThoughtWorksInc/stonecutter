@@ -25,10 +25,10 @@
 (defn check-signed-in [request user]
   (let [is-signed-in? #(and (= (:login user) (get-in % [:session :user-login]))
                             (contains? (:session %) :access_token))]
-    (checker [response] 
+    (checker [response]
              (let [session-not-changed (not (contains? response :session))]
                (or (and (is-signed-in? request)
-                        session-not-changed) 
+                        session-not-changed)
                    (is-signed-in? response))))))
 
 (def email "valid@email.com")
@@ -326,13 +326,13 @@
 (facts "about confirm-email"
        (fact "if the confirmation UUID in the query string matches that of the signed in user's user record confirm the account and redirect to profile view"
              (let [user (user/store-user! "dummy@email.com" "password")
-                   request (-> (create-request-with-query-string :get (routes/path :confirm-email) 
+                   request (-> (create-request-with-query-string :get (routes/path :confirm-email)
                                                                  {:confirmation-id (:confirmation-id user)})
                                (with-signed-in-user user))]
-               (u/confirm-email request) => (check-redirects-to (routes/path :show-profile)) 
-               (user/retrieve-user (:login user)) =not=> (contains {:confirmation-id anything})   
+               (u/confirm-email request) => (check-redirects-to (routes/path :show-profile))
+               (user/retrieve-user (:login user)) =not=> (contains {:confirmation-id anything})
                (user/retrieve-user (:login user)) => (contains {:confirmed? true})))
-       
+
        (fact "when confirmation UUID in the query string does not match that of the signed in user's user record, signs the user out and redirects to confirmation endpoint with the original confirmation UUID from the query string"
              (let [signed-in-user (user/store-user! "signed-in@email.com" "password")
                    confirming-user (user/store-user! "confirming@email.com" "password")
@@ -342,7 +342,7 @@
                    response (u/confirm-email request)]
                response =not=> (check-signed-in request signed-in-user)
                response => (check-redirects-to (str (routes/path :confirm-email) "?confirmation-id=" (:confirmation-id confirming-user)))))
-       
+
        (fact "when user is not signed in, redirects to sign-in form with the confirmation endpoint (including confirmation UUID query string) as the successful sign-in redirect target"
              (let [confirming-user (user/store-user! "confirming@email.com" "password")
                    request (create-request-with-query-string :get (routes/path :confirm-email)

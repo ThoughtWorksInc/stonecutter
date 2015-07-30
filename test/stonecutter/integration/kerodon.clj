@@ -299,6 +299,14 @@
             (-> (k/session (h/create-app {:secure "false"} :dev-mode? true))
                 (k/visit "/register")) => (throws Exception)))
 
+(fact "theme.css file is generated using environment variables"
+      (-> (k/session (h/create-app {:secure "false" :header-bg-color "#012345" :inactive-tab-font-color "#FEDCBA"}
+                                   :dev-mode? false))
+          (k/visit "/stylesheets/theme.css")
+          (kh/response-status-is 200)
+          (kh/response-body-contains "#012345")
+          (kh/response-body-contains "#fedcba")))
+
 (fact "Correct css file is used when config includes a :theme"
       (-> (k/session (h/create-app {:secure "false" :theme "MY_STYLING"} :dev-mode? false))
           (k/visit "/sign-in")

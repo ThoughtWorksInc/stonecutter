@@ -19,14 +19,20 @@
   state)
 
 (defn page-uri-contains [state uri]
-  (fact {:midje/name "Checking if page uri contains:"}
+  (fact {:midje/name (str "Checking if page uri contains " uri)}
         (-> state :request :uri) => (contains uri))
   state)
 
 (defn response-status-is [state status]
-  (fact {:midje/name "Checking response status"}
+  (fact {:midje/name (str "Checking response status is " status)}
         (-> state :response :status) => status)
   state)
+
+(defn response-body-contains [state content]
+  (fact {:midje/name (str "Check body contains " content)}
+        (-> state :response :body) => (contains content))
+  state)
+
 
 (defn selector-exists [state selector]
   (fact {:midje/name (str "Check element exists with " selector)}

@@ -1,6 +1,6 @@
 (ns stonecutter.test.config
   (:require [midje.sweet :refer :all]
-            [stonecutter.config :refer [secure?]]))
+            [stonecutter.config :refer [secure? create-config]]))
 
 
 (tabular

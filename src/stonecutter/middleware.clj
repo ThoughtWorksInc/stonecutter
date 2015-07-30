@@ -43,6 +43,12 @@
         (assoc-in [:context :theme :app-name] app-name)
         handler)))
 
+(defn wrap-config [handler config-m]
+  (fn [request]
+    (-> request
+        (assoc-in [:context :config-m] config-m)
+        handler)))
+
 (defn wrap-handlers [handlers wrap-function exclusions]
   (into {} (for [[k v] handlers]
              [k (if (k exclusions) v (wrap-function v))])))
