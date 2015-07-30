@@ -351,19 +351,19 @@
                response => (contains {:session (contains {:return-to (contains (str (routes/path :confirm-email) "?confirmation-id=" (:confirmation-id confirming-user)))})})
                response => (check-redirects-to (routes/path :show-sign-in-form)))))
 
-(when (= toggles/story-25 :activated)
-  (facts "about show-profile"
-         (fact "user's authorised clients passed to html-response"
-               (-> (create-request :get (routes/path :show-profile) nil)
-                   (assoc :session {:user-login ...email...})
-                   u/show-profile
-                   :body) => (contains #"CLIENT 1[\s\S]+CLIENT 2")
-               (provided
-                 (user/retrieve-user ...email...) => {:login ...email...
-                                                      :authorised-clients [...client-id-1... ...client-id-2...]}
-                 (c/retrieve-client ...client-id-1...) => {:name "CLIENT 1"}
-                 (c/retrieve-client ...client-id-2...) => {:name "CLIENT 2"}))
+(facts "about show-profile"
+       (fact "user's authorised clients passed to html-response"
+             (-> (create-request :get (routes/path :show-profile) nil)
+                 (assoc :session {:user-login ...email...})
+                 u/show-profile
+                 :body) => (contains #"CLIENT 1[\s\S]+CLIENT 2")
+             (provided
+               (user/retrieve-user ...email...) => {:login ...email...
+                                                    :authorised-clients [...client-id-1... ...client-id-2...]}
+               (c/retrieve-client ...client-id-1...) => {:name "CLIENT 1"}
+               (c/retrieve-client ...client-id-2...) => {:name "CLIENT 2"}))
 
+       (when (= toggles/story-25 :activated)
          (tabular
            (fact "user confirmation status is displayed appropriately"
                  (against-background
@@ -382,7 +382,6 @@
            ?confirmed    ?should-show                        ?should-hide
            true          :.clj--email-confirmed-message      :.clj--email-not-confirmed-message
            false         :.clj--email-not-confirmed-message  :.clj--email-confirmed-message)))
-
 
 (facts "about unsharing profile cards"
        (facts "about get requests to /unshare-profile-card"

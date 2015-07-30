@@ -34,6 +34,13 @@
   state)
 
 
+(defn check-follow-redirect [state]
+  (fact {:midje/name "Attempting to follow redirect"}
+        (k/follow-redirect state) =not=> (throws Exception))
+  (try (k/follow-redirect state)
+       (catch Exception state)))
+
+
 (defn selector-exists [state selector]
   (fact {:midje/name (str "Check element exists with " selector)}
         (-> state :enlive (html/select selector)) =not=> empty?)

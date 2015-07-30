@@ -61,6 +61,8 @@ profile:
   settings-title: Settings
   change-password-button: Change password
   delete-button: Delete account
+  email-not-confirmed: Your email address is not yet confirmed.
+  email-confirmed: Your email address has been confirmed.
 
 applications:
   title: Applications

@@ -1,6 +1,7 @@
 (ns stonecutter.controller.user
   (:require [clauth.token :as cl-token]
             [clauth.endpoints :as cl-ep]
+            [clojure.tools.logging :as log]
             [ring.util.response :as r]
             [stonecutter.util.ring :as util-ring]
             [stonecutter.routes :as routes]
@@ -160,17 +161,38 @@
 
 (defn confirm-email [request]
   (if (signed-in? request)
-   (let [user (user/retrieve-user (get-in request [:session :user-login]))]
+    (let [user-email (get-in request [:session :user-login])
+          user (user/retrieve-user user-email)]
+      (log/debug (format "Confirm-email user '%s' signed in." user-email)) 
+      (if (= (get-in request [:params :confirmation-id] :no-confirmation-id-in-query) (:confirmation-id user))
+        (do  
+          (user/confirm-email! user)
+          (r/redirect (routes/path :show-profile)))
+        (-> (r/redirect (str (:uri request) "?" (:query-string request)))
+            (preserve-session request)
+            (update-in [:session] #(dissoc % :user-login :access_token)))))
+    (do (log/debug "Confirm-email user not signed in.")
+        (-> (r/redirect (routes/path :show-sign-in-form))
+            (preserve-session request)
+            (assoc-in [:session :return-to] (util-ring/complete-uri-of request))))))
+
+(defn confirm-email-with-id [request]
+ (if (signed-in? request)
+  (let [user-email (get-in request [:session :user-login])
+        user (user/retrieve-user user-email)]
+    (log/debug (format "Confirm-email user '%s' signed in." user-email)) 
     (if (= (get-in request [:params :confirmation-id] :no-confirmation-id-in-query) (:confirmation-id user))
-      (do  
-        (user/confirm-email! user)
-        (r/redirect (routes/path :show-profile)))
-      (-> (r/redirect (str (:uri request) "?" (:query-string request)))
-          (preserve-session request)
-          (update-in [:session] #(dissoc % :user-login :access_token)))))
-    (-> (r/redirect (routes/path :show-sign-in-form))
-        (preserve-session request)
-        (assoc-in [:session :return-to] (util-ring/complete-uri-of request)))))
+        (do  
+          (user/confirm-email! user)
+          (r/redirect (routes/path :show-profile)))
+        (-> (r/redirect (routes/path :confirm-email-with-id
+                                     :confirmation-id (get-in request [:params :confirmation-id])))
+            (preserve-session request)
+            (update-in [:session] #(dissoc % :user-login :access_token)))))
+  (do (log/debug "Confirm-email user not signed in.")
+      (-> (r/redirect (routes/path :confirmation-sign-in-form
+                                   :confirmation-id (get-in request [:params :confirmation-id])))
+          (preserve-session request)))))
 
 (defn home [request]
   (r/redirect (routes/path :show-profile)))

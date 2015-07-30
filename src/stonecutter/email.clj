@@ -12,6 +12,13 @@
 (defn null-sender [email-address subject body] nil)
 (defn null-renderer [email-data] {:subject nil :body nil})
 
+(defn stdout-sender [email-address subject body]
+  (prn "email-address: " email-address) 
+  (prn "subject: " subject) 
+  (prn "body: " body))
+
+(defn stdout-renderer [email-data] {:subject nil :body email-data})
+
 (defn send! [template email-address email-data]
   (let [{:keys [subject body]} ((template @template-to-renderer-map) email-data)]
     (@sender email-address subject body)))
@@ -32,5 +39,5 @@
                 (str body)))) 
 
 (defn configure-email [path]
-  (initialise! null-sender
-               {:confirmation null-renderer}))
+  (initialise! stdout-sender
+               {:confirmation stdout-renderer}))
