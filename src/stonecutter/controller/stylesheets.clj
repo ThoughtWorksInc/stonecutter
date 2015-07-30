@@ -8,7 +8,7 @@
         inactive-tab-font-color (config/inactive-tab-font-color config-m)]
     (garden/css {:pretty-print? false}
       [:.header {:background-color header-bg-color}]
-      [:.tabs__item {:color inactive-tab-font-color}])))
+      [".tabs__item:not(.tabs__item--active)" {:color inactive-tab-font-color}])))
 
 (defn theme-css [request]
   (let [config-m (get-in request [:context :config-m])]
