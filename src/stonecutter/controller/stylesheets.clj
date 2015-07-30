@@ -1,7 +1,6 @@
 (ns stonecutter.controller.stylesheets
   (:require [ring.util.response :as r]
             [garden.core :as garden]
-            [com.evocomputing.colors :as colors]
             [stonecutter.config :as config]))
 
 (defn generate-css [config-m]
