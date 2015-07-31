@@ -6,7 +6,7 @@
                 :mongo-uri :client-credentials-file-path
                 :theme :secure :email-script-path :app-name
                 :header-bg-color :inactive-tab-font-color
-                :static-resources-dir-path})
+                :static-resources-dir-path :logo-file-name})
 
 (defn create-config []
   (select-keys env/env env-vars))
@@ -54,10 +54,13 @@
     (log/warn "No email script path provided - Stonecutter will be unable to send emails")))
 
 (defn header-bg-color [config-m]
-  (get-env config-m :header-bg-color "#EEE"))
+  (get-env config-m :header-bg-color))
 
 (defn inactive-tab-font-color [config-m]
-  (get-env config-m :inactive-tab-font-color "#404040"))
+  (get-env config-m :inactive-tab-font-color))
 
 (defn static-resources-dir-path [config-m]
   (get-env config-m :static-resources-dir-path))
+
+(defn logo-file-name [config-m]
+  (get-env config-m :logo-file-name))
