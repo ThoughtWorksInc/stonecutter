@@ -3,7 +3,7 @@
             [stonecutter.db.session :as session]
             [ring.middleware.session.store :as store]
             [stonecutter.integration.test-helpers :as ith]
-            [stonecutter.db.storage :as db]))
+            [stonecutter.util.uuid :as uuid]))
 
 (background (before :facts (ith/setup-db)
                     :after (ith/teardown-db)))
@@ -16,7 +16,7 @@
 (fact "if id is does not exist then uuid is used"
       (let [session-store (session/mongo-session-store (ith/get-test-db))]
         (store/write-session session-store nil {:some "data"}) => anything
-        (provided (db/uuid) => "id1")
+        (provided (uuid/uuid) => "id1")
         (store/read-session session-store "id1") => {:some "data"}))
 
 (fact "can delete session by id"

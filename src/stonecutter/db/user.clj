@@ -3,8 +3,8 @@
             [clauth.auth-code :as cl-auth-code]
             [clauth.store :as cl-store]
             [clojure.string :as s]
-            [stonecutter.db.storage :as storage]
-            [stonecutter.db.mongo :as m]))
+            [stonecutter.db.mongo :as m]
+            [stonecutter.util.uuid :as uuid]))
 
 (defn create-user [id-gen email password]
   (let [lower-email (s/lower-case email)]
@@ -15,7 +15,7 @@
       (assoc :uid (id-gen)))))
 
 (defn store-user! [email password]
-  (-> (create-user storage/uuid email password)
+  (-> (create-user uuid/uuid email password)
       cl-user/store-user
       (dissoc :password)))
 

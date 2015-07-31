@@ -8,7 +8,8 @@
             [stonecutter.db.storage :as s]
             [stonecutter.integration.kerodon-helpers :as kh]
             [stonecutter.integration.kerodon-selectors :as ks]
-            [stonecutter.db.user :as user]))
+            [stonecutter.db.user :as user]
+            [stonecutter.integration.test-helpers :as ith]))
 
 ;; CLIENT => AUTH    /authorisation?client-id=123&response_type=code&redirect_uri=callback-url
 ;;   USER LOGIN (Auth Server)
@@ -67,7 +68,6 @@
 (def password "valid-password")
 
 (defn setup []
-  (s/reset-mongo-stores! "mongodb://localhost:27017/stonecutter-test")
   (let [client (cl-client/register-client "myclient" "http://myclient.com")
         client-id (:client-id client)
         client-secret (:client-secret client)
@@ -79,8 +79,8 @@
      :invalid-client-secret invalid-client-secret}))
 
 (background
-  (before :contents (s/reset-mongo-stores! "mongodb://localhost:27017/stonecutter-test")
-          :after (s/reset-mongo-stores! "mongodb://localhost:27017/stonecutter-test")))
+  (before :contents (ith/setup-db)
+          :after (ith/teardown-db)))
 
 (defn print-debug [v] (prn "Kerodon:" v) v)
 

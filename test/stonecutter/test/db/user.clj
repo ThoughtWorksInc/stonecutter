@@ -2,8 +2,8 @@
   (:require [midje.sweet :refer :all]
             [clauth.user :as cl-user]
             [clauth.auth-code :as cl-auth-code]
-            [stonecutter.db.client :as client]
             [stonecutter.db.storage :as s]
+            [stonecutter.util.uuid :as uuid]
             [stonecutter.db.user :as user]))
 
 (facts "about storage of users - user storage journey"
@@ -88,14 +88,14 @@
        (fact "users are stored in the user-store"
              (user/store-user! "email@server.com" "password") => {...a-user-key... ...a-user-value...}
              (provided
-               (user/create-user s/uuid "email@server.com" "password") => ...user...
+               (user/create-user uuid/uuid "email@server.com" "password") => ...user...
                (cl-user/store-user ...user...) => {...a-user-key... ...a-user-value...}))
 
        (fact "password is removed before returning user"
              (-> (user/store-user! "email@server.com" "password")
                  :password) => nil
              (provided
-               (user/create-user s/uuid "email@server.com" "password") => ...user...
+               (user/create-user uuid/uuid "email@server.com" "password") => ...user...
                (cl-user/store-user ...user...) => {:password "hashedAndSaltedPassword"})))
 
 (facts "about authenticating and retrieving users"

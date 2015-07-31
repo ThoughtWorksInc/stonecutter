@@ -3,7 +3,7 @@
             [monger.collection :as coll]
             [ragtime.core :as ragtime]
             [clojure.tools.logging :as log]
-            [stonecutter.db.storage :as storage]))
+            [stonecutter.util.uuid :as uuid]))
 
 (defn do-to-coll [db coll f]
   (let [records (coll/find-maps db coll)]
@@ -13,7 +13,7 @@
 (defn add-user-id [record]
   (if (:uid record)
     record
-    (assoc record :uid (storage/uuid))))
+    (assoc record :uid (uuid/uuid))))
 
 (defn add-user-uids [db]
   (log/info "Running migration add-user-id")
