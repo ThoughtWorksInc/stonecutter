@@ -17,7 +17,7 @@
   (when (config/static-resources-dir-path config-m)
     (when-let [logo-file-name (config/logo-file-name config-m)]
       (garden/css {:pretty-print? false}
-                  [:.header__logo {:background (str "url(\""  logo-file-name "\") 50% 0 no-repeat")}]))))
+                  [:.header__logo {:background (str "url(\"/"  logo-file-name "\") 50% 0 no-repeat")}]))))
 
 (defn generate-theme-css [config-m]
   (str

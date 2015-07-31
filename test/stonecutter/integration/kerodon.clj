@@ -310,7 +310,7 @@
           (kh/response-status-is 200)
           (kh/response-body-contains "#012345")
           (kh/response-body-contains "#fedcba")
-          (kh/response-body-contains "\"beautiful_logo.png\"")))
+          (kh/response-body-contains "\"/beautiful_logo.png\"")))
 
 (fact "Correct css file is used when config includes a :theme"
       (-> (k/session (h/create-app {:secure "false" :theme "MY_STYLING"} :dev-mode? false))
