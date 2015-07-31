@@ -6,7 +6,7 @@ ssh $REMOTE_USER@$SERVER_IP "mkdir -p /data/stonecutter/static"
 scp target/*-standalone.jar $REMOTE_USER@$SERVER_IP:/var/stonecutter/target/stonecutter-standalone.jar
 scp stonecutter.env $REMOTE_USER@$SERVER_IP:/var/stonecutter/config/stonecutter.env
 scp clients.yml $REMOTE_USER@$SERVER_IP:/var/stonecutter/config/clients.yml
-scp logo.svg $REMOTE_USER@$SERVER_IP:/data/stonecutter/static
+scp logo.svg $REMOTE_USER@$SERVER_IP:/data/stonecutter/static/logo.svg
 ssh $REMOTE_USER@$SERVER_IP <<EOF
   sudo docker stop stonecutter || echo 'Failed to stop stonecutter container'
   sudo docker rm stonecutter || echo 'Failed to remove stonecutter container'
