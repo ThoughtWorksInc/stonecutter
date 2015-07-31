@@ -300,12 +300,17 @@
                 (k/visit "/register")) => (throws Exception)))
 
 (fact "theme.css file is generated using environment variables"
-      (-> (k/session (h/create-app {:secure "false" :header-bg-color "#012345" :inactive-tab-font-color "#FEDCBA"}
+      (-> (k/session (h/create-app {:secure "false"
+                                    :header-bg-color "#012345"
+                                    :inactive-tab-font-color "#FEDCBA"
+                                    :static-resources-dir-path "./test-resources"
+                                    :logo-file-name "beautiful_logo.png"}
                                    :dev-mode? false))
           (k/visit "/stylesheets/theme.css")
           (kh/response-status-is 200)
           (kh/response-body-contains "#012345")
-          (kh/response-body-contains "#fedcba")))
+          (kh/response-body-contains "#fedcba")
+          (kh/response-body-contains "\"beautiful_logo.png\"")))
 
 (fact "Correct css file is used when config includes a :theme"
       (-> (k/session (h/create-app {:secure "false" :theme "MY_STYLING"} :dev-mode? false))
