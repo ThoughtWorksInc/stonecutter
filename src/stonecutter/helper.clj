@@ -1,24 +1,17 @@
 (ns stonecutter.helper
   (:require [ring.util.response :as r]
+            [net.cgrand.enlive-html :as html]
             [stonecutter.translation :as t]
             [stonecutter.view.view-helpers :as vh]
-            [net.cgrand.enlive-html :as html]))
-
-(defn update-theme [enlive-m context]
-  (if-let [theme (get-in context [:theme :theme])]
-    (-> enlive-m
-        (html/at [(html/attr= :data-clojure-id "theme-link")] (html/set-attr :href (format "stylesheets/%s_theme.css" theme)))
-        (vh/remove-attribute-globally :data-clojure-id))
-    enlive-m))
+            [stonecutter.config :as config]))
 
 (defn update-app-name [enlive-m context]
-  (let [app-name (get-in context [:theme :app-name])]
+  (let [app-name (config/app-name (:config-m context))]
     (-> enlive-m
         (html/at [:.clj--app-name] (html/content app-name)))))
 
 (defn enlive-response [enlive-m context]
   (-> enlive-m
-      (update-theme context)
       (update-app-name context)
       (t/context-translate context)
       vh/enlive-to-str

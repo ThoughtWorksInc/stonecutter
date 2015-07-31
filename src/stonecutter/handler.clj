@@ -112,7 +112,6 @@
   (-> (scenic/scenic-handler routes/routes site-handlers not-found)
       (ring-mw/wrap-defaults (wrap-defaults-config (config/secure? config-m)))
       m/wrap-translator
-      (m/wrap-theme (config/theme config-m) (config/app-name config-m))
       (m/wrap-config config-m)
       (m/wrap-error-handling err-handler dev-mode?)
       (m/wrap-custom-static-resources config-m)))

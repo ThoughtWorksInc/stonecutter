@@ -315,7 +315,7 @@
 (fact "Correct css file is used when config includes a :theme"
       (-> (k/session (h/create-app {:secure "false" :theme "MY_STYLING"} :dev-mode? false))
           (k/visit "/sign-in")
-          (kh/selector-has-attribute-with-content [ks/css-link] :href "stylesheets/MY_STYLING_theme.css")))
+          (kh/selector-has-attribute-with-content [ks/css-link] :href "/stylesheets/application.css")))
 
 (fact "Correct app-name is used when config includes an :app-name"
       (-> (k/session (h/create-app {:secure "false" :app-name "My App Name"} :dev-mode? false))
