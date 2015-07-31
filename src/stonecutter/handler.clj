@@ -1,6 +1,7 @@
 (ns stonecutter.handler
   (:require [ring.middleware.defaults :as ring-mw]
             [ring.middleware.file :as ring-mf]
+            [ring.middleware.content-type :as ring-mct]
             [ring.util.response :as r]
             [ring.adapter.jetty :as ring-jetty]
             [scenic.routes :as scenic]
@@ -114,7 +115,8 @@
       m/wrap-translator
       (m/wrap-config config-m)
       (m/wrap-error-handling err-handler dev-mode?)
-      (m/wrap-custom-static-resources config-m)))
+      (m/wrap-custom-static-resources config-m)
+      ring-mct/wrap-content-type))
 
 (defn create-api-app [config-m dev-mode?]
   (-> (scenic/scenic-handler routes/routes api-handlers not-found)
