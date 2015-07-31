@@ -1,0 +1,45 @@
+extends layout/layout
+
+block vars
+  - bodyClass = "func--confirmation-sign-in-page"
+  - pageTitle = "!Sign in"
+  - pageTitleDataL8n = "content:confirmation-sign-in-form/title"
+
+block headerScripts
+
+block headerContent
+
+block content
+  .middle-container
+    h1.page-title.visuallyhidden(data-l8n="content:confirmation-sign-in-form/page-header")
+      | !Sign in
+    form.login-form(action="authorise", method="post", role="form")
+      .validation-summary.clj--validation-summary
+        .validation-summary__title
+        ul.validation-summary__list
+          li.validation-summary__item.clj--validation-summary__item(data-l8n="content:confirmation-sign-in-form/invalid-credentials-validation-message")
+            | !Invalid email address or password
+      input.clj--confirmation-id__input(type="hidden", id="confirm-id", name="confirm-id")
+      p.form-row.clj--sign-in-password
+        label.form-row__label(for="password")
+          span.form-row__title(data-l8n="content:confirmation-sign-in-form/password")
+            | !Password
+          span.form-row__validation.clj--sign-in-password__validation(data-l8n="content:confirmation-sign-in-form/password-invalid-validation-message")
+            | !Cannot be blank
+        input.form-row__input.func--password__input(type="password", id="password", name="password")
+      .button-actions
+        .button-actions__primary
+          button.button.button--full-width.func--sign-in__button(type="submit", data-l8n="content:confirmation-sign-in-form/sign-in")
+            | !Sign in to Confirm Email
+        .button-actions__secondary.clj-wip
+          a.button.button--link.button--full-width(href="#", data-l8n="content:confirmation-sign-in-form/forgot-password") !Forgot password?
+
+block footerScripts
+  if staticMode
+    script.
+      var form = document.getElementsByClassName('login-form')[0];
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var formAction = form.getAttribute('action') + "?";
+        window.location = formAction;
+      });

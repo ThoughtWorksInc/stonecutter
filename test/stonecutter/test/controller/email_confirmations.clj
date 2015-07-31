@@ -87,3 +87,5 @@
                    response (u/confirm-email-with-id request)]
                response => (check-redirects-to (routes/path :confirmation-sign-in-form
                                                             :confirmation-id (:confirmation-id confirming-user))))))
+
+

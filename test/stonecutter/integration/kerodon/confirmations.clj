@@ -87,7 +87,8 @@
              (teardown-test-directory))))
 
 (when (= toggles/story-25 :activated)
- (future-facts "The account confirmation flow can be followed by a user who is not signed in when first accessing the confirmation endpoint"
+(future-facts "The account confirmation flow can be followed by a user who is not signed in when first accessing the confirmation endpoint"
+       (prn "===================================================")
        (-> (k/session h/app)
 
            (setup-test-directory)
@@ -100,7 +101,7 @@
            (k/visit (routes/path :confirm-email-with-id
                                  :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
            (kh/page-uri-is (routes/path :confirm-email-with-id
-                                 :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
+                                        :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
 
            (kh/check-follow-redirect)
            (kh/page-uri-is (routes/path :confirmation-sign-in-form
@@ -117,4 +118,5 @@
            (kh/selector-not-present [:.clj--email-not-confirmed-message])
            (kh/selector-exists [:.clj--email-confirmed-message])
 
-           (teardown-test-directory))))
+           (teardown-test-directory))
+       (prn "-------------------------------------------------------")))

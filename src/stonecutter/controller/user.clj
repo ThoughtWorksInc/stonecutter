@@ -72,6 +72,10 @@
     (-> (r/redirect (routes/path :home)) (preserve-session request))
     (sh/enlive-response (sign-in/sign-in-form request) (:context request))))
 
+(defn show-confirm-sign-in-form [request]
+  (sh/enlive-response (sign-in/confirmation-sign-in-form request) (:context request))
+  )
+
 (defn generate-login-access-token [user]
   (:token (cl-token/create-token nil user)))
 
@@ -163,7 +167,7 @@
   (if (signed-in? request)
     (let [user-email (get-in request [:session :user-login])
           user (user/retrieve-user user-email)]
-      (log/debug (format "Confirm-email user '%s' signed in." user-email)) 
+      (log/debug (format "confirm-email Confirm-email user '%s' signed in." user-email)) 
       (if (= (get-in request [:params :confirmation-id] :no-confirmation-id-in-query) (:confirmation-id user))
         (do  
           (user/confirm-email! user)
@@ -176,13 +180,18 @@
             (preserve-session request)
             (assoc-in [:session :return-to] (util-ring/complete-uri-of request))))))
 
+(defn confirmation-sign-in [request]
+  {}
+  )
+
 (defn confirm-email-with-id [request]
  (if (signed-in? request)
   (let [user-email (get-in request [:session :user-login])
         user (user/retrieve-user user-email)]
-    (log/debug (format "Confirm-email user '%s' signed in." user-email)) 
+    (log/debug (format "confirm-email-with-id Confirm-email user '%s' signed in. BOO!" user-email)) 
     (if (= (get-in request [:params :confirmation-id] :no-confirmation-id-in-query) (:confirmation-id user))
         (do  
+          (log/debug (format "confirmation-ids match. Confirming user's email."))
           (user/confirm-email! user)
           (r/redirect (routes/path :show-profile)))
         (-> (r/redirect (routes/path :confirm-email-with-id

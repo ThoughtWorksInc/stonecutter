@@ -62,8 +62,9 @@
      :sign-in                            user/sign-in
      :sign-out                           user/sign-out
      :confirm-email                      user/confirm-email
-     :confirm-email-with-id              user/confirm-email
-     :confirmation-sign-in-form          user/show-sign-in-form
+     :confirm-email-with-id              user/confirm-email-with-id
+     :confirmation-sign-in-form          user/show-confirm-sign-in-form
+     :confirmation-sign-in               user/confirmation-sign-in
      :show-profile                       user/show-profile
      :show-profile-created               user/show-profile-created
      :show-profile-deleted               user/show-profile-deleted
@@ -80,14 +81,17 @@
     (m/wrap-handlers #(m/wrap-handle-404 % not-found) #{})
     (m/wrap-handlers #(m/wrap-handle-403 % forbidden-err-handler) #{})
     (m/wrap-handlers m/wrap-disable-caching #{:theme-css})
-    (m/wrap-handlers m/wrap-signed-in #{:show-registration-form :register-user
-                                        :show-sign-in-form      :sign-in
+    (m/wrap-handlers m/wrap-signed-in #{:show-registration-form    :register-user
+                                        :show-sign-in-form         :sign-in
                                         :sign-out
                                         :show-profile-deleted
                                         :authorise
                                         :ping
                                         :theme-css
-                                        :confirm-email})))
+                                        :confirm-email
+                                        :confirm-email-with-id
+                                        :confirmation-sign-in-form :confirmation-sign-in
+                                        })))
 
 (def api-handlers
   {:validate-token         oauth/validate-token})

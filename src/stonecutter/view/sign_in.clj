@@ -49,12 +49,16 @@
       (add-password-error err)
       (add-invalid-credentials-error err)))
 
-(defn add-params [params enlive-m]
+(defn set-email-input [params enlive-m]
   (html/at enlive-m
            [:.clj--email__input] (html/set-attr :value (:email params))))
 
-(defn set-form-action [enlive-m]
-  (html/at enlive-m [:form] (html/set-attr :action (r/path :sign-in))))
+(defn set-confirmation-id [params enlive-m]
+  (html/at enlive-m
+           [:.clj--confirmation-id__input] (html/set-attr :value (:confirmation-id params))))
+
+(defn set-form-action [path enlive-m]
+  (html/at enlive-m [:form] (html/set-attr :action path)))
 
 (defn sign-in-form [request]
   (let [context (:context request)
@@ -62,8 +66,15 @@
         err (:errors context)]
     (->> (vh/load-template "public/sign-in.html")
          set-registration-link
-         set-form-action
+         (set-form-action (r/path :sign-in))
          (add-sign-in-errors err)
-         (add-params params)
+         (set-email-input params)
          vh/remove-work-in-progress
          vh/add-anti-forgery)))
+
+(defn confirmation-sign-in-form [request]
+  (->>  (vh/load-template "public/confirmation-sign-in.html")
+       (set-form-action (r/path :confirmation-sign-in))
+       (set-confirmation-id (:params request))
+       vh/remove-work-in-progress
+       vh/add-anti-forgery))

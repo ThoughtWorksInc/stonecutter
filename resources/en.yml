@@ -54,6 +54,17 @@ sign-in-form:
   sign-in: Sign in to Profile
   forgot-password: Forgot password?
 
+confirmation-sign-in-form:
+  title: Sign in for Confirmation
+  page-header: Sign in for Confirmation
+  invalid-credentials-validation-message: Invalid password
+  password: Password
+  password-blank-validation-message: Password cannot be blank
+  password-too-long-validation-message: Password is too long
+  password-too-short-validation-message: Password should be at least 8 characters long
+  sign-in: Sign in to Confirm Email
+  forgot-password: Forgot password?
+
 profile:
   title: Profile
   profile-link: Profile

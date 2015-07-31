@@ -8,6 +8,7 @@
 (def token-collection "tokens")
 (def auth-code-collection "auth-codes")
 (def client-collection "clients")
+(def confirmation-collection "confirmations")
 
 (defprotocol StonecutterStore
   (update! [e k update-fn]
@@ -82,3 +83,6 @@
 
 (defn create-client-store [db]
   (new-mongo-store db client-collection))
+
+(defn create-confirmation-store [db]
+  (new-mongo-store db confirmation-collection))

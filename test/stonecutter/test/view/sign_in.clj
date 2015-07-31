@@ -4,7 +4,7 @@
             [stonecutter.routes :as r]
             [stonecutter.test.view.test-helpers :as th]
             [stonecutter.translation :as t]
-            [stonecutter.view.sign-in :refer [sign-in-form]]
+            [stonecutter.view.sign-in :refer [sign-in-form confirmation-sign-in-form]]
             [stonecutter.helper :as helper]))
 
 (fact "sign-in-form should return some html"
@@ -100,3 +100,26 @@
                      (html/select page [:.clj--sign-in-password__validation]) =not=> empty?)
                (fact "correct error message is displayed"
                      (html/select page [[:.clj--sign-in-password__validation (html/attr= :data-l8n "content:sign-in-form/password-too-long-validation-message")]]) =not=> empty?))))
+
+(facts "about confirmation sign in form"
+       (fact "confirmation sign-in-form should return some html"
+             (let [page (-> (th/create-request) confirmation-sign-in-form)]
+               (html/select page [:form]) =not=> empty?))
+
+       (fact "there are no missing translations"
+             (let [translator (t/translations-fn t/translation-map)
+                   page (-> (th/create-request) confirmation-sign-in-form (helper/enlive-response {:translator translator}) :body)]
+               page => th/no-untranslated-strings))
+
+       (fact "work in progress should be removed from page"
+             (let [page (-> (th/create-request) confirmation-sign-in-form)]
+               page => th/work-in-progress-removed))
+
+       (fact "form should post to correct endpoint"
+             (let [page (-> (th/create-request) confirmation-sign-in-form)]
+               (-> page (html/select [:form]) first :attrs :action) => (r/path :confirmation-sign-in)))
+       
+       (fact "confirmation id should be set in form"
+             (let [confirmation-id "confirmation-123"
+                   page (-> (th/create-request {} nil {:confirmation-id confirmation-id}) confirmation-sign-in-form)]
+               (-> page (html/select [:.clj--confirmation-id__input]) first :attrs :value) => confirmation-id)))
