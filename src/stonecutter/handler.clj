@@ -1,5 +1,6 @@
 (ns stonecutter.handler
   (:require [ring.middleware.defaults :as ring-mw]
+            [ring.middleware.file :as ring-mf]
             [ring.util.response :as r]
             [ring.adapter.jetty :as ring-jetty]
             [scenic.routes :as scenic]
@@ -113,7 +114,8 @@
       m/wrap-translator
       (m/wrap-theme (config/theme config-m) (config/app-name config-m))
       (m/wrap-config config-m)
-      (m/wrap-error-handling err-handler dev-mode?)))
+      (m/wrap-error-handling err-handler dev-mode?)
+      (m/wrap-custom-static-resources config-m)))
 
 (defn create-api-app [config-m dev-mode?]
   (-> (scenic/scenic-handler routes/routes api-handlers not-found)
@@ -131,7 +133,6 @@
 
 (defn -main [& args]
   (let [config-m (config/create-config)]
-    (log-config/init-logger!)
     (vh/enable-template-caching!)
     (let [db (mongo/get-mongo-db (config/mongo-uri config-m))]
       (s/setup-mongo-stores! db)
@@ -144,7 +145,6 @@
   "Function called when running app with 'lein ring server'"
   []
   (let [config-m (config/create-config)]
-    (log-config/init-logger!)
     (vh/disable-template-caching!)
     (s/setup-in-memory-stores!)
     (email/configure-email (config/email-script-path config-m))

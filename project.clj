@@ -34,6 +34,7 @@
                              :ring {:handler stonecutter.handler/lein-app
                                     :init    stonecutter.handler/lein-ring-init
                                     :stacktrace-middleware prone.middleware/wrap-exceptions}
+                             :jvm-opts ["-Dlog4j.configuration=log4j.dev"]
                              :resource-paths ["resources" "test-resources"]
                              :aliases        {"test"        ["do" "clean," "midje"]
                                               "unit"        ["midje" "stonecutter.test.*"]

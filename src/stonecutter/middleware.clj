@@ -1,10 +1,12 @@
 (ns stonecutter.middleware
   (:require [clojure.tools.logging :as log]
             [ring.util.response :as r]
+            [ring.middleware.file :as ring-mf]
             [stonecutter.translation :as translation]
             [stonecutter.routes :as routes]
             [stonecutter.controller.user :as user]
-            [stonecutter.helper :as helper]))
+            [stonecutter.helper :as helper]
+            [stonecutter.config :as config]))
 
 (defn wrap-error-handling [handler err-handler dev-mode?]
   (if-not dev-mode?
@@ -64,3 +66,9 @@
     (if (user/signed-in? request)
       (handler request)
       (r/redirect (routes/path :sign-in)))))
+
+(defn wrap-custom-static-resources [handler config-m]
+  (if-let [static-resources-dir-path (config/static-resources-dir-path config-m)]
+    (do (log/info (str "All resources in " static-resources-dir-path " are now being served as static resources"))
+        (ring-mf/wrap-file handler static-resources-dir-path))
+    handler))
