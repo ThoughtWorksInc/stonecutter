@@ -138,8 +138,7 @@ In order to select which email service is used, set the ```EMAIL_SERVICE_PROVIDE
 match one of the provider scripts under in the ```ops/roles/mail/files/providers``` directory.  For example, to use
 the Mailgun provider:
 
-```EMAIL_SERVICE_PROVIDER=mailgun```
-
+    EMAIL_SERVICE_PROVIDER=mailgun
 
 For the mailgun example, the following environment variables are also required:
 
