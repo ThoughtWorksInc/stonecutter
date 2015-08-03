@@ -10,6 +10,7 @@
             [stonecutter.controller.user :as u]
             [stonecutter.db.user :as user]
             [stonecutter.db.storage :as storage]
+            [stonecutter.db.confirmation :as conf]
             [stonecutter.view.profile :as profile]))
 
 (defn check-redirects-to [path]
@@ -38,6 +39,9 @@
       (assoc-in [:context :translator] {})))
 
 (def most-recent-email (atom nil))
+(def email "dummy@email.com")
+(def confirmation-id "RANDOM-ID-12345")
+(def password "password123")
 
 (defn test-email-sender! [email subject body]
   (reset! most-recent-email {:email email
@@ -47,6 +51,13 @@
 (defn test-email-renderer [email-data]
   {:subject "confirmation"
    :body email-data})
+
+(def confirm-email-path
+  (routes/path :confirm-email-with-id
+               :confirmation-id confirmation-id))
+
+(def confirm-email-request
+  (create-request :get confirm-email-path {:confirmation-id confirmation-id}))
 
 (background (before :facts (do (storage/setup-in-memory-stores!)
                                (cl-user/reset-user-store!)
@@ -58,10 +69,9 @@
 
 (facts "about confirm-email-with-id"
        (fact "if the confirmation UUID in the query string matches that of the signed in user's user record confirm the account and redirect to profile view"
-             (let [user (user/store-user! "dummy@email.com" "password")
-                   request (-> (create-request :get (routes/path :confirm-email-with-id
-                                                                 :confirmation-id (:confirmation-id user))
-                                               {:confirmation-id (:confirmation-id user)})
+             (let [user (user/store-user! email "password")
+                   confirmation (conf/store! email confirmation-id)
+                   request (-> confirm-email-request
                                (with-signed-in-user user))]
                (u/confirm-email-with-id request) => (check-redirects-to (routes/path :show-profile))
                (user/retrieve-user (:login user)) =not=> (contains {:confirmation-id anything})
@@ -70,22 +80,30 @@
        (fact "when confirmation UUID in the query string does not match that of the signed in user's user record, signs the user out and redirects to confirmation endpoint with the original confirmation UUID from the query string"
              (let [signed-in-user (user/store-user! "signed-in@email.com" "password")
                    confirming-user (user/store-user! "confirming@email.com" "password")
-                   request (-> (create-request :get (routes/path :confirm-email-with-id
-                                                                 :confirmation-id (:confirmation-id confirming-user))
-                                               {:confirmation-id (:confirmation-id confirming-user)})
+                   confirmation (conf/store! "confirming@email.com"  confirmation-id)
+                   request (-> confirm-email-request
                                (with-signed-in-user signed-in-user))
                    response (u/confirm-email-with-id request)]
                response =not=> (check-signed-in request signed-in-user)
-               response => (check-redirects-to (routes/path :confirm-email-with-id
-                                                            :confirmation-id (:confirmation-id confirming-user)))))
+               response => (check-redirects-to confirm-email-path)))
 
        (fact "when user is not signed in, redirects to sign-in form with the confirmation endpoint (including confirmation UUID query string) as the successful sign-in redirect target"
-             (let [confirming-user (user/store-user! "confirming@email.com" "password")
-                   request (create-request :get (routes/path :confirm-email-with-id
-                                                             :confirmation-id (:confirmation-id confirming-user))
-                                           {:confirmation-id (:confirmation-id confirming-user)})
-                   response (u/confirm-email-with-id request)]
+             (let [confirming-user (user/store-user! email "password")
+                   confirmation (conf/store! email confirmation-id)
+                   response (u/confirm-email-with-id confirm-email-request)]
                response => (check-redirects-to (routes/path :confirmation-sign-in-form
-                                                            :confirmation-id (:confirmation-id confirming-user))))))
+                                                            :confirmation-id confirmation-id)))))
 
+(facts "about confirmation sign in"
+       (fact "when password matches login of confirmation id, user is logged in")
+      (-> (create-request :post (routes/path :confirmation-sign-in) {:confirmation-id confirmation-id :password password}) 
+          u/confirmation-sign-in) => (contains {:status 302
+                                                :headers {"Location" confirm-email-path}
+                                                :session {:user-login ...user-login...
+                                                          :access_token ...token...}})
+      (provided
+        (user/authenticate-and-retrieve-user email password) => {:login ...user-login...}
+        (conf/fetch confirmation-id) => {:login email :confirmation-id confirmation-id}
+        (cl-token/create-token nil {:login ...user-login...}) => {:token ...token...}))
+       
 

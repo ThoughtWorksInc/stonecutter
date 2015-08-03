@@ -9,6 +9,7 @@
             [stonecutter.validation :as v]
             [stonecutter.db.user :as user]
             [stonecutter.db.client :as c]
+            [stonecutter.db.confirmation :as conf]
             [stonecutter.email :as email]
             [stonecutter.view.register :as register]
             [stonecutter.view.profile-created :as profile-created]
@@ -16,6 +17,7 @@
             [stonecutter.view.delete-account :as delete-account]
             [stonecutter.view.change-password :as change-password]
             [stonecutter.view.unshare-profile-card :as unshare-profile-card]
+            [stonecutter.util.uuid :as uuid]
             [stonecutter.helper :as sh]))
 
 (declare redirect-to-profile-created redirect-to-profile-deleted)
@@ -31,20 +33,22 @@
 (defn show-registration-form [request]
   (sh/enlive-response (register/registration-form request) (:context request)))
 
-(defn send-confirmation-email! [user email]
-  (email/send! :confirmation email {:confirmation-id (:confirmation-id user)})
+(defn send-confirmation-email! [user email confirmation-id]
+  (email/send! :confirmation email {:confirmation-id confirmation-id})
   user)
 
 (defn register-user [request]
   (let [params (:params request)
         email (:email params)
         password (:password params)
+        confirmation-id (uuid/uuid)
         err (v/validate-registration params user/is-duplicate-user?)
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
+      (do (conf/store! email confirmation-id)
       (-> (user/store-user! email password)
-          (send-confirmation-email! email)
-          (redirect-to-profile-created request))
+          (send-confirmation-email! email confirmation-id)
+          (redirect-to-profile-created request)))
       (show-registration-form request-with-validation-errors))))
 
 (defn show-change-password-form [request]
@@ -73,8 +77,7 @@
     (sh/enlive-response (sign-in/sign-in-form request) (:context request))))
 
 (defn show-confirm-sign-in-form [request]
-  (sh/enlive-response (sign-in/confirmation-sign-in-form request) (:context request))
-  )
+  (sh/enlive-response (sign-in/confirmation-sign-in-form request) (:context request)))
 
 (defn generate-login-access-token [user]
   (:token (cl-token/create-token nil user)))
@@ -163,33 +166,25 @@
     (user/remove-authorised-client-for-user! email client-id)
     (r/redirect (routes/path :show-profile))))
 
-(defn confirm-email [request]
-  (if (signed-in? request)
-    (let [user-email (get-in request [:session :user-login])
-          user (user/retrieve-user user-email)]
-      (log/debug (format "confirm-email Confirm-email user '%s' signed in." user-email)) 
-      (if (= (get-in request [:params :confirmation-id] :no-confirmation-id-in-query) (:confirmation-id user))
-        (do  
-          (user/confirm-email! user)
-          (r/redirect (routes/path :show-profile)))
-        (-> (r/redirect (str (:uri request) "?" (:query-string request)))
-            (preserve-session request)
-            (update-in [:session] #(dissoc % :user-login :access_token)))))
-    (do (log/debug "Confirm-email user not signed in.")
-        (-> (r/redirect (routes/path :show-sign-in-form))
-            (preserve-session request)
-            (assoc-in [:session :return-to] (util-ring/complete-uri-of request))))))
-
 (defn confirmation-sign-in [request]
-  {}
-  )
+  (let [confirmation-id (get-in request [:params :confirmation-id])
+        password (get-in request [:params :password])
+        email (:login (conf/fetch confirmation-id))]
+    (if-let [user (user/authenticate-and-retrieve-user email password)]
+        (let [access-token (generate-login-access-token user)]
+          (-> (r/redirect (routes/path :confirm-email-with-id
+                                       :confirmation-id confirmation-id))
+              (assoc-in [:session :user-login] (:login user))
+              (assoc-in [:session :access_token] access-token)))
+        (throw (Exception. "user not authenticated")))))
 
 (defn confirm-email-with-id [request]
  (if (signed-in? request)
   (let [user-email (get-in request [:session :user-login])
-        user (user/retrieve-user user-email)]
-    (log/debug (format "confirm-email-with-id Confirm-email user '%s' signed in. BOO!" user-email)) 
-    (if (= (get-in request [:params :confirmation-id] :no-confirmation-id-in-query) (:confirmation-id user))
+        user (user/retrieve-user user-email)
+        confirmation (conf/fetch (get-in request [:params :confirmation-id]))]
+    (log/debug (format "confirm-email-with-id Confirm-email user '%s' signed in." user-email)) 
+    (if (= (:login confirmation) (:login user))
         (do  
           (log/debug (format "confirmation-ids match. Confirming user's email."))
           (user/confirm-email! user)

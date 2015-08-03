@@ -12,6 +12,7 @@
             [stonecutter.db.user :as user]
             [stonecutter.db.storage :as storage]
             [stonecutter.view.profile :as profile]
+            [stonecutter.util.uuid :as uuid]
             [stonecutter.validation :as v]))
 
 (def check-body-not-blank
@@ -33,6 +34,7 @@
 
 (def email "valid@email.com")
 (def password "password")
+(def confirmation-id "1234-ABCD")
 (def sign-in-user-params {:email email :password password})
 (def register-user-params {:email email :password password :confirm-password password})
 
@@ -96,11 +98,13 @@
                  (user/store-user! "valid@email.com" "password") => ...user...)))
 
        (fact "user is send a confirmation email with the correct content"
+             (against-background 
+               (uuid/uuid) => confirmation-id)
              (let [response (-> (create-request :post (routes/path :register-user) register-user-params)
                                 u/register-user)
                    registered-user (user/retrieve-user email)]
              (:email @most-recent-email) => email
-             (:body @most-recent-email) => {:confirmation-id (:confirmation-id registered-user)})))
+             (:body @most-recent-email) => {:confirmation-id confirmation-id})))
 
 (facts "about registration validation errors"
        (fact "email must not be a duplicate"
@@ -323,34 +327,6 @@
         (assoc-in [:session :access_token] (:token access-token))
         (assoc-in [:session :user-login] (:login user)))))
 
-(facts "about confirm-email"
-       (fact "if the confirmation UUID in the query string matches that of the signed in user's user record confirm the account and redirect to profile view"
-             (let [user (user/store-user! "dummy@email.com" "password")
-                   request (-> (create-request-with-query-string :get (routes/path :confirm-email)
-                                                                 {:confirmation-id (:confirmation-id user)})
-                               (with-signed-in-user user))]
-               (u/confirm-email request) => (check-redirects-to (routes/path :show-profile))
-               (user/retrieve-user (:login user)) =not=> (contains {:confirmation-id anything})
-               (user/retrieve-user (:login user)) => (contains {:confirmed? true})))
-
-       (fact "when confirmation UUID in the query string does not match that of the signed in user's user record, signs the user out and redirects to confirmation endpoint with the original confirmation UUID from the query string"
-             (let [signed-in-user (user/store-user! "signed-in@email.com" "password")
-                   confirming-user (user/store-user! "confirming@email.com" "password")
-                   request (-> (create-request-with-query-string :get (routes/path :confirm-email)
-                                                                 {:confirmation-id (:confirmation-id confirming-user)})
-                               (with-signed-in-user signed-in-user))
-                   response (u/confirm-email request)]
-               response =not=> (check-signed-in request signed-in-user)
-               response => (check-redirects-to (str (routes/path :confirm-email) "?confirmation-id=" (:confirmation-id confirming-user)))))
-
-       (fact "when user is not signed in, redirects to sign-in form with the confirmation endpoint (including confirmation UUID query string) as the successful sign-in redirect target"
-             (let [confirming-user (user/store-user! "confirming@email.com" "password")
-                   request (create-request-with-query-string :get (routes/path :confirm-email)
-                                                             {:confirmation-id (:confirmation-id confirming-user)})
-                   response (u/confirm-email request)]
-               response => (contains {:session (contains {:return-to (contains (str (routes/path :confirm-email) "?confirmation-id=" (:confirmation-id confirming-user)))})})
-               response => (check-redirects-to (routes/path :show-sign-in-form)))))
-
 (facts "about show-profile"
        (fact "user's authorised clients passed to html-response"
              (-> (create-request :get (routes/path :show-profile) nil)
@@ -363,25 +339,24 @@
                (c/retrieve-client ...client-id-1...) => {:name "CLIENT 1"}
                (c/retrieve-client ...client-id-2...) => {:name "CLIENT 2"}))
 
-       (when (= toggles/story-25 :activated)
-         (tabular
-           (fact "user confirmation status is displayed appropriately"
-                 (against-background
-                   (user/retrieve-user ...email...) => {:login ...email...
-                                                        :confirmed? ?confirmed})
-                 (let [enlive-snippet
-                       (-> (create-request :get (routes/path :show-profile) nil)
-                           (assoc :session {:user-login ...email...})
-                           u/show-profile
-                           :body
-                           html/html-snippet)]
+       (tabular
+         (fact "user confirmation status is displayed appropriately"
+               (against-background
+                 (user/retrieve-user ...email...) => {:login ...email...
+                                                      :confirmed? ?confirmed})
+               (let [enlive-snippet
+                     (-> (create-request :get (routes/path :show-profile) nil)
+                         (assoc :session {:user-login ...email...})
+                         u/show-profile
+                         :body
+                         html/html-snippet)]
 
-                   (html/select enlive-snippet [?should-show]) => (one-of anything)
-                   (html/select enlive-snippet [?should-hide]) => empty?))
+                 (html/select enlive-snippet [?should-show]) => (one-of anything)
+                 (html/select enlive-snippet [?should-hide]) => empty?))
 
-           ?confirmed    ?should-show                        ?should-hide
-           true          :.clj--email-confirmed-message      :.clj--email-not-confirmed-message
-           false         :.clj--email-not-confirmed-message  :.clj--email-confirmed-message)))
+         ?confirmed    ?should-show                        ?should-hide
+         true          :.clj--email-confirmed-message      :.clj--email-not-confirmed-message
+         false         :.clj--email-not-confirmed-message  :.clj--email-confirmed-message))
 
 (facts "about unsharing profile cards"
        (facts "about get requests to /unshare-profile-card"

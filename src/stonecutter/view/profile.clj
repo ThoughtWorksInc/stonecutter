@@ -44,14 +44,10 @@
            [:.clj--delete-account__link] (html/set-attr :href (r/path :show-delete-account-confirmation))))
 
 (defn display-email-confirmation-status [request enlive-m]
-  (if (not= toggles/story-25 :activated)
-    (html/at enlive-m
-             [:.clj--email-not-confirmed-message] nil
-             [:.clj--email-confirmed-message] nil)
     (let [confirmed? (get-in request [:context :confirmed?])]
       (if confirmed?
         (html/at enlive-m [:.clj--email-not-confirmed-message] nil)
-        (html/at enlive-m [:.clj--email-confirmed-message] nil)))))
+        (html/at enlive-m [:.clj--email-confirmed-message] nil))))
 
 (defn add-flash-message [request enlive-m]
   (if (= (:flash request) :password-changed)

@@ -11,11 +11,11 @@
        (s/setup-in-memory-stores!)
        (fact "can store a user"
              (user/store-user! "email@server.com" "password")
-             => (contains {:login "email@server.com"
+             =>  (just {:login "email@server.com"
                            :name nil
                            :url nil
                            :confirmed? false
-                           :confirmation-id anything}))
+                           :uid anything}))
 
        (fact "can authenticate a user"
              (user/authenticate-and-retrieve-user "email@server.com" "password")
@@ -79,7 +79,7 @@
 (fact "about creating a user record"
       (let [id-gen (constantly "id")]
         (fact "a uuid is added"
-              (user/create-user id-gen "email" "password") => {:login "email" :password "encrypted_password" :uid "id" :name nil :url nil :confirmed? false :confirmation-id "id"}
+              (user/create-user id-gen "email" "password") => {:login "email" :password "encrypted_password" :uid "id" :name nil :url nil :confirmed? false}
               (provided (cl-user/bcrypt "password") => "encrypted_password"))
         (fact "email is lower-cased"
               (user/create-user id-gen "EMAIL" "password") => (contains {:login "email"}))))

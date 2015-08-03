@@ -10,7 +10,6 @@
   (let [lower-email (s/lower-case email)]
     (->
       (cl-user/new-user lower-email password)
-      (assoc :confirmation-id (id-gen))
       (assoc :confirmed? false)
       (assoc :uid (id-gen)))))
 

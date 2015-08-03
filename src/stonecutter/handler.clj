@@ -61,7 +61,6 @@
      :show-sign-in-form                  user/show-sign-in-form
      :sign-in                            user/sign-in
      :sign-out                           user/sign-out
-     :confirm-email                      user/confirm-email
      :confirm-email-with-id              user/confirm-email-with-id
      :confirmation-sign-in-form          user/show-confirm-sign-in-form
      :confirmation-sign-in               user/confirmation-sign-in
@@ -88,7 +87,6 @@
                                         :authorise
                                         :ping
                                         :theme-css
-                                        :confirm-email
                                         :confirm-email-with-id
                                         :confirmation-sign-in-form :confirmation-sign-in
                                         })))
