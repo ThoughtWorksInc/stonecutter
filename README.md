@@ -143,4 +143,4 @@ the Mailgun provider:
 For the mailgun example, the following environment variables are also required:
 
 - EMAIL_DOMAIN_NAME --- the domain name that has been linked to mailgun
-- MAILGUN_API_KEY --- the mailgun api username + key (i.e. a string in the form: "api:<api-key>"), provided by Mailgun.
+- MAILGUN_API_KEY --- the mailgun api username + key (i.e. a string in the form: "api:_api-key_"), provided by Mailgun.
