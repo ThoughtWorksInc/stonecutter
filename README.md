@@ -85,28 +85,32 @@ gulp server
 lein midje
 ```
 
-### Customising the theme
+### Customising the app
 
-####Colours
+Optional environment variables can be set up to customise app name, colour scheme and logo.
 
-Currently without getting your hands dirty we offer customisation of the header, logo and navigation tabs.
+####App name
 
-Locate /assets/stylesheets/application.scss and modify the line that looks like this:
-```
-//@import "theme"; // uncomment to apply your theme
-```
+App name is used anywhere where the application refers to itself, e.g. "Register with <App name>".
+To set the app name:
 
-To look like this:
-```
-@import "theme"; // uncomment to apply your theme
-```
+* Set the environment variable **APP_NAME**
 
-Then update the variable values inside /assets/stylesheets/theme.scss 
+The content of any HTML elements with the class `.clj--app-name` will be replaced with the app name.
 
 ####Logo
 
-You can either update the /assets/images/logo.svg or supply your own.  If you choose you own be sure to enable the theme and update the path in assets/stylesheets/theme.scss.
+Logo is used in the header.
+To set the logo:
 
-####Fav icon
+* Set the environment variable **STATIC_RESOURCES_DIR_PATH** to a directory containing the logo.
+* **NOTE: Anything inside this directory will be served as a static resource, including subdirectories.**
+* Set the environment variable **LOGO_FILE_NAME** to the logo file name including the extension, e.g. logo.png
 
-You can update the favicons located in /assets/icons/.
+####Colours
+
+The header colour can be customised:
+
+* Set the environment variable **HEADER_BG_COLOR** to a CSS colour value, e.g. `#1F1F1F` or `"rgb(192,192,192)"`
+* Set the environment variable **INACTIVE_TAB_FONT_COLOR** to a CSS colour value.
+* The two colours should be contrasting in order for the inactive tab text to be visible.
