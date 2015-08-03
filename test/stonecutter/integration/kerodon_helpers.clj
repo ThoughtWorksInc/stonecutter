@@ -35,6 +35,7 @@
 
 
 (defn check-follow-redirect [state]
+  "Possibly a double redirect"
   (fact {:midje/name "Attempting to follow redirect"}
         (k/follow-redirect state) =not=> (throws Exception))
   (try (k/follow-redirect state)

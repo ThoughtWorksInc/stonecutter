@@ -188,11 +188,14 @@
         (do  
           (log/debug (format "confirmation-ids match. Confirming user's email."))
           (user/confirm-email! user)
+          (conf/revoke! (:confirmation-id confirmation))
           (r/redirect (routes/path :show-profile)))
-        (-> (r/redirect (routes/path :confirm-email-with-id
-                                     :confirmation-id (get-in request [:params :confirmation-id])))
-            (preserve-session request)
-            (update-in [:session] #(dissoc % :user-login :access_token)))))
+        (do 
+          (log/debug (format "confirmation-ids DID NOT match. SIGNING OUT"))
+          (-> (r/redirect (routes/path :confirm-email-with-id
+                                       :confirmation-id (get-in request [:params :confirmation-id])))
+              (preserve-session request)
+              (update-in [:session] #(dissoc % :user-login :access_token))))))
   (do (log/debug "Confirm-email user not signed in.")
       (-> (r/redirect (routes/path :confirmation-sign-in-form
                                    :confirmation-id (get-in request [:params :confirmation-id])))

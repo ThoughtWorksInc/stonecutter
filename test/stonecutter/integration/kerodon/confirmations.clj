@@ -104,11 +104,11 @@
            (k/fill-in ks/sign-in-password-input "valid-password")
            (k/press ks/sign-in-submit)
 
-           (kh/check-follow-redirect)
+           (k/follow-redirect)
            (kh/page-uri-is (routes/path :confirm-email-with-id
                                  :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
 
-           (kh/check-follow-redirect)
+           (k/follow-redirect)
            (kh/page-uri-is (routes/path :show-profile))
            (kh/selector-not-present [:.clj--email-not-confirmed-message])
            (kh/selector-exists [:.clj--email-confirmed-message])

@@ -37,7 +37,6 @@
 (defn confirm-email! [user]
   (m/update! @cl-user/user-store (:login user)
              (fn [user] (-> user
-                            (dissoc :confirmation-id)
                             (assoc :confirmed? true)))))
 
 (defn unique-conj [things thing]

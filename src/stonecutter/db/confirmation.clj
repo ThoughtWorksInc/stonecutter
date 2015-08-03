@@ -8,3 +8,6 @@
 
 (defn fetch [confirmation-id] 
  (cl-store/fetch @storage/confirmation-store confirmation-id))
+
+(defn revoke! [confirmation-id]
+  (cl-store/revoke! @storage/confirmation-store confirmation-id))
