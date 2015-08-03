@@ -6,7 +6,8 @@
                 :mongo-uri :client-credentials-file-path
                 :theme :secure :email-script-path :app-name
                 :header-bg-color :inactive-tab-font-color
-                :static-resources-dir-path :logo-file-name})
+                :static-resources-dir-path :logo-file-name
+                :favicon-file-name})
 
 (defn create-config []
   (select-keys env/env env-vars))
@@ -64,3 +65,6 @@
 
 (defn logo-file-name [config-m]
   (get-env config-m :logo-file-name))
+
+(defn favicon-file-name [config-m]
+  (get-env config-m :favicon-file-name))

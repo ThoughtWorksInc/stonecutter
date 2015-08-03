@@ -10,9 +10,16 @@
     (-> enlive-m
         (html/at [:.clj--app-name] (html/content app-name)))))
 
+(defn set-favicon [enlive-m context]
+  (if-let [favicon-file-name (config/favicon-file-name (:config-m context))]
+    (-> enlive-m
+        (html/at [[:link (html/attr= :rel "shortcut icon")]] (html/set-attr :href (str "/" favicon-file-name))))
+    enlive-m))
+
 (defn enlive-response [enlive-m context]
   (-> enlive-m
       (update-app-name context)
+      (set-favicon context)
       (t/context-translate context)
       vh/enlive-to-str
       r/response

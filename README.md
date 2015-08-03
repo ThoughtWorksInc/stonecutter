@@ -107,6 +107,15 @@ To set the logo:
 * **NOTE: Anything inside this directory will be served as a static resource, including subdirectories.**
 * Set the environment variable **LOGO_FILE_NAME** to the logo file name including the extension, e.g. logo.png
 
+####Favicon
+
+Favicon should be an .ico file.
+To set the favicon:
+
+* Set the environment variable **STATIC_RESOURCES_DIR_PATH** to a directory containing the favicon
+if you haven't already done so for the logo.
+* Set the environment variable **FAVICON_FILE_NAME** to the favicon file name, e.g. my-favicon.ico
+
 ####Colours
 
 The header colour can be customised:
