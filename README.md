@@ -100,7 +100,7 @@ The content of any HTML elements with the class `.clj--app-name` will be replace
 
 ####Logo
 
-Logo is used in the header.
+Logo is used in the header. Maximum dimensions (W x H) 110px x 50px.
 To set the logo:
 
 * Set the environment variable **STATIC_RESOURCES_DIR_PATH** to a directory containing the logo.
