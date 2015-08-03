@@ -91,7 +91,7 @@ Optional environment variables can be set up to customise app name, colour schem
 
 ####App name
 
-App name is used anywhere where the application refers to itself, e.g. "Register with <App name>".
+App name is used anywhere where the application refers to itself, e.g. "Register with {App name}".
 To set the app name:
 
 * Set the environment variable **APP_NAME**
@@ -114,6 +114,7 @@ To set the favicon:
 
 * Set the environment variable **STATIC_RESOURCES_DIR_PATH** to a directory containing the favicon
 if you haven't already done so for the logo.
+* **NOTE: Anything inside this directory will be served as a static resource, including subdirectories.**
 * Set the environment variable **FAVICON_FILE_NAME** to the favicon file name, e.g. my-favicon.ico
 
 ####Colours
