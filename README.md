@@ -124,3 +124,23 @@ The header colour can be customised:
 * Set the environment variable **HEADER_BG_COLOR** to a CSS colour value, e.g. `#1F1F1F` or `"rgb(192,192,192)"`
 * Set the environment variable **INACTIVE_TAB_FONT_COLOR** to a CSS colour value.
 * The two colours should be contrasting in order for the inactive tab text to be visible.
+
+### Adding an email provider
+
+Stonecutter can integrate against 3rd party email providers via a shell script interface, which may optionally require
+configuration via environment variables.
+
+Scripts for individual mail service providers should be located in the ```ops/roles/mail/files/providers``` directory.
+These will be copied into a deployment environment by Ansible.  Currently, an implementation has been provided for
+Mailgun, which can be used as a template.
+
+In order to select which email service is used, set the ```EMAIL_SERVICE_PROVIDER``` environment variable.  This should
+match one of the provider scripts under in the ```ops/roles/mail/files/providers``` directory.  For example, to use
+the Mailgun provider:
+
+```EMAIL_SERVICE_PROVIDER=mailgun```
+
+For the mailgun example, the following environment variables are also required:
+
+- EMAIL_DOMAIN_NAME --- the domain name that has been linked to mailgun
+- MAILGUN_API_KEY --- the mailgun api username + key (i.e. a string in the form: "api:<api-key>"), provided by Mailgun.
