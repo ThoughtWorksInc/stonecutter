@@ -4,7 +4,6 @@
             [clauth.token :as cl-token]
             [clauth.user :as cl-user]
             [net.cgrand.enlive-html :as html]
-            [stonecutter.toggles :as toggles]
             [stonecutter.email :as email]
             [stonecutter.routes :as routes]
             [stonecutter.controller.user :as u]

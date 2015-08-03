@@ -1,7 +1,6 @@
 (ns stonecutter.test.view.profile
   (:require [midje.sweet :refer :all]
             [net.cgrand.enlive-html :as html]
-            [stonecutter.toggles :as toggles]
             [stonecutter.routes :as r]
             [stonecutter.test.view.test-helpers :as th]
             [stonecutter.translation :as t]

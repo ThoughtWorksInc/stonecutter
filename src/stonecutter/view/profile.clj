@@ -1,7 +1,6 @@
 (ns stonecutter.view.profile
   (:require [traduki.core :as t]
             [net.cgrand.enlive-html :as html]
-            [stonecutter.toggles :as toggles]
             [stonecutter.routes :as r]
             [stonecutter.view.view-helpers :as vh]))
 
