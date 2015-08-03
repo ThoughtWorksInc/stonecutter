@@ -1,0 +1,27 @@
+#!/bin/bash
+set -x
+REQUIRED_ENV=('MAILGUN_API_KEY' 'EMAIL_DOMAIN_NAME')
+
+for r in ${REQUIRED_ENV[@]};
+do
+  [[ -z "${!r}" ]] && echo "$r not defined" && exit 1
+done
+
+DEFAULT_FROM="test <info@$EMAIL_DOMAIN_NAME>"
+provider_endpoint="https://api.mailgun.net/v3/$EMAIL_DOMAIN_NAME/messages"
+
+to=$1
+subject=$2
+body=$3
+[[ -n "$FROM" ]] && from=$FROM || from=$DEFAULT_FROM
+echo $from
+
+response_code=$(curl -s -o /dev/stderr -w "%{http_code}" --user "$MAILGUN_API_KEY" \
+    $provider_endpoint \
+    -F "from=$from" \
+    -F "to=$to" \
+    -F "subject=$subject" \
+    -F "text=$body")
+
+[[ response_code -eq 200 ]] && exit 0
+exit 1

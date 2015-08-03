@@ -1,0 +1,13 @@
+---
+  - name: Create email service directory
+    file: path={{ email_service_dir }}/providers state=directory mode=0700
+
+  - name: Copy send_mail script
+    template: src=send_mail.sh dest={{ email_service_dir }}/send_mail.sh
+              owner=root group=root mode=0700
+
+  - name: Copy mail service providers
+    copy: src={{ item }} dest={{ email_service_dir }}/providers
+          owner=root mode=700
+    with_fileglob:
+      - providers/*

@@ -7,4 +7,5 @@
     - common
     - nginx
     - ferm
+    - mail
     - docker
