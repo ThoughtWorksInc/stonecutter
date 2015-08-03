@@ -140,6 +140,7 @@ the Mailgun provider:
 
 ```EMAIL_SERVICE_PROVIDER=mailgun```
 
+
 For the mailgun example, the following environment variables are also required:
 
 - EMAIL_DOMAIN_NAME --- the domain name that has been linked to mailgun
