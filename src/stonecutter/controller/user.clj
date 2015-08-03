@@ -176,7 +176,9 @@
                                        :confirmation-id confirmation-id))
               (assoc-in [:session :user-login] (:login user))
               (assoc-in [:session :access_token] access-token)))
-        (throw (Exception. "user not authenticated")))))
+        (-> request
+            (assoc-in [:context :errors :credentials] :confirmation-invalid)
+            show-confirm-sign-in-form))))
 
 (defn confirm-email-with-id [request]
  (if (signed-in? request)

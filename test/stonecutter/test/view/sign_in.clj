@@ -123,3 +123,14 @@
              (let [confirmation-id "confirmation-123"
                    page (-> (th/create-request {} nil {:confirmation-id confirmation-id}) confirmation-sign-in-form)]
                (-> page (html/select [:.clj--confirmation-id__input]) first :attrs :value) => confirmation-id)))
+
+ ( facts "about displaying errors"
+       (facts "when password is invalid"
+              (let [errors {:credentials :confirmation-invalid}
+                    page (-> (th/create-request {} errors {}) confirmation-sign-in-form)]
+                (fact "credentials validation element is present"
+                      (html/select page [:.validation-summary--show]) =not=> empty?)
+                (fact "correct error message is displayed"
+                      (html/select page [[:.clj--validation-summary__item (html/attr= :data-l8n "content:confirmation-sign-in-form/invalid-credentials-validation-message")]]) =not=> empty?)
+                (fact "invalid value is not preserved in input field"
+                      (-> page (html/select [:.func--password__input]) first :attrs :value) => empty?))))

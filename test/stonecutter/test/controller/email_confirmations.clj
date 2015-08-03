@@ -111,6 +111,19 @@
       (provided
         (user/authenticate-and-retrieve-user email password) => {:login ...user-login...}
         (conf/fetch confirmation-id) => {:login email :confirmation-id confirmation-id}
-        (cl-token/create-token nil {:login ...user-login...}) => {:token ...token...}))
+        (cl-token/create-token nil {:login ...user-login...}) => {:token ...token...})
+      
+      (fact "when credentials are invalid, redirect back to form with invalid error"
+            (against-background
+              (user/authenticate-and-retrieve-user email "Invalid password") => nil
+              (conf/fetch confirmation-id) => {:login email :confirmation-id confirmation-id})
+            (let [response (-> (create-request :post (routes/path :confirmation-sign-in)
+                                               {:confirmation-id confirmation-id :password "Invalid password"}) 
+                               u/confirmation-sign-in)] 
+              response => (contains {:status 200})
+              response =not=> (contains {:session {:user-login anything
+                                                   :access_token anything}})
+              (-> (html/select (html/html-snippet (:body response)) [:.clj--validation-summary__item]) first :attrs :data-l8n) 
+              => "content:confirmation-sign-in-form/invalid-credentials-validation-message")))
        
 
