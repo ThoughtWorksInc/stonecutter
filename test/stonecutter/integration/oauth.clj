@@ -33,6 +33,8 @@
 ;<- Auth/Client conversation
 ; CLIENT:   'You are logged in'
 
+(s/setup-in-memory-stores!)
+
 (defn browser-sends-authorisation-request-from-client-redirect [state client-id]
   (-> state
       (k/visit "/authorisation" :headers {"accept" "text/html"} :params {:client_id     client-id

@@ -17,6 +17,7 @@
             [stonecutter.view.register :as register-view]))
 
 (l/init-logger!)
+(s/setup-in-memory-stores!)
 
 (defn setup-add-client-to-user! [email client-name]
   (let [client (cl-client/register-client client-name "myclient.com")
@@ -49,8 +50,6 @@
       (k/fill-in ks/sign-in-email-input email)
       (k/fill-in ks/sign-in-password-input "valid-password")
       (k/press ks/sign-in-submit)))
-
-(s/setup-in-memory-stores!)
 
 (defn parse-test-email []
     (read-string (slurp "test-tmp/test-email.txt")))

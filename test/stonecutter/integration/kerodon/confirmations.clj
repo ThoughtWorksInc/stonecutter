@@ -17,6 +17,7 @@
             [stonecutter.view.register :as register-view]))
 
 (l/init-logger!)
+(s/setup-in-memory-stores!)
 
 (defn register [state email]
   (-> state
@@ -25,8 +26,6 @@
       (k/fill-in ks/registration-password-input "valid-password")
       (k/fill-in ks/registration-confirm-input "valid-password")
       (k/press ks/registration-submit)))
-
-(s/setup-in-memory-stores!)
 
 (defn parse-test-email []
     (read-string (slurp "test-tmp/test-email.txt")))
