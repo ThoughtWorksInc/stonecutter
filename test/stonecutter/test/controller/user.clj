@@ -103,7 +103,14 @@
                                 u/register-user)
                    registered-user (user/retrieve-user email)]
              (:email @most-recent-email) => email
-             (:body @most-recent-email) => {:confirmation-id confirmation-id})))
+             (:body @most-recent-email) => {:confirmation-id confirmation-id}))
+
+       (fact "when user email is send, flash message is assoc-ed in redirect"
+             (against-background
+               (uuid/uuid) => confirmation-id)
+              (let [response (-> (create-request :post (routes/path :register-user) register-user-params)
+                                u/register-user)]
+                (:flash response) => :confirm-email-sent)))
 
 (facts "about registration validation errors"
        (fact "email must not be a duplicate"

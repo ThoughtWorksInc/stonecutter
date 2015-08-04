@@ -140,3 +140,4 @@ modal:
 
 flash:
   password-changed: "Your password has been changed!"
+  confirm-email-sent: "Please check your email to confirm your account."

@@ -48,7 +48,8 @@
       (do (conf/store! email confirmation-id)
       (-> (user/store-user! email password)
           (send-confirmation-email! email confirmation-id)
-          (redirect-to-profile-created request)))
+          (redirect-to-profile-created request)
+          (assoc :flash :confirm-email-sent)))
       (show-registration-form request-with-validation-errors))))
 
 (defn show-change-password-form [request]

@@ -29,5 +29,6 @@
         next-url (get-next-url from-app request)]
     (->> (vh/load-template "public/profile-created.html")
          (set-next-link next-url)
+         (vh/set-flash-message request :confirm-email-sent)
          (set-button-text from-app)
          vh/remove-work-in-progress)))

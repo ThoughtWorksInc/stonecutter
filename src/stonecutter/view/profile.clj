@@ -48,14 +48,9 @@
         (html/at enlive-m [:.clj--email-not-confirmed-message] nil)
         (html/at enlive-m [:.clj--email-confirmed-message] nil))))
 
-(defn add-flash-message [request enlive-m]
-  (if (= (:flash request) :password-changed)
-    enlive-m
-    (vh/remove-element enlive-m [:.clj--flash-message-container])))
-
 (defn profile [request]
   (->> (vh/load-template "public/profile.html")
-       (add-flash-message request)
+       (vh/set-flash-message request :password-changed)
        (display-email-confirmation-status request)
        (add-username request)
        (add-application-list request)

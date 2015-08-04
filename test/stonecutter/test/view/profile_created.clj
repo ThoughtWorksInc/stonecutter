@@ -40,3 +40,12 @@
 
          (fact "when coming from authorisation flow, next button should use from-app text"
                (-> page (html/select [:.func--profile-created-next__button]) first :attrs :data-l8n) => "content:profile-created/action-button-from-app")))
+
+(facts "about flash messages"
+       (fact "no flash messages are displayed by default"
+             (let [page (-> (th/create-request) profile-created)]
+               (-> page (html/select [:.clj--flash-message-container])) => empty?))
+
+       (fact "email sent flash message is displayed on page if it is in the flash of request"
+             (let [page (-> (th/create-request) (assoc :flash :confirm-email-sent) profile-created)]
+               (-> page (html/select [:.clj--flash-message-container])) =not=> empty?)))

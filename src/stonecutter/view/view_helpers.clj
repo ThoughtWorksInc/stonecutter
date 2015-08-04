@@ -14,6 +14,11 @@
 (defn remove-element [enlive-m selector]
   (html/at enlive-m selector nil))
 
+(defn set-flash-message [request message-key enlive-m]
+  (if (= (:flash request) message-key)
+    enlive-m
+    (remove-element enlive-m [:.clj--flash-message-container])))
+
 (defn remove-attribute [enlive-m selector attr]
   (html/at enlive-m selector (html/remove-attr attr)))
 
