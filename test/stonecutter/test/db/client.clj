@@ -14,13 +14,13 @@
 
 (fact "can store clients using credentials from the map"
       (c/store-clients-from-map client-credentials)
-      (cl-client/clients) => '({:client-id "NOPQRSTUVWXYZ" :client-secret "ABCDEFGHIJKLM" :name "Red Party"   :url "http://redparty.org"}
+      (cl-client/clients @storage/client-store) => '({:client-id "NOPQRSTUVWXYZ" :client-secret "ABCDEFGHIJKLM" :name "Red Party"   :url "http://redparty.org"}
                                {:client-id "ABCDEFGHIJKLM" :client-secret "NOPQRSTUVWXYZ" :name "Green Party" :url "http://greenparty.org"}))
 
 (fact "will not store clients with duplicate client-ids"
       (c/store-clients-from-map client-credentials)
       (c/store-clients-from-map client-credentials)
-      (cl-client/clients) => '({:client-id "NOPQRSTUVWXYZ" :client-secret "ABCDEFGHIJKLM" :name "Red Party"   :url "http://redparty.org"}
+      (cl-client/clients @storage/client-store) => '({:client-id "NOPQRSTUVWXYZ" :client-secret "ABCDEFGHIJKLM" :name "Red Party"   :url "http://redparty.org"}
                                {:client-id "ABCDEFGHIJKLM" :client-secret "NOPQRSTUVWXYZ" :name "Green Party" :url "http://greenparty.org"}))
 
 (fact "will not store clients without url"
@@ -48,16 +48,16 @@
 
 (fact "can drop the collection of clients"
       (c/store-clients-from-map client-credentials)
-      (cl-client/clients) =not=> empty?
+      (cl-client/clients @storage/client-store) =not=> empty?
       (c/delete-clients!)
-      (cl-client/clients) => empty?)
+      (cl-client/clients @storage/client-store) => empty?)
 
 (fact "can retrieve client using client-id and client-secret is removed"
       (let [client-entry {:name           "name"
                           :client-id      "client-id"
                           :client-secret  "client-secret"
                           :url            "url"}]
-        (cl-client/store-client client-entry)
+        (cl-client/store-client @storage/client-store client-entry)
         (c/retrieve-client "client-id") => {:name "name"
                                             :client-id "client-id"
                                             :url "url"}

@@ -9,7 +9,8 @@
             [stonecutter.integration.kerodon-helpers :as kh]
             [stonecutter.integration.kerodon-selectors :as ks]
             [stonecutter.db.user :as user]
-            [stonecutter.integration.test-helpers :as ith]))
+            [stonecutter.integration.test-helpers :as ith]
+            [stonecutter.db.storage :as storage]))
 
 ;; CLIENT => AUTH    /authorisation?client-id=123&response_type=code&redirect_uri=callback-url
 ;;   USER LOGIN (Auth Server)
@@ -70,7 +71,7 @@
 (def password "valid-password")
 
 (defn setup []
-  (let [client (cl-client/register-client "myclient" "http://myclient.com")
+  (let [client (cl-client/register-client @storage/client-store  "myclient" "http://myclient.com")
         client-id (:client-id client)
         client-secret (:client-secret client)
         invalid-client-secret (string/reverse client-secret)

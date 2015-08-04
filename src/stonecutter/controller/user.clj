@@ -18,7 +18,8 @@
             [stonecutter.view.change-password :as change-password]
             [stonecutter.view.unshare-profile-card :as unshare-profile-card]
             [stonecutter.util.uuid :as uuid]
-            [stonecutter.helper :as sh]))
+            [stonecutter.helper :as sh]
+            [stonecutter.db.storage :as storage]))
 
 (declare redirect-to-profile-created redirect-to-profile-deleted)
 
@@ -46,10 +47,10 @@
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
       (do (conf/store! email confirmation-id)
-      (-> (user/store-user! email password)
-          (send-confirmation-email! email confirmation-id)
-          (redirect-to-profile-created request)
-          (assoc :flash :confirm-email-sent)))
+          (-> (user/store-user! email password)
+              (send-confirmation-email! email confirmation-id)
+              (redirect-to-profile-created request)
+              (assoc :flash :confirm-email-sent)))
       (show-registration-form request-with-validation-errors))))
 
 (defn show-change-password-form [request]
@@ -78,7 +79,7 @@
     (sh/enlive-response (sign-in/sign-in-form request) (:context request))))
 
 (defn generate-login-access-token [user]
-  (:token (cl-token/create-token nil user)))
+  (:token (cl-token/create-token @storage/token-store nil user)))
 
 (defn sign-in [request]
   (let [return-to (get-in request [:session :return-to])

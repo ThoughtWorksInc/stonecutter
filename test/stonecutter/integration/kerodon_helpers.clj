@@ -34,12 +34,15 @@
   state)
 
 
-(defn check-follow-redirect [state]
-  "Possibly a double redirect"
-  (fact {:midje/name "Attempting to follow redirect"}
-        (k/follow-redirect state) =not=> (throws Exception))
-  (try (k/follow-redirect state)
-       (catch Exception state)))
+(defn check-and-follow-redirect
+  ([state description]
+   "Possibly a double redirect"
+   (fact {:midje/name (format "Attempting to follow redirect - %s" description)}
+         (-> state :response :status) => 302)
+   (try (k/follow-redirect state)
+        (catch Exception state)))
+  ([state]
+   (check-and-follow-redirect state "")))
 
 
 (defn selector-exists [state selector]

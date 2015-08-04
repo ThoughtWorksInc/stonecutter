@@ -32,7 +32,7 @@
 
 (fact "will load client credentials and store clients from a resource if provided a resource name"
       (cs/load-client-credentials-and-store-clients "test-client-credentials.yml")
-      (cl-client/clients) => '({:client-id "M4DPY7IO5KZ77KRHMXYTACUZEEZEK4FH"
+      (cl-client/clients @storage/client-store) => '({:client-id "M4DPY7IO5KZ77KRHMXYTACUZEEZEK4FH"
                                 :name "Red Resource Party"
                                 :client-secret "VZ27BQ5GWLWXVFQQBPGDIPY4QTDEUZNM"
                                 :url "https://redresource.org"}
@@ -43,7 +43,7 @@
 
 (fact "will load and store client-credentials from a file if provided a file path"
       (cs/load-client-credentials-and-store-clients "test-var/var/test-client-credentials-file.yml")
-      (cl-client/clients) => '({:client-id "F7ZFMTRJLS5FF6DTWMBCGWA7CXEQTH24"
+      (cl-client/clients @storage/client-store) => '({:client-id "F7ZFMTRJLS5FF6DTWMBCGWA7CXEQTH24"
                                 :name "Blue File Party"
                                 :client-secret "ISLS5HVYP65QE6OROI43FLHFFOBGISOG"
                                 :url "http://bluefile.org"}

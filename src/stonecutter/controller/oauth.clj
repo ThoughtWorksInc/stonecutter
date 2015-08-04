@@ -8,7 +8,8 @@
             [stonecutter.db.client :as client]
             [stonecutter.view.authorise :as authorise]
             [stonecutter.view.authorise-failure :as authorise-failure]
-            [stonecutter.helper :as sh]))
+            [stonecutter.helper :as sh]
+            [stonecutter.db.storage :as storage]))
 
 (defn show-authorise-form [request]
   (let [client-id (get-in request [:params :client_id])]
@@ -29,8 +30,8 @@
         redirect-uri (get-in request [:params :redirect_uri])
         callback-uri-with-error (add-error-to-uri redirect-uri)
         request (-> request
-                     (assoc-in [:context :client-name] client-name)
-                     (assoc-in [:params :callback-uri-with-error] callback-uri-with-error))]
+                    (assoc-in [:context :client-name] client-name)
+                    (assoc-in [:params :callback-uri-with-error] callback-uri-with-error))]
 
     (sh/enlive-response (authorise-failure/show-authorise-failure request) (:context request))))
 
@@ -40,9 +41,15 @@
         user-email (get-in request [:session :user-login])]
     (user/is-authorised-client-for-user? user-email client-id)))
 
-(def auth-handler (cl-ep/authorization-handler {:auto-approver                  auto-approver
-                                                :user-session-required-redirect (routes/path :show-sign-in-form)
-                                                :authorization-form             show-authorise-form}))
+(defn auth-handler [request]
+  ((cl-ep/authorization-handler
+     @storage/client-store
+     @storage/token-store
+     @storage/auth-code-store
+     {:auto-approver                  auto-approver
+      :user-session-required-redirect (routes/path :show-sign-in-form)
+      :authorization-form             show-authorise-form
+      }) request))
 
 (defn authorise-client [request]
   (let [client-id (get-in request [:params :client_id])
@@ -62,17 +69,21 @@
         user-login (get-in request [:session :user-login])
         request (update-in request [:session] dissoc :csrf-token)
         access-token (get-in request [:session :access_token])]
-   (if (is-redirect-uri-valid? client-id redirect-uri)
-     (-> request
-         (assoc-in [:headers "accept"] "text/html")
-         auth-handler
-         (assoc-in [:session :user-login] user-login)
-         (assoc-in [:session :access_token] access-token))
-     (do
-       (log/warn "Invalid query params for authorisation request")
-       {:status 403}))))
+    (if (is-redirect-uri-valid? client-id redirect-uri)
+      (-> request
+          (assoc-in [:headers "accept"] "text/html")
+          auth-handler
+          (assoc-in [:session :user-login] user-login)
+          (assoc-in [:session :access_token] access-token))
+      (do
+        (log/warn "Invalid query params for authorisation request")
+        {:status 403}))))
 
-(def token-handler (cl-ep/token-handler))
+(defn token-handler [request]
+  ((cl-ep/token-handler @storage/user-store
+                        @storage/client-store
+                        @storage/token-store
+                        @storage/auth-code-store) request))
 
 (defn validate-token [request]
   (let [auth-code (get-in request [:params :code])

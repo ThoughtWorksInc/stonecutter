@@ -1,22 +1,18 @@
 (ns stonecutter.integration.kerodon.confirmations
   (:require [midje.sweet :refer :all]
             [kerodon.core :as k]
-            [clauth.client :as cl-client]
             [clojure.java.io :as io]
-            [clojure.string :as string]
-            [stonecutter.config :as config]
             [stonecutter.email :as email]
             [stonecutter.integration.kerodon-helpers :as kh]
             [stonecutter.integration.kerodon-selectors :as ks]
             [stonecutter.routes :as routes]
             [stonecutter.handler :as h]
-            [stonecutter.db.storage :as s]
             [stonecutter.logging :as l]
-            [stonecutter.db.user :as user]
-            [stonecutter.view.register :as register-view]))
+            [stonecutter.db.storage :as storage]
+            [clauth.store :as cl-store]))
 
 (l/init-logger!)
-(s/setup-in-memory-stores!)
+(storage/setup-in-memory-stores!)
 
 (defn register [state email]
   (-> state
@@ -27,11 +23,13 @@
       (k/press ks/registration-submit)))
 
 (defn parse-test-email []
-    (read-string (slurp "test-tmp/test-email.txt")))
+  (let [m (read-string (slurp "test-tmp/test-email.txt"))]
+    (prn m)
+    m))
 
 (defn checks-email-is-sent [state email-address]
   (fact {:midje/name "Check send email script is called"}
-      (parse-test-email) => (contains {:email-address email-address}))
+        (parse-test-email) => (contains {:email-address email-address}))
   state)
 
 (defn delete-directory [directory-path]
@@ -55,7 +53,7 @@
 
 (defn test-email-renderer [email-data]
   {:subject ""
-   :body (str email-data)})
+   :body    (str email-data)})
 
 (email/initialise! (email/bash-sender-factory "test-resources/mail_stub.sh")
                    {:confirmation test-email-renderer})
@@ -75,7 +73,7 @@
 
            (k/visit (routes/path :confirm-email-with-id
                                  :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
-           (kh/check-follow-redirect)
+           (kh/check-and-follow-redirect)
 
            (kh/page-uri-is (routes/path :show-profile))
            (kh/selector-not-present [:.clj--email-not-confirmed-message])
@@ -91,14 +89,14 @@
            (register "confirmation-test-2@email.com")
            (k/visit "/profile")
            (k/follow ks/sign-out-link)
-           (kh/check-follow-redirect)
+           (kh/check-and-follow-redirect "just signed out")
 
            (k/visit (routes/path :confirm-email-with-id
                                  :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
            (kh/page-uri-is (routes/path :confirm-email-with-id
                                         :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
 
-           (kh/check-follow-redirect)
+           (kh/check-and-follow-redirect "redirecting to sign in")
            (kh/page-uri-is (routes/path :confirmation-sign-in-form
                                         :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
            (k/fill-in ks/sign-in-password-input "valid-password")
@@ -106,11 +104,12 @@
 
            (k/follow-redirect)
            (kh/page-uri-is (routes/path :confirm-email-with-id
-                                 :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
+                                        :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
 
            (k/follow-redirect)
            (kh/page-uri-is (routes/path :show-profile))
            (kh/selector-not-present [:.clj--email-not-confirmed-message])
            (kh/selector-exists [:.clj--email-confirmed-message])
 
-           (teardown-test-directory)))
+           (teardown-test-directory)
+           ))

@@ -1,7 +1,8 @@
 (ns stonecutter.db.client
   (:require [clauth.client :as cl-client]
             [schema.core :as schema]
-            [clojure.string :as s]))
+            [clojure.string :as s]
+            [stonecutter.db.storage :as storage]))
 
 (def not-blank? (complement s/blank?))
 
@@ -13,20 +14,20 @@
    :url           (schema/both schema/Str (schema/pred not-blank?))})
 
 (defn validate-url-format [client-entry]
- (let [url (:url client-entry)]
-  (if (re-find #"https?://" url)
-    client-entry
-    (throw Exception "missing resource prefix e.g. https://"))))
+  (let [url (:url client-entry)]
+    (if (re-find #"https?://" url)
+      client-entry
+      (throw Exception "missing resource prefix e.g. https://"))))
 
 (defn validate-client-entry [client-entry]
   (-> (schema/validate Client client-entry)
       validate-url-format))
 
-(defn delete-clients![]
-  (cl-client/reset-client-store!))
+(defn delete-clients! []
+  (cl-client/reset-client-store! @storage/client-store))
 
 (defn retrieve-client [client-id]
-  (dissoc (cl-client/fetch-client client-id) :client-secret))
+  (dissoc (cl-client/fetch-client @storage/client-store client-id) :client-secret))
 
 (defn unique-client-id? [client-id]
   (nil? (retrieve-client client-id)))
@@ -40,7 +41,7 @@
             client-secret (:client-secret client-entry)
             url (:url client-entry)]
         (when (unique-client-id? client-id)
-          (cl-client/store-client {:name          name
-                                   :client-id     client-id
-                                   :client-secret client-secret
-                                   :url           url}))))))
+          (cl-client/store-client @storage/client-store {:name          name
+                                                        :client-id     client-id
+                                                        :client-secret client-secret
+                                                        :url           url}))))))

@@ -65,7 +65,7 @@
    :body email-data})
 
 (background (before :facts (do (storage/setup-in-memory-stores!)
-                               (cl-user/reset-user-store!)
+                               (cl-user/reset-user-store! @storage/user-store)
                                (email/initialise! test-email-sender!
                                                   {:confirmation test-email-renderer}))
                     :after (do (storage/reset-in-memory-stores!)
@@ -125,13 +125,13 @@
                    (provided
                     (v/validate-registration register-user-params user/is-duplicate-user?) => {:email :duplicate}
                     (cl-user/new-user anything anything) => anything :times 0
-                    (cl-user/store-user anything) => anything :times 0))
+                    (cl-user/store-user @storage/user-store anything) => anything :times 0))
 
        (fact "user isn't saved to the database if email is invalid"
              (-> (create-request :post "/register" {:email "invalid"}) u/register-user) => anything
              (provided
                (cl-user/new-user anything anything) => anything :times 0
-               (cl-user/store-user anything) => anything :times 0))
+               (cl-user/store-user @storage/user-store anything) => anything :times 0))
 
        (facts "registration page is rendered with errors"
               (let [html-response (-> (create-request :post "/register" {:email "invalid"})
@@ -153,7 +153,7 @@
                                              :access_token ...token...}})
       (provided
         (user/authenticate-and-retrieve-user email password) => {:login ...user-login...}
-        (cl-token/create-token nil {:login ...user-login...}) => {:token ...token...}))
+        (cl-token/create-token @storage/token-store nil {:login ...user-login...}) => {:token ...token...}))
 
 (fact "signed-in? returns true only when user-login and access_token are in the session"
       (tabular
@@ -188,7 +188,7 @@
                                         :session {:access_token ...token... :user-login ...user-login...}})
       (provided
        (user/authenticate-and-retrieve-user email password) => {:login ...user-login...}
-       (cl-token/create-token nil {:login ...user-login...}) => {:token ...token...}))
+       (cl-token/create-token @storage/token-store nil {:login ...user-login...}) => {:token ...token...}))
 
 (facts "about sign-in validation errors"
        (fact "user cannot sign in with blank password"

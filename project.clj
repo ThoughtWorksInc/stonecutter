@@ -9,7 +9,7 @@
                            [enlive "1.1.6"]
                            [hiccup "1.0.5"]
                            [com.cemerick/url "0.1.1"]
-                           [johncowie/clauth "1.0.1"]
+                           [johncowie/clauth "2.0.1"]
                            [traduki "0.1.1-SNAPSHOT"]
                            [clj-yaml "0.4.0"]
                            [environ "1.0.0"]

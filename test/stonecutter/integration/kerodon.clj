@@ -13,13 +13,14 @@
             [stonecutter.db.storage :as s]
             [stonecutter.logging :as l]
             [stonecutter.db.user :as user]
-            [stonecutter.view.register :as register-view]))
+            [stonecutter.view.register :as register-view]
+            [stonecutter.db.storage :as storage]))
 
 (l/init-logger!)
 (s/setup-in-memory-stores!)
 
 (defn setup-add-client-to-user! [email client-name]
-  (let [client (cl-client/register-client client-name "myclient.com")
+  (let [client (cl-client/register-client @storage/client-store client-name "myclient.com")
         client-id (:client-id client)]
     (user/add-authorised-client-for-user! email client-id)))
 

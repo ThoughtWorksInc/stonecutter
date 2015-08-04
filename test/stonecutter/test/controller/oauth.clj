@@ -28,7 +28,7 @@
 
 (facts "about authorisation end-point"
        (fact "request with client-id, response_type and redirect_uri returns redirect to login page if there is no user session"
-             (let [client-details (cl-client/register-client "ClientTestApp" client-url) ;FORMAT => {:client-secret "XLFCQRKJXSV3T6YQJL5ZJJVGFUJNT6LD", :client-id "RXBX6ZXAER5KPDSZ3ZCZJDOBS27FLDE7", :name "ClientTestApp", :url "localhost:3001"}
+             (let [client-details (cl-client/register-client @storage/client-store "ClientTestApp" client-url) ;FORMAT => {:client-secret "XLFCQRKJXSV3T6YQJL5ZJJVGFUJNT6LD", :client-id "RXBX6ZXAER5KPDSZ3ZCZJDOBS27FLDE7", :name "ClientTestApp", :url "localhost:3001"}
                    request (-> (create-request :get (routes/path :authorise)
                                                {:client_id (:client-id client-details)
                                                 :response_type "code"
@@ -41,8 +41,8 @@
 
        (fact "valid request goes to authorisation page with auth_code and email when there is an existing user session"
              (let [user (user/store-user! user-email "password")
-                   client-details (cl-client/register-client "MYAPP" client-url) ; NB this saves into the client store
-                   access-token (cl-token/create-token client-details user) ; NB this saves into the token store
+                   client-details (cl-client/register-client @storage/client-store "MYAPP" client-url) ; NB this saves into the client store
+                   access-token (cl-token/create-token @storage/token-store client-details user) ; NB this saves into the token store
                    request (-> (create-request :get (routes/path :authorise)
                                                {:client_id (:client-id client-details)
                                                 :response_type "code"
@@ -62,8 +62,8 @@
 
        (fact "posting to authorisation endpoint redirects to callback with auth code and adds the client to the user's authorised clients"
              (let [user (user/store-user! user-email "password")
-                   client-details (cl-client/register-client "MYAPP" "myapp.com")
-                   access-token (cl-token/create-token client-details user)
+                   client-details (cl-client/register-client @storage/client-store "MYAPP" "myapp.com")
+                   access-token (cl-token/create-token @storage/token-store client-details user)
                    csrf-token "CSRF-TOKEN"
                    request (-> (create-request :post (routes/path :authorise)
                                                {:client_id (:client-id client-details) :response_type "code"
@@ -79,9 +79,9 @@
 
        (fact "valid request redirects to callback with auth code when there is an existing user session and the user has previously authorised the app"
              (let [user (user/store-user! user-email "password")
-                   client-details (cl-client/register-client "MYAPP" "https://myapp.com")
+                   client-details (cl-client/register-client @storage/client-store "MYAPP" "https://myapp.com")
                    updated-user (user/add-authorised-client-for-user! user-email (:client-id client-details))
-                   access-token (cl-token/create-token client-details user)
+                   access-token (cl-token/create-token @storage/token-store client-details user)
                    request (-> (create-request :get (routes/path :authorise)
                                                {:client_id (:client-id client-details) :response_type "code"
                                                 :redirect_uri "https://myapp.com/callback"})
@@ -93,9 +93,9 @@
 
        (fact "request to authorisation endpoint with an incorrect redirect url does not redirect to the invalid url"
              (let [user (user/store-user! user-email "password")
-                   client-details (cl-client/register-client "MYAPP" "https://myapp.com")
+                   client-details (cl-client/register-client @storage/client-store "MYAPP" "https://myapp.com")
                    updated-user (user/add-authorised-client-for-user! user-email (:client-id client-details))
-                   access-token (cl-token/create-token client-details user)
+                   access-token (cl-token/create-token @storage/token-store client-details user)
                    request (-> (create-request :get (routes/path :authorise)
                                                {:client_id (:client-id client-details) :response_type "code"
                                                 :redirect_uri "https://invalidcallback.com"})
@@ -105,7 +105,7 @@
                (:status response) =not=> 302))
 
        (fact "return-to session key is refreshed when accessing authorisation endpoint without being signed in"
-             (let [client-details (cl-client/register-client "MYAPP" "https://myapp.com")
+             (let [client-details (cl-client/register-client @storage/client-store "MYAPP" "https://myapp.com")
                    client-id (:client-id client-details)
                    redirect-uri "https://myapp.com/callback"
                    new-return-to-uri (-> {:uri ...new-uri...
@@ -122,8 +122,8 @@
 
        (fact "user-login and access_token in session stay in session if user is logged in"
              (let [user (user/store-user! user-email "password")
-                   client-details (cl-client/register-client "MYAPP" client-url)
-                   access-token (cl-token/create-token client-details user)
+                   client-details (cl-client/register-client @storage/client-store "MYAPP" client-url)
+                   access-token (cl-token/create-token @storage/token-store client-details user)
                    request (-> (create-request :post (routes/path :authorise) nil)
                                (assoc :params {:client_id (:client-id client-details)
                                                :response_type "code" :redirect_uri client-url})
@@ -191,8 +191,8 @@
 
 (facts "about token endpoint"
        (let [user (user/store-user! user-email "password")
-             client-details (cl-client/register-client "MYAPP" "http://myapp.com")
-             auth-code (cl-auth-code/create-auth-code client-details user "http://myapp.com/callback")
+             client-details (cl-client/register-client @storage/client-store "MYAPP" "http://myapp.com")
+             auth-code (cl-auth-code/create-auth-code @storage/auth-code-store client-details user "http://myapp.com/callback")
              request (-> (create-request :get (routes/path :validate-token) {:grant_type   "authorization_code"
                                                                              :redirect_uri  "http://myapp.com/callback"
                                                                              :code         (:code auth-code)})

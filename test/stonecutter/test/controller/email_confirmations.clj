@@ -19,7 +19,7 @@
                         (= (get-in response [:headers "Location"]) path))))
 
 (defn with-signed-in-user [ring-map user]
-  (let [access-token (cl-token/create-token nil user)]
+  (let [access-token (cl-token/create-token @storage/token-store nil user)]
     (-> ring-map
         (assoc-in [:session :access_token] (:token access-token))
         (assoc-in [:session :user-login] (:login user)))))
@@ -60,7 +60,7 @@
   (create-request :get confirm-email-path {:confirmation-id confirmation-id}))
 
 (background (before :facts (do (storage/setup-in-memory-stores!)
-                               (cl-user/reset-user-store!)
+                               (cl-user/reset-user-store! @storage/user-store)
                                (email/initialise! test-email-sender!
                                                   {:confirmation test-email-renderer}))
                     :after (do (storage/reset-in-memory-stores!)
@@ -112,7 +112,7 @@
       (provided
         (user/authenticate-and-retrieve-user email password) => {:login ...user-login...}
         (conf/fetch confirmation-id) => {:login email :confirmation-id confirmation-id}
-        (cl-token/create-token nil {:login ...user-login...}) => {:token ...token...})
+        (cl-token/create-token @storage/token-store nil {:login ...user-login...}) => {:token ...token...})
       
       (fact "when credentials are invalid, redirect back to form with invalid error"
             (against-background

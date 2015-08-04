@@ -4,7 +4,8 @@
             [clauth.auth-code :as cl-auth-code]
             [stonecutter.db.storage :as s]
             [stonecutter.util.uuid :as uuid]
-            [stonecutter.db.user :as user]))
+            [stonecutter.db.user :as user]
+            [stonecutter.db.storage :as storage]))
 
 (facts "about storage of users - user storage journey"
        ;; These facts do not mock the database
@@ -89,42 +90,42 @@
              (user/store-user! "email@server.com" "password") => {...a-user-key... ...a-user-value...}
              (provided
                (user/create-user uuid/uuid "email@server.com" "password") => ...user...
-               (cl-user/store-user ...user...) => {...a-user-key... ...a-user-value...}))
+               (cl-user/store-user @storage/user-store ...user...) => {...a-user-key... ...a-user-value...}))
 
        (fact "password is removed before returning user"
              (-> (user/store-user! "email@server.com" "password")
                  :password) => nil
              (provided
                (user/create-user uuid/uuid "email@server.com" "password") => ...user...
-               (cl-user/store-user ...user...) => {:password "hashedAndSaltedPassword"})))
+               (cl-user/store-user @storage/user-store ...user...) => {:password "hashedAndSaltedPassword"})))
 
 (facts "about authenticating and retrieving users"
        (fact "with valid credentials"
              (user/authenticate-and-retrieve-user "email@server.com" "password") => {...a-user-key... ...a-user-value...}
              (provided
-               (cl-user/authenticate-user "email@server.com" "password") => {...a-user-key... ...a-user-value...}))
+               (cl-user/authenticate-user @storage/user-store "email@server.com" "password") => {...a-user-key... ...a-user-value...}))
 
        (fact "password is removed before returning user"
              (-> (user/authenticate-and-retrieve-user "email@server.com" "password")
                  :password) => nil
              (provided
-               (cl-user/authenticate-user "email@server.com" "password") => {:password "hashedAndSaltedPassword"}))
+               (cl-user/authenticate-user @storage/user-store "email@server.com" "password") => {:password "hashedAndSaltedPassword"}))
 
        (fact "with invalid credentials returns nil"
              (user/authenticate-and-retrieve-user "invalid@credentials.com" "password") => nil
              (provided
-               (cl-user/authenticate-user "invalid@credentials.com" "password") => nil)))
+               (cl-user/authenticate-user @storage/user-store "invalid@credentials.com" "password") => nil)))
 
 (fact "can retrieve user without authentication"
       (user/retrieve-user "email@server.com") => ...a-user...
       (provided
-        (cl-user/fetch-user "email@server.com") => ...a-user...))
+        (cl-user/fetch-user @storage/user-store "email@server.com") => ...a-user...))
 
 (fact "can retrieve user using auth-code"
-      (let [auth-code-record (cl-auth-code/create-auth-code ...client... ...user... ...redirect-uri...)]
+      (let [auth-code-record (cl-auth-code/create-auth-code @storage/auth-code-store ...client... ...user... ...redirect-uri...)]
         (user/retrieve-user-with-auth-code "code") => ...user...
         (provided
-          (cl-auth-code/fetch-auth-code "code") => auth-code-record)))
+          (cl-auth-code/fetch-auth-code @storage/auth-code-store "code") => auth-code-record)))
 
 (facts "about adding client ids to users with add-client-id"
        (fact "returns a function which adds client-id to a user's authorised clients"

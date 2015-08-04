@@ -4,7 +4,8 @@
             [clauth.store :as cl-store]
             [clojure.string :as s]
             [stonecutter.db.mongo :as m]
-            [stonecutter.util.uuid :as uuid]))
+            [stonecutter.util.uuid :as uuid]
+            [stonecutter.db.storage :as storage]))
 
 (defn create-user [id-gen email password]
   (let [lower-email (s/lower-case email)]
@@ -14,28 +15,28 @@
       (assoc :uid (id-gen)))))
 
 (defn store-user! [email password]
-  (-> (create-user uuid/uuid email password)
-      cl-user/store-user
-      (dissoc :password)))
+  (let [user (create-user uuid/uuid email password)]
+    (-> (cl-user/store-user @storage/user-store user)
+        (dissoc :password))))
 
 (defn retrieve-user [email]
-  (cl-user/fetch-user email))
+  (cl-user/fetch-user @storage/user-store email))
 
 (defn is-duplicate-user? [email]
   (not (nil? (retrieve-user (s/lower-case email)))))
 
 (defn delete-user! [email]
-  (cl-store/revoke! @cl-user/user-store email))
+  (cl-store/revoke! @storage/user-store email))
 
 (defn authenticate-and-retrieve-user [email password]
-  (-> (cl-user/authenticate-user email password)
+  (-> (cl-user/authenticate-user @storage/user-store email password)
       (dissoc :password)))
 
 (defn retrieve-user-with-auth-code [code]
-  (-> (cl-auth-code/fetch-auth-code code) :subject))
+  (-> (cl-auth-code/fetch-auth-code @storage/auth-code-store code) :subject))
 
 (defn confirm-email! [user]
-  (m/update! @cl-user/user-store (:login user)
+  (m/update! @storage/user-store (:login user)
              (fn [user] (-> user
                             (assoc :confirmed? true)))))
 
@@ -51,14 +52,14 @@
     (update-in user [:authorised-clients] unique-conj client-id)))
 
 (defn add-authorised-client-for-user! [email client-id]
-  (m/update! @cl-user/user-store email (add-client-id client-id)))
+  (m/update! @storage/user-store email (add-client-id client-id)))
 
 (defn remove-client-id [client-id]
   (fn [user]
     (update-in user [:authorised-clients] (partial remove #(= % client-id)))))
 
 (defn remove-authorised-client-for-user! [email client-id]
-  (m/update! @cl-user/user-store email (remove-client-id client-id)))
+  (m/update! @storage/user-store email (remove-client-id client-id)))
 
 (defn is-authorised-client-for-user? [email client-id]
   (let [user (retrieve-user email)
@@ -70,4 +71,4 @@
     (assoc user :password (cl-user/bcrypt password))))
 
 (defn change-password! [email new-password]
-  (m/update! @cl-user/user-store email (update-password new-password)))
+  (m/update! @storage/user-store email (update-password new-password)))
