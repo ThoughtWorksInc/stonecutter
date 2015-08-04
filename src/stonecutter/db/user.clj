@@ -35,8 +35,8 @@
 (defn retrieve-user-with-auth-code [code]
   (-> (cl-auth-code/fetch-auth-code @storage/auth-code-store code) :subject))
 
-(defn confirm-email! [user]
-  (m/update! @storage/user-store (:login user)
+(defn confirm-email! [user-store user]
+  (m/update! user-store (:login user)
              (fn [user] (-> user
                             (assoc :confirmed? true)))))
 
@@ -51,8 +51,8 @@
   (fn [user]
     (update-in user [:authorised-clients] unique-conj client-id)))
 
-(defn add-authorised-client-for-user! [email client-id]
-  (m/update! @storage/user-store email (add-client-id client-id)))
+(defn add-authorised-client-for-user! [user-store email client-id]
+  (m/update! user-store email (add-client-id client-id)))
 
 (defn remove-client-id [client-id]
   (fn [user]

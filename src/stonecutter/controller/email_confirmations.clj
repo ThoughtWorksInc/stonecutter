@@ -21,7 +21,7 @@
     (if (= (:login confirmation) (:login user))
         (do  
           (log/debug (format "confirmation-ids match. Confirming user's email."))
-          (user/confirm-email! user)
+          (user/confirm-email! @storage/user-store user)
           (conf/revoke! (:confirmation-id confirmation))
           (r/redirect (routes/path :show-profile)))
         (do 

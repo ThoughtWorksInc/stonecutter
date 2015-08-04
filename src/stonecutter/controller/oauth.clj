@@ -55,7 +55,7 @@
   (let [client-id (get-in request [:params :client_id])
         user-email (get-in request [:session :user-login])
         response (auth-handler request)]
-    (user/add-authorised-client-for-user! user-email client-id)
+    (user/add-authorised-client-for-user! @storage/user-store user-email client-id)
     response))
 
 (defn is-redirect-uri-valid? [client-id redirect-uri]

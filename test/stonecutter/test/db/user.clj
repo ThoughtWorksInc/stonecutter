@@ -31,13 +31,13 @@
                            :url   nil}))
 
        (fact "can confirm user's account"
-             (let [confirmed-user-record (-> (user/store-user! @storage/user-store "email@server.com" "password")
-                                             (user/confirm-email!))]
+             (let [confirmed-user-record (->> (user/store-user! @storage/user-store "email@server.com" "password")
+                                              (user/confirm-email! @storage/user-store))]
                confirmed-user-record =not=> (contains {:confirmation-id anything})
                confirmed-user-record => (contains {:confirmed? true})))
 
        (fact "can add authorised client for user"
-             (user/add-authorised-client-for-user! "email@server.com" "a-client-id")
+             (user/add-authorised-client-for-user! @storage/user-store "email@server.com" "a-client-id")
              => (contains {:login              "email@server.com"
                            :name               nil
                            :url                nil

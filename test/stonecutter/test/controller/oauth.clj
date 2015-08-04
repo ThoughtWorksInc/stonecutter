@@ -75,12 +75,12 @@
                    response (oauth/authorise-client request)]
                (oauth/authorise-client request) => (contains {:status 302 :headers (contains {"Location" (contains "callback?code=")})})
                (provided
-                 (user/add-authorised-client-for-user! user-email anything) => ...user...)))
+                 (user/add-authorised-client-for-user! @storage/user-store user-email anything) => ...user...)))
 
        (fact "valid request redirects to callback with auth code when there is an existing user session and the user has previously authorised the app"
              (let [user (user/store-user! @storage/user-store user-email "password")
                    client-details (cl-client/register-client @storage/client-store "MYAPP" "https://myapp.com")
-                   updated-user (user/add-authorised-client-for-user! user-email (:client-id client-details))
+                   updated-user (user/add-authorised-client-for-user! @storage/user-store user-email (:client-id client-details))
                    access-token (cl-token/create-token @storage/token-store client-details user)
                    request (-> (create-request :get (routes/path :authorise)
                                                {:client_id (:client-id client-details) :response_type "code"
@@ -94,7 +94,7 @@
        (fact "request to authorisation endpoint with an incorrect redirect url does not redirect to the invalid url"
              (let [user (user/store-user! @storage/user-store user-email "password")
                    client-details (cl-client/register-client @storage/client-store "MYAPP" "https://myapp.com")
-                   updated-user (user/add-authorised-client-for-user! user-email (:client-id client-details))
+                   updated-user (user/add-authorised-client-for-user! @storage/user-store user-email (:client-id client-details))
                    access-token (cl-token/create-token @storage/token-store client-details user)
                    request (-> (create-request :get (routes/path :authorise)
                                                {:client_id (:client-id client-details) :response_type "code"
