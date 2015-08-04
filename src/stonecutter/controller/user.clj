@@ -124,7 +124,7 @@
 
 (defn show-profile [request]
   (let [email (get-in request [:session :user-login])
-        user (user/retrieve-user email)
+        user (user/retrieve-user @storage/user-store email)
         confirmed? (:confirmed? user)
         authorised-client-ids (:authorised-clients user)
         authorised-clients (map c/retrieve-client authorised-client-ids)]

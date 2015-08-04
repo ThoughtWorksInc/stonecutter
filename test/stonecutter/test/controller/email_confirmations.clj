@@ -74,8 +74,8 @@
                    request (-> confirm-email-request
                                (with-signed-in-user user))]
                (ec/confirm-email-with-id request) => (check-redirects-to (routes/path :show-profile))
-               (user/retrieve-user (:login user)) =not=> (contains {:confirmation-id anything})
-               (user/retrieve-user (:login user)) => (contains {:confirmed? true})))
+               (user/retrieve-user @storage/user-store (:login user)) =not=> (contains {:confirmation-id anything})
+               (user/retrieve-user @storage/user-store (:login user)) => (contains {:confirmed? true})))
 
        (fact "when confirmation UUID in the query string does not match that of the signed in user's user record, signs the user out and redirects to confirmation endpoint with the original confirmation UUID from the query string"
              (let [signed-in-user (user/store-user! @storage/user-store "signed-in@email.com" "password")

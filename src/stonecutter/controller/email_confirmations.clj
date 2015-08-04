@@ -6,7 +6,8 @@
             [stonecutter.db.user :as user]
             [stonecutter.routes :as routes]
             [stonecutter.view.sign-in :as sign-in]
-            [stonecutter.helper :as sh]))
+            [stonecutter.helper :as sh]
+            [stonecutter.db.storage :as storage]))
 
 (defn show-confirm-sign-in-form [request]
   (sh/enlive-response (sign-in/confirmation-sign-in-form request) (:context request)))
@@ -14,7 +15,7 @@
 (defn confirm-email-with-id [request]
  (if (u/signed-in? request)
   (let [user-email (get-in request [:session :user-login])
-        user (user/retrieve-user user-email)
+        user (user/retrieve-user @storage/user-store user-email)
         confirmation (conf/fetch (get-in request [:params :confirmation-id]))]
     (log/debug (format "confirm-email-with-id Confirm-email user '%s' signed in." user-email)) 
     (if (= (:login confirmation) (:login user))

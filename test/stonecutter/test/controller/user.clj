@@ -77,7 +77,7 @@
              (let [response (-> (create-request :post (routes/path :register-user) register-user-params)
                                 (assoc :session {:some "data"})
                                 u/register-user)
-                   registered-user (user/retrieve-user email)]
+                   registered-user (user/retrieve-user @storage/user-store email)]
                response => (check-redirects-to (routes/path :show-profile-created))
                response => (contains {:session (contains {:user-login (:login registered-user)
                                                           :access_token (complement nil?)})})))
@@ -101,7 +101,7 @@
                (uuid/uuid) => confirmation-id)
              (let [response (-> (create-request :post (routes/path :register-user) register-user-params)
                                 u/register-user)
-                   registered-user (user/retrieve-user email)]
+                   registered-user (user/retrieve-user @storage/user-store email)]
              (:email @most-recent-email) => email
              (:body @most-recent-email) => {:confirmation-id confirmation-id}))
 
@@ -340,7 +340,7 @@
                  u/show-profile
                  :body) => (contains #"CLIENT 1[\s\S]+CLIENT 2")
              (provided
-               (user/retrieve-user ...email...) => {:login ...email...
+               (user/retrieve-user @storage/user-store ...email...) => {:login ...email...
                                                     :authorised-clients [...client-id-1... ...client-id-2...]}
                (c/retrieve-client ...client-id-1...) => {:name "CLIENT 1"}
                (c/retrieve-client ...client-id-2...) => {:name "CLIENT 2"}))
@@ -348,7 +348,7 @@
        (tabular
          (fact "user confirmation status is displayed appropriately"
                (against-background
-                 (user/retrieve-user ...email...) => {:login ...email...
+                 (user/retrieve-user @storage/user-store ...email...) => {:login ...email...
                                                       :confirmed? ?confirmed})
                (let [enlive-snippet
                      (-> (create-request :get (routes/path :show-profile) nil)

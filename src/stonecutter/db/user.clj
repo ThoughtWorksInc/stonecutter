@@ -19,11 +19,11 @@
     (-> (cl-user/store-user user-store user)
         (dissoc :password))))
 
-(defn retrieve-user [email]
-  (cl-user/fetch-user @storage/user-store email))
+(defn retrieve-user [user-store email]
+  (cl-user/fetch-user user-store email))
 
 (defn is-duplicate-user? [email]
-  (not (nil? (retrieve-user (s/lower-case email)))))
+  (not (nil? (retrieve-user @storage/user-store (s/lower-case email)))))
 
 (defn delete-user! [email]
   (cl-store/revoke! @storage/user-store email))
@@ -62,7 +62,7 @@
   (m/update! @storage/user-store email (remove-client-id client-id)))
 
 (defn is-authorised-client-for-user? [email client-id]
-  (let [user (retrieve-user email)
+  (let [user (retrieve-user @storage/user-store email)
         authorised-clients (set (:authorised-clients user))]
     (boolean (authorised-clients client-id))))
 
