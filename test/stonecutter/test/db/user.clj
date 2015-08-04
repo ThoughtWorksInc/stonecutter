@@ -11,7 +11,7 @@
        ;; These facts do not mock the database
        (s/setup-in-memory-stores!)
        (fact "can store a user"
-             (user/store-user! "email@server.com" "password")
+             (user/store-user! @storage/user-store "email@server.com" "password")
              =>  (just {:login "email@server.com"
                            :name nil
                            :url nil
@@ -31,7 +31,7 @@
                            :url nil}))
 
        (fact "can confirm user's account"
-             (let [confirmed-user-record (-> (user/store-user! "email@server.com" "password")
+             (let [confirmed-user-record (-> (user/store-user! @storage/user-store "email@server.com" "password")
                                              (user/confirm-email!))]
                confirmed-user-record =not=> (contains {:confirmation-id anything})  
                confirmed-user-record => (contains {:confirmed? true})))
@@ -87,13 +87,13 @@
 
 (facts "about storing users"
        (fact "users are stored in the user-store"
-             (user/store-user! "email@server.com" "password") => {...a-user-key... ...a-user-value...}
+             (user/store-user! @storage/user-store "email@server.com" "password") => {...a-user-key... ...a-user-value...}
              (provided
                (user/create-user uuid/uuid "email@server.com" "password") => ...user...
                (cl-user/store-user @storage/user-store ...user...) => {...a-user-key... ...a-user-value...}))
 
        (fact "password is removed before returning user"
-             (-> (user/store-user! "email@server.com" "password")
+             (-> (user/store-user! @storage/user-store "email@server.com" "password")
                  :password) => nil
              (provided
                (user/create-user uuid/uuid "email@server.com" "password") => ...user...

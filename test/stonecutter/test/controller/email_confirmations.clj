@@ -69,7 +69,7 @@
 
 (facts "about confirm-email-with-id"
        (fact "if the confirmation UUID in the query string matches that of the signed in user's user record confirm the account and redirect to profile view"
-             (let [user (user/store-user! email "password")
+             (let [user (user/store-user! @storage/user-store email "password")
                    confirmation (conf/store! email confirmation-id)
                    request (-> confirm-email-request
                                (with-signed-in-user user))]
@@ -78,8 +78,8 @@
                (user/retrieve-user (:login user)) => (contains {:confirmed? true})))
 
        (fact "when confirmation UUID in the query string does not match that of the signed in user's user record, signs the user out and redirects to confirmation endpoint with the original confirmation UUID from the query string"
-             (let [signed-in-user (user/store-user! "signed-in@email.com" "password")
-                   confirming-user (user/store-user! "confirming@email.com" "password")
+             (let [signed-in-user (user/store-user! @storage/user-store "signed-in@email.com" "password")
+                   confirming-user (user/store-user! @storage/user-store "confirming@email.com" "password")
                    confirmation (conf/store! "confirming@email.com"  confirmation-id)
                    request (-> confirm-email-request
                                (with-signed-in-user signed-in-user))
@@ -88,14 +88,14 @@
                response => (check-redirects-to confirm-email-path)))
 
        (fact "when user is not signed in, redirects to sign-in form with the confirmation endpoint (including confirmation UUID query string) as the successful sign-in redirect target"
-             (let [confirming-user (user/store-user! email "password")
+             (let [confirming-user (user/store-user! @storage/user-store email "password")
                    confirmation (conf/store! email confirmation-id)
                    response (ec/confirm-email-with-id confirm-email-request)]
                response => (check-redirects-to (routes/path :confirmation-sign-in-form
                                                             :confirmation-id confirmation-id))))
 
        (fact "when email confirmation is complete confirmation-id is revoked"
-             (let [user (user/store-user! email "password")
+             (let [user (user/store-user! @storage/user-store email "password")
                    confirmation (conf/store! email confirmation-id)
                    request (-> confirm-email-request
                                (with-signed-in-user user))]

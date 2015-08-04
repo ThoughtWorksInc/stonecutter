@@ -94,7 +94,7 @@
                (-> (create-request :post (routes/path :register-user) register-user-params)
                    u/register-user) => anything
                (provided
-                 (user/store-user! "valid@email.com" "password") => ...user...)))
+                 (user/store-user! @storage/user-store "valid@email.com" "password") => ...user...)))
 
        (fact "user is send a confirmation email with the correct content"
              (against-background 

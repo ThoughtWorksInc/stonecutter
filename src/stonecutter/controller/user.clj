@@ -47,7 +47,7 @@
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
       (do (conf/store! email confirmation-id)
-          (-> (user/store-user! email password)
+          (-> (user/store-user! @storage/user-store email password)
               (send-confirmation-email! email confirmation-id)
               (redirect-to-profile-created request)
               (assoc :flash :confirm-email-sent)))

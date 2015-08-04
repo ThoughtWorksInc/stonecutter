@@ -14,9 +14,9 @@
       (assoc :confirmed? false)
       (assoc :uid (id-gen)))))
 
-(defn store-user! [email password]
+(defn store-user! [user-store email password]
   (let [user (create-user uuid/uuid email password)]
-    (-> (cl-user/store-user @storage/user-store user)
+    (-> (cl-user/store-user user-store user)
         (dissoc :password))))
 
 (defn retrieve-user [email]

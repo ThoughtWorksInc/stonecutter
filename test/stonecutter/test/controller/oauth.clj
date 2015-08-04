@@ -40,7 +40,7 @@
                (-> response (get-in [:session :return-to])) => (format "/authorisation?client_id=%s&response_type=code&redirect_uri=%s" (:client-id client-details) (hiccup/url-encode client-url))))
 
        (fact "valid request goes to authorisation page with auth_code and email when there is an existing user session"
-             (let [user (user/store-user! user-email "password")
+             (let [user (user/store-user! @storage/user-store user-email "password")
                    client-details (cl-client/register-client @storage/client-store "MYAPP" client-url) ; NB this saves into the client store
                    access-token (cl-token/create-token @storage/token-store client-details user) ; NB this saves into the token store
                    request (-> (create-request :get (routes/path :authorise)
@@ -61,7 +61,7 @@
                (get-in response [:session :csrf-token]) =not=> "staleCSRFtoken"))
 
        (fact "posting to authorisation endpoint redirects to callback with auth code and adds the client to the user's authorised clients"
-             (let [user (user/store-user! user-email "password")
+             (let [user (user/store-user! @storage/user-store user-email "password")
                    client-details (cl-client/register-client @storage/client-store "MYAPP" "myapp.com")
                    access-token (cl-token/create-token @storage/token-store client-details user)
                    csrf-token "CSRF-TOKEN"
@@ -78,7 +78,7 @@
                  (user/add-authorised-client-for-user! user-email anything) => ...user...)))
 
        (fact "valid request redirects to callback with auth code when there is an existing user session and the user has previously authorised the app"
-             (let [user (user/store-user! user-email "password")
+             (let [user (user/store-user! @storage/user-store user-email "password")
                    client-details (cl-client/register-client @storage/client-store "MYAPP" "https://myapp.com")
                    updated-user (user/add-authorised-client-for-user! user-email (:client-id client-details))
                    access-token (cl-token/create-token @storage/token-store client-details user)
@@ -92,7 +92,7 @@
                (get-in response [:headers "Location"]) => (contains "callback?code=")))
 
        (fact "request to authorisation endpoint with an incorrect redirect url does not redirect to the invalid url"
-             (let [user (user/store-user! user-email "password")
+             (let [user (user/store-user! @storage/user-store user-email "password")
                    client-details (cl-client/register-client @storage/client-store "MYAPP" "https://myapp.com")
                    updated-user (user/add-authorised-client-for-user! user-email (:client-id client-details))
                    access-token (cl-token/create-token @storage/token-store client-details user)
@@ -121,7 +121,7 @@
                new-return-to-uri => (contains ...query-string...)))
 
        (fact "user-login and access_token in session stay in session if user is logged in"
-             (let [user (user/store-user! user-email "password")
+             (let [user (user/store-user! @storage/user-store user-email "password")
                    client-details (cl-client/register-client @storage/client-store "MYAPP" client-url)
                    access-token (cl-token/create-token @storage/token-store client-details user)
                    request (-> (create-request :post (routes/path :authorise) nil)
@@ -190,7 +190,7 @@
             (encode-client-info client)))
 
 (facts "about token endpoint"
-       (let [user (user/store-user! user-email "password")
+       (let [user (user/store-user! @storage/user-store user-email "password")
              client-details (cl-client/register-client @storage/client-store "MYAPP" "http://myapp.com")
              auth-code (cl-auth-code/create-auth-code @storage/auth-code-store client-details user "http://myapp.com/callback")
              request (-> (create-request :get (routes/path :validate-token) {:grant_type   "authorization_code"
