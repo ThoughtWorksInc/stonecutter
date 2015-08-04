@@ -163,12 +163,12 @@
 
 (facts "about is-authorised-client-for-user?"
        (fact "returns true if client-id is in the users authorised-clients list"
-             (user/is-authorised-client-for-user? ...email... ...client-id...) => true
+             (user/is-authorised-client-for-user? @storage/user-store ...email... ...client-id...) => true
              (provided
                (user/retrieve-user @storage/user-store ...email...) => {:authorised-clients [...client-id...]}))
 
        (fact "returns false if client-id is in not in the users authorised-clients list"
-             (user/is-authorised-client-for-user? ...email... ...client-id...) => false
+             (user/is-authorised-client-for-user? @storage/user-store ...email... ...client-id...) => false
              (provided
                (user/retrieve-user @storage/user-store ...email...) => {:authorised-clients [...a-different-client-id...]})))
 

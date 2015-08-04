@@ -39,7 +39,7 @@
 (defn auto-approver [request]
   (let [client-id (get-in request [:params :client_id])
         user-email (get-in request [:session :user-login])]
-    (user/is-authorised-client-for-user? user-email client-id)))
+    (user/is-authorised-client-for-user? @storage/user-store user-email client-id)))
 
 (defn auth-handler [request]
   ((cl-ep/authorization-handler

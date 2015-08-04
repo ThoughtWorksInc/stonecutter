@@ -377,7 +377,7 @@
                         :attrs
                         :value) => "client-id"
                     (provided
-                      (user/is-authorised-client-for-user? ...email... "client-id") => true
+                      (user/is-authorised-client-for-user? @storage/user-store ...email... "client-id") => true
                       (c/retrieve-client "client-id") => {:client-id "client-id" :name "CLIENT_NAME"}))
 
               (fact "client name is correctly shown on the page"
@@ -389,7 +389,7 @@
                           html/html-snippet
                           (html/select [:.clj--client-name])) => (has some element-has-correct-client-name-fn)
                       (provided
-                        (user/is-authorised-client-for-user? ...email... "client-id") => true
+                        (user/is-authorised-client-for-user? @storage/user-store ...email... "client-id") => true
                         (c/retrieve-client "client-id") => {:client-id "client-id" :name "CLIENT_NAME"})))
 
               (fact "missing client_id query param responds with 404"
@@ -401,7 +401,7 @@
                         (assoc-in [:session :user-login] ...email...)
                         u/show-unshare-profile-card) => (check-redirects-to "/profile")
                     (provided
-                      (user/is-authorised-client-for-user? ...email... ...client-id...) => false)))
+                      (user/is-authorised-client-for-user? @storage/user-store ...email... ...client-id...) => false)))
 
        (facts "about post requests to /unshare-profile-card"
               (fact "posting to /unshare-profile-card with client-id in the form params should remove client-id from the user's authorised clients and then redirect the user to the profile page"

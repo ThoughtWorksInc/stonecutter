@@ -221,14 +221,14 @@
                  (assoc-in [:session :user-login] ...email...)
                  oauth/auto-approver) => true
              (provided
-               (user/is-authorised-client-for-user? ...email... ...client-id...) => true))
+               (user/is-authorised-client-for-user? @storage/user-store ...email... ...client-id...) => true))
 
        (fact "returns false if user has not authorised the client"
              (-> (create-request :get (routes/path :authorise) {:client_id ...client-id...})
                  (assoc-in [:session :user-login] ...email...)
                  oauth/auto-approver) => false
              (provided
-               (user/is-authorised-client-for-user? ...email... ...client-id...) => false)))
+               (user/is-authorised-client-for-user? @storage/user-store ...email... ...client-id...) => false)))
 
 (facts "about is-redirect-uri-valid?"
 

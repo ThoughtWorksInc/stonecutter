@@ -157,7 +157,7 @@
 
 (defn show-unshare-profile-card [request]
   (if-let [client-id (get-in request [:params :client_id])]
-    (if (user/is-authorised-client-for-user? (get-in request [:session :user-login]) client-id)
+    (if (user/is-authorised-client-for-user? @storage/user-store (get-in request [:session :user-login]) client-id)
       (let [client (c/retrieve-client client-id)]
         (-> (assoc-in request [:context :client] client)
             unshare-profile-card/unshare-profile-card

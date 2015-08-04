@@ -61,8 +61,8 @@
 (defn remove-authorised-client-for-user! [email client-id]
   (m/update! @storage/user-store email (remove-client-id client-id)))
 
-(defn is-authorised-client-for-user? [email client-id]
-  (let [user (retrieve-user @storage/user-store email)
+(defn is-authorised-client-for-user? [user-store email client-id]
+  (let [user (retrieve-user user-store email)
         authorised-clients (set (:authorised-clients user))]
     (boolean (authorised-clients client-id))))
 
