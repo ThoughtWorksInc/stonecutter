@@ -2,7 +2,7 @@
   (:require [environ.core :as env]
             [clojure.tools.logging :as log]))
 
-(def env-vars #{:port :host :mongo-port-27017-tcp-addr
+(def env-vars #{:port :host :base-url :mongo-port-27017-tcp-addr
                 :mongo-uri :client-credentials-file-path
                 :theme :secure :email-script-path :app-name
                 :header-bg-color :inactive-tab-font-color
@@ -24,6 +24,9 @@
 
 (defn host [config-m]
   (get-env config-m :host "127.0.0.1"))
+
+(defn base-url [config-m]
+  (get-env config-m :base-url "http://localhost:3000"))
 
 (defn- get-docker-mongo-uri [config-m]
   (when-let [mongo-ip (:mongo-port-27017-tcp-addr config-m)]

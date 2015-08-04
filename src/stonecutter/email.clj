@@ -19,6 +19,18 @@
 
 (defn stdout-renderer [email-data] {:subject nil :body email-data})
 
+(defn confirmation-email-body [base-url confirmation-id]
+  (str
+    "Hi,\n"
+    "Click this link to confirm your email address:\n"
+    base-url "/confirm-email/" confirmation-id
+    "\nCheers,"
+    "\nAdmin"))
+
+(defn confirmation-renderer [email-data]
+  {:subject (format "Confirm your email for %s" (:app-name email-data))
+   :body (confirmation-email-body (:base-url email-data) (:confirmation-id email-data))})
+
 (defn send! [template email-address email-data]
   (let [{:keys [subject body]} ((template @template-to-renderer-map) email-data)]
     (@sender email-address subject body)))
@@ -40,4 +52,4 @@
 
 (defn configure-email [path]
   (initialise! stdout-sender
-               {:confirmation stdout-renderer}))
+               {:confirmation confirmation-renderer}))

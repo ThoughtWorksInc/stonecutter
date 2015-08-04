@@ -19,7 +19,8 @@
             [stonecutter.view.unshare-profile-card :as unshare-profile-card]
             [stonecutter.util.uuid :as uuid]
             [stonecutter.helper :as sh]
-            [stonecutter.db.storage :as storage]))
+            [stonecutter.db.storage :as storage]
+            [stonecutter.config :as config]))
 
 (declare redirect-to-profile-created redirect-to-profile-deleted)
 
@@ -34,8 +35,12 @@
 (defn show-registration-form [request]
   (sh/enlive-response (register/registration-form request) (:context request)))
 
-(defn send-confirmation-email! [user email confirmation-id]
-  (email/send! :confirmation email {:confirmation-id confirmation-id})
+(defn send-confirmation-email! [user email confirmation-id config-m]
+  (let [app-name (config/app-name config-m)
+        base-url (config/base-url config-m)]
+    (email/send! :confirmation email {:confirmation-id confirmation-id
+                                      :app-name app-name
+                                      :base-url base-url}))
   user)
 
 (defn register-user [request]
@@ -43,14 +48,15 @@
         email (:email params)
         password (:password params)
         confirmation-id (uuid/uuid)
+        config-m (get-in request [:context :config-m])
         err (v/validate-registration params user/is-duplicate-user?)
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
       (do (conf/store! email confirmation-id)
           (-> (user/store-user! @storage/user-store email password)
-              (send-confirmation-email! email confirmation-id)
+              (send-confirmation-email! email confirmation-id config-m)
               (redirect-to-profile-created request)
-              (assoc :flash :confirm-email-sent)))
+              (assoc :flash :confirm-email-sent))) 
       (show-registration-form request-with-validation-errors))))
 
 (defn show-change-password-form [request]

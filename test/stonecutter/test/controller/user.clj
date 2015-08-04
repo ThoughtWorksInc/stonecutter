@@ -103,7 +103,7 @@
                                 u/register-user)
                    registered-user (user/retrieve-user @storage/user-store email)]
              (:email @most-recent-email) => email
-             (:body @most-recent-email) => {:confirmation-id confirmation-id}))
+             (:body @most-recent-email) => (contains {:confirmation-id confirmation-id})))
 
        (fact "when user email is send, flash message is assoc-ed in redirect"
              (against-background
