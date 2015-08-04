@@ -13,13 +13,13 @@
     {:client-id "NOPQRSTUVWXYZ", :name "Red Party", :client-secret "ABCDEFGHIJKLM", :url "http://redparty.org"}))
 
 (fact "can store clients using credentials from the map"
-      (c/store-clients-from-map client-credentials)
+      (c/store-clients-from-map @storage/client-store client-credentials)
       (cl-client/clients @storage/client-store) => '({:client-id "NOPQRSTUVWXYZ" :client-secret "ABCDEFGHIJKLM" :name "Red Party"   :url "http://redparty.org"}
                                {:client-id "ABCDEFGHIJKLM" :client-secret "NOPQRSTUVWXYZ" :name "Green Party" :url "http://greenparty.org"}))
 
 (fact "will not store clients with duplicate client-ids"
-      (c/store-clients-from-map client-credentials)
-      (c/store-clients-from-map client-credentials)
+      (c/store-clients-from-map @storage/client-store client-credentials)
+      (c/store-clients-from-map @storage/client-store client-credentials)
       (cl-client/clients @storage/client-store) => '({:client-id "NOPQRSTUVWXYZ" :client-secret "ABCDEFGHIJKLM" :name "Red Party"   :url "http://redparty.org"}
                                {:client-id "ABCDEFGHIJKLM" :client-secret "NOPQRSTUVWXYZ" :name "Green Party" :url "http://greenparty.org"}))
 
@@ -28,7 +28,7 @@
             '({:client-id "ABCDEFGHIJKLL" :name "Green Party" :client-secret "NOPQRSTUVWXYZ" :url nil}
               {:client-id "NOPQRSTUVWXYL" :name "Red Party" :client-secret "ABCDEFGHIJKLM" :url "http://redparty.com"})]
 
-        (c/store-clients-from-map client-credentials-with-missing-url) => (throws Exception)))
+        (c/store-clients-from-map @storage/client-store client-credentials-with-missing-url) => (throws Exception)))
 
 (tabular
   (fact "will throw exception if user credentials are invalid"
@@ -47,7 +47,7 @@
   "\t\t"                "valid-name"    "valid-secret"  "http://test.com")
 
 (fact "can drop the collection of clients"
-      (c/store-clients-from-map client-credentials)
+      (c/store-clients-from-map @storage/client-store client-credentials)
       (cl-client/clients @storage/client-store) =not=> empty?
       (c/delete-clients! @storage/client-store)
       (cl-client/clients @storage/client-store) => empty?)

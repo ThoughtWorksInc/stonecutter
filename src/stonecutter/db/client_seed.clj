@@ -25,4 +25,4 @@
 
 (defn load-client-credentials-and-store-clients [resource-or-file]
   (do (client/delete-clients! @storage/client-store)
-      (client/store-clients-from-map (load-client-credentials resource-or-file))))
+      (client/store-clients-from-map @storage/client-store (load-client-credentials resource-or-file))))

@@ -29,10 +29,10 @@
 (defn retrieve-client [client-store client-id]
   (dissoc (cl-client/fetch-client client-store client-id) :client-secret))
 
-(defn unique-client-id? [client-id]
-  (nil? (retrieve-client @storage/client-store client-id)))
+(defn unique-client-id? [client-store client-id]
+  (nil? (retrieve-client client-store client-id)))
 
-(defn store-clients-from-map [client-credentials-map]
+(defn store-clients-from-map [client-store client-credentials-map]
   (let [client-credentials-seq (seq client-credentials-map)]
     (doseq [client-entry client-credentials-seq]
       (validate-client-entry client-entry)
@@ -40,8 +40,8 @@
             client-id (:client-id client-entry)
             client-secret (:client-secret client-entry)
             url (:url client-entry)]
-        (when (unique-client-id? client-id)
-          (cl-client/store-client @storage/client-store {:name          name
-                                                        :client-id     client-id
-                                                        :client-secret client-secret
-                                                        :url           url}))))))
+        (when (unique-client-id? client-store client-id)
+          (cl-client/store-client client-store {:name          name
+                                                :client-id     client-id
+                                                :client-secret client-secret
+                                                :url           url}))))))
