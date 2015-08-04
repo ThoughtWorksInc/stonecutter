@@ -11,6 +11,7 @@
             [stonecutter.helper :as sh]
             [stonecutter.routes :as routes]
             [stonecutter.logging :as log-config]
+            [stonecutter.controller.email-confirmations :as ec]
             [stonecutter.controller.user :as user]
             [stonecutter.controller.oauth :as oauth]
             [stonecutter.controller.stylesheets :as stylesheets]
@@ -61,9 +62,9 @@
      :show-sign-in-form                  user/show-sign-in-form
      :sign-in                            user/sign-in
      :sign-out                           user/sign-out
-     :confirm-email-with-id              user/confirm-email-with-id
-     :confirmation-sign-in-form          user/show-confirm-sign-in-form
-     :confirmation-sign-in               user/confirmation-sign-in
+     :confirm-email-with-id              ec/confirm-email-with-id
+     :confirmation-sign-in-form          ec/show-confirm-sign-in-form
+     :confirmation-sign-in               ec/confirmation-sign-in
      :show-profile                       user/show-profile
      :show-profile-created               user/show-profile-created
      :show-profile-deleted               user/show-profile-deleted

@@ -76,9 +76,6 @@
     (-> (r/redirect (routes/path :home)) (preserve-session request))
     (sh/enlive-response (sign-in/sign-in-form request) (:context request))))
 
-(defn show-confirm-sign-in-form [request]
-  (sh/enlive-response (sign-in/confirmation-sign-in-form request) (:context request)))
-
 (defn generate-login-access-token [user]
   (:token (cl-token/create-token nil user)))
 
@@ -165,43 +162,6 @@
         client-id (get-in request [:params :client_id])]
     (user/remove-authorised-client-for-user! email client-id)
     (r/redirect (routes/path :show-profile))))
-
-(defn confirmation-sign-in [request]
-  (let [confirmation-id (get-in request [:params :confirmation-id])
-        password (get-in request [:params :password])
-        email (:login (conf/fetch confirmation-id))]
-    (if-let [user (user/authenticate-and-retrieve-user email password)]
-        (let [access-token (generate-login-access-token user)]
-          (-> (r/redirect (routes/path :confirm-email-with-id
-                                       :confirmation-id confirmation-id))
-              (assoc-in [:session :user-login] (:login user))
-              (assoc-in [:session :access_token] access-token)))
-        (-> request
-            (assoc-in [:context :errors :credentials] :confirmation-invalid)
-            show-confirm-sign-in-form))))
-
-(defn confirm-email-with-id [request]
- (if (signed-in? request)
-  (let [user-email (get-in request [:session :user-login])
-        user (user/retrieve-user user-email)
-        confirmation (conf/fetch (get-in request [:params :confirmation-id]))]
-    (log/debug (format "confirm-email-with-id Confirm-email user '%s' signed in." user-email)) 
-    (if (= (:login confirmation) (:login user))
-        (do  
-          (log/debug (format "confirmation-ids match. Confirming user's email."))
-          (user/confirm-email! user)
-          (conf/revoke! (:confirmation-id confirmation))
-          (r/redirect (routes/path :show-profile)))
-        (do 
-          (log/debug (format "confirmation-ids DID NOT match. SIGNING OUT"))
-          (-> (r/redirect (routes/path :confirm-email-with-id
-                                       :confirmation-id (get-in request [:params :confirmation-id])))
-              (preserve-session request)
-              (update-in [:session] #(dissoc % :user-login :access_token))))))
-  (do (log/debug "Confirm-email user not signed in.")
-      (-> (r/redirect (routes/path :confirmation-sign-in-form
-                                   :confirmation-id (get-in request [:params :confirmation-id])))
-          (preserve-session request)))))
 
 (defn home [request]
   (r/redirect (routes/path :show-profile)))
