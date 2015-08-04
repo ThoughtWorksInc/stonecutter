@@ -87,7 +87,7 @@
 
 (defn validate-token [request]
   (let [auth-code (get-in request [:params :code])
-        user (user/retrieve-user-with-auth-code auth-code)
+        user (user/retrieve-user-with-auth-code @storage/auth-code-store auth-code)
         user-login (:login user)
         user-id (:uid user)
         confirmed? (:confirmed? user)

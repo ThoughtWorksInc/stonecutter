@@ -32,8 +32,8 @@
   (-> (cl-user/authenticate-user user-store email password)
       (dissoc :password)))
 
-(defn retrieve-user-with-auth-code [code]
-  (-> (cl-auth-code/fetch-auth-code @storage/auth-code-store code) :subject))
+(defn retrieve-user-with-auth-code [auth-code-store code]
+  (-> (cl-auth-code/fetch-auth-code auth-code-store code) :subject))
 
 (defn confirm-email! [user-store user]
   (m/update! user-store (:login user)

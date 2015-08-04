@@ -123,7 +123,7 @@
 
 (fact "can retrieve user using auth-code"
       (let [auth-code-record (cl-auth-code/create-auth-code @storage/auth-code-store ...client... ...user... ...redirect-uri...)]
-        (user/retrieve-user-with-auth-code "code") => ...user...
+        (user/retrieve-user-with-auth-code @storage/auth-code-store "code") => ...user...
         (provided
           (cl-auth-code/fetch-auth-code @storage/auth-code-store "code") => auth-code-record)))
 
