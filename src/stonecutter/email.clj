@@ -13,7 +13,7 @@
 (defn null-renderer [email-data] {:subject nil :body nil})
 
 (defn stdout-sender [email-address subject body]
-  (log/warn "Cannot send confirmation email as the path to the email sending script has not been set. Please set the EMAIL-SCRIPT-PATH environment variable to the appropriate script.")
+  (log/warn "Cannot send confirmation email as the path to the email sending script has not been set. Please set the EMAIL_SCRIPT_PATH environment variable to the appropriate script.")
   (log/debug "email-address: " email-address "\nsubject: " subject "\nbody: " body))
 
 (defn stdout-renderer [email-data] {:subject nil :body email-data})
