@@ -409,4 +409,4 @@
                         (assoc-in [:session :user-login] "user@email.com")
                         u/unshare-profile-card) => (check-redirects-to "/profile")
                     (provided
-                      (user/remove-authorised-client-for-user! "user@email.com" "client-id") => anything))))
+                      (user/remove-authorised-client-for-user! @storage/user-store "user@email.com" "client-id") => anything))))

@@ -58,8 +58,8 @@
   (fn [user]
     (update-in user [:authorised-clients] (partial remove #(= % client-id)))))
 
-(defn remove-authorised-client-for-user! [email client-id]
-  (m/update! @storage/user-store email (remove-client-id client-id)))
+(defn remove-authorised-client-for-user! [user-store email client-id]
+  (m/update! user-store email (remove-client-id client-id)))
 
 (defn is-authorised-client-for-user? [user-store email client-id]
   (let [user (retrieve-user user-store email)

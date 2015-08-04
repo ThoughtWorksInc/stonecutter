@@ -168,7 +168,7 @@
 (defn unshare-profile-card [request]
   (let [email (get-in request [:session :user-login])
         client-id (get-in request [:params :client_id])]
-    (user/remove-authorised-client-for-user! email client-id)
+    (user/remove-authorised-client-for-user! @storage/user-store email client-id)
     (r/redirect (routes/path :show-profile))))
 
 (defn home [request]

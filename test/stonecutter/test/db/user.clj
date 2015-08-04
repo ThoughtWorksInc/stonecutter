@@ -44,7 +44,7 @@
                            :authorised-clients ["a-client-id"]}))
 
        (fact "can remove authorised client for user"
-             (user/remove-authorised-client-for-user! "email@server.com" "a-client-id")
+             (user/remove-authorised-client-for-user! @storage/user-store "email@server.com" "a-client-id")
              => (contains {:login              "email@server.com"
                            :name               nil
                            :url                nil
