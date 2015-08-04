@@ -13,9 +13,8 @@
 (defn null-renderer [email-data] {:subject nil :body nil})
 
 (defn stdout-sender [email-address subject body]
-  (prn "email-address: " email-address) 
-  (prn "subject: " subject) 
-  (prn "body: " body))
+  (log/warn "Cannot send confirmation email as the path to the email sending script has not been set. Please set the EMAIL-SCRIPT-PATH environment variable to the appropriate script.")
+  (log/debug "email-address: " email-address "\nsubject: " subject "\nbody: " body))
 
 (defn stdout-renderer [email-data] {:subject nil :body email-data})
 
@@ -44,12 +43,14 @@
   (reset! template-to-renderer-map nil))
 
 (defn bash-sender-factory [email-script-path]
-  (fn [email-address subject body] 
+  (if email-script-path
+    (fn [email-address subject body] 
       (shell/sh email-script-path 
                 (str email-address)
                 (str subject)
-                (str body)))) 
+                (str body))) 
+    stdout-sender))
 
 (defn configure-email [path]
-  (initialise! stdout-sender
+  (initialise! (bash-sender-factory path)
                {:confirmation confirmation-renderer}))
