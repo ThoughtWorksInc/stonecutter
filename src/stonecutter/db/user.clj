@@ -28,8 +28,8 @@
 (defn delete-user! [user-store email]
   (cl-store/revoke! user-store email))
 
-(defn authenticate-and-retrieve-user [email password]
-  (-> (cl-user/authenticate-user @storage/user-store email password)
+(defn authenticate-and-retrieve-user [user-store email password]
+  (-> (cl-user/authenticate-user user-store email password)
       (dissoc :password)))
 
 (defn retrieve-user-with-auth-code [code]

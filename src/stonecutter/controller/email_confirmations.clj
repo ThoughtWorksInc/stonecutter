@@ -39,7 +39,7 @@
   (let [confirmation-id (get-in request [:params :confirmation-id])
         password (get-in request [:params :password])
         email (:login (conf/fetch confirmation-id))]
-    (if-let [user (user/authenticate-and-retrieve-user email password)]
+    (if-let [user (user/authenticate-and-retrieve-user @storage/user-store email password)]
         (let [access-token (u/generate-login-access-token user)]
           (-> (r/redirect (routes/path :confirm-email-with-id
                                        :confirmation-id confirmation-id))

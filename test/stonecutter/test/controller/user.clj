@@ -152,7 +152,7 @@
                                    :session {:user-login ...user-login...
                                              :access_token ...token...}})
       (provided
-        (user/authenticate-and-retrieve-user email password) => {:login ...user-login...}
+        (user/authenticate-and-retrieve-user @storage/user-store email password) => {:login ...user-login...}
         (cl-token/create-token @storage/token-store nil {:login ...user-login...}) => {:token ...token...}))
 
 (fact "signed-in? returns true only when user-login and access_token are in the session"
@@ -187,7 +187,7 @@
           u/sign-in) => (contains {:status  302 :headers {"Location" ...return-to-url...}
                                         :session {:access_token ...token... :user-login ...user-login...}})
       (provided
-       (user/authenticate-and-retrieve-user email password) => {:login ...user-login...}
+       (user/authenticate-and-retrieve-user @storage/user-store email password) => {:login ...user-login...}
        (cl-token/create-token @storage/token-store nil {:login ...user-login...}) => {:token ...token...}))
 
 (facts "about sign-in validation errors"
@@ -199,7 +199,7 @@
              (-> (create-request :post "/sign-in" {:email "invalid@credentials.com" :password "password"})
                  u/sign-in) => (contains {:status 200})
              (provided
-               (user/authenticate-and-retrieve-user "invalid@credentials.com" "password") => nil))
+               (user/authenticate-and-retrieve-user @storage/user-store "invalid@credentials.com" "password") => nil))
 
        (facts "sign-in page is rendered with errors when invalid credentials are used"
               (let [html-response (-> (create-request :post "/sign-in" {:email    "invalid@credentials.com"
@@ -246,7 +246,7 @@
                  u/change-password) => (every-checker (check-redirects-to "/profile")
                                                       (contains {:flash :password-changed}))
              (provided
-               (user/authenticate-and-retrieve-user "user_who_is@changing_password.com"
+               (user/authenticate-and-retrieve-user @storage/user-store "user_who_is@changing_password.com"
                                                     "currentPassword") => ...user...
                (user/change-password! "user_who_is@changing_password.com" "newPassword") => ...updated-user...))
 
@@ -266,7 +266,7 @@
                                                       check-body-not-blank)
              (provided
                (v/validate-change-password anything) => {}
-               (user/authenticate-and-retrieve-user "user_who_is@changing_password.com" "wrong-password") => nil
+               (user/authenticate-and-retrieve-user @storage/user-store "user_who_is@changing_password.com" "wrong-password") => nil
                (user/change-password! anything anything) => anything :times 0))
 
        (facts "about rendering change-password page with errors"
@@ -295,7 +295,7 @@
                         (html/select [:.clj--validation-summary__item])) =not=> empty?
                     (provided
                       (v/validate-change-password ...params-with-wrong-current-password...) => {}
-                      (user/authenticate-and-retrieve-user anything anything) => nil))))
+                      (user/authenticate-and-retrieve-user anything anything anything) => nil))))
 
 
 (facts "about profile created"

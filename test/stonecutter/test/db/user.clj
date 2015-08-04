@@ -19,7 +19,7 @@
                        :uid        anything}))
 
        (fact "can authenticate a user"
-             (user/authenticate-and-retrieve-user "email@server.com" "password")
+             (user/authenticate-and-retrieve-user @storage/user-store "email@server.com" "password")
              => (contains {:login "email@server.com"
                            :name  nil
                            :url   nil}))
@@ -52,14 +52,14 @@
 
        (fact "can change user's password"
              (user/change-password! "email@server.com" "new-password")
-             (user/authenticate-and-retrieve-user "email@server.com" "password") => nil
-             (user/authenticate-and-retrieve-user "email@server.com" "new-password")
+             (user/authenticate-and-retrieve-user @storage/user-store "email@server.com" "password") => nil
+             (user/authenticate-and-retrieve-user @storage/user-store "email@server.com" "new-password")
              => (contains {:login "email@server.com" :name nil :url nil}))
 
 
        (fact "can delete a user"
              (user/delete-user! @storage/user-store "email@server.com") => {}
-             (user/authenticate-and-retrieve-user "email@server.com" "password") => nil))
+             (user/authenticate-and-retrieve-user @storage/user-store "email@server.com" "password") => nil))
 
 (facts "about is-duplicate-user?"
        (fact "unique email in not a duplicate"
@@ -101,18 +101,18 @@
 
 (facts "about authenticating and retrieving users"
        (fact "with valid credentials"
-             (user/authenticate-and-retrieve-user "email@server.com" "password") => {...a-user-key... ...a-user-value...}
+             (user/authenticate-and-retrieve-user @storage/user-store "email@server.com" "password") => {...a-user-key... ...a-user-value...}
              (provided
                (cl-user/authenticate-user @storage/user-store "email@server.com" "password") => {...a-user-key... ...a-user-value...}))
 
        (fact "password is removed before returning user"
-             (-> (user/authenticate-and-retrieve-user "email@server.com" "password")
+             (-> (user/authenticate-and-retrieve-user @storage/user-store "email@server.com" "password")
                  :password) => nil
              (provided
                (cl-user/authenticate-user @storage/user-store "email@server.com" "password") => {:password "hashedAndSaltedPassword"}))
 
        (fact "with invalid credentials returns nil"
-             (user/authenticate-and-retrieve-user "invalid@credentials.com" "password") => nil
+             (user/authenticate-and-retrieve-user @storage/user-store "invalid@credentials.com" "password") => nil
              (provided
                (cl-user/authenticate-user @storage/user-store "invalid@credentials.com" "password") => nil)))
 

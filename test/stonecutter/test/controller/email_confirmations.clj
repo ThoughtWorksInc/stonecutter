@@ -110,13 +110,13 @@
                                                 :session {:user-login ...user-login...
                                                           :access_token ...token...}})
       (provided
-        (user/authenticate-and-retrieve-user email password) => {:login ...user-login...}
+        (user/authenticate-and-retrieve-user @storage/user-store email password) => {:login ...user-login...}
         (conf/fetch confirmation-id) => {:login email :confirmation-id confirmation-id}
         (cl-token/create-token @storage/token-store nil {:login ...user-login...}) => {:token ...token...})
       
       (fact "when credentials are invalid, redirect back to form with invalid error"
             (against-background
-              (user/authenticate-and-retrieve-user email "Invalid password") => nil
+              (user/authenticate-and-retrieve-user @storage/user-store email "Invalid password") => nil
               (conf/fetch confirmation-id) => {:login email :confirmation-id confirmation-id})
             (let [response (-> (create-request :post (routes/path :confirmation-sign-in)
                                                {:confirmation-id confirmation-id :password "Invalid password"}) 

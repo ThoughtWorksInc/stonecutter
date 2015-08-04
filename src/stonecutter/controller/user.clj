@@ -70,7 +70,7 @@
         err (v/validate-change-password params)
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
-      (if (user/authenticate-and-retrieve-user email current-password)
+      (if (user/authenticate-and-retrieve-user @storage/user-store email current-password)
         (do (user/change-password! email new-password)
             (-> (r/redirect (routes/path :show-profile))
                 (assoc :flash :password-changed)))
@@ -95,7 +95,7 @@
         err (v/validate-sign-in params)
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
-      (if-let [user (user/authenticate-and-retrieve-user email password)]
+      (if-let [user (user/authenticate-and-retrieve-user @storage/user-store email password)]
         (let [access-token (generate-login-access-token user)]
           (-> request
               (cl-ep/return-to-handler (routes/path :show-profile))
