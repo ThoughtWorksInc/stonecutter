@@ -142,7 +142,7 @@
       (s/setup-mongo-stores! db)
       (migration/run-migrations db))
     (email/configure-email (config/email-script-path config-m))
-    (client-seed/load-client-credentials-and-store-clients (config/client-credentials-file-path config-m))
+    (client-seed/load-client-credentials-and-store-clients @s/client-store (config/client-credentials-file-path config-m))
     (ring-jetty/run-jetty app {:port (config/port config-m) :host (config/host config-m)})))
 
 (defn lein-ring-init
@@ -152,5 +152,5 @@
     (vh/disable-template-caching!)
     (s/setup-in-memory-stores!)
     (email/configure-email (config/email-script-path config-m))
-    (client-seed/load-client-credentials-and-store-clients (config/client-credentials-file-path config-m))))
+    (client-seed/load-client-credentials-and-store-clients @s/client-store (config/client-credentials-file-path config-m))))
 
