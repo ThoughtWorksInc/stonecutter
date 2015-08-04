@@ -25,8 +25,8 @@
 (defn is-duplicate-user? [user-store email]
   (not (nil? (retrieve-user user-store (s/lower-case email)))))
 
-(defn delete-user! [email]
-  (cl-store/revoke! @storage/user-store email))
+(defn delete-user! [user-store email]
+  (cl-store/revoke! user-store email))
 
 (defn authenticate-and-retrieve-user [email password]
   (-> (cl-user/authenticate-user @storage/user-store email password)

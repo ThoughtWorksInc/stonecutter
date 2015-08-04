@@ -116,7 +116,7 @@
 
 (defn delete-account [request]
   (let [email (get-in request [:session :user-login])]
-    (user/delete-user! email)
+    (user/delete-user! @storage/user-store email)
     (redirect-to-profile-deleted)))
 
 (defn redirect-to-profile-created [user request]

@@ -58,7 +58,7 @@
 
 
        (fact "can delete a user"
-             (user/delete-user! "email@server.com") => {}
+             (user/delete-user! @storage/user-store "email@server.com") => {}
              (user/authenticate-and-retrieve-user "email@server.com" "password") => nil))
 
 (facts "about is-duplicate-user?"

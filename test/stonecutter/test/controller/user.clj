@@ -231,7 +231,7 @@
                                  (check-redirects-to "/profile-deleted")
                                  (contains {:session nil}))
       (provided
-        (user/delete-user! "account_to_be@deleted.com") => anything))
+        (user/delete-user! @storage/user-store "account_to_be@deleted.com") => anything))
 
 (fact "user can access profile-deleted page when not signed in"
       (-> (create-request :get "/profile-deleted" nil)
