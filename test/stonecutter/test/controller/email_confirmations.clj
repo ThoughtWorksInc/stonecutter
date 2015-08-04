@@ -70,7 +70,7 @@
 (facts "about confirm-email-with-id"
        (fact "if the confirmation UUID in the query string matches that of the signed in user's user record confirm the account and redirect to profile view"
              (let [user (user/store-user! @storage/user-store email "password")
-                   confirmation (conf/store! email confirmation-id)
+                   confirmation (conf/store! @storage/confirmation-store email confirmation-id)
                    request (-> confirm-email-request
                                (with-signed-in-user user))]
                (ec/confirm-email-with-id request) => (check-redirects-to (routes/path :show-profile))
@@ -80,7 +80,7 @@
        (fact "when confirmation UUID in the query string does not match that of the signed in user's user record, signs the user out and redirects to confirmation endpoint with the original confirmation UUID from the query string"
              (let [signed-in-user (user/store-user! @storage/user-store "signed-in@email.com" "password")
                    confirming-user (user/store-user! @storage/user-store "confirming@email.com" "password")
-                   confirmation (conf/store! "confirming@email.com"  confirmation-id)
+                   confirmation (conf/store! @storage/confirmation-store "confirming@email.com"  confirmation-id)
                    request (-> confirm-email-request
                                (with-signed-in-user signed-in-user))
                    response (ec/confirm-email-with-id request)]
@@ -89,18 +89,18 @@
 
        (fact "when user is not signed in, redirects to sign-in form with the confirmation endpoint (including confirmation UUID query string) as the successful sign-in redirect target"
              (let [confirming-user (user/store-user! @storage/user-store email "password")
-                   confirmation (conf/store! email confirmation-id)
+                   confirmation (conf/store! @storage/confirmation-store email confirmation-id)
                    response (ec/confirm-email-with-id confirm-email-request)]
                response => (check-redirects-to (routes/path :confirmation-sign-in-form
                                                             :confirmation-id confirmation-id))))
 
        (fact "when email confirmation is complete confirmation-id is revoked"
              (let [user (user/store-user! @storage/user-store email "password")
-                   confirmation (conf/store! email confirmation-id)
+                   confirmation (conf/store! @storage/confirmation-store email confirmation-id)
                    request (-> confirm-email-request
                                (with-signed-in-user user))]
                (ec/confirm-email-with-id request)
-               (conf/fetch confirmation-id) => nil)))
+               (conf/fetch @storage/confirmation-store confirmation-id) => nil)))
 
 (facts "about confirmation sign in"
        (fact "when password matches login of confirmation id, user is logged in")
@@ -111,13 +111,13 @@
                                                           :access_token ...token...}})
       (provided
         (user/authenticate-and-retrieve-user @storage/user-store email password) => {:login ...user-login...}
-        (conf/fetch confirmation-id) => {:login email :confirmation-id confirmation-id}
+        (conf/fetch @storage/confirmation-store confirmation-id) => {:login email :confirmation-id confirmation-id}
         (cl-token/create-token @storage/token-store nil {:login ...user-login...}) => {:token ...token...})
       
       (fact "when credentials are invalid, redirect back to form with invalid error"
             (against-background
               (user/authenticate-and-retrieve-user @storage/user-store email "Invalid password") => nil
-              (conf/fetch confirmation-id) => {:login email :confirmation-id confirmation-id})
+              (conf/fetch @storage/confirmation-store confirmation-id) => {:login email :confirmation-id confirmation-id})
             (let [response (-> (create-request :post (routes/path :confirmation-sign-in)
                                                {:confirmation-id confirmation-id :password "Invalid password"}) 
                                ec/confirmation-sign-in)] 

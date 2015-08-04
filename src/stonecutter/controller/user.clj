@@ -52,7 +52,7 @@
         err (v/validate-registration params (partial user/is-duplicate-user? @storage/user-store))
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
-      (do (conf/store! email confirmation-id)
+      (do (conf/store! @storage/confirmation-store email confirmation-id)
           (-> (user/store-user! @storage/user-store email password)
               (send-confirmation-email! email confirmation-id config-m)
               (redirect-to-profile-created request)

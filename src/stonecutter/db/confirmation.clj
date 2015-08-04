@@ -1,13 +1,11 @@
 (ns stonecutter.db.confirmation
-  (:require [clauth.store :as cl-store]
-            [stonecutter.db.storage :as storage]
-            [stonecutter.db.mongo :as mongo]))
+  (:require [clauth.store :as cl-store]))
 
-(defn store! [login confirmation-id]
-  (cl-store/store! @storage/confirmation-store :confirmation-id {:login login :confirmation-id confirmation-id}))
+(defn store! [confirmation-store login confirmation-id]
+  (cl-store/store! confirmation-store :confirmation-id {:login login :confirmation-id confirmation-id}))
 
-(defn fetch [confirmation-id] 
- (cl-store/fetch @storage/confirmation-store confirmation-id))
+(defn fetch [confirmation-store confirmation-id]
+ (cl-store/fetch confirmation-store confirmation-id))
 
-(defn revoke! [confirmation-id]
-  (cl-store/revoke! @storage/confirmation-store confirmation-id))
+(defn revoke! [confirmation-store confirmation-id]
+  (cl-store/revoke! confirmation-store confirmation-id))
