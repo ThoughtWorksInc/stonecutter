@@ -123,7 +123,7 @@
                    :attrs
                    :class)) => (contains "clj--registration-email")
                    (provided
-                    (v/validate-registration register-user-params user/is-duplicate-user?) => {:email :duplicate}
+                    (v/validate-registration register-user-params anything) => {:email :duplicate}
                     (cl-user/new-user anything anything) => anything :times 0
                     (cl-user/store-user @storage/user-store anything) => anything :times 0))
 

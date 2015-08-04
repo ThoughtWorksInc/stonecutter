@@ -63,17 +63,17 @@
 
 (facts "about is-duplicate-user?"
        (fact "unique email in not a duplicate"
-             (user/is-duplicate-user? "unique@email.com") => false
+             (user/is-duplicate-user? @storage/user-store "unique@email.com") => false
              (provided
                (user/retrieve-user @storage/user-store "unique@email.com") => nil))
 
        (fact "duplicate email is a duplicate"
-             (user/is-duplicate-user? "valid@email.com") => true
+             (user/is-duplicate-user? @storage/user-store "valid@email.com") => true
              (provided
                (user/retrieve-user @storage/user-store "valid@email.com") => ...a-user...))
 
        (fact "the email is always lower-cased"
-             (user/is-duplicate-user? "VALID@EMAIL.COM") => true
+             (user/is-duplicate-user? @storage/user-store "VALID@EMAIL.COM") => true
              (provided
                (user/retrieve-user @storage/user-store "valid@email.com") => ...a-user...)))
 
