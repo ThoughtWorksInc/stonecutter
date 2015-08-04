@@ -248,7 +248,7 @@
              (provided
                (user/authenticate-and-retrieve-user @storage/user-store "user_who_is@changing_password.com"
                                                     "currentPassword") => ...user...
-               (user/change-password! "user_who_is@changing_password.com" "newPassword") => ...updated-user...))
+               (user/change-password! @storage/user-store "user_who_is@changing_password.com" "newPassword") => ...updated-user...))
 
        (fact "user is returned to change-password page and user's password is not changed if there are validation errors"
              (-> (create-request :post "/change-password" ...invalid-params...)
@@ -257,7 +257,7 @@
                                                       check-body-not-blank)
              (provided
                (v/validate-change-password ...invalid-params...) => {:some-validation-key "some-value"}
-               (user/change-password! anything anything) => anything :times 0))
+               (user/change-password! @storage/user-store anything anything) => anything :times 0))
 
        (fact "user cannot change password if current-password is invalid"
              (-> (create-request :post "/change-password" {:current-password "wrong-password"})
@@ -267,7 +267,7 @@
              (provided
                (v/validate-change-password anything) => {}
                (user/authenticate-and-retrieve-user @storage/user-store "user_who_is@changing_password.com" "wrong-password") => nil
-               (user/change-password! anything anything) => anything :times 0))
+               (user/change-password! @storage/user-store anything anything) => anything :times 0))
 
        (facts "about rendering change-password page with errors"
               (fact "there are no validation messages by default"

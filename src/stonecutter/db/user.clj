@@ -70,5 +70,5 @@
   (fn [user]
     (assoc user :password (cl-user/bcrypt password))))
 
-(defn change-password! [email new-password]
-  (m/update! @storage/user-store email (update-password new-password)))
+(defn change-password! [user-store email new-password]
+  (m/update! user-store email (update-password new-password)))

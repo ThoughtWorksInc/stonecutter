@@ -51,7 +51,7 @@
                            :authorised-clients []}))
 
        (fact "can change user's password"
-             (user/change-password! "email@server.com" "new-password")
+             (user/change-password! @storage/user-store "email@server.com" "new-password")
              (user/authenticate-and-retrieve-user @storage/user-store "email@server.com" "password") => nil
              (user/authenticate-and-retrieve-user @storage/user-store "email@server.com" "new-password")
              => (contains {:login "email@server.com" :name nil :url nil}))

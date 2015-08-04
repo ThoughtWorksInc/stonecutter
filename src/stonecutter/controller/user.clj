@@ -71,7 +71,7 @@
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
       (if (user/authenticate-and-retrieve-user @storage/user-store email current-password)
-        (do (user/change-password! email new-password)
+        (do (user/change-password! @storage/user-store email new-password)
             (-> (r/redirect (routes/path :show-profile))
                 (assoc :flash :password-changed)))
         (-> request-with-validation-errors
