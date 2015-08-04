@@ -1,5 +1,4 @@
 #!/bin/bash
-set -x
 REQUIRED_ENV=('MAILGUN_API_KEY' 'EMAIL_DOMAIN_NAME')
 
 for r in ${REQUIRED_ENV[@]};
@@ -7,7 +6,8 @@ do
   [[ -z "${!r}" ]] && echo "$r not defined" && exit 1
 done
 
-DEFAULT_FROM="test <info@$EMAIL_DOMAIN_NAME>"
+[[ -n "$APP_NAME" ]] && from_name=$APP_NAME || from_name='Stonecutter'
+DEFAULT_FROM="$from_name <no-reply@$EMAIL_DOMAIN_NAME>"
 provider_endpoint="https://api.mailgun.net/v3/$EMAIL_DOMAIN_NAME/messages"
 
 to=$1
