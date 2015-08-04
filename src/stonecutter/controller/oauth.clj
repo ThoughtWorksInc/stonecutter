@@ -13,7 +13,7 @@
 
 (defn show-authorise-form [request]
   (let [client-id (get-in request [:params :client_id])]
-    (if-let [client (client/retrieve-client client-id)]
+    (if-let [client (client/retrieve-client @storage/client-store client-id)]
       (let [context (assoc (:context request) :client client)]
         (-> (assoc request :context context)
             authorise/authorise-form
@@ -25,7 +25,7 @@
 
 (defn show-authorise-failure [request]
   (let [client-id (get-in request [:params :client_id])
-        client (client/retrieve-client client-id)
+        client (client/retrieve-client @storage/client-store client-id)
         client-name (:name client)
         redirect-uri (get-in request [:params :redirect_uri])
         callback-uri-with-error (add-error-to-uri redirect-uri)
@@ -59,7 +59,7 @@
     response))
 
 (defn is-redirect-uri-valid? [client-id redirect-uri]
-  (let [client-url (:url (client/retrieve-client client-id))]
+  (let [client-url (:url (client/retrieve-client @storage/client-store client-id))]
     (when (and client-url redirect-uri)
       (= (:host (url/url client-url)) (:host (url/url redirect-uri))))))
 

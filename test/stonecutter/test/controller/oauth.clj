@@ -145,12 +145,12 @@
                    :body
                    html/html-snippet
                    (html/select [:.clj--client-name])) => (has some element-has-correct-client-name-fn)
-                   (provided (client/retrieve-client "CLIENT_ID") => {:client-id "CLIENT_ID" :name "CLIENT_NAME"})))
+                   (provided (client/retrieve-client @storage/client-store "CLIENT_ID") => {:client-id "CLIENT_ID" :name "CLIENT_NAME"})))
 
        (fact "redirects to error 404 page if client_id doesn't match a registered client"
              (-> (create-request :get (routes/path :show-authorise-form) {:client_id "CLIENT_ID"})
                  oauth/show-authorise-form) => (contains {:status 404})
-                 (provided (client/retrieve-client "CLIENT_ID") => nil)))
+                 (provided (client/retrieve-client @storage/client-store "CLIENT_ID") => nil)))
 
 (facts "about show-authorise-failure"
        (fact "when authorisation failure is rendered will add error=access_denied in the querystring of the callback uri"
@@ -170,7 +170,7 @@
                    :body
                    html/html-snippet
                    (html/select [:.clj--client-name])) => (has some element-has-correct-client-name-fn)
-               (provided (client/retrieve-client "CLIENT_ID") => {:client-id "CLIENT_ID" :name "CLIENT_NAME"}))))
+               (provided (client/retrieve-client @storage/client-store "CLIENT_ID") => {:client-id "CLIENT_ID" :name "CLIENT_NAME"}))))
 
 (fact "add-error-to-uri adds oauth error message to callback uri"
       (oauth/add-error-to-uri "https://client.com/callback") => "https://client.com/callback?error=access_denied")
@@ -238,18 +238,18 @@
        (fact "returns true if redirect uri is the same as url in stored client"
              (oauth/is-redirect-uri-valid? ...client-id... correct-url) => true
              (provided
-               (client/retrieve-client ...client-id...) => {:url correct-url}))
+               (client/retrieve-client anything ...client-id...) => {:url correct-url}))
 
        (fact "returns false if redirect uri is NOT the same as url in stored client"
              (oauth/is-redirect-uri-valid? ...client-id... incorrect-url) => false
              (provided
-               (client/retrieve-client ...client-id...) => {:url correct-url}))
+               (client/retrieve-client anything ...client-id...) => {:url correct-url}))
 
        (tabular
          (fact "returns true as long as host is the same"
              (oauth/is-redirect-uri-valid? ...client-id... ?client-url) => true
              (provided
-               (client/retrieve-client ...client-id...) => {:url correct-url}))
+               (client/retrieve-client anything ...client-id...) => {:url correct-url}))
 
              ?client-url
              "https://test.com"
@@ -261,7 +261,7 @@
        (fact "returns true if redirect uri has the same root as url in stored client"
              (oauth/is-redirect-uri-valid? ...client-id... (str correct-url "/callback")) => true
              (provided
-               (client/retrieve-client ...client-id...) => {:url correct-url}))
+               (client/retrieve-client anything ...client-id...) => {:url correct-url}))
 
        (fact "returns nil when client-id or redirect-uri does not exist"
              (oauth/is-redirect-uri-valid? nil correct-url) => nil
@@ -270,4 +270,4 @@
        (fact "returns nil when client does not have url"
              (oauth/is-redirect-uri-valid? ...client-id... correct-url) => nil
              (provided
-               (client/retrieve-client ...client-id...) => {})))
+               (client/retrieve-client anything ...client-id...) => {})))

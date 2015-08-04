@@ -133,7 +133,8 @@
         user (user/retrieve-user @storage/user-store email)
         confirmed? (:confirmed? user)
         authorised-client-ids (:authorised-clients user)
-        authorised-clients (map c/retrieve-client authorised-client-ids)]
+        authorised-clients (map #(c/retrieve-client @storage/client-store %)
+                                authorised-client-ids)]
     (-> request
         (assoc-in [:context :authorised-clients] authorised-clients)
         (assoc-in [:context :confirmed?] confirmed?)
@@ -158,7 +159,7 @@
 (defn show-unshare-profile-card [request]
   (if-let [client-id (get-in request [:params :client_id])]
     (if (user/is-authorised-client-for-user? @storage/user-store (get-in request [:session :user-login]) client-id)
-      (let [client (c/retrieve-client client-id)]
+      (let [client (c/retrieve-client @storage/client-store client-id)]
         (-> (assoc-in request [:context :client] client)
             unshare-profile-card/unshare-profile-card
             (sh/enlive-response (:context request))))

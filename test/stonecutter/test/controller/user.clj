@@ -342,8 +342,8 @@
              (provided
                (user/retrieve-user @storage/user-store ...email...) => {:login ...email...
                                                     :authorised-clients [...client-id-1... ...client-id-2...]}
-               (c/retrieve-client ...client-id-1...) => {:name "CLIENT 1"}
-               (c/retrieve-client ...client-id-2...) => {:name "CLIENT 2"}))
+               (c/retrieve-client anything ...client-id-1...) => {:name "CLIENT 1"}
+               (c/retrieve-client anything ...client-id-2...) => {:name "CLIENT 2"}))
 
        (tabular
          (fact "user confirmation status is displayed appropriately"
@@ -376,9 +376,9 @@
                         first
                         :attrs
                         :value) => "client-id"
-                    (provided
-                      (user/is-authorised-client-for-user? @storage/user-store ...email... "client-id") => true
-                      (c/retrieve-client "client-id") => {:client-id "client-id" :name "CLIENT_NAME"}))
+                        (provided
+                         (user/is-authorised-client-for-user? @storage/user-store ...email... "client-id") => true
+                         (c/retrieve-client anything "client-id") => {:client-id "client-id" :name "CLIENT_NAME"}))
 
               (fact "client name is correctly shown on the page"
                     (let [element-has-correct-client-name-fn (fn [element] (= (html/text element) "CLIENT_NAME"))]
@@ -388,9 +388,9 @@
                           :body
                           html/html-snippet
                           (html/select [:.clj--client-name])) => (has some element-has-correct-client-name-fn)
-                      (provided
-                        (user/is-authorised-client-for-user? @storage/user-store ...email... "client-id") => true
-                        (c/retrieve-client "client-id") => {:client-id "client-id" :name "CLIENT_NAME"})))
+                          (provided
+                           (user/is-authorised-client-for-user? @storage/user-store ...email... "client-id") => true
+                           (c/retrieve-client anything "client-id") => {:client-id "client-id" :name "CLIENT_NAME"})))
 
               (fact "missing client_id query param responds with 404"
                     (-> (create-request :get (routes/path :show-unshare-profile-card) nil)
@@ -400,13 +400,13 @@
                     (-> (create-request :get (routes/path :show-unshare-profile-card) {:client_id ...client-id...})
                         (assoc-in [:session :user-login] ...email...)
                         u/show-unshare-profile-card) => (check-redirects-to "/profile")
-                    (provided
-                      (user/is-authorised-client-for-user? @storage/user-store ...email... ...client-id...) => false)))
+                        (provided
+                         (user/is-authorised-client-for-user? @storage/user-store ...email... ...client-id...) => false)))
 
        (facts "about post requests to /unshare-profile-card"
               (fact "posting to /unshare-profile-card with client-id in the form params should remove client-id from the user's authorised clients and then redirect the user to the profile page"
                     (-> (create-request :post "/unshare-profile-card" {:client_id "client-id"})
                         (assoc-in [:session :user-login] "user@email.com")
                         u/unshare-profile-card) => (check-redirects-to "/profile")
-                    (provided
-                      (user/remove-authorised-client-for-user! @storage/user-store "user@email.com" "client-id") => anything))))
+                        (provided
+                         (user/remove-authorised-client-for-user! @storage/user-store "user@email.com" "client-id") => anything))))

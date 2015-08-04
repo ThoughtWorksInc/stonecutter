@@ -26,11 +26,11 @@
 (defn delete-clients! [client-store]
   (cl-client/reset-client-store! client-store))
 
-(defn retrieve-client [client-id]
-  (dissoc (cl-client/fetch-client @storage/client-store client-id) :client-secret))
+(defn retrieve-client [client-store client-id]
+  (dissoc (cl-client/fetch-client client-store client-id) :client-secret))
 
 (defn unique-client-id? [client-id]
-  (nil? (retrieve-client client-id)))
+  (nil? (retrieve-client @storage/client-store client-id)))
 
 (defn store-clients-from-map [client-credentials-map]
   (let [client-credentials-seq (seq client-credentials-map)]
