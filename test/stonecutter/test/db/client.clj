@@ -49,7 +49,7 @@
 (fact "can drop the collection of clients"
       (c/store-clients-from-map client-credentials)
       (cl-client/clients @storage/client-store) =not=> empty?
-      (c/delete-clients!)
+      (c/delete-clients! @storage/client-store)
       (cl-client/clients @storage/client-store) => empty?)
 
 (fact "can retrieve client using client-id and client-secret is removed"

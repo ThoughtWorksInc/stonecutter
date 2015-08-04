@@ -23,8 +23,8 @@
   (-> (schema/validate Client client-entry)
       validate-url-format))
 
-(defn delete-clients! []
-  (cl-client/reset-client-store! @storage/client-store))
+(defn delete-clients! [client-store]
+  (cl-client/reset-client-store! client-store))
 
 (defn retrieve-client [client-id]
   (dissoc (cl-client/fetch-client @storage/client-store client-id) :client-secret))
