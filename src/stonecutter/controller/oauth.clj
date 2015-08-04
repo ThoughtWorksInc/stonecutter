@@ -79,12 +79,14 @@
         user (user/retrieve-user-with-auth-code auth-code)
         user-login (:login user)
         user-id (:uid user)
+        confirmed? (:confirmed? user)
         response (token-handler request)
         body (-> response
                  :body
                  (json/parse-string keyword)
                  (assoc :user-email user-login)
                  (assoc :user-id user-id)
+                 (assoc :user-email-confirmed confirmed?)
                  (json/generate-string))]
     (-> response
         (assoc :body body))))

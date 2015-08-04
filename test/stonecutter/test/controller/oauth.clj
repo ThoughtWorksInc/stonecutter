@@ -210,7 +210,10 @@
 
          (fact "user id in session is returned in body after validating token"
                (:user-id response-body) => (:uid user)
-               (:uid user) =not=> nil?)))
+               (:uid user) =not=> nil?)
+         (fact "email confirmed status is returned in the body after validating token"
+               (:user-email-confirmed response-body) => (:confirmed? user))))
+
 
 (facts "about auto-approver"
        (fact "returns true if user has authorised the client"
