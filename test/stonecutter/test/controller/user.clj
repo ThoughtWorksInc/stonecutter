@@ -350,7 +350,7 @@
                     (let [request (th/create-request :get (routes/path :show-unshare-profile-card)
                                                   {:client_id "client-id"}
                                                   {:user-login ...email...})]
-                      (-> (u/show-unshare-profile-card ...user-store... request)
+                      (-> (u/show-unshare-profile-card @storage/client-store ...user-store... request)
                           :body
                           html/html-snippet
                           (html/select [:.clj--client-id__input])
@@ -366,7 +366,7 @@
                           request (th/create-request :get (routes/path :show-unshare-profile-card)
                                                   {:client_id "client-id"}
                                                   {:user-login ...email...})]
-                      (-> (u/show-unshare-profile-card ...user-store... request)
+                      (-> (u/show-unshare-profile-card @storage/client-store ...user-store... request)
                           :body
                           html/html-snippet
                           (html/select [:.clj--client-name])) => (has some element-has-correct-client-name-fn)
@@ -376,13 +376,13 @@
 
               (fact "missing client_id query param responds with 404"
                     (->> (th/create-request :get (routes/path :show-unshare-profile-card) nil)
-                         (u/show-unshare-profile-card ...user-store...)) => {:status 404})
+                         (u/show-unshare-profile-card @storage/client-store ...user-store...)) => {:status 404})
 
               (fact "user is redirected to /profile if client_id is not in user's list of authorised clients"
                     (->> (th/create-request :get (routes/path :show-unshare-profile-card)
-                                         {:client_id ...client-id...}
-                                         {:user-login ...email...})
-                         (u/show-unshare-profile-card ...user-store...)) => (check-redirects-to "/profile")
+                                            {:client_id ...client-id...}
+                                            {:user-login ...email...})
+                         (u/show-unshare-profile-card @storage/client-store ...user-store...)) => (check-redirects-to "/profile")
                     (provided
                      (user/is-authorised-client-for-user? ...user-store... ...email... ...client-id...) => false)))
 

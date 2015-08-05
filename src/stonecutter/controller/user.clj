@@ -155,10 +155,10 @@
 (defn show-profile-deleted [request]
   (sh/enlive-response (delete-account/profile-deleted request) (:context request)))
 
-(defn show-unshare-profile-card [user-store request]
+(defn show-unshare-profile-card [client-store user-store request]
   (if-let [client-id (get-in request [:params :client_id])]
     (if (user/is-authorised-client-for-user? user-store (get-in request [:session :user-login]) client-id)
-      (let [client (c/retrieve-client @storage/client-store client-id)]
+      (let [client (c/retrieve-client client-store client-id)]
         (-> (assoc-in request [:context :client] client)
             unshare-profile-card/unshare-profile-card
             (sh/enlive-response (:context request))))

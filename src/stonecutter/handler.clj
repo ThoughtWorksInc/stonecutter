@@ -71,7 +71,7 @@
        :show-profile                     (partial user/show-profile client-store user-store)
        :show-profile-created             user/show-profile-created
        :show-profile-deleted             user/show-profile-deleted
-       :show-unshare-profile-card        (partial user/show-unshare-profile-card user-store)
+       :show-unshare-profile-card        (partial user/show-unshare-profile-card client-store user-store)
        :unshare-profile-card             (partial user/unshare-profile-card user-store)
        :show-delete-account-confirmation user/show-delete-account-confirmation
        :delete-account                   (partial user/delete-account user-store)
