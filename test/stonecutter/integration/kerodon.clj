@@ -19,6 +19,7 @@
 
 (l/init-logger!)
 (ih/setup-db)
+(ih/clear-collections)
 
 (s/setup-mongo-stores! (ih/get-test-db))
 

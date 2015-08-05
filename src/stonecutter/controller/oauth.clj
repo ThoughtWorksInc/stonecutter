@@ -23,9 +23,9 @@
 (defn add-error-to-uri [uri]
   (str uri "?error=access_denied"))
 
-(defn show-authorise-failure [request]
+(defn show-authorise-failure [client-store request]
   (let [client-id (get-in request [:params :client_id])
-        client (client/retrieve-client @storage/client-store client-id)
+        client (client/retrieve-client client-store client-id)
         client-name (:name client)
         redirect-uri (get-in request [:params :redirect_uri])
         callback-uri-with-error (add-error-to-uri redirect-uri)

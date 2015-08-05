@@ -160,16 +160,16 @@
              (let [request (-> (th/create-request-with-query-string :get "/authorise-failure"
                                                                     {:redirect_uri "http://where.do.we.go.now"})
                                (assoc-in [:context :translator] {}))
-                   response (oauth/show-authorise-failure request)]
+                   response (oauth/show-authorise-failure @storage/client-store request)]
                (:status response)) => 200
              (provided
                (oauth/add-error-to-uri "http://where.do.we.go.now") => anything))
 
        (fact "authorisation failure page is rendered with client name"
-             (let [element-has-correct-client-name-fn (fn [element] (= (html/text element) "CLIENT_NAME"))]
-               (-> (th/create-request-with-query-string :get (routes/path :show-authorise-failure)
-                                                        {:client_id "CLIENT_ID"})
-                   oauth/show-authorise-failure
+             (let [element-has-correct-client-name-fn (fn [element] (= (html/text element) "CLIENT_NAME"))
+                   request (th/create-request-with-query-string :get (routes/path :show-authorise-failure)
+                                                        {:client_id "CLIENT_ID"})]
+               (-> (oauth/show-authorise-failure @storage/client-store request)
                    :body
                    html/html-snippet
                    (html/select [:.clj--client-name])) => (has some element-has-correct-client-name-fn)

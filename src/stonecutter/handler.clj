@@ -80,7 +80,7 @@
        :show-authorise-form              (partial oauth/show-authorise-form client-store)
        :authorise                        (partial oauth/authorise client-store user-store)
        :authorise-client                 (partial oauth/authorise-client client-store user-store)
-       :show-authorise-failure           oauth/show-authorise-failure}
+       :show-authorise-failure           (partial oauth/show-authorise-failure client-store)}
       (m/wrap-handlers #(m/wrap-handle-404 % not-found) #{})
       (m/wrap-handlers #(m/wrap-handle-403 % forbidden-err-handler) #{})
       (m/wrap-handlers m/wrap-disable-caching #{:theme-css})

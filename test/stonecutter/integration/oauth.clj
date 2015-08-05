@@ -82,10 +82,6 @@
      :client-name           (:name client)
      :invalid-client-secret invalid-client-secret}))
 
-#_(background
-  (before :contents (ith/setup-db)
-          :after (ith/teardown-db)))
-
 (defn print-debug [v] (prn "Kerodon:" v) v)
 
 (defn sign-in [state]
