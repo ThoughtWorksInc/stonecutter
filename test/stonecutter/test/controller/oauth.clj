@@ -194,14 +194,15 @@
 
 (facts "about token endpoint"
        (let [user-store (m/create-memory-store)
+             client-store (m/create-memory-store)
              user (user/store-user! user-store user-email "password")
-             client-details (cl-client/register-client @storage/client-store "MYAPP" "http://myapp.com")
+             client-details (cl-client/register-client client-store "MYAPP" "http://myapp.com")
              auth-code (cl-auth-code/create-auth-code @storage/auth-code-store client-details user "http://myapp.com/callback")
              request (-> (th/create-request-with-query-string :get (routes/path :validate-token) {:grant_type   "authorization_code"
                                                                                                   :redirect_uri "http://myapp.com/callback"
                                                                                                   :code         (:code auth-code)})
                          (create-auth-header client-details))
-             response (oauth/validate-token user-store request)
+             response (oauth/validate-token client-store user-store request)
              response-body (-> response :body (json/parse-string keyword))]
 
          (fact "request with grant type authorization_code and correct credentials returns access token"

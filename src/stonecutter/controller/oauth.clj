@@ -82,19 +82,19 @@
         (log/warn "Invalid query params for authorisation request")
         {:status 403}))))
 
-(defn token-handler [user-store request]
+(defn token-handler [client-store user-store request]
   ((cl-ep/token-handler user-store
-                        @storage/client-store
+                        client-store
                         @storage/token-store
                         @storage/auth-code-store) request))
 
-(defn validate-token [user-store request]
+(defn validate-token [client-store user-store request]
   (let [auth-code (get-in request [:params :code])
         user (user/retrieve-user-with-auth-code @storage/auth-code-store auth-code)
         user-login (:login user)
         user-id (:uid user)
         confirmed? (:confirmed? user)
-        response (token-handler user-store request)
+        response (token-handler client-store user-store request)
         body (-> response
                  :body
                  (json/parse-string keyword)
