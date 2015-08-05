@@ -94,8 +94,9 @@
                                           :confirmation-sign-in-form :confirmation-sign-in
                                           }))))
 
-(def api-handlers
-  {:validate-token         oauth/validate-token})
+(defn api-handlers [stores-m]
+  (let [user-store (storage/get-user-store stores-m)]
+    {:validate-token (partial oauth/validate-token user-store)}))
 
 (defn splitter [site api]
   (fn [request]
@@ -123,15 +124,15 @@
       (m/wrap-custom-static-resources config-m)
       ring-mct/wrap-content-type))
 
-(defn create-api-app [config-m dev-mode?]
-  (-> (scenic/scenic-handler routes/routes api-handlers not-found)
+(defn create-api-app [config-m stores-m dev-mode?]
+  (-> (scenic/scenic-handler routes/routes (api-handlers stores-m) not-found)
       (ring-mw/wrap-defaults (if (config/secure? config-m)
                                (assoc ring-mw/secure-api-defaults :proxy true)
                                ring-mw/api-defaults))
       (m/wrap-error-handling err-handler dev-mode?))) ;; TODO create json error handler
 
 (defn create-app [config-m stores-m & {dev-mode? :dev-mode?}]
-  (splitter (create-site-app config-m stores-m dev-mode?) (create-api-app config-m dev-mode?)))
+  (splitter (create-site-app config-m stores-m dev-mode?) (create-api-app config-m stores-m dev-mode?)))
 
 (defn app [stores-m]
   (create-app (config/create-config) stores-m :dev-mode? false))

@@ -192,7 +192,7 @@
                                                                                                   :redirect_uri "http://myapp.com/callback"
                                                                                                   :code         (:code auth-code)})
                          (create-auth-header client-details))
-             response (oauth/validate-token request)
+             response (oauth/validate-token @storage/user-store request)
              response-body (-> response :body (json/parse-string keyword))]
 
          (fact "request with grant type authorization_code and correct credentials returns access token"

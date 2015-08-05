@@ -55,7 +55,7 @@
   (let [client-id (get-in request [:params :client_id])
         user-email (get-in request [:session :user-login])
         response (auth-handler user-store request)]
-    (user/add-authorised-client-for-user! @storage/user-store user-email client-id)
+    (user/add-authorised-client-for-user! user-store user-email client-id)
     response))
 
 (defn is-redirect-uri-valid? [client-id redirect-uri]
@@ -83,19 +83,19 @@
         (log/warn "Invalid query params for authorisation request")
         {:status 403}))))
 
-(defn token-handler [request]
-  ((cl-ep/token-handler @storage/user-store
+(defn token-handler [user-store request]
+  ((cl-ep/token-handler user-store
                         @storage/client-store
                         @storage/token-store
                         @storage/auth-code-store) request))
 
-(defn validate-token [request]
+(defn validate-token [user-store request]
   (let [auth-code (get-in request [:params :code])
         user (user/retrieve-user-with-auth-code @storage/auth-code-store auth-code)
         user-login (:login user)
         user-id (:uid user)
         confirmed? (:confirmed? user)
-        response (token-handler request)
+        response (token-handler user-store request)
         body (-> response
                  :body
                  (json/parse-string keyword)
