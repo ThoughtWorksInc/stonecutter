@@ -31,11 +31,15 @@
                         session-not-changed)
                    (is-signed-in? response))))))
 
-(def email "valid@email.com")
-(def password "password")
+(def default-email "valid@email.com")
+(def default-password "password")
 (def confirmation-id "1234-ABCD")
-(def sign-in-user-params {:email email :password password})
-(def register-user-params {:email email :password password :confirm-password password})
+(def sign-in-user-params {:email default-email :password default-password})
+
+(defn register-user-params [email password confirm-password]
+  {:email email :password password :confirm-password confirm-password})
+
+(def default-register-user-params (register-user-params default-email default-password default-password))
 
 (def most-recent-email (atom nil))
 
@@ -58,23 +62,23 @@
 (facts "about registration"
        (fact "user can register with valid credentials and is redirected to profile-created page, with user-login and access_token added to session"
              (let [user-store (m/create-memory-store)
-                   response (->> (th/create-request :post (routes/path :register-user) register-user-params {:some "session-data"})
+                   response (->> (th/create-request :post (routes/path :register-user) default-register-user-params {:some "session-data"})
                                  (u/register-user user-store))
-                   registered-user (user/retrieve-user user-store email)]
+                   registered-user (user/retrieve-user user-store default-email)]
                response => (check-redirects-to (routes/path :show-profile-created))
                response => (contains {:session (contains {:user-login   (:login registered-user)
                                                           :access_token (complement nil?)})})))
 
        (fact "session is not lost when redirecting from registration"
              (let [user-store (m/create-memory-store)
-                   response (->> (th/create-request :post (routes/path :register-user) register-user-params {:some "session-data"})
+                   response (->> (th/create-request :post (routes/path :register-user) default-register-user-params {:some "session-data"})
                                  (u/register-user user-store))]
                response => (check-redirects-to (routes/path :show-profile-created))
                response => (contains {:session (contains {:some "session-data"})})))
 
        (fact "user data is saved"
              (let [user-store (m/create-memory-store)]
-               (->> (th/create-request :post (routes/path :register-user) register-user-params)
+               (->> (th/create-request :post (routes/path :register-user) default-register-user-params)
                     (u/register-user user-store))) => anything
              (provided
               (user/store-user! anything "valid@email.com" "password") => ...user...))
@@ -83,35 +87,32 @@
              (against-background
                (uuid/uuid) => confirmation-id)
              (let [user-store (m/create-memory-store)
-                   response (->> (th/create-request :post (routes/path :register-user) register-user-params)
+                   response (->> (th/create-request :post (routes/path :register-user) default-register-user-params)
                                  (u/register-user user-store))
-                   registered-user (user/retrieve-user user-store email)]
-               (:email @most-recent-email) => email
+                   registered-user (user/retrieve-user user-store default-email)]
+               (:email @most-recent-email) => default-email
                (:body @most-recent-email) => (contains {:confirmation-id confirmation-id})))
 
        (fact "when user email is send, flash message is assoc-ed in redirect"
              (against-background
                (uuid/uuid) => confirmation-id)
              (let [user-store (m/create-memory-store)
-                   response (->> (th/create-request :post (routes/path :register-user) register-user-params)
+                   response (->> (th/create-request :post (routes/path :register-user) default-register-user-params)
                                  (u/register-user user-store))]
                (:flash response) => :confirm-email-sent)))
 
 (facts "about registration validation errors"
        (fact "email must not be a duplicate"
              (let [user-store (m/create-memory-store)
-                   html-response (->> (th/create-request :post "/register" register-user-params)
+                   original-user (user/store-user! user-store default-email default-password)
+                   html-response (->> (th/create-request :post "/register" (register-user-params default-email default-password default-password))
                                       (u/register-user user-store)
                                       :body
                                       html/html-snippet)]
                (-> (html/select html-response [:.form-row--validation-error])
                    first
                    :attrs
-                   :class)) => (contains "clj--registration-email")
-             (provided
-               (v/validate-registration register-user-params anything) => {:email :duplicate}
-               (cl-user/new-user anything anything) => anything :times 0
-               (cl-user/store-user anything anything) => anything :times 0))
+                   :class)) => (contains "clj--registration-email"))
 
        (fact "user isn't saved to the database if email is invalid"
              (let [user-store (m/create-memory-store)]
@@ -140,7 +141,7 @@
                                                        :session {:user-login   ...user-login...
                                                                  :access_token ...token...}})
       (provided
-       (user/authenticate-and-retrieve-user ...user-store... email password) => {:login ...user-login...}
+       (user/authenticate-and-retrieve-user ...user-store... default-email default-password) => {:login ...user-login...}
        (cl-token/create-token @storage/token-store nil {:login ...user-login...}) => {:token ...token...}))
 
 (fact "signed-in? returns true only when user-login and access_token are in the session"
@@ -174,7 +175,7 @@
            (u/sign-in ...user-store...)) => (contains {:status  302 :headers {"Location" ...return-to-url...}
                                                        :session {:access_token ...token... :user-login ...user-login...}})
       (provided
-       (user/authenticate-and-retrieve-user ...user-store... email password) => {:login ...user-login...}
+       (user/authenticate-and-retrieve-user ...user-store... default-email default-password) => {:login ...user-login...}
        (cl-token/create-token @storage/token-store nil {:login ...user-login...}) => {:token ...token...}))
 
 (facts "about sign-in validation errors"
