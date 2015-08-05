@@ -31,26 +31,29 @@
    :body (confirmation-email-body (:base-url email-data) (:confirmation-id email-data))})
 
 (defn send! [template email-address email-data]
+  (log/debug (format "sending template '%s' to '%s'." template email-address))
   (let [{:keys [subject body]} ((template @template-to-renderer-map) email-data)]
     (@sender email-address subject body)))
-
-(defn initialise! [sender-fn template-to-renderer-config]
-  (reset! sender sender-fn)  
-  (reset! template-to-renderer-map template-to-renderer-config))
-
-(defn reset-email-configuration! []
-  (reset! sender nil)
-  (reset! template-to-renderer-map nil))
 
 (defn bash-sender-factory [email-script-path]
   (if email-script-path
     (fn [email-address subject body] 
+      (log/debug (format "sending email to '%s' using bash script: '%s'." email-address email-script-path))
       (shell/sh email-script-path 
                 (str email-address)
                 (str subject)
                 (str body))) 
     stdout-sender))
 
+(defn reset-email-configuration! []
+  (reset! sender nil)
+  (reset! template-to-renderer-map nil))
+
+(defn initialise! [sender-fn template-to-renderer-config]
+  (reset! sender sender-fn)  
+  (reset! template-to-renderer-map template-to-renderer-config))
+
 (defn configure-email [path]
+  (log/debug (format "Initialising email sender to path: '%s'." path))
   (initialise! (bash-sender-factory path)
                {:confirmation confirmation-renderer}))
