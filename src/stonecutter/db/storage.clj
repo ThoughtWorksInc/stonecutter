@@ -33,3 +33,12 @@
 
 (defn reset-in-memory-stores! []
   (setup-in-memory-stores!))
+
+(defn create-mongo-stores [db]
+  {:user-store @user-store})
+
+(defn create-in-memory-stores []
+  {:user-store @user-store})
+
+(defn get-user-store [store-m]
+  (:user-store store-m))

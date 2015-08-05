@@ -43,17 +43,17 @@
                                       :base-url base-url}))
   user)
 
-(defn register-user [request]
+(defn register-user [user-store request]
   (let [params (:params request)
         email (:email params)
         password (:password params)
         confirmation-id (uuid/uuid)
         config-m (get-in request [:context :config-m])
-        err (v/validate-registration params (partial user/is-duplicate-user? @storage/user-store))
+        err (v/validate-registration params (partial user/is-duplicate-user? user-store))
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
       (do (conf/store! @storage/confirmation-store email confirmation-id)
-          (-> (user/store-user! @storage/user-store email password)
+          (-> (user/store-user! user-store email password)
               (send-confirmation-email! email confirmation-id config-m)
               (redirect-to-profile-created request)
               (assoc :flash :confirm-email-sent))) 

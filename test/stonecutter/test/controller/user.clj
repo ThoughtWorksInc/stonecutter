@@ -37,10 +37,15 @@
 (def sign-in-user-params {:email email :password password})
 (def register-user-params {:email email :password password :confirm-password password})
 
-(defn create-request [method url params]
-  (-> (mock/request method url)
-      (assoc :params params)
-      (assoc-in [:context :translator] {})))
+(defn create-request
+  ([method url params]
+   (-> (mock/request method url)
+       (assoc :params params)
+       (assoc-in [:context :translator] {})))
+  ([method url params session]
+   (->
+     (create-request method url params)
+     (assoc :session session))))
 
 (defn create-request-with-query-string [method url params]
   (-> (mock/request method url params)
@@ -74,33 +79,31 @@
 
 (facts "about registration"
        (fact "user can register with valid credentials and is redirected to profile-created page, with user-login and access_token added to session"
-             (let [response (-> (create-request :post (routes/path :register-user) register-user-params)
-                                (assoc :session {:some "data"})
-                                u/register-user)
+             (let [response (->> (create-request :post (routes/path :register-user) register-user-params {:some "session-data"})
+                                 (u/register-user @storage/user-store))
                    registered-user (user/retrieve-user @storage/user-store email)]
                response => (check-redirects-to (routes/path :show-profile-created))
                response => (contains {:session (contains {:user-login (:login registered-user)
                                                           :access_token (complement nil?)})})))
 
        (fact "session is not lost when redirecting from registration"
-             (let [response (-> (create-request :post (routes/path :register-user) register-user-params)
-                                (assoc :session {:some "data"})
-                                u/register-user)]
+             (let [response (->> (create-request :post (routes/path :register-user) register-user-params {:some "session-data"})
+                                 (u/register-user @storage/user-store))]
                response => (check-redirects-to (routes/path :show-profile-created))
-               response => (contains {:session (contains {:some "data"})})))
+               response => (contains {:session (contains {:some "session-data"})})))
 
        (fact "user data is saved"
              (let [user-registration-data (create-user "valid@email.com" "password")]
-               (-> (create-request :post (routes/path :register-user) register-user-params)
-                   u/register-user) => anything
+               (->> (create-request :post (routes/path :register-user) register-user-params)
+                    (u/register-user @storage/user-store)) => anything
                (provided
                  (user/store-user! @storage/user-store "valid@email.com" "password") => ...user...)))
 
        (fact "user is send a confirmation email with the correct content"
              (against-background 
                (uuid/uuid) => confirmation-id)
-             (let [response (-> (create-request :post (routes/path :register-user) register-user-params)
-                                u/register-user)
+             (let [response (->> (create-request :post (routes/path :register-user) register-user-params)
+                                 (u/register-user @storage/user-store))
                    registered-user (user/retrieve-user @storage/user-store email)]
              (:email @most-recent-email) => email
              (:body @most-recent-email) => (contains {:confirmation-id confirmation-id})))
@@ -108,15 +111,15 @@
        (fact "when user email is send, flash message is assoc-ed in redirect"
              (against-background
                (uuid/uuid) => confirmation-id)
-              (let [response (-> (create-request :post (routes/path :register-user) register-user-params)
-                                u/register-user)]
+              (let [response (->> (create-request :post (routes/path :register-user) register-user-params)
+                                  (u/register-user @storage/user-store))]
                 (:flash response) => :confirm-email-sent)))
 
 (facts "about registration validation errors"
        (fact "email must not be a duplicate"
-             (let [html-response (-> (create-request :post "/register" register-user-params)
-                                     u/register-user
-                                     :body
+             (let [html-response (->> (create-request :post "/register" register-user-params)
+                                      (u/register-user @storage/user-store)
+                                      :body
                                      html/html-snippet)]
                (-> (html/select html-response [:.form-row--validation-error])
                    first
@@ -128,14 +131,14 @@
                     (cl-user/store-user @storage/user-store anything) => anything :times 0))
 
        (fact "user isn't saved to the database if email is invalid"
-             (-> (create-request :post "/register" {:email "invalid"}) u/register-user) => anything
+             (->> (create-request :post "/register" {:email "invalid"}) (u/register-user @storage/user-store)) => anything
              (provided
                (cl-user/new-user anything anything) => anything :times 0
                (cl-user/store-user @storage/user-store anything) => anything :times 0))
 
        (facts "registration page is rendered with errors"
-              (let [html-response (-> (create-request :post "/register" {:email "invalid"})
-                                      u/register-user
+              (let [html-response (->> (create-request :post "/register" {:email "invalid"})
+                                      (u/register-user @storage/user-store)
                                       :body
                                       html/html-snippet)]
                 (fact "email field should have validation error class"

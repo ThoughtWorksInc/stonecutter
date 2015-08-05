@@ -14,6 +14,8 @@
 (l/init-logger!)
 (storage/setup-in-memory-stores!)
 
+(def stores-m (storage/create-in-memory-stores))
+
 (defn register [state email]
   (-> state
       (k/visit "/register")
@@ -58,10 +60,8 @@
 (email/initialise! (email/bash-sender-factory "test-resources/mail_stub.sh")
                    {:confirmation test-email-renderer})
 
-
-
 (facts "User is not confirmed when first registering for an account; Hitting the confirmation endpoint confirms the user account when the UUID in the uri matches that for the signed in user's account"
-       (-> (k/session h/app)
+       (-> (k/session (h/app stores-m))
 
            (setup-test-directory)
 
@@ -82,7 +82,7 @@
            (teardown-test-directory)))
 
 (facts "The account confirmation flow can be followed by a user who is not signed in when first accessing the confirmation endpoint"
-       (-> (k/session h/app)
+       (-> (k/session (h/app stores-m))
 
            (setup-test-directory)
 

@@ -22,7 +22,8 @@
             [stonecutter.db.storage :as s]
             [stonecutter.db.migration :as migration]
             [stonecutter.db.mongo :as mongo]
-            [stonecutter.config :as config])
+            [stonecutter.config :as config]
+            [stonecutter.db.storage :as storage])
   (:gen-class))
 
 (def default-context {:translator (t/translations-fn t/translation-map)})
@@ -52,45 +53,46 @@
   (-> (r/response "pong")
       (r/content-type "text/plain")))
 
-(def site-handlers
-  (->
-    {:home                               user/home
-     :ping                               ping
-     :theme-css                          stylesheets/theme-css
-     :show-registration-form             user/show-registration-form
-     :register-user                      user/register-user
-     :show-sign-in-form                  user/show-sign-in-form
-     :sign-in                            user/sign-in
-     :sign-out                           user/sign-out
-     :confirm-email-with-id              ec/confirm-email-with-id
-     :confirmation-sign-in-form          ec/show-confirm-sign-in-form
-     :confirmation-sign-in               ec/confirmation-sign-in
-     :show-profile                       user/show-profile
-     :show-profile-created               user/show-profile-created
-     :show-profile-deleted               user/show-profile-deleted
-     :show-unshare-profile-card          user/show-unshare-profile-card
-     :unshare-profile-card               user/unshare-profile-card
-     :show-delete-account-confirmation   user/show-delete-account-confirmation
-     :delete-account                     user/delete-account
-     :show-change-password-form          user/show-change-password-form
-     :change-password                    user/change-password
-     :show-authorise-form                oauth/show-authorise-form
-     :authorise                          oauth/authorise
-     :authorise-client                   oauth/authorise-client
-     :show-authorise-failure             oauth/show-authorise-failure}
-    (m/wrap-handlers #(m/wrap-handle-404 % not-found) #{})
-    (m/wrap-handlers #(m/wrap-handle-403 % forbidden-err-handler) #{})
-    (m/wrap-handlers m/wrap-disable-caching #{:theme-css})
-    (m/wrap-handlers m/wrap-signed-in #{:show-registration-form    :register-user
-                                        :show-sign-in-form         :sign-in
-                                        :sign-out
-                                        :show-profile-deleted
-                                        :authorise
-                                        :ping
-                                        :theme-css
-                                        :confirm-email-with-id
-                                        :confirmation-sign-in-form :confirmation-sign-in
-                                        })))
+(defn site-handlers [stores-m]
+  (let [user-store (storage/get-user-store stores-m)]
+    (->
+      {:home                             user/home
+       :ping                             ping
+       :theme-css                        stylesheets/theme-css
+       :show-registration-form           user/show-registration-form
+       :register-user                    (partial user/register-user user-store)
+       :show-sign-in-form                user/show-sign-in-form
+       :sign-in                          user/sign-in
+       :sign-out                         user/sign-out
+       :confirm-email-with-id            ec/confirm-email-with-id
+       :confirmation-sign-in-form        ec/show-confirm-sign-in-form
+       :confirmation-sign-in             ec/confirmation-sign-in
+       :show-profile                     user/show-profile
+       :show-profile-created             user/show-profile-created
+       :show-profile-deleted             user/show-profile-deleted
+       :show-unshare-profile-card        user/show-unshare-profile-card
+       :unshare-profile-card             user/unshare-profile-card
+       :show-delete-account-confirmation user/show-delete-account-confirmation
+       :delete-account                   user/delete-account
+       :show-change-password-form        user/show-change-password-form
+       :change-password                  user/change-password
+       :show-authorise-form              oauth/show-authorise-form
+       :authorise                        oauth/authorise
+       :authorise-client                 oauth/authorise-client
+       :show-authorise-failure           oauth/show-authorise-failure}
+      (m/wrap-handlers #(m/wrap-handle-404 % not-found) #{})
+      (m/wrap-handlers #(m/wrap-handle-403 % forbidden-err-handler) #{})
+      (m/wrap-handlers m/wrap-disable-caching #{:theme-css})
+      (m/wrap-handlers m/wrap-signed-in #{:show-registration-form :register-user
+                                          :show-sign-in-form :sign-in
+                                          :sign-out
+                                          :show-profile-deleted
+                                          :authorise
+                                          :ping
+                                          :theme-css
+                                          :confirm-email-with-id
+                                          :confirmation-sign-in-form :confirmation-sign-in
+                                          }))))
 
 (def api-handlers
   {:validate-token         oauth/validate-token})
@@ -112,8 +114,8 @@
       (assoc-in [:session :cookie-name] "stonecutter-session")
       (assoc-in [:security :anti-forgery] {:error-handler handle-anti-forgery-error})))
 
-(defn create-site-app [config-m dev-mode?]
-  (-> (scenic/scenic-handler routes/routes site-handlers not-found)
+(defn create-site-app [config-m stores-m dev-mode?]
+  (-> (scenic/scenic-handler routes/routes (site-handlers stores-m) not-found)
       (ring-mw/wrap-defaults (wrap-defaults-config (config/secure? config-m)))
       m/wrap-translator
       (m/wrap-config config-m)
@@ -128,22 +130,24 @@
                                ring-mw/api-defaults))
       (m/wrap-error-handling err-handler dev-mode?))) ;; TODO create json error handler
 
-(defn create-app [config-m & {dev-mode? :dev-mode?}]
-  (splitter (create-site-app config-m dev-mode?) (create-api-app config-m dev-mode?)))
+(defn create-app [config-m stores-m & {dev-mode? :dev-mode?}]
+  (splitter (create-site-app config-m stores-m dev-mode?) (create-api-app config-m dev-mode?)))
 
-(def app (create-app (config/create-config) :dev-mode? false))
+(defn app [stores-m]
+  (create-app (config/create-config) stores-m :dev-mode? false))
 
-(def lein-app (create-app (config/create-config) :dev-mode? true))
+; FIXME when refactoring is done
+(def lein-app (create-app (config/create-config) @storage/user-store :dev-mode? true))
 
 (defn -main [& args]
   (let [config-m (config/create-config)]
     (vh/enable-template-caching!)
     (let [db (mongo/get-mongo-db (config/mongo-uri config-m))]
       (s/setup-mongo-stores! db)
-      (migration/run-migrations db))
-    (email/configure-email (config/email-script-path config-m))
-    (client-seed/load-client-credentials-and-store-clients @s/client-store (config/client-credentials-file-path config-m))
-    (ring-jetty/run-jetty app {:port (config/port config-m) :host (config/host config-m)})))
+      (migration/run-migrations db)
+      (email/configure-email (config/email-script-path config-m))
+      (client-seed/load-client-credentials-and-store-clients @s/client-store (config/client-credentials-file-path config-m))
+      (ring-jetty/run-jetty (app (storage/create-mongo-stores db)) {:port (config/port config-m) :host (config/host config-m)}))))
 
 (defn lein-ring-init
   "Function called when running app with 'lein ring server'"

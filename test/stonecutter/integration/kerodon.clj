@@ -18,6 +18,7 @@
 
 (l/init-logger!)
 (s/setup-in-memory-stores!)
+(def stores-m (s/create-in-memory-stores))
 
 (defn setup-add-client-to-user! [email client-name]
   (let [client (cl-client/register-client @storage/client-store client-name "myclient.com")
@@ -86,7 +87,7 @@
                    {:confirmation test-email-renderer})
 
 (facts "Home url redirects to sign-in page if user is not signed in"
-       (-> (k/session h/app)
+       (-> (k/session (h/app stores-m))
            (k/visit "/")
            (k/follow-redirect)
            (kh/page-uri-is "/sign-in")
@@ -94,7 +95,7 @@
            (kh/selector-exists [ks/sign-in-page-body])))
 
 (facts "User is returned to same page when email is invalid"
-       (-> (k/session h/app)
+       (-> (k/session (h/app stores-m))
            (k/visit "/register")
            (k/fill-in "Email address" "invalid-email")
            (k/press ks/registration-submit)
@@ -104,7 +105,7 @@
            (kh/selector-includes-content [ks/registration-email-validation-element] "Enter a valid email address")))
 
 (facts "User is returned to same page when existing email is used"
-       (-> (k/session h/app)
+       (-> (k/session (h/app stores-m))
            (register "existing@user.com")
            (k/visit "/register")
            (k/fill-in ks/registration-email-input "existing@user.com")
@@ -116,7 +117,7 @@
            (kh/selector-exists [ks/registration-page-body])))
 
 (facts "Registering a new user should call out to script to send a confirmation email"
-       (-> (k/session h/app)
+       (-> (k/session (h/app stores-m))
            (setup-test-directory)
            (register "new-user@email.com")
            (checks-email-is-sent "new-user@email.com")
@@ -124,7 +125,7 @@
 
 (facts "Register page redirects to profile-created page when registered and
        user-login is in the session so that email address is displayed on profile card"
-       (-> (k/session h/app)
+       (-> (k/session (h/app stores-m))
            (register "email@server.com")
            (k/follow-redirect)
            (kh/page-uri-is "/profile-created")
@@ -138,7 +139,7 @@
            (kh/selector-includes-content [:body] "email@server.com")))
 
 (facts "User is not confirmed when first registering for an account; Hitting the confirmation endpoint confirms the user account when the UUID in the query string matches that for the signed in user's account"
-       (-> (k/session h/app)
+       (-> (k/session (h/app stores-m))
 
            (setup-test-directory)
 
@@ -159,7 +160,7 @@
            (teardown-test-directory)))
 
 (facts "The account confirmation flow can be followed by a user who is not signed in when first accessing the confirmation endpoint"
-       (-> (k/session h/app)
+       (-> (k/session (h/app stores-m))
            (setup-test-directory)
 
            (register "confirmation-test-2@email.com")
@@ -188,7 +189,7 @@
            (teardown-test-directory)))
 
 (facts "User is redirected to sign-in page when accessing profile page not signed in"
-       (-> (k/session h/app)
+       (-> (k/session (h/app stores-m))
            (k/visit "/profile")
            (k/follow-redirect)
            (kh/page-uri-is "/sign-in")
@@ -196,7 +197,7 @@
            (kh/selector-exists [ks/sign-in-page-body])))
 
 (facts "User can sign in"
-       (-> (k/session h/app)
+       (-> (k/session (h/app stores-m))
            (sign-in "email@server.com")
            (k/follow-redirect)
            (kh/page-uri-is "/profile")
@@ -205,7 +206,7 @@
            (kh/selector-includes-content [:body] "email@server.com")))
 
 (facts "User can sign out"
-       (-> (k/session h/app)
+       (-> (k/session (h/app stores-m))
            (sign-in "email@server.com")
            (k/visit "/profile")
            (k/follow ks/sign-out-link)
@@ -215,30 +216,30 @@
            (kh/page-uri-is "/sign-in")))
 
 (facts "Home url redirects to profile page if user is signed in"
-       (-> (k/session h/app)
+       (-> (k/session (h/app stores-m))
            (sign-in "email@server.com")
            (k/visit "/")
            (k/follow-redirect)
            (kh/page-uri-is "/profile")))
 
 (facts "Home url redirects to profile page if user is registered"
-       (-> (k/session h/app)
+       (-> (k/session (h/app stores-m))
            (register "email2@server.com")
            (k/visit "/")
            (k/follow-redirect)
            (kh/page-uri-is "/profile")))
 
 (facts "Clients appear on user profile page"
-       (-> (k/session h/app)
+       (-> (k/session (h/app stores-m))
            (register "user@withclient.com"))
        (setup-add-client-to-user! "user@withclient.com" "myapp")
-       (-> (k/session h/app)
+       (-> (k/session (h/app stores-m))
            (sign-in "user@withclient.com")
            (k/visit "/profile")
            (kh/selector-includes-content [ks/profile-authorised-client-list] "myapp")))
 
 (facts "User can unshare profile card"
-       (-> (k/session h/app)
+       (-> (k/session (h/app stores-m))
            (sign-in "user@withclient.com")
            (k/visit "/profile")
            (kh/selector-includes-content [ks/profile-authorised-client-list] "myapp")
@@ -250,7 +251,7 @@
            (kh/selector-does-not-include-content [ks/profile-authorised-client-list] "myapp")))
 
 (facts "User can change password"
-       (-> (k/session h/app)
+       (-> (k/session (h/app stores-m))
            (sign-in "user@withclient.com")
            (k/visit "/profile")
            (k/follow ks/profile-change-password-link)
@@ -268,7 +269,7 @@
            (kh/selector-exists [ks/profile-flash-message])))
 
 (facts "User can delete account"
-       (-> (k/session h/app)
+       (-> (k/session (h/app stores-m))
            (register "account_to_be@deleted.com")
            (k/visit "/profile")
            (k/follow ks/profile-delete-account-link)
@@ -282,7 +283,7 @@
            (kh/selector-exists [ks/profile-deleted-page-body])))
 
 (facts "Not found page is shown for unknown url"
-       (-> (k/session h/app)
+       (-> (k/session (h/app stores-m))
            (k/visit "/wrong-url")
            (kh/response-status-is 404)
            (kh/selector-exists [ks/error-404-page-body])))
@@ -290,7 +291,7 @@
 (fact "Error page is shown if an exception is thrown"
       (against-background
         (register-view/registration-form anything) =throws=> (Exception.))
-      (-> (k/session (h/create-app {:secure "false"} :dev-mode? false))
+      (-> (k/session (h/create-app {:secure "false"} stores-m :dev-mode? false))
           (k/visit "/register")
           (kh/response-status-is 500)
           (kh/selector-exists [ks/error-500-page-body]))
@@ -304,6 +305,7 @@
                                     :inactive-tab-font-color "#FEDCBA"
                                     :static-resources-dir-path "./test-resources"
                                     :logo-file-name "beautiful_logo.png"}
+                                   stores-m
                                    :dev-mode? false))
           (k/visit "/stylesheets/theme.css")
           (kh/response-status-is 200)
@@ -312,17 +314,17 @@
           (kh/response-body-contains "\"/beautiful_logo.png\"")))
 
 (fact "Correct css file is used when config includes a :theme"
-      (-> (k/session (h/create-app {:secure "false" :theme "MY_STYLING"} :dev-mode? false))
+      (-> (k/session (h/create-app {:secure "false" :theme "MY_STYLING"} stores-m :dev-mode? false))
           (k/visit "/sign-in")
           (kh/selector-has-attribute-with-content [ks/css-link] :href "/stylesheets/application.css")))
 
 (fact "Correct app-name is used when config includes an :app-name"
-      (-> (k/session (h/create-app {:secure "false" :app-name "My App Name"} :dev-mode? false))
+      (-> (k/session (h/create-app {:secure "false" :app-name "My App Name"} stores-m :dev-mode? false))
           (k/visit "/sign-in")
           (kh/selector-includes-content [ks/sign-in-app-name] "My App Name")))
 
 (future-fact "Replaying the same post will generate a 403 from the csrf handling"
-             (-> (k/session h/app)
+             (-> (k/session (h/app stores-m))
                  (register "csrf@email.com")
                  (sign-in "csrf@email.com")
                  (kh/replay-last-request)

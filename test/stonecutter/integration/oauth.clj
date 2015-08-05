@@ -96,7 +96,7 @@
 (facts "user authorising client-apps"
        (facts "user can sign in through client"
               (let [{:keys [client-id client-secret]} (setup)]
-                (-> (k/session h/app)
+                (-> (k/session (h/app (s/create-in-memory-stores)))
                     (browser-sends-authorisation-request-from-client-redirect client-id)
                     (k/follow-redirect)
                     ;; login
@@ -115,7 +115,7 @@
 
        (facts "user who has already authorised client does not need to authorise client again"
               (let [{:keys [client-id client-secret client-name]} (setup)]
-                (-> (k/session h/app)
+                (-> (k/session (h/app (s/create-in-memory-stores)))
                     ;; authorise client for the first time
                     (browser-sends-authorisation-request-from-client-redirect client-id)
                     (k/follow-redirect)
@@ -134,7 +134,7 @@
 
        (facts "user is redirected to authorisation-failure page when cancelling authorisation"
               (let [{:keys [client-id client-secret]} (setup)]
-                (-> (k/session h/app)
+                (-> (k/session (h/app (s/create-in-memory-stores)))
                     (browser-sends-authorisation-request-from-client-redirect client-id)
                     (k/follow-redirect)
                     ;; login
@@ -151,7 +151,7 @@
 (facts "no access token will be issued with invalid credentials"
        (facts "user cannot sign in with invalid client secret"
               (let [{:keys [client-id invalid-client-secret]} (setup)]
-                (-> (k/session h/app)
+                (-> (k/session (h/app (s/create-in-memory-stores)))
                     (browser-sends-authorisation-request-from-client-redirect client-id)
                     (k/follow-redirect)
                     ;; login
@@ -168,7 +168,7 @@
 
        (facts "user cannot sign in with invalid password"
               (let [{:keys [client-id]} (setup)]
-                (-> (k/session h/app)
+                (-> (k/session (h/app (s/create-in-memory-stores)))
                     (browser-sends-authorisation-request-from-client-redirect client-id)
                     (k/follow-redirect)
                     ;; login
