@@ -32,7 +32,7 @@
                                                                      :response_type "code"
                                                                      :redirect_uri  client-url})
                                (r/header "accept" "text/html"))
-                   response (oauth/authorise @storage/client-store (m/create-memory-store) request)]
+                   response (oauth/authorise @storage/client-store (m/create-memory-store) @storage/token-store request)]
                (:status response) => 302
                (-> response (get-in [:headers "Location"])) => "/sign-in"
                (-> response (get-in [:session :return-to])) => (format "/authorisation?client_id=%s&response_type=code&redirect_uri=%s" (:client-id client-details) (hiccup/url-encode client-url))))
@@ -52,7 +52,7 @@
                                (assoc-in [:context :translator] {})
                                ;the csrf-token key in session will stop clauth from refreshing the csrf-token in request
                                (assoc-in [:session :csrf-token] "staleCSRFtoken"))
-                   response (oauth/authorise @storage/client-store user-store request)]
+                   response (oauth/authorise @storage/client-store user-store @storage/token-store request)]
                (:status response) => 200
                (get-in response [:session :access_token]) => (:token access-token)
                (get response :body) => (contains "Share Profile Card")
@@ -72,7 +72,7 @@
                                (assoc-in [:session :csrf-token] csrf-token)
                                (assoc :content-type "application/x-www-form-urlencoded") ;To mock a form post
                                (assoc-in [:session :user-login] user-email))]
-               (oauth/authorise-client @storage/client-store user-store request) => (contains {:status 302 :headers (contains {"Location" (contains "callback?code=")})})
+               (oauth/authorise-client @storage/client-store user-store @storage/token-store request) => (contains {:status 302 :headers (contains {"Location" (contains "callback?code=")})})
                (provided
                 (user/add-authorised-client-for-user! user-store user-email anything) => ...user...)))
        
@@ -87,7 +87,7 @@
                                                                      :redirect_uri "https://myapp.com/callback"})
                                (assoc-in [:session :access_token] (:token access-token))
                                (assoc-in [:session :user-login] (:login user)))
-                   response (oauth/authorise @storage/client-store user-store request)]
+                   response (oauth/authorise @storage/client-store user-store @storage/token-store request)]
                (:status response) => 302
                (get-in response [:headers "Location"]) => (contains "callback?code=")))
 
@@ -102,7 +102,7 @@
                                                                      :redirect_uri "https://invalidcallback.com"})
                                (assoc-in [:session :access_token] (:token access-token))
                                (assoc-in [:session :user-login] (:login user)))
-                   response (oauth/authorise @storage/client-store user-store request)]
+                   response (oauth/authorise @storage/client-store user-store @storage/token-store request)]
                (:status response) =not=> 302))
 
        (fact "return-to session key is refreshed when accessing authorisation endpoint without being signed in"
@@ -116,7 +116,7 @@
                                                           :response_type "code"
                                                           :redirect_uri  redirect-uri}
                                            :session      {:return-to ...old-return-to-uri...}}
-                                          (oauth/authorise @storage/client-store user-store)
+                                          (oauth/authorise @storage/client-store user-store @storage/token-store)
                                           :session
                                           :return-to)]
                new-return-to-uri => (contains ...new-uri...)
@@ -134,7 +134,7 @@
                                (assoc-in [:session :user-login] (:login user))
                                ;; stale csrf token can cause session to be lost
                                (assoc-in [:session :csrf-token] "staleCSRFtoken"))
-                   response (oauth/authorise @storage/client-store user-store request)]
+                   response (oauth/authorise @storage/client-store user-store @storage/token-store request)]
                (:status response) => 302
                (get-in response [:headers "Location"]) => (contains (str client-url "?code="))
                (get-in response [:session :access_token]) => (:token access-token)

@@ -36,14 +36,19 @@
 
 (defn create-mongo-stores [db]
   {:user-store @user-store
-   :client-store @client-store})
+   :client-store @client-store
+   :token-store @token-store})
 
 (defn create-in-memory-stores []
   {:user-store @user-store
-   :client-store @client-store})
+   :client-store @client-store
+   :token-store @token-store})
 
 (defn get-user-store [store-m]
   (:user-store store-m))
 
 (defn get-client-store [store-m]
   (:client-store store-m))
+
+(defn get-token-store [store-m]
+  (:token-store store-m))
