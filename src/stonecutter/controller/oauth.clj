@@ -36,25 +36,25 @@
     (sh/enlive-response (authorise-failure/show-authorise-failure request) (:context request))))
 
 
-(defn auto-approver [request]
+(defn auto-approver [user-store request]
   (let [client-id (get-in request [:params :client_id])
         user-email (get-in request [:session :user-login])]
-    (user/is-authorised-client-for-user? @storage/user-store user-email client-id)))
+    (user/is-authorised-client-for-user? user-store user-email client-id)))
 
-(defn auth-handler [request]
+(defn auth-handler [user-store request]
   ((cl-ep/authorization-handler
      @storage/client-store
      @storage/token-store
      @storage/auth-code-store
-     {:auto-approver                  auto-approver
+     {:auto-approver                  (partial auto-approver user-store)
       :user-session-required-redirect (routes/path :show-sign-in-form)
       :authorization-form             show-authorise-form
       }) request))
 
-(defn authorise-client [request]
+(defn authorise-client [user-store request]
   (let [client-id (get-in request [:params :client_id])
         user-email (get-in request [:session :user-login])
-        response (auth-handler request)]
+        response (auth-handler user-store request)]
     (user/add-authorised-client-for-user! @storage/user-store user-email client-id)
     response))
 
@@ -63,16 +63,20 @@
     (when (and client-url redirect-uri)
       (= (:host (url/url client-url)) (:host (url/url redirect-uri))))))
 
-(defn authorise [request]
+(defn remove-csrf-token [request]
+  (update-in request [:session] dissoc :csrf-token))
+
+(defn add-html-accept [request]
+  (assoc-in request [:headers "accept"] "text/html"))
+
+(defn authorise [user-store request]
   (let [client-id (get-in request [:params :client_id])
         redirect-uri (get-in request [:params :redirect_uri])
         user-login (get-in request [:session :user-login])
-        request (update-in request [:session] dissoc :csrf-token)
+        clauth-request (-> request remove-csrf-token add-html-accept)
         access-token (get-in request [:session :access_token])]
     (if (is-redirect-uri-valid? client-id redirect-uri)
-      (-> request
-          (assoc-in [:headers "accept"] "text/html")
-          auth-handler
+      (-> (auth-handler user-store clauth-request)
           (assoc-in [:session :user-login] user-login)
           (assoc-in [:session :access_token] access-token))
       (do

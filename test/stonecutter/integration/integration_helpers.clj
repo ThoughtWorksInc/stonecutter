@@ -1,4 +1,4 @@
-(ns stonecutter.integration.test-helpers
+(ns stonecutter.integration.integration-helpers
   (:require [monger.core :as monger]))
 
 

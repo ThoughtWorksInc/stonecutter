@@ -9,7 +9,7 @@
             [stonecutter.integration.kerodon-helpers :as kh]
             [stonecutter.integration.kerodon-selectors :as ks]
             [stonecutter.db.user :as user]
-            [stonecutter.integration.test-helpers :as ith]
+            [stonecutter.integration.integration-helpers :as ith]
             [stonecutter.db.storage :as storage]))
 
 ;; CLIENT => AUTH    /authorisation?client-id=123&response_type=code&redirect_uri=callback-url

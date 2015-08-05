@@ -77,8 +77,8 @@
        :show-change-password-form        user/show-change-password-form
        :change-password                  (partial user/change-password user-store)
        :show-authorise-form              oauth/show-authorise-form
-       :authorise                        oauth/authorise
-       :authorise-client                 oauth/authorise-client
+       :authorise                        (partial oauth/authorise user-store)
+       :authorise-client                 (partial oauth/authorise-client user-store)
        :show-authorise-failure           oauth/show-authorise-failure}
       (m/wrap-handlers #(m/wrap-handle-404 % not-found) #{})
       (m/wrap-handlers #(m/wrap-handle-403 % forbidden-err-handler) #{})

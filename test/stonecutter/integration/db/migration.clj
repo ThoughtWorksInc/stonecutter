@@ -2,7 +2,7 @@
   (:require [midje.sweet :refer :all]
             [monger.collection :as monger-c]
             [clojure.string :as s]
-            [stonecutter.integration.test-helpers :as ith]
+            [stonecutter.integration.integration-helpers :as ith]
             [stonecutter.db.migration :as m]))
 
 (background (before :facts (ith/setup-db)
