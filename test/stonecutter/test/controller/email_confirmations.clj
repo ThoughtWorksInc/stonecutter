@@ -44,13 +44,13 @@
 (def password "password123")
 
 (defn test-email-sender! [email subject body]
-  (reset! most-recent-email {:email email
+  (reset! most-recent-email {:email   email
                              :subject subject
-                             :body body}))
+                             :body    body}))
 
 (defn test-email-renderer [email-data]
   {:subject "confirmation"
-   :body email-data})
+   :body    email-data})
 
 (def confirm-email-path
   (routes/path :confirm-email-with-id
@@ -80,7 +80,7 @@
        (fact "when confirmation UUID in the query string does not match that of the signed in user's user record, signs the user out and redirects to confirmation endpoint with the original confirmation UUID from the query string"
              (let [signed-in-user (user/store-user! @storage/user-store "signed-in@email.com" "password")
                    confirming-user (user/store-user! @storage/user-store "confirming@email.com" "password")
-                   confirmation (conf/store! @storage/confirmation-store "confirming@email.com"  confirmation-id)
+                   confirmation (conf/store! @storage/confirmation-store "confirming@email.com" confirmation-id)
                    request (-> confirm-email-request
                                (with-signed-in-user signed-in-user))
                    response (ec/confirm-email-with-id @storage/user-store request)]
@@ -104,27 +104,27 @@
 
 (facts "about confirmation sign in"
        (fact "when password matches login of confirmation id, user is logged in")
-      (-> (create-request :post (routes/path :confirmation-sign-in) {:confirmation-id confirmation-id :password password}) 
-          ec/confirmation-sign-in) => (contains {:status 302
-                                                :headers {"Location" confirm-email-path}
-                                                :session {:user-login ...user-login...
-                                                          :access_token ...token...}})
-      (provided
-        (user/authenticate-and-retrieve-user @storage/user-store email password) => {:login ...user-login...}
-        (conf/fetch @storage/confirmation-store confirmation-id) => {:login email :confirmation-id confirmation-id}
-        (cl-token/create-token @storage/token-store nil {:login ...user-login...}) => {:token ...token...})
-      
-      (fact "when credentials are invalid, redirect back to form with invalid error"
-            (against-background
-              (user/authenticate-and-retrieve-user @storage/user-store email "Invalid password") => nil
-              (conf/fetch @storage/confirmation-store confirmation-id) => {:login email :confirmation-id confirmation-id})
-            (let [response (-> (create-request :post (routes/path :confirmation-sign-in)
-                                               {:confirmation-id confirmation-id :password "Invalid password"}) 
-                               ec/confirmation-sign-in)] 
-              response => (contains {:status 200})
-              response =not=> (contains {:session {:user-login anything
-                                                   :access_token anything}})
-              (-> (html/select (html/html-snippet (:body response)) [:.clj--validation-summary__item]) first :attrs :data-l8n) 
-              => "content:confirmation-sign-in-form/invalid-credentials-validation-message")))
+       (->> (create-request :post (routes/path :confirmation-sign-in) {:confirmation-id confirmation-id :password password})
+            (ec/confirmation-sign-in @storage/user-store)) => (contains {:status  302
+                                                                         :headers {"Location" confirm-email-path}
+                                                                         :session {:user-login   ...user-login...
+                                                                                   :access_token ...token...}})
+       (provided
+         (user/authenticate-and-retrieve-user @storage/user-store email password) => {:login ...user-login...}
+         (conf/fetch @storage/confirmation-store confirmation-id) => {:login email :confirmation-id confirmation-id}
+         (cl-token/create-token @storage/token-store nil {:login ...user-login...}) => {:token ...token...})
+
+       (fact "when credentials are invalid, redirect back to form with invalid error"
+             (against-background
+               (user/authenticate-and-retrieve-user @storage/user-store email "Invalid password") => nil
+               (conf/fetch @storage/confirmation-store confirmation-id) => {:login email :confirmation-id confirmation-id})
+             (let [response (->> (create-request :post (routes/path :confirmation-sign-in)
+                                                 {:confirmation-id confirmation-id :password "Invalid password"})
+                                 (ec/confirmation-sign-in @storage/user-store))]
+               response => (contains {:status 200})
+               response =not=> (contains {:session {:user-login   anything
+                                                    :access_token anything}})
+               (-> (html/select (html/html-snippet (:body response)) [:.clj--validation-summary__item]) first :attrs :data-l8n)
+               => "content:confirmation-sign-in-form/invalid-credentials-validation-message")))
        
 
