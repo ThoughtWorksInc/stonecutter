@@ -71,7 +71,7 @@
        :show-profile-created             user/show-profile-created
        :show-profile-deleted             user/show-profile-deleted
        :show-unshare-profile-card        (partial user/show-unshare-profile-card user-store)
-       :unshare-profile-card             user/unshare-profile-card
+       :unshare-profile-card             (partial user/unshare-profile-card user-store)
        :show-delete-account-confirmation user/show-delete-account-confirmation
        :delete-account                   (partial user/delete-account user-store)
        :show-change-password-form        user/show-change-password-form
