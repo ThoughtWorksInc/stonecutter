@@ -71,18 +71,21 @@
     (log/debug "Connected to mongo.")
     db))
 
+(defn- create-mongo-store [db collection index]
+  (mc/ensure-index db collection {index 1} {:unique true})
+  (new-mongo-store db collection))
+
 (defn create-mongo-user-store [db]
-  (mc/ensure-index db user-collection {:login 1} {:unique true})
-  (new-mongo-store db user-collection))
+  (create-mongo-store db user-collection :login))
 
 (defn create-token-store [db]
-  (new-mongo-store db token-collection))
+  (create-mongo-store db token-collection :token))
 
 (defn create-auth-code-store [db]
-  (new-mongo-store db auth-code-collection))
+  (create-mongo-store db auth-code-collection :code))
 
 (defn create-client-store [db]
-  (new-mongo-store db client-collection))
+  (create-mongo-store db client-collection :client-id))
 
 (defn create-confirmation-store [db]
-  (new-mongo-store db confirmation-collection))
+  (create-mongo-store db confirmation-collection :confirmation-id))
