@@ -6,6 +6,7 @@
             [clojure.string :as string]
             [stonecutter.config :as config]
             [stonecutter.email :as email]
+            [stonecutter.integration.integration-helpers :as ih]
             [stonecutter.integration.kerodon-helpers :as kh]
             [stonecutter.integration.kerodon-selectors :as ks]
             [stonecutter.routes :as routes]
@@ -17,11 +18,14 @@
             [stonecutter.db.storage :as storage]))
 
 (l/init-logger!)
-(s/setup-in-memory-stores!)
-(def stores-m (s/create-in-memory-stores))
+(ih/setup-db)
+
+(s/setup-mongo-stores! (ih/get-test-db))
+
+(def stores-m (s/create-mongo-stores (ih/get-test-db)))
 
 (defn setup-add-client-to-user! [email client-name]
-  (let [client (cl-client/register-client @storage/client-store client-name "myclient.com")
+  (let [client (cl-client/register-client (s/get-client-store stores-m) client-name "myclient.com")
         client-id (:client-id client)]
     (user/add-authorised-client-for-user! (s/get-user-store stores-m) email client-id)))
 

@@ -35,7 +35,8 @@
   (setup-in-memory-stores!))
 
 (defn create-mongo-stores [db]
-  {:user-store @user-store})
+  {:user-store @user-store
+   :client-store @client-store})
 
 (defn create-in-memory-stores []
   {:user-store @user-store
