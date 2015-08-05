@@ -35,16 +35,22 @@
   (let [{:keys [subject body]} ((template @template-to-renderer-map) email-data)]
     (@sender email-address subject body)))
 
+(defn bash-sender [email-script-path email-address subject body]
+  (log/debug (format "sending email to '%s' using bash script: '%s'." email-address email-script-path))
+  (try (let [shell-response (shell/sh email-script-path 
+                                      (str email-address)
+                                      (str subject)
+                                      (str body))]
+         (log/debug (format "script returned exit code: '%s'" (:exit shell-response)))
+         (when-not (= 0 (:exit shell-response))
+           (log/error (format "script failed to send email. Here is the output of the script: '%s'" (:out shell-response))))
+         shell-response)
+       (catch Exception e (log/error e (format "Failed while calling '%s'." email-script-path)))))
+
 (defn bash-sender-factory [email-script-path]
   (if email-script-path
-    (fn [email-address subject body] 
-      (log/debug (format "sending email to '%s' using bash script: '%s'." email-address email-script-path))
-      (let [shell-response (shell/sh email-script-path 
-                (str email-address)
-                (str subject)
-                (str body))]
-        (log/debug (format "script returned exit code: '%s'" shell-response))
-        shell-response)) 
+    (fn [email-address subject body]
+      (bash-sender email-script-path email-address subject body)) 
     stdout-sender))
 
 (defn reset-email-configuration! []
