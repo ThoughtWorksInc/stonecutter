@@ -70,7 +70,7 @@
        :show-profile                     (partial user/show-profile user-store)
        :show-profile-created             user/show-profile-created
        :show-profile-deleted             user/show-profile-deleted
-       :show-unshare-profile-card        user/show-unshare-profile-card
+       :show-unshare-profile-card        (partial user/show-unshare-profile-card user-store)
        :unshare-profile-card             user/unshare-profile-card
        :show-delete-account-confirmation user/show-delete-account-confirmation
        :delete-account                   (partial user/delete-account user-store)

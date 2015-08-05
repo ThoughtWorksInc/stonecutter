@@ -361,24 +361,26 @@
 (facts "about unsharing profile cards"
        (facts "about get requests to /unshare-profile-card"
               (fact "client_id from query params is used in the form"
-                    (-> (create-request :get (routes/path :show-unshare-profile-card) {:client_id "client-id"})
-                        (assoc-in [:session :user-login] ...email...)
-                        u/show-unshare-profile-card
-                        :body
-                        html/html-snippet
-                        (html/select [:.clj--client-id__input])
-                        first
-                        :attrs
-                        :value) => "client-id"
+                    (let [request (create-request :get (routes/path :show-unshare-profile-card)
+                                                  {:client_id "client-id"}
+                                                  {:user-login ...email...})]
+                      (-> (u/show-unshare-profile-card @storage/user-store request)
+                          :body
+                          html/html-snippet
+                          (html/select [:.clj--client-id__input])
+                          first
+                          :attrs
+                          :value)) => "client-id"
                     (provided
                       (user/is-authorised-client-for-user? @storage/user-store ...email... "client-id") => true
                       (c/retrieve-client anything "client-id") => {:client-id "client-id" :name "CLIENT_NAME"}))
 
               (fact "client name is correctly shown on the page"
-                    (let [element-has-correct-client-name-fn (fn [element] (= (html/text element) "CLIENT_NAME"))]
-                      (-> (create-request :get (routes/path :show-unshare-profile-card) {:client_id "client-id"})
-                          (assoc-in [:session :user-login] ...email...)
-                          u/show-unshare-profile-card
+                    (let [element-has-correct-client-name-fn (fn [element] (= (html/text element) "CLIENT_NAME"))
+                          request (create-request :get (routes/path :show-unshare-profile-card)
+                                                  {:client_id "client-id"}
+                                                  {:user-login ...email...})]
+                      (-> (u/show-unshare-profile-card @storage/user-store request)
                           :body
                           html/html-snippet
                           (html/select [:.clj--client-name])) => (has some element-has-correct-client-name-fn)
@@ -387,13 +389,14 @@
                         (c/retrieve-client anything "client-id") => {:client-id "client-id" :name "CLIENT_NAME"})))
 
               (fact "missing client_id query param responds with 404"
-                    (-> (create-request :get (routes/path :show-unshare-profile-card) nil)
-                        u/show-unshare-profile-card) => {:status 404})
+                    (->> (create-request :get (routes/path :show-unshare-profile-card) nil)
+                         (u/show-unshare-profile-card @storage/user-store)) => {:status 404})
 
               (fact "user is redirected to /profile if client_id is not in user's list of authorised clients"
-                    (-> (create-request :get (routes/path :show-unshare-profile-card) {:client_id ...client-id...})
-                        (assoc-in [:session :user-login] ...email...)
-                        u/show-unshare-profile-card) => (check-redirects-to "/profile")
+                    (->> (create-request :get (routes/path :show-unshare-profile-card)
+                                         {:client_id ...client-id...}
+                                         {:user-login ...email...})
+                         (u/show-unshare-profile-card @storage/user-store)) => (check-redirects-to "/profile")
                     (provided
                       (user/is-authorised-client-for-user? @storage/user-store ...email... ...client-id...) => false)))
 
