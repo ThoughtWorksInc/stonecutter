@@ -100,7 +100,14 @@
                    request (-> confirm-email-request
                                (with-signed-in-user user))]
                (ec/confirm-email-with-id user-store request)
-               (conf/fetch @storage/confirmation-store confirmation-id) => nil)))
+               (conf/fetch @storage/confirmation-store confirmation-id) => nil))
+
+       (fact "when the confirmation id does not exist in the db"
+             (let [user-store (m/create-memory-store)
+                   user (user/store-user! user-store email "password")
+                   request (-> confirm-email-request
+                               (with-signed-in-user user))]
+               (ec/confirm-email-with-id user-store request) => (check-redirects-to (routes/path :sign-in)))))
 
 (facts "about confirmation sign in"
        (fact "when password matches login of confirmation id, user is logged in")
