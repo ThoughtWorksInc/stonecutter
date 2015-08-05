@@ -226,12 +226,11 @@
             :session)) => {:something-else ...something-else...})
 
 (fact "account can be deleted, user is redirected to profile-deleted and session is cleared"
-      (-> (create-request :post "/delete-account" nil)
-          (assoc-in [:session :user-login] "account_to_be@deleted.com")
-          (assoc-in [:session :access_token] ...token...)
-          u/delete-account) => (every-checker
-                                 (check-redirects-to "/profile-deleted")
-                                 (contains {:session nil}))
+      (->> (create-request :post "/delete-account" nil {:user-login   "account_to_be@deleted.com"
+                                                        :access_token ...token...})
+           (u/delete-account @storage/user-store)) => (every-checker
+                                                        (check-redirects-to "/profile-deleted")
+                                                        (contains {:session nil}))
       (provided
         (user/delete-user! @storage/user-store "account_to_be@deleted.com") => anything))
 

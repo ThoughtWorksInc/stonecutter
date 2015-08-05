@@ -73,7 +73,7 @@
        :show-unshare-profile-card        user/show-unshare-profile-card
        :unshare-profile-card             user/unshare-profile-card
        :show-delete-account-confirmation user/show-delete-account-confirmation
-       :delete-account                   user/delete-account
+       :delete-account                   (partial user/delete-account user-store)
        :show-change-password-form        user/show-change-password-form
        :change-password                  (partial user/change-password user-store)
        :show-authorise-form              oauth/show-authorise-form

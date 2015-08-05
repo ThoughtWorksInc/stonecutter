@@ -113,9 +113,9 @@
 (defn show-delete-account-confirmation [request]
   (sh/enlive-response (delete-account/delete-account-confirmation request) (:context request)))
 
-(defn delete-account [request]
+(defn delete-account [user-store request]
   (let [email (get-in request [:session :user-login])]
-    (user/delete-user! @storage/user-store email)
+    (user/delete-user! user-store email)
     (redirect-to-profile-deleted)))
 
 (defn redirect-to-profile-created [user request]
