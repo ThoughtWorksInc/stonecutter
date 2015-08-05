@@ -49,7 +49,6 @@
    :body    email-data})
 
 (background (before :facts (do (storage/setup-in-memory-stores!)
-                               (cl-user/reset-user-store! @storage/user-store)
                                (email/initialise! test-email-sender!
                                                   {:confirmation test-email-renderer}))
                     :after (do (storage/reset-in-memory-stores!)

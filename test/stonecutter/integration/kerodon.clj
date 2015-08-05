@@ -23,7 +23,7 @@
 (defn setup-add-client-to-user! [email client-name]
   (let [client (cl-client/register-client @storage/client-store client-name "myclient.com")
         client-id (:client-id client)]
-    (user/add-authorised-client-for-user! @storage/user-store email client-id)))
+    (user/add-authorised-client-for-user! (s/get-user-store stores-m) email client-id)))
 
 (defn print-enlive [state]
   (prn (-> state :enlive))

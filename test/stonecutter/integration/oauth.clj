@@ -75,7 +75,8 @@
         client-id (:client-id client)
         client-secret (:client-secret client)
         invalid-client-secret (string/reverse client-secret)
-        user (user/store-user! @storage/user-store email password)]
+        user (-> (s/get-user-store (s/create-in-memory-stores))
+                 (user/store-user! email password))]
     {:client-id             client-id
      :client-secret         client-secret
      :client-name           (:name client)
