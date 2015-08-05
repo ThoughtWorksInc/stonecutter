@@ -2,80 +2,82 @@
   (:require [midje.sweet :refer :all]
             [clauth.user :as cl-user]
             [clauth.auth-code :as cl-auth-code]
+            [stonecutter.db.mongo :as m]
             [stonecutter.db.storage :as s]
             [stonecutter.util.uuid :as uuid]
             [stonecutter.db.user :as user]
             [stonecutter.db.storage :as storage]))
 
+(s/setup-in-memory-stores!)
+(def user-store (m/create-memory-store))
+
 (facts "about storage of users - user storage journey"
-       ;; These facts do not mock the database
-       (s/setup-in-memory-stores!)
        (fact "can store a user"
-             (user/store-user! @storage/user-store "email@server.com" "password")
+             (user/store-user! user-store "email@server.com" "password")
              => (just {:login      "email@server.com"
-                       :name       nil
-                       :url        nil
-                       :confirmed? false
+                          :name       nil
+                          :url        nil
+                          :confirmed? false
                        :uid        anything}))
 
        (fact "can authenticate a user"
-             (user/authenticate-and-retrieve-user @storage/user-store "email@server.com" "password")
+             (user/authenticate-and-retrieve-user user-store "email@server.com" "password")
              => (contains {:login "email@server.com"
                            :name  nil
                            :url   nil}))
 
        (fact "can retrieve a user"
-             (user/retrieve-user @storage/user-store "email@server.com")
+             (user/retrieve-user user-store "email@server.com")
              => (contains {:login "email@server.com"
                            :name  nil
                            :url   nil}))
 
        (fact "can confirm user's account"
-             (let [confirmed-user-record (->> (user/store-user! @storage/user-store "email@server.com" "password")
-                                              (user/confirm-email! @storage/user-store))]
+             (let [confirmed-user-record (->> (user/store-user! user-store "email@server.com" "password")
+                                              (user/confirm-email! user-store))]
                confirmed-user-record =not=> (contains {:confirmation-id anything})
                confirmed-user-record => (contains {:confirmed? true})))
 
        (fact "can add authorised client for user"
-             (user/add-authorised-client-for-user! @storage/user-store "email@server.com" "a-client-id")
+             (user/add-authorised-client-for-user! user-store "email@server.com" "a-client-id")
              => (contains {:login              "email@server.com"
                            :name               nil
                            :url                nil
                            :authorised-clients ["a-client-id"]}))
 
        (fact "can remove authorised client for user"
-             (user/remove-authorised-client-for-user! @storage/user-store "email@server.com" "a-client-id")
+             (user/remove-authorised-client-for-user! user-store "email@server.com" "a-client-id")
              => (contains {:login              "email@server.com"
                            :name               nil
                            :url                nil
                            :authorised-clients []}))
 
        (fact "can change user's password"
-             (user/change-password! @storage/user-store "email@server.com" "new-password")
-             (user/authenticate-and-retrieve-user @storage/user-store "email@server.com" "password") => nil
-             (user/authenticate-and-retrieve-user @storage/user-store "email@server.com" "new-password")
+             (user/change-password! user-store "email@server.com" "new-password")
+             (user/authenticate-and-retrieve-user user-store "email@server.com" "password") => nil
+             (user/authenticate-and-retrieve-user user-store "email@server.com" "new-password")
              => (contains {:login "email@server.com" :name nil :url nil}))
 
 
        (fact "can delete a user"
-             (user/delete-user! @storage/user-store "email@server.com") => {}
-             (user/authenticate-and-retrieve-user @storage/user-store "email@server.com" "password") => nil))
+             (user/delete-user! user-store "email@server.com") => {}
+             (user/authenticate-and-retrieve-user user-store "email@server.com" "password") => nil))
 
 (facts "about is-duplicate-user?"
        (fact "unique email in not a duplicate"
-             (user/is-duplicate-user? @storage/user-store "unique@email.com") => false
+             (user/is-duplicate-user? ...user-store... "unique@email.com") => false
              (provided
-               (user/retrieve-user @storage/user-store "unique@email.com") => nil))
+               (user/retrieve-user ...user-store... "unique@email.com") => nil))
 
        (fact "duplicate email is a duplicate"
-             (user/is-duplicate-user? @storage/user-store "valid@email.com") => true
+             (user/is-duplicate-user? ...user-store... "valid@email.com") => true
              (provided
-               (user/retrieve-user @storage/user-store "valid@email.com") => ...a-user...))
+               (user/retrieve-user ...user-store... "valid@email.com") => ...a-user...))
 
        (fact "the email is always lower-cased"
-             (user/is-duplicate-user? @storage/user-store "VALID@EMAIL.COM") => true
+             (user/is-duplicate-user? ...user-store... "VALID@EMAIL.COM") => true
              (provided
-               (user/retrieve-user @storage/user-store "valid@email.com") => ...a-user...)))
+               (user/retrieve-user ...user-store... "valid@email.com") => ...a-user...)))
 
 (fact "about creating a user record"
       (let [id-gen (constantly "id")]
@@ -87,39 +89,39 @@
 
 (facts "about storing users"
        (fact "users are stored in the user-store"
-             (user/store-user! @storage/user-store "email@server.com" "password") => {...a-user-key... ...a-user-value...}
+             (user/store-user! ...user-store... "email@server.com" "password") => {...a-user-key... ...a-user-value...}
              (provided
                (user/create-user uuid/uuid "email@server.com" "password") => ...user...
-               (cl-user/store-user @storage/user-store ...user...) => {...a-user-key... ...a-user-value...}))
+               (cl-user/store-user ...user-store... ...user...) => {...a-user-key... ...a-user-value...}))
 
        (fact "password is removed before returning user"
-             (-> (user/store-user! @storage/user-store "email@server.com" "password")
+             (-> (user/store-user! ...user-store... "email@server.com" "password")
                  :password) => nil
              (provided
                (user/create-user uuid/uuid "email@server.com" "password") => ...user...
-               (cl-user/store-user @storage/user-store ...user...) => {:password "hashedAndSaltedPassword"})))
+               (cl-user/store-user ...user-store... ...user...) => {:password "hashedAndSaltedPassword"})))
 
 (facts "about authenticating and retrieving users"
        (fact "with valid credentials"
-             (user/authenticate-and-retrieve-user @storage/user-store "email@server.com" "password") => {...a-user-key... ...a-user-value...}
+             (user/authenticate-and-retrieve-user ...user-store... "email@server.com" "password") => {...a-user-key... ...a-user-value...}
              (provided
-               (cl-user/authenticate-user @storage/user-store "email@server.com" "password") => {...a-user-key... ...a-user-value...}))
+               (cl-user/authenticate-user ...user-store... "email@server.com" "password") => {...a-user-key... ...a-user-value...}))
 
        (fact "password is removed before returning user"
-             (-> (user/authenticate-and-retrieve-user @storage/user-store "email@server.com" "password")
+             (-> (user/authenticate-and-retrieve-user ...user-store... "email@server.com" "password")
                  :password) => nil
              (provided
-               (cl-user/authenticate-user @storage/user-store "email@server.com" "password") => {:password "hashedAndSaltedPassword"}))
+               (cl-user/authenticate-user ...user-store... "email@server.com" "password") => {:password "hashedAndSaltedPassword"}))
 
        (fact "with invalid credentials returns nil"
-             (user/authenticate-and-retrieve-user @storage/user-store "invalid@credentials.com" "password") => nil
+             (user/authenticate-and-retrieve-user ...user-store... "invalid@credentials.com" "password") => nil
              (provided
-               (cl-user/authenticate-user @storage/user-store "invalid@credentials.com" "password") => nil)))
+               (cl-user/authenticate-user ...user-store... "invalid@credentials.com" "password") => nil)))
 
 (fact "can retrieve user without authentication"
-      (user/retrieve-user @storage/user-store "email@server.com") => ...a-user...
+      (user/retrieve-user ...user-store... "email@server.com") => ...a-user...
       (provided
-        (cl-user/fetch-user @storage/user-store "email@server.com") => ...a-user...))
+        (cl-user/fetch-user ...user-store... "email@server.com") => ...a-user...))
 
 (fact "can retrieve user using auth-code"
       (let [auth-code-record (cl-auth-code/create-auth-code @storage/auth-code-store ...client... ...user... ...redirect-uri...)]
@@ -163,14 +165,14 @@
 
 (facts "about is-authorised-client-for-user?"
        (fact "returns true if client-id is in the users authorised-clients list"
-             (user/is-authorised-client-for-user? @storage/user-store ...email... ...client-id...) => true
+             (user/is-authorised-client-for-user? ...user-store... ...email... ...client-id...) => true
              (provided
-               (user/retrieve-user @storage/user-store ...email...) => {:authorised-clients [...client-id...]}))
+               (user/retrieve-user ...user-store... ...email...) => {:authorised-clients [...client-id...]}))
 
        (fact "returns false if client-id is in not in the users authorised-clients list"
-             (user/is-authorised-client-for-user? @storage/user-store ...email... ...client-id...) => false
+             (user/is-authorised-client-for-user? ...user-store... ...email... ...client-id...) => false
              (provided
-               (user/retrieve-user @storage/user-store ...email...) => {:authorised-clients [...a-different-client-id...]})))
+               (user/retrieve-user ...user-store... ...email...) => {:authorised-clients [...a-different-client-id...]})))
 
 (facts "about changing password"
        (fact "update-password returns a function that hashes and updates the user's password"
