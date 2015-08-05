@@ -75,7 +75,7 @@
        :show-delete-account-confirmation user/show-delete-account-confirmation
        :delete-account                   user/delete-account
        :show-change-password-form        user/show-change-password-form
-       :change-password                  user/change-password
+       :change-password                  (partial user/change-password user-store)
        :show-authorise-form              oauth/show-authorise-form
        :authorise                        oauth/authorise
        :authorise-client                 oauth/authorise-client

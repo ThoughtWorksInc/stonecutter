@@ -62,7 +62,7 @@
 (defn show-change-password-form [request]
   (sh/enlive-response (change-password/change-password-form request) (:context request)))
 
-(defn change-password [request]
+(defn change-password [user-store request]
   (let [email (get-in request [:session :user-login])
         params (:params request)
         current-password (:current-password params)
@@ -70,8 +70,8 @@
         err (v/validate-change-password params)
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
-      (if (user/authenticate-and-retrieve-user @storage/user-store email current-password)
-        (do (user/change-password! @storage/user-store email new-password)
+      (if (user/authenticate-and-retrieve-user user-store email current-password)
+        (do (user/change-password! user-store email new-password)
             (-> (r/redirect (routes/path :show-profile))
                 (assoc :flash :password-changed)))
         (-> request-with-validation-errors
