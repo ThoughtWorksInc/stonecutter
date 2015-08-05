@@ -42,7 +42,7 @@
 
 (defn auth-handler [client-store user-store request]
   ((cl-ep/authorization-handler
-     @storage/client-store
+     client-store
      @storage/token-store
      @storage/auth-code-store
      {:auto-approver                  (partial auto-approver user-store)
@@ -57,8 +57,8 @@
     (user/add-authorised-client-for-user! user-store user-email client-id)
     response))
 
-(defn is-redirect-uri-valid? [client-id redirect-uri]
-  (let [client-url (:url (client/retrieve-client @storage/client-store client-id))]
+(defn is-redirect-uri-valid? [client-store client-id redirect-uri]
+  (let [client-url (:url (client/retrieve-client client-store client-id))]
     (when (and client-url redirect-uri)
       (= (:host (url/url client-url)) (:host (url/url redirect-uri))))))
 
@@ -74,7 +74,7 @@
         user-login (get-in request [:session :user-login])
         clauth-request (-> request remove-csrf-token add-html-accept)
         access-token (get-in request [:session :access_token])]
-    (if (is-redirect-uri-valid? client-id redirect-uri)
+    (if (is-redirect-uri-valid? client-store client-id redirect-uri)
       (-> (auth-handler client-store user-store clauth-request)
           (assoc-in [:session :user-login] user-login)
           (assoc-in [:session :access_token] access-token))

@@ -240,20 +240,20 @@
        (def incorrect-url "http://danger-zone.com")
 
        (fact "returns true if redirect uri is the same as url in stored client"
-             (oauth/is-redirect-uri-valid? ...client-id... correct-url) => true
+             (oauth/is-redirect-uri-valid? ...client-store... ...client-id... correct-url) => true
              (provided
-               (client/retrieve-client anything ...client-id...) => {:url correct-url}))
+              (client/retrieve-client ...client-store... ...client-id...) => {:url correct-url}))
 
        (fact "returns false if redirect uri is NOT the same as url in stored client"
-             (oauth/is-redirect-uri-valid? ...client-id... incorrect-url) => false
+             (oauth/is-redirect-uri-valid? ...client-store... ...client-id... incorrect-url) => false
              (provided
-               (client/retrieve-client anything ...client-id...) => {:url correct-url}))
+              (client/retrieve-client ...client-store... ...client-id...) => {:url correct-url}))
 
        (tabular
          (fact "returns true as long as host is the same"
-               (oauth/is-redirect-uri-valid? ...client-id... ?client-url) => true
+               (oauth/is-redirect-uri-valid? ...client-store... ...client-id... ?client-url) => true
                (provided
-                 (client/retrieve-client anything ...client-id...) => {:url correct-url}))
+                (client/retrieve-client ...client-store... ...client-id...) => {:url correct-url}))
 
          ?client-url
          "https://test.com"
@@ -263,15 +263,15 @@
          "https://test.com/callback?params=1")
 
        (fact "returns true if redirect uri has the same root as url in stored client"
-             (oauth/is-redirect-uri-valid? ...client-id... (str correct-url "/callback")) => true
+             (oauth/is-redirect-uri-valid? ...client-store... ...client-id... (str correct-url "/callback")) => true
              (provided
-               (client/retrieve-client anything ...client-id...) => {:url correct-url}))
+              (client/retrieve-client ...client-store... ...client-id...) => {:url correct-url}))
 
        (fact "returns nil when client-id or redirect-uri does not exist"
-             (oauth/is-redirect-uri-valid? nil correct-url) => nil
-             (oauth/is-redirect-uri-valid? "123" nil) => nil)
+             (oauth/is-redirect-uri-valid? @storage/client-store nil correct-url) => nil
+             (oauth/is-redirect-uri-valid? @storage/client-store "123" nil) => nil)
 
        (fact "returns nil when client does not have url"
-             (oauth/is-redirect-uri-valid? ...client-id... correct-url) => nil
+             (oauth/is-redirect-uri-valid? ...client-store... ...client-id... correct-url) => nil
              (provided
-               (client/retrieve-client anything ...client-id...) => {})))
+              (client/retrieve-client ...client-store... ...client-id...) => {})))
