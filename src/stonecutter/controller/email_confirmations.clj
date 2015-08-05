@@ -3,11 +3,11 @@
             [ring.util.response :as r]
             [stonecutter.controller.user :as u]
             [stonecutter.db.confirmation :as conf]
+            [stonecutter.db.storage :as storage]
             [stonecutter.db.user :as user]
-            [stonecutter.routes :as routes]
-            [stonecutter.view.sign-in :as sign-in]
             [stonecutter.helper :as sh]
-            [stonecutter.db.storage :as storage]))
+            [stonecutter.routes :as routes]
+            [stonecutter.view.sign-in :as sign-in]))
 
 (defn show-confirm-sign-in-form [request]
   (sh/enlive-response (sign-in/confirmation-sign-in-form request) (:context request)))
