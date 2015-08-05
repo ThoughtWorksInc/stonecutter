@@ -137,9 +137,6 @@
 (defn app [stores-m]
   (create-app (config/create-config) stores-m :dev-mode? false))
 
-; FIXME when refactoring is done
-(def lein-app (create-app (config/create-config) @storage/user-store :dev-mode? true))
-
 (defn -main [& args]
   (let [config-m (config/create-config)]
     (vh/enable-template-caching!)
@@ -149,13 +146,3 @@
       (email/configure-email (config/email-script-path config-m))
       (client-seed/load-client-credentials-and-store-clients @s/client-store (config/client-credentials-file-path config-m))
       (ring-jetty/run-jetty (app (storage/create-mongo-stores db)) {:port (config/port config-m) :host (config/host config-m)}))))
-
-(defn lein-ring-init
-  "Function called when running app with 'lein ring server'"
-  []
-  (let [config-m (config/create-config)]
-    (vh/disable-template-caching!)
-    (s/setup-in-memory-stores!)
-    (email/configure-email (config/email-script-path config-m))
-    (client-seed/load-client-credentials-and-store-clients @s/client-store (config/client-credentials-file-path config-m))))
-

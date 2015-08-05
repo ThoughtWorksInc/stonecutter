@@ -31,8 +31,9 @@
                                               [lein-midje "3.1.3"]
                                               [lein-kibit "0.1.2"]
                                               [lein-ancient "0.6.7"]]
-                             :ring {:handler stonecutter.handler/lein-app
-                                    :init    stonecutter.handler/lein-ring-init
+                             :ring {:reload-paths ["src"]
+                                    :handler stonecutter.lein/lein-app
+                                    :init    stonecutter.lein/lein-ring-init
                                     :stacktrace-middleware prone.middleware/wrap-exceptions}
                              :jvm-opts ["-Dlog4j.configuration=log4j.dev"]
                              :resource-paths ["resources" "test-resources"]
