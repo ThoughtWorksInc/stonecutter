@@ -17,5 +17,5 @@ ssh $REMOTE_USER@$SERVER_IP <<EOF
                      -v /var/stonecutter/email_service:/var/stonecutter/email_service \
                      -p 127.0.0.1:5000:3000 --name stonecutter --link mongo:mongo \
                      --env-file=/var/stonecutter/config/stonecutter.env \
-                     java:8 bash -c 'java -jar /var/stonecutter/stonecutter-standalone.jar'
+                     java:8 bash -c 'java -Dlog4j.configuration=log4j.dev -jar /var/stonecutter/stonecutter-standalone.jar'
 EOF
