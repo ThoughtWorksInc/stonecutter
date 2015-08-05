@@ -87,15 +87,14 @@
 (defn generate-login-access-token [user]
   (:token (cl-token/create-token @storage/token-store nil user)))
 
-(defn sign-in [request]
-  (let [return-to (get-in request [:session :return-to])
-        params (:params request)
+(defn sign-in [user-store request]
+  (let [params (:params request)
         email (:email params)
         password (:password params)
         err (v/validate-sign-in params)
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
-      (if-let [user (user/authenticate-and-retrieve-user @storage/user-store email password)]
+      (if-let [user (user/authenticate-and-retrieve-user user-store email password)]
         (let [access-token (generate-login-access-token user)]
           (-> request
               (cl-ep/return-to-handler (routes/path :show-profile))

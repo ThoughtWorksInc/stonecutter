@@ -150,10 +150,10 @@
                           :value) => "invalid"))))
 
 (fact "user can sign in with valid credentials and is redirected to profile, with user-login and access_token added to session"
-      (-> (create-request :post "/sign-in" sign-in-user-params)
-          u/sign-in) => (contains {:status  302 :headers {"Location" (routes/path :show-profile)}
-                                   :session {:user-login   ...user-login...
-                                             :access_token ...token...}})
+      (->> (create-request :post "/sign-in" sign-in-user-params)
+           (u/sign-in @storage/user-store)) => (contains {:status  302 :headers {"Location" (routes/path :show-profile)}
+                                                          :session {:user-login   ...user-login...
+                                                                    :access_token ...token...}})
       (provided
         (user/authenticate-and-retrieve-user @storage/user-store email password) => {:login ...user-login...}
         (cl-token/create-token @storage/token-store nil {:login ...user-login...}) => {:token ...token...}))
@@ -185,31 +185,30 @@
                                                           :access_token ...token...}})))
 
 (fact "when user signs in, if the session contains return-to, then redirect to that address"
-      (-> (create-request :post "/sign-in" sign-in-user-params)
-          (assoc-in [:session :return-to] ...return-to-url...)
-          u/sign-in) => (contains {:status  302 :headers {"Location" ...return-to-url...}
-                                   :session {:access_token ...token... :user-login ...user-login...}})
+      (->> (create-request :post "/sign-in" sign-in-user-params {:return-to ...return-to-url...})
+           (u/sign-in @storage/user-store)) => (contains {:status  302 :headers {"Location" ...return-to-url...}
+                                                          :session {:access_token ...token... :user-login ...user-login...}})
       (provided
         (user/authenticate-and-retrieve-user @storage/user-store email password) => {:login ...user-login...}
         (cl-token/create-token @storage/token-store nil {:login ...user-login...}) => {:token ...token...}))
 
 (facts "about sign-in validation errors"
        (fact "user cannot sign in with blank password"
-             (-> (create-request :post "/sign-in" {:email "email@credentials.com" :password ""})
-                 u/sign-in) => (contains {:status 200}))
+             (->> (create-request :post "/sign-in" {:email "email@credentials.com" :password ""})
+                  (u/sign-in @storage/user-store)) => (contains {:status 200}))
 
        (fact "user cannot sign in with invalid credentials"
-             (-> (create-request :post "/sign-in" {:email "invalid@credentials.com" :password "password"})
-                 u/sign-in) => (contains {:status 200})
+             (->> (create-request :post "/sign-in" {:email "invalid@credentials.com" :password "password"})
+                  (u/sign-in @storage/user-store)) => (contains {:status 200})
              (provided
                (user/authenticate-and-retrieve-user @storage/user-store "invalid@credentials.com" "password") => nil))
 
        (facts "sign-in page is rendered with errors when invalid credentials are used"
-              (let [html-response (-> (create-request :post "/sign-in" {:email    "invalid@credentials.com"
-                                                                        :password "password"})
-                                      u/sign-in
-                                      :body
-                                      html/html-snippet)]
+              (let [html-response (->> (create-request :post "/sign-in" {:email    "invalid@credentials.com"
+                                                                         :password "password"})
+                                       (u/sign-in @storage/user-store)
+                                       :body
+                                       html/html-snippet)]
                 (fact "form should include validation error class"
                       (html/select html-response [:.clj--validation-summary__item]) =not=> empty?)
                 (fact "email value should be preserved"
@@ -263,8 +262,8 @@
 
        (fact "user cannot change password if current-password is invalid"
              (->> (create-request :post "/change-password" {:current-password "wrong-password"} {:user-login "user_who_is@changing_password.com"})
-                 (u/change-password @storage/user-store)) => (every-checker (contains {:status 200})
-                                                                            check-body-not-blank)
+                  (u/change-password @storage/user-store)) => (every-checker (contains {:status 200})
+                                                                             check-body-not-blank)
              (provided
                (v/validate-change-password anything) => {}
                (user/authenticate-and-retrieve-user @storage/user-store "user_who_is@changing_password.com" "wrong-password") => nil

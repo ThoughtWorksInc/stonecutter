@@ -62,7 +62,7 @@
        :show-registration-form           user/show-registration-form
        :register-user                    (partial user/register-user user-store)
        :show-sign-in-form                user/show-sign-in-form
-       :sign-in                          user/sign-in
+       :sign-in                          (partial user/sign-in user-store)
        :sign-out                         user/sign-out
        :confirm-email-with-id            ec/confirm-email-with-id
        :confirmation-sign-in-form        ec/show-confirm-sign-in-form
