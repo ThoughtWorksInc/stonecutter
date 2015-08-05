@@ -118,10 +118,16 @@ authorise-fail:
   page-intro-ending: can not have access to your Profile Card and cannot sign in.
 
 error-csrf:
-  page-intro: "CSRF forbidden response."
+  title: CSRF invalid
+  page-header: "CSRF invalid"
+  page-intro: "CSRF invalid response."
+  page-content: '<h2>What can I do now?</h2><ul><li>Please return to the <a href="/" title="Return to Home">home page</a>.</li></ul>'
 
 error-forbidden:
+  title: Forbidden
+  page-header: "Request forbidden"
   page-intro: "Request forbidden response."
+  page-content: '<h2>What can I do now?</h2><ul><li>Please return to the <a href="/" title="Return to Home">home page</a>.</li></ul>'
 
 error-404:
   title: Error-404

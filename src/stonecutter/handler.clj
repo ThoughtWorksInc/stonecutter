@@ -92,8 +92,7 @@
                                           :ping
                                           :theme-css
                                           :confirm-email-with-id
-                                          :confirmation-sign-in-form :confirmation-sign-in
-                                          }))))
+                                          :confirmation-sign-in-form :confirmation-sign-in}))))
 
 (defn api-handlers [stores-m]
   (let [user-store (storage/get-user-store stores-m)]
