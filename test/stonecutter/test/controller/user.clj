@@ -137,7 +137,7 @@
 
 (fact "user can sign in with valid credentials and is redirected to profile, with user-login and access_token added to session"
       (->> (th/create-request :post "/sign-in" sign-in-user-params)
-           (u/sign-in ...user-store...)) => (contains {:status  302 :headers {"Location" (routes/path :show-profile)}
+           (u/sign-in ...user-store... @storage/token-store)) => (contains {:status  302 :headers {"Location" (routes/path :show-profile)}
                                                        :session {:user-login   ...user-login...
                                                                  :access_token ...token...}})
       (provided
@@ -172,29 +172,31 @@
 
 (fact "when user signs in, if the session contains return-to, then redirect to that address"
       (->> (th/create-request :post "/sign-in" sign-in-user-params {:return-to ...return-to-url...})
-           (u/sign-in ...user-store...)) => (contains {:status  302 :headers {"Location" ...return-to-url...}
+           (u/sign-in ...user-store... @storage/token-store)) => (contains {:status  302 :headers {"Location" ...return-to-url...}
                                                        :session {:access_token ...token... :user-login ...user-login...}})
       (provided
        (user/authenticate-and-retrieve-user ...user-store... default-email default-password) => {:login ...user-login...}
        (cl-token/create-token @storage/token-store nil {:login ...user-login...}) => {:token ...token...}))
 
 (facts "about sign-in validation errors"
-       (let [user-store (m/create-memory-store)]
+       (let [user-store (m/create-memory-store)
+             token-store (m/create-memory-store)]
          (fact "user cannot sign in with blank password"
                (->> (th/create-request :post "/sign-in" {:email "email@credentials.com" :password ""})
-                    (u/sign-in user-store)) => (contains {:status 200})))
+                    (u/sign-in user-store token-store)) => (contains {:status 200})))
 
        (fact "user cannot sign in with invalid credentials"
              (->> (th/create-request :post "/sign-in" {:email "invalid@credentials.com" :password "password"})
-                  (u/sign-in ...user-store...)) => (contains {:status 200})
+                  (u/sign-in ...user-store... ...token-store...)) => (contains {:status 200})
              (provided
               (user/authenticate-and-retrieve-user ...user-store... "invalid@credentials.com" "password") => nil))
 
        (facts "sign-in page is rendered with errors when invalid credentials are used"
               (let [user-store (m/create-memory-store)
+                    token-store (m/create-memory-store)
                     html-response (->> (th/create-request :post "/sign-in" {:email    "invalid@credentials.com"
                                                                          :password "password"})
-                                       (u/sign-in user-store)
+                                       (u/sign-in user-store token-store)
                                        :body
                                        html/html-snippet)]
                 (fact "form should include validation error class"

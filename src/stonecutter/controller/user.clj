@@ -84,10 +84,10 @@
     (-> (r/redirect (routes/path :home)) (preserve-session request))
     (sh/enlive-response (sign-in/sign-in-form request) (:context request))))
 
-(defn generate-login-access-token [user]
-  (:token (cl-token/create-token @storage/token-store nil user)))
+(defn generate-login-access-token [token-store user]
+  (:token (cl-token/create-token token-store nil user)))
 
-(defn sign-in [user-store request]
+(defn sign-in [user-store token-store request]
   (let [params (:params request)
         email (:email params)
         password (:password params)
@@ -95,7 +95,7 @@
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
       (if-let [user (user/authenticate-and-retrieve-user user-store email password)]
-        (let [access-token (generate-login-access-token user)]
+        (let [access-token (generate-login-access-token token-store user)]
           (-> request
               (cl-ep/return-to-handler (routes/path :show-profile))
               (assoc-in [:session :user-login] (:login user))
@@ -122,7 +122,7 @@
   (-> (r/redirect (routes/path :show-profile-created))
       (preserve-session request)
       (assoc-in [:session :user-login] (:login user))
-      (assoc-in [:session :access_token] (generate-login-access-token user))))
+      (assoc-in [:session :access_token] (generate-login-access-token @storage/token-store user))))
 
 (defn redirect-to-profile-deleted []
   (assoc (r/redirect (routes/path :show-profile-deleted)) :session nil))
