@@ -64,7 +64,7 @@
        :show-sign-in-form                user/show-sign-in-form
        :sign-in                          (partial user/sign-in user-store)
        :sign-out                         user/sign-out
-       :confirm-email-with-id            ec/confirm-email-with-id
+       :confirm-email-with-id            (partial ec/confirm-email-with-id user-store)
        :confirmation-sign-in-form        ec/show-confirm-sign-in-form
        :confirmation-sign-in             ec/confirmation-sign-in
        :show-profile                     (partial user/show-profile user-store)

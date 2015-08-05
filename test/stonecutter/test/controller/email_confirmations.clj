@@ -73,7 +73,7 @@
                    confirmation (conf/store! @storage/confirmation-store email confirmation-id)
                    request (-> confirm-email-request
                                (with-signed-in-user user))]
-               (ec/confirm-email-with-id request) => (check-redirects-to (routes/path :show-profile))
+               (ec/confirm-email-with-id @storage/user-store request) => (check-redirects-to (routes/path :show-profile))
                (user/retrieve-user @storage/user-store (:login user)) =not=> (contains {:confirmation-id anything})
                (user/retrieve-user @storage/user-store (:login user)) => (contains {:confirmed? true})))
 
@@ -83,14 +83,14 @@
                    confirmation (conf/store! @storage/confirmation-store "confirming@email.com"  confirmation-id)
                    request (-> confirm-email-request
                                (with-signed-in-user signed-in-user))
-                   response (ec/confirm-email-with-id request)]
+                   response (ec/confirm-email-with-id @storage/user-store request)]
                response =not=> (check-signed-in request signed-in-user)
                response => (check-redirects-to confirm-email-path)))
 
        (fact "when user is not signed in, redirects to sign-in form with the confirmation endpoint (including confirmation UUID query string) as the successful sign-in redirect target"
              (let [confirming-user (user/store-user! @storage/user-store email "password")
                    confirmation (conf/store! @storage/confirmation-store email confirmation-id)
-                   response (ec/confirm-email-with-id confirm-email-request)]
+                   response (ec/confirm-email-with-id @storage/user-store confirm-email-request)]
                response => (check-redirects-to (routes/path :confirmation-sign-in-form
                                                             :confirmation-id confirmation-id))))
 
@@ -99,7 +99,7 @@
                    confirmation (conf/store! @storage/confirmation-store email confirmation-id)
                    request (-> confirm-email-request
                                (with-signed-in-user user))]
-               (ec/confirm-email-with-id request)
+               (ec/confirm-email-with-id @storage/user-store request)
                (conf/fetch @storage/confirmation-store confirmation-id) => nil)))
 
 (facts "about confirmation sign in"

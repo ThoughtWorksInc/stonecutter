@@ -12,16 +12,16 @@
 (defn show-confirm-sign-in-form [request]
   (sh/enlive-response (sign-in/confirmation-sign-in-form request) (:context request)))
 
-(defn confirm-email-with-id [request]
+(defn confirm-email-with-id [user-store request]
  (if (u/signed-in? request)
   (let [user-email (get-in request [:session :user-login])
-        user (user/retrieve-user @storage/user-store user-email)
+        user (user/retrieve-user user-store user-email)
         confirmation (conf/fetch @storage/confirmation-store (get-in request [:params :confirmation-id]))]
     (log/debug (format "confirm-email-with-id Confirm-email user '%s' signed in." user-email)) 
     (if (= (:login confirmation) (:login user))
         (do  
           (log/debug (format "confirmation-ids match. Confirming user's email."))
-          (user/confirm-email! @storage/user-store user)
+          (user/confirm-email! user-store user)
           (conf/revoke! @storage/confirmation-store (:confirmation-id confirmation))
           (r/redirect (routes/path :show-profile)))
         (do 
