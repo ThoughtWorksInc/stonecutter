@@ -331,10 +331,9 @@
 
 (facts "about show-profile"
        (fact "user's authorised clients passed to html-response"
-             (-> (create-request :get (routes/path :show-profile) nil)
-                 (assoc :session {:user-login ...email...})
-                 u/show-profile
-                 :body) => (contains #"CLIENT 1[\s\S]+CLIENT 2")
+             (->> (create-request :get (routes/path :show-profile) nil {:user-login ...email...})
+                  (u/show-profile @storage/user-store)
+                  :body) => (contains #"CLIENT 1[\s\S]+CLIENT 2")
              (provided
                (user/retrieve-user @storage/user-store ...email...) => {:login              ...email...
                                                                         :authorised-clients [...client-id-1... ...client-id-2...]}
@@ -347,11 +346,10 @@
                  (user/retrieve-user @storage/user-store ...email...) => {:login      ...email...
                                                                           :confirmed? ?confirmed})
                (let [enlive-snippet
-                     (-> (create-request :get (routes/path :show-profile) nil)
-                         (assoc :session {:user-login ...email...})
-                         u/show-profile
-                         :body
-                         html/html-snippet)]
+                     (->> (create-request :get (routes/path :show-profile) nil {:user-login ...email...})
+                          (u/show-profile @storage/user-store)
+                          :body
+                          html/html-snippet)]
 
                  (html/select enlive-snippet [?should-show]) => (one-of anything)
                  (html/select enlive-snippet [?should-hide]) => empty?))

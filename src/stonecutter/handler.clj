@@ -67,7 +67,7 @@
        :confirm-email-with-id            ec/confirm-email-with-id
        :confirmation-sign-in-form        ec/show-confirm-sign-in-form
        :confirmation-sign-in             ec/confirmation-sign-in
-       :show-profile                     user/show-profile
+       :show-profile                     (partial user/show-profile user-store)
        :show-profile-created             user/show-profile-created
        :show-profile-deleted             user/show-profile-deleted
        :show-unshare-profile-card        user/show-unshare-profile-card
