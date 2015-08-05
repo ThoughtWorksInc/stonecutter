@@ -39,10 +39,12 @@
   (if email-script-path
     (fn [email-address subject body] 
       (log/debug (format "sending email to '%s' using bash script: '%s'." email-address email-script-path))
-      (shell/sh email-script-path 
+      (let [shell-response (shell/sh email-script-path 
                 (str email-address)
                 (str subject)
-                (str body))) 
+                (str body))]
+        (log/debug (format "script returned exit code: '%s'" shell-response))
+        shell-response)) 
     stdout-sender))
 
 (defn reset-email-configuration! []
