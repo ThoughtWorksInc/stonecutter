@@ -1,6 +1,6 @@
 #!/bin/bash
-
-PROVIDER_DIR=./providers
+DIR=$( cd "$( dirname "$BASH_SOURCE[0]}" )" && pwd )
+PROVIDER_DIR=$DIR/providers
 VERBOSE=0
 GREEN='\033[0;36m'
 NC='\033[0m' # No Color
