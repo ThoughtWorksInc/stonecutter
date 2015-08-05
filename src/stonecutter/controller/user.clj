@@ -127,12 +127,12 @@
 (defn redirect-to-profile-deleted []
   (assoc (r/redirect (routes/path :show-profile-deleted)) :session nil))
 
-(defn show-profile [user-store request]
+(defn show-profile [client-store user-store request]
   (let [email (get-in request [:session :user-login])
         user (user/retrieve-user user-store email)
         confirmed? (:confirmed? user)
         authorised-client-ids (:authorised-clients user)
-        authorised-clients (map #(c/retrieve-client @storage/client-store %)
+        authorised-clients (map #(c/retrieve-client client-store %)
                                 authorised-client-ids)]
     (-> request
         (assoc-in [:context :authorised-clients] authorised-clients)

@@ -54,7 +54,8 @@
       (r/content-type "text/plain")))
 
 (defn site-handlers [stores-m]
-  (let [user-store (storage/get-user-store stores-m)]
+  (let [user-store (storage/get-user-store stores-m)
+        client-store (storage/get-client-store stores-m)]
     (->
       {:home                             user/home
        :ping                             ping
@@ -67,7 +68,7 @@
        :confirm-email-with-id            (partial ec/confirm-email-with-id user-store)
        :confirmation-sign-in-form        ec/show-confirm-sign-in-form
        :confirmation-sign-in             (partial ec/confirmation-sign-in user-store)
-       :show-profile                     (partial user/show-profile user-store)
+       :show-profile                     (partial user/show-profile client-store user-store)
        :show-profile-created             user/show-profile-created
        :show-profile-deleted             user/show-profile-deleted
        :show-unshare-profile-card        (partial user/show-unshare-profile-card user-store)

@@ -318,7 +318,7 @@
 (facts "about show-profile"
        (fact "user's authorised clients passed to html-response"
              (->> (th/create-request :get (routes/path :show-profile) nil {:user-login ...email...})
-                  (u/show-profile ...user-store...)
+                  (u/show-profile @storage/client-store ...user-store...)
                   :body) => (contains #"CLIENT 1[\s\S]+CLIENT 2")
              (provided
               (user/retrieve-user ...user-store... ...email...) => {:login              ...email...
@@ -333,7 +333,7 @@
                                                                       :confirmed? ?confirmed})
                (let [enlive-snippet
                      (->> (th/create-request :get (routes/path :show-profile) nil {:user-login ...email...})
-                          (u/show-profile ...user-store...)
+                          (u/show-profile @storage/client-store ...user-store...)
                           :body
                           html/html-snippet)]
 
