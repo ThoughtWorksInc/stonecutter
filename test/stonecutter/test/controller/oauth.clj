@@ -32,7 +32,7 @@
                                                                      :response_type "code"
                                                                      :redirect_uri  client-url})
                                (r/header "accept" "text/html"))
-                   response (oauth/authorise (m/create-memory-store) request)]
+                   response (oauth/authorise @storage/client-store (m/create-memory-store) request)]
                (:status response) => 302
                (-> response (get-in [:headers "Location"])) => "/sign-in"
                (-> response (get-in [:session :return-to])) => (format "/authorisation?client_id=%s&response_type=code&redirect_uri=%s" (:client-id client-details) (hiccup/url-encode client-url))))
@@ -52,7 +52,7 @@
                                (assoc-in [:context :translator] {})
                                ;the csrf-token key in session will stop clauth from refreshing the csrf-token in request
                                (assoc-in [:session :csrf-token] "staleCSRFtoken"))
-                   response (oauth/authorise user-store request)]
+                   response (oauth/authorise @storage/client-store user-store request)]
                (:status response) => 200
                (get-in response [:session :access_token]) => (:token access-token)
                (get response :body) => (contains "Share Profile Card")
@@ -72,10 +72,10 @@
                                (assoc-in [:session :csrf-token] csrf-token)
                                (assoc :content-type "application/x-www-form-urlencoded") ;To mock a form post
                                (assoc-in [:session :user-login] user-email))]
-               (oauth/authorise-client user-store request) => (contains {:status 302 :headers (contains {"Location" (contains "callback?code=")})})
+               (oauth/authorise-client @storage/client-store user-store request) => (contains {:status 302 :headers (contains {"Location" (contains "callback?code=")})})
                (provided
-                 (user/add-authorised-client-for-user! user-store user-email anything) => ...user...)))
-
+                (user/add-authorised-client-for-user! user-store user-email anything) => ...user...)))
+       
        (fact "valid request redirects to callback with auth code when there is an existing user session and the user has previously authorised the app"
              (let [user-store (m/create-memory-store)
                    user (user/store-user! user-store user-email "password")
@@ -87,7 +87,7 @@
                                                                      :redirect_uri "https://myapp.com/callback"})
                                (assoc-in [:session :access_token] (:token access-token))
                                (assoc-in [:session :user-login] (:login user)))
-                   response (oauth/authorise user-store request)]
+                   response (oauth/authorise @storage/client-store user-store request)]
                (:status response) => 302
                (get-in response [:headers "Location"]) => (contains "callback?code=")))
 
@@ -102,7 +102,7 @@
                                                                      :redirect_uri "https://invalidcallback.com"})
                                (assoc-in [:session :access_token] (:token access-token))
                                (assoc-in [:session :user-login] (:login user)))
-                   response (oauth/authorise user-store request)]
+                   response (oauth/authorise @storage/client-store user-store request)]
                (:status response) =not=> 302))
 
        (fact "return-to session key is refreshed when accessing authorisation endpoint without being signed in"
@@ -116,7 +116,7 @@
                                                           :response_type "code"
                                                           :redirect_uri  redirect-uri}
                                            :session      {:return-to ...old-return-to-uri...}}
-                                          (oauth/authorise user-store)
+                                          (oauth/authorise @storage/client-store user-store)
                                           :session
                                           :return-to)]
                new-return-to-uri => (contains ...new-uri...)
@@ -134,7 +134,7 @@
                                (assoc-in [:session :user-login] (:login user))
                                ;; stale csrf token can cause session to be lost
                                (assoc-in [:session :csrf-token] "staleCSRFtoken"))
-                   response (oauth/authorise user-store request)]
+                   response (oauth/authorise @storage/client-store user-store request)]
                (:status response) => 302
                (get-in response [:headers "Location"]) => (contains (str client-url "?code="))
                (get-in response [:session :access_token]) => (:token access-token)
@@ -142,17 +142,17 @@
 
 (facts "about show-authorise-form"
        (fact "authorise form is rendered with client name"
-             (let [element-has-correct-client-name-fn (fn [element] (= (html/text element) "CLIENT_NAME"))]
-               (-> (th/create-request-with-query-string :get (routes/path :show-authorise-form) {:client_id "CLIENT_ID"})
-                   oauth/show-authorise-form
+             (let [element-has-correct-client-name-fn (fn [element] (= (html/text element) "CLIENT_NAME"))
+                   request (th/create-request-with-query-string :get (routes/path :show-authorise-form) {:client_id "CLIENT_ID"})]
+               (-> (oauth/show-authorise-form @storage/client-store request)
                    :body
                    html/html-snippet
                    (html/select [:.clj--client-name])) => (has some element-has-correct-client-name-fn)
                (provided (client/retrieve-client @storage/client-store "CLIENT_ID") => {:client-id "CLIENT_ID" :name "CLIENT_NAME"})))
 
        (fact "redirects to error 404 page if client_id doesn't match a registered client"
-             (-> (th/create-request-with-query-string :get (routes/path :show-authorise-form) {:client_id "CLIENT_ID"})
-                 oauth/show-authorise-form) => (contains {:status 404})
+             (->> (th/create-request-with-query-string :get (routes/path :show-authorise-form) {:client_id "CLIENT_ID"})
+                  (oauth/show-authorise-form @storage/client-store)) => (contains {:status 404})
              (provided (client/retrieve-client @storage/client-store "CLIENT_ID") => nil)))
 
 (facts "about show-authorise-failure"

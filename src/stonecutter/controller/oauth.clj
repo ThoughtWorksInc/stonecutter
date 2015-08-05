@@ -11,9 +11,9 @@
             [stonecutter.helper :as sh]
             [stonecutter.db.storage :as storage]))
 
-(defn show-authorise-form [request]
+(defn show-authorise-form [client-store request]
   (let [client-id (get-in request [:params :client_id])]
-    (if-let [client (client/retrieve-client @storage/client-store client-id)]
+    (if-let [client (client/retrieve-client client-store client-id)]
       (let [context (assoc (:context request) :client client)]
         (-> (assoc request :context context)
             authorise/authorise-form
@@ -35,26 +35,25 @@
 
     (sh/enlive-response (authorise-failure/show-authorise-failure request) (:context request))))
 
-
 (defn auto-approver [user-store request]
   (let [client-id (get-in request [:params :client_id])
         user-email (get-in request [:session :user-login])]
     (user/is-authorised-client-for-user? user-store user-email client-id)))
 
-(defn auth-handler [user-store request]
+(defn auth-handler [client-store user-store request]
   ((cl-ep/authorization-handler
      @storage/client-store
      @storage/token-store
      @storage/auth-code-store
      {:auto-approver                  (partial auto-approver user-store)
       :user-session-required-redirect (routes/path :show-sign-in-form)
-      :authorization-form             show-authorise-form
+      :authorization-form             (partial show-authorise-form client-store)
       }) request))
 
-(defn authorise-client [user-store request]
+(defn authorise-client [client-store user-store request]
   (let [client-id (get-in request [:params :client_id])
         user-email (get-in request [:session :user-login])
-        response (auth-handler user-store request)]
+        response (auth-handler client-store user-store request)]
     (user/add-authorised-client-for-user! user-store user-email client-id)
     response))
 
@@ -69,14 +68,14 @@
 (defn add-html-accept [request]
   (assoc-in request [:headers "accept"] "text/html"))
 
-(defn authorise [user-store request]
+(defn authorise [client-store user-store request]
   (let [client-id (get-in request [:params :client_id])
         redirect-uri (get-in request [:params :redirect_uri])
         user-login (get-in request [:session :user-login])
         clauth-request (-> request remove-csrf-token add-html-accept)
         access-token (get-in request [:session :access_token])]
     (if (is-redirect-uri-valid? client-id redirect-uri)
-      (-> (auth-handler user-store clauth-request)
+      (-> (auth-handler client-store user-store clauth-request)
           (assoc-in [:session :user-login] user-login)
           (assoc-in [:session :access_token] access-token))
       (do

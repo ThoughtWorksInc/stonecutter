@@ -77,9 +77,9 @@
        :delete-account                   (partial user/delete-account user-store)
        :show-change-password-form        user/show-change-password-form
        :change-password                  (partial user/change-password user-store)
-       :show-authorise-form              oauth/show-authorise-form
-       :authorise                        (partial oauth/authorise user-store)
-       :authorise-client                 (partial oauth/authorise-client user-store)
+       :show-authorise-form              (partial oauth/show-authorise-form client-store)
+       :authorise                        (partial oauth/authorise client-store user-store)
+       :authorise-client                 (partial oauth/authorise-client client-store user-store)
        :show-authorise-failure           oauth/show-authorise-failure}
       (m/wrap-handlers #(m/wrap-handle-404 % not-found) #{})
       (m/wrap-handlers #(m/wrap-handle-403 % forbidden-err-handler) #{})
