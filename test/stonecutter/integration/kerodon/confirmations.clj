@@ -55,11 +55,12 @@
   {:subject ""
    :body    (str email-data)})
 
-(email/initialise! (email/bash-sender-factory "test-resources/mail_stub.sh")
-                   {:confirmation test-email-renderer})
+(email/initialise! {:confirmation test-email-renderer})
+
+(def email-sender (email/bash-sender-factory "test-resources/mail_stub.sh"))
 
 (facts "User is not confirmed when first registering for an account; Hitting the confirmation endpoint confirms the user account when the UUID in the uri matches that for the signed in user's account"
-       (-> (k/session (h/create-app {:secure "false"} stores-m :dev-mode? false))
+       (-> (k/session (h/create-app {:secure "false"} stores-m email-sender))
 
            (setup-test-directory)
 
@@ -80,7 +81,7 @@
            (teardown-test-directory)))
 
 (facts "The account confirmation flow can be followed by a user who is not signed in when first accessing the confirmation endpoint"
-       (-> (k/session (h/create-app {:secure "false"} stores-m :dev-mode? false))
+       (-> (k/session (h/create-app {:secure "false"} stores-m email-sender))
 
            (setup-test-directory)
 

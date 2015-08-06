@@ -54,7 +54,7 @@
   (-> (r/response "pong")
       (r/content-type "text/plain")))
 
-(defn site-handlers [stores-m]
+(defn site-handlers [stores-m email-sender]
   (let [user-store (storage/get-user-store stores-m)
         client-store (storage/get-client-store stores-m)
         token-store (storage/get-token-store stores-m)
@@ -65,7 +65,7 @@
        :ping                             ping
        :theme-css                        stylesheets/theme-css
        :show-registration-form           user/show-registration-form
-       :register-user                    (partial user/register-user user-store token-store confirmation-store)
+       :register-user                    (partial user/register-user user-store token-store confirmation-store email-sender)
        :show-sign-in-form                user/show-sign-in-form
        :sign-in                          (partial user/sign-in user-store token-store)
        :sign-out                         user/sign-out
@@ -125,8 +125,8 @@
       (assoc-in [:session :store] session-store)
       (assoc-in [:security :anti-forgery] {:error-handler handle-anti-forgery-error})))
 
-(defn create-site-app [config-m stores-m dev-mode?]
-  (-> (scenic/scenic-handler routes/routes (site-handlers stores-m) not-found)
+(defn create-site-app [config-m stores-m email-sender dev-mode?]
+  (-> (scenic/scenic-handler routes/routes (site-handlers stores-m email-sender) not-found)
       (ring-mw/wrap-defaults (wrap-defaults-config (s/get-session-store stores-m) (config/secure? config-m)))
       m/wrap-translator
       (m/wrap-config config-m)
@@ -141,17 +141,20 @@
                                ring-mw/api-defaults))
       (m/wrap-error-handling err-handler dev-mode?)))       ;; TODO create json error handler
 
-(defn create-app [config-m stores-m & {dev-mode? :dev-mode?}]
-  (splitter (create-site-app config-m stores-m dev-mode?) (create-api-app config-m stores-m dev-mode?)))
+(defn create-app
+  ([config-m stores-m email-sender]
+    (create-app config-m stores-m email-sender false))
+  ([config-m stores-m email-sender prone-stacktraces?]
+   (splitter (create-site-app config-m stores-m email-sender prone-stacktraces?) (create-api-app config-m stores-m prone-stacktraces?))))
 
 (defn -main [& args]
   (let [config-m (config/create-config)]
     (vh/enable-template-caching!)
     (let [db (mongo/get-mongo-db (config/mongo-uri config-m))
           stores-m (storage/create-mongo-stores db)
-          app (create-app config-m stores-m :dev-mode? false)]
+          email-sender (email/bash-sender-factory (config/email-script-path config-m))
+          app (create-app config-m stores-m email-sender)]
       (migration/run-migrations db)
-      (email/configure-email (config/email-script-path config-m))
       (admin/create-admin-user config-m (storage/get-user-store stores-m))
       (client-seed/load-client-credentials-and-store-clients (storage/get-client-store stores-m) (config/client-credentials-file-path config-m))
       (ring-jetty/run-jetty app {:port (config/port config-m) :host (config/host config-m)}))))

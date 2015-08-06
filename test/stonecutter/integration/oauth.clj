@@ -8,7 +8,8 @@
             [stonecutter.db.storage :as s]
             [stonecutter.integration.kerodon-helpers :as kh]
             [stonecutter.integration.kerodon-selectors :as ks]
-            [stonecutter.db.user :as user]))
+            [stonecutter.db.user :as user]
+            [stonecutter.test.email :as test-email]))
 
 ;; CLIENT => AUTH    /authorisation?client-id=123&response_type=code&redirect_uri=callback-url
 ;;   USER LOGIN (Auth Server)
@@ -85,11 +86,13 @@
       (k/fill-in ks/sign-in-password-input password)
       (k/press ks/sign-in-submit)))
 
+(def test-email-sender (test-email/create-test-email-sender))
+
 (facts "user authorising client-apps"
        (facts "user can sign in through client"
               (let [stores (s/create-in-memory-stores)
                     {:keys [client-id client-secret]} (setup stores)]
-                (-> (k/session (h/create-app {:secure "false"} stores :dev-mode? false))
+                (-> (k/session (h/create-app {:secure "false"} stores test-email-sender))
                     (browser-sends-authorisation-request-from-client-redirect client-id)
                     (k/follow-redirect)
                     ;; login
@@ -109,7 +112,7 @@
        (facts "user who has already authorised client does not need to authorise client again"
               (let [stores (s/create-in-memory-stores)
                     {:keys [client-id client-secret client-name]} (setup stores)]
-                (-> (k/session (h/create-app {:secure "false"} stores :dev-mode? false))
+                (-> (k/session (h/create-app {:secure "false"} stores test-email-sender))
                     ;; authorise client for the first time
                     (browser-sends-authorisation-request-from-client-redirect client-id)
                     (k/follow-redirect)
@@ -129,7 +132,7 @@
        (facts "user is redirected to authorisation-failure page when cancelling authorisation"
               (let [stores (s/create-in-memory-stores)
                     {:keys [client-id client-secret]} (setup stores)]
-                (-> (k/session (h/create-app {:secure "false"} stores :dev-mode? false))
+                (-> (k/session (h/create-app {:secure "false"} stores test-email-sender))
                     (browser-sends-authorisation-request-from-client-redirect client-id)
                     (k/follow-redirect)
                     ;; login
@@ -147,7 +150,7 @@
        (facts "user cannot sign in with invalid client secret"
               (let [stores (s/create-in-memory-stores)
                     {:keys [client-id invalid-client-secret]} (setup stores)]
-                (-> (k/session (h/create-app {:secure "false"} stores :dev-mode? false))
+                (-> (k/session (h/create-app {:secure "false"} stores test-email-sender))
                     (browser-sends-authorisation-request-from-client-redirect client-id)
                     (k/follow-redirect)
                     ;; login
@@ -165,7 +168,7 @@
        (facts "user cannot sign in with invalid password"
               (let [stores (s/create-in-memory-stores)
                     {:keys [client-id]} (setup stores)]
-                (-> (k/session (h/create-app {:secure "false"} stores :dev-mode? false))
+                (-> (k/session (h/create-app {:secure "false"} stores test-email-sender))
                     (browser-sends-authorisation-request-from-client-redirect client-id)
                     (k/follow-redirect)
                     ;; login

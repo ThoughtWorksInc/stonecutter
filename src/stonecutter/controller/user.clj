@@ -32,15 +32,15 @@
 (defn show-registration-form [request]
   (sh/enlive-response (register/registration-form request) (:context request)))
 
-(defn send-confirmation-email! [user email confirmation-id config-m]
+(defn send-confirmation-email! [email-sender user email confirmation-id config-m]
   (let [app-name (config/app-name config-m)
         base-url (config/base-url config-m)]
-    (email/send! :confirmation email {:confirmation-id confirmation-id
-                                      :app-name app-name
-                                      :base-url base-url}))
+    (email/send! email-sender :confirmation email {:confirmation-id confirmation-id
+                                                   :app-name        app-name
+                                                   :base-url        base-url}))
   user)
 
-(defn register-user [user-store token-store confirmation-store request]
+(defn register-user [user-store token-store confirmation-store email-sender request]
   (let [params (:params request)
         email (:email params)
         password (:password params)
@@ -51,9 +51,9 @@
     (if (empty? err)
       (do (conf/store! confirmation-store email confirmation-id)
           (-> (user/store-user! user-store email password)
-              (send-confirmation-email! email confirmation-id config-m)
-              (#(redirect-to-profile-created token-store % request))
-              (assoc :flash :confirm-email-sent))) 
+              (#(send-confirmation-email! email-sender % email confirmation-id config-m))
+              (#(redirect-to-profile-created token-store % request)) ;; FIXME tidy this up a bit
+              (assoc :flash :confirm-email-sent)))
       (show-registration-form request-with-validation-errors))))
 
 (defn show-change-password-form [request]

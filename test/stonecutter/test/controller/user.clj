@@ -9,10 +9,10 @@
             [stonecutter.controller.user :as u]
             [stonecutter.db.client :as c]
             [stonecutter.db.user :as user]
-            [stonecutter.db.storage :as storage]
             [stonecutter.db.mongo :as m]
             [stonecutter.util.uuid :as uuid]
-            [stonecutter.validation :as v]))
+            [stonecutter.validation :as v]
+            [stonecutter.test.email :as test-email]))
 
 (def check-body-not-blank
   (checker [response] (not (empty? (:body response)))))
@@ -41,21 +41,14 @@
 
 (def default-register-user-params (register-user-params default-email default-password default-password))
 
-(def most-recent-email (atom nil))
-
-(defn test-email-sender! [email subject body]
-  (reset! most-recent-email {:email   email
-                             :subject subject
-                             :body    body}))
-
 (defn test-email-renderer [email-data]
   {:subject "confirmation"
    :body    email-data})
 
-(background (before :facts (do (email/initialise! test-email-sender!
-                                                  {:confirmation test-email-renderer}))
-                    :after (do (email/reset-email-configuration!)
-                               (reset! most-recent-email nil))))
+(def test-email-sender (test-email/create-test-email-sender))
+
+(background (before :facts (do (email/initialise! {:confirmation test-email-renderer}))
+                    :after (do (test-email/reset-emails! test-email-sender ))))
 
 (facts "about registration"
        (fact "user can register with valid credentials and is redirected to profile-created page, with user-login and access_token added to session"
@@ -63,7 +56,7 @@
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
                    response (->> (th/create-request :post (routes/path :register-user) default-register-user-params {:some "session-data"})
-                                 (u/register-user user-store token-store confirmation-store))
+                                 (u/register-user user-store token-store confirmation-store test-email-sender))
                    registered-user (user/retrieve-user user-store default-email)]
                response => (check-redirects-to (routes/path :show-profile-created))
                response => (contains {:session (contains {:user-login   (:login registered-user)
@@ -74,7 +67,7 @@
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
                    response (->> (th/create-request :post (routes/path :register-user) default-register-user-params {:some "session-data"})
-                                 (u/register-user user-store token-store confirmation-store))]
+                                 (u/register-user user-store token-store confirmation-store test-email-sender))]
                response => (check-redirects-to (routes/path :show-profile-created))
                response => (contains {:session (contains {:some "session-data"})})))
 
@@ -83,21 +76,21 @@
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)]
                (->> (th/create-request :post (routes/path :register-user) default-register-user-params)
-                    (u/register-user user-store token-store confirmation-store))) => anything
+                    (u/register-user user-store token-store confirmation-store test-email-sender))) => anything
              (provided
               (user/store-user! anything "valid@email.com" "password") => ...user...))
 
-       (fact "user is send a confirmation email with the correct content"
+       (fact "user is sent a confirmation email with the correct content"
              (against-background
                (uuid/uuid) => confirmation-id)
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
                    response (->> (th/create-request :post (routes/path :register-user) default-register-user-params)
-                                 (u/register-user user-store token-store confirmation-store))
+                                 (u/register-user user-store token-store confirmation-store test-email-sender))
                    registered-user (user/retrieve-user user-store default-email)]
-               (:email @most-recent-email) => default-email
-               (:body @most-recent-email) => (contains {:confirmation-id confirmation-id})))
+               (:email (test-email/last-sent-email test-email-sender)) => default-email
+               (:body (test-email/last-sent-email test-email-sender)) => (contains {:confirmation-id confirmation-id})))
 
        (fact "when user email is send, flash message is assoc-ed in redirect"
              (against-background
@@ -106,7 +99,7 @@
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
                    response (->> (th/create-request :post (routes/path :register-user) default-register-user-params)
-                                 (u/register-user user-store token-store confirmation-store))]
+                                 (u/register-user user-store token-store confirmation-store test-email-sender))]
                (:flash response) => :confirm-email-sent)))
 
 (facts "about registration validation errors"
@@ -116,7 +109,7 @@
                    confirmation-store (m/create-memory-store)
                    original-user (user/store-user! user-store default-email default-password)
                    html-response (->> (th/create-request :post "/register" (register-user-params default-email default-password default-password))
-                                      (u/register-user user-store token-store confirmation-store)
+                                      (u/register-user user-store token-store confirmation-store test-email-sender)
                                       :body
                                       html/html-snippet)]
                (-> (html/select html-response [:.form-row--validation-error])
@@ -128,7 +121,7 @@
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)]
-               (->> (th/create-request :post "/register" {:email "invalid"}) (u/register-user user-store token-store confirmation-store))) => anything
+               (->> (th/create-request :post "/register" {:email "invalid"}) (u/register-user user-store token-store confirmation-store test-email-sender))) => anything
              (provided
                (cl-user/new-user anything anything) => anything :times 0
                (cl-user/store-user anything anything) => anything :times 0))
@@ -138,7 +131,7 @@
                     token-store (m/create-memory-store)
                     confirmation-store (m/create-memory-store)
                     html-response (->> (th/create-request :post "/register" {:email "invalid"})
-                                       (u/register-user user-store token-store confirmation-store)
+                                       (u/register-user user-store token-store confirmation-store test-email-sender)
                                        :body
                                        html/html-snippet)]
                 (fact "email field should have validation error class"

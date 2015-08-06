@@ -12,7 +12,8 @@
             [stonecutter.db.storage :as s]
             [stonecutter.logging :as l]
             [stonecutter.db.user :as user]
-            [stonecutter.view.register :as register-view]))
+            [stonecutter.view.register :as register-view]
+            [stonecutter.test.email :as test-email]))
 
 (l/init-logger!)
 (ih/setup-db)
@@ -52,7 +53,7 @@
       (k/press ks/sign-in-submit)))
 
 (defn parse-test-email []
-    (read-string (slurp "test-tmp/test-email.txt")))
+  (read-string (slurp "test-tmp/test-email.txt")))
 
 (defn checks-email-is-sent [state email-address]
   (fact {:midje/name "Check send email script is called"}
@@ -82,10 +83,11 @@
   {:subject ""
    :body (str email-data)})
 
-(email/initialise! (email/bash-sender-factory "test-resources/mail_stub.sh")
-                   {:confirmation test-email-renderer})
+(email/initialise! {:confirmation test-email-renderer})
 
-(def test-app (h/create-app {:secure "false"} stores-m :dev-mode? false))
+(def email-sender (email/bash-sender-factory "test-resources/mail_stub.sh"))
+
+(def test-app (h/create-app {:secure "false"} stores-m email-sender))
 
 (facts "Home url redirects to sign-in page if user is not signed in"
        (-> (k/session test-app)
@@ -292,12 +294,12 @@
 (fact "Error page is shown if an exception is thrown"
       (against-background
         (register-view/registration-form anything) =throws=> (Exception.))
-      (-> (k/session (h/create-app {:secure "false"} stores-m :dev-mode? false))
+      (-> (k/session (h/create-app {:secure "false"} stores-m email-sender))
           (k/visit "/register")
           (kh/response-status-is 500)
           (kh/selector-exists [ks/error-500-page-body]))
       (fact "if dev mode is enabled then error middleware isn't invoked (exception not caught)"
-            (-> (k/session (h/create-app {:secure "false"} :dev-mode? true))
+            (-> (k/session (h/create-app {:secure "false"} stores-m email-sender true))
                 (k/visit "/register")) => (throws Exception)))
 
 (fact "theme.css file is generated using environment variables"
@@ -307,7 +309,7 @@
                                     :static-resources-dir-path "./test-resources"
                                     :logo-file-name "beautiful_logo.png"}
                                    stores-m
-                                   :dev-mode? false))
+                                   email-sender))
           (k/visit "/stylesheets/theme.css")
           (kh/response-status-is 200)
           (kh/response-body-contains "#012345")
@@ -315,12 +317,12 @@
           (kh/response-body-contains "\"/beautiful_logo.png\"")))
 
 (fact "Correct css file is used when config includes a :theme"
-      (-> (k/session (h/create-app {:secure "false" :theme "MY_STYLING"} stores-m :dev-mode? false))
+      (-> (k/session (h/create-app {:secure "false" :theme "MY_STYLING"} stores-m email-sender))
           (k/visit "/sign-in")
           (kh/selector-has-attribute-with-content [ks/css-link] :href "/stylesheets/application.css")))
 
 (fact "Correct app-name is used when config includes an :app-name"
-      (-> (k/session (h/create-app {:secure "false" :app-name "My App Name"} stores-m :dev-mode? false))
+      (-> (k/session (h/create-app {:secure "false" :app-name "My App Name"} stores-m email-sender))
           (k/visit "/sign-in")
           (kh/selector-includes-content [ks/sign-in-app-name] "My App Name")))
 

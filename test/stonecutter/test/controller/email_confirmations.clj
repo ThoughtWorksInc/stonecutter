@@ -1,19 +1,15 @@
 (ns stonecutter.test.controller.email-confirmations
   (:require [midje.sweet :refer :all]
-            [ring.mock.request :as mock]
             [clauth.token :as cl-token]
-            [clauth.user :as cl-user]
             [net.cgrand.enlive-html :as html]
             [stonecutter.test.test-helpers :as th]
             [stonecutter.email :as email]
             [stonecutter.routes :as routes]
             [stonecutter.controller.email-confirmations :as ec]
-            [stonecutter.controller.user :as u]
             [stonecutter.db.user :as user]
-            [stonecutter.db.storage :as storage]
             [stonecutter.db.confirmation :as conf]
             [stonecutter.db.mongo :as m]
-            [stonecutter.view.profile :as profile]))
+            [stonecutter.test.email :as test-email]))
 
 (defn check-redirects-to [path]
   (checker [response] (and
@@ -35,15 +31,9 @@
                         session-not-changed)
                    (is-signed-in? response))))))
 
-(def most-recent-email (atom nil))
 (def email "dummy@email.com")
 (def confirmation-id "RANDOM-ID-12345")
 (def password "password123")
-
-(defn test-email-sender! [email subject body]
-  (reset! most-recent-email {:email   email
-                             :subject subject
-                             :body    body}))
 
 (defn test-email-renderer [email-data]
   {:subject "confirmation"
@@ -56,10 +46,10 @@
 (def confirm-email-request
   (th/create-request :get confirm-email-path {:confirmation-id confirmation-id}))
 
-(background (before :facts (do (email/initialise! test-email-sender!
-                                                  {:confirmation test-email-renderer}))
-                    :after (do (email/reset-email-configuration!)
-                               (reset! most-recent-email nil))))
+(def test-email-sender (test-email/create-test-email-sender))
+
+(background (before :facts (do (email/initialise! {:confirmation test-email-renderer})
+                               (test-email/reset-emails! test-email-sender))))
 
 (facts "about confirm-email-with-id"
        (fact "if the confirmation UUID in the query string matches that of the signed in user's user record confirm the account and redirect to profile view"

@@ -6,7 +6,7 @@
 
 (def stores-m (storage/create-in-memory-stores))
 
-(def app (h/create-app {:secure "false"} stores-m :dev-mode? false))
+(def app (h/create-app {:secure "false"} stores-m nil))
 
 (fact "registration url returns a 200 response"
       (-> (mock/request :get "/register") app  :status) => 200)

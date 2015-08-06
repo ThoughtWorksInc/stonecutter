@@ -2,21 +2,37 @@
   (:require [clojure.java.shell :as shell]
             [clojure.tools.logging :as log]))
 
-(def email-script-path (atom nil))
+(defprotocol EmailSender
+  (send-email! [this email-address subject body]))
 
-(def ^:dynamic email-renderers {:confirmation-email identity})
+(defrecord BashEmailSender [email-script-path]
+  EmailSender
+  (send-email! [this email-address subject body]
+    (log/debug (format "sending email to '%s' using bash script: '%s'." email-address email-script-path))
+    (try (let [shell-response (shell/sh email-script-path
+                                        (str email-address)
+                                        (str subject)
+                                        (str body))]
+           (log/debug (format "script returned exit code: '%s'" (:exit shell-response)))
+           (when-not (= 0 (:exit shell-response))
+             (log/error (format "script failed to send email. Here is the output of the script: '%s'" (:out shell-response))))
+           shell-response)
+         (catch Exception e (log/error e (format "Failed while calling '%s'." email-script-path))))))
 
-(def sender (atom nil))
+(defn create-bash-email-sender [path]
+  (log/debug (format "Initialising email sender to path: '%s'." path))
+  (BashEmailSender. path))
+
+(defrecord StdoutSender []
+  EmailSender
+  (send-email! [this email-address subject body]
+    (log/warn "Cannot send confirmation email as the path to the email sending script has not been set. Please set the EMAIL_SCRIPT_PATH environment variable to the appropriate script.")
+    (log/debug "email-address: " email-address "\nsubject: " subject "\nbody: " body)))
+
+(defn create-stdout-email-sender []
+  (StdoutSender. ))
+
 (def template-to-renderer-map (atom nil))
-
-(defn null-sender [email-address subject body] nil)
-(defn null-renderer [email-data] {:subject nil :body nil})
-
-(defn stdout-sender [email-address subject body]
-  (log/warn "Cannot send confirmation email as the path to the email sending script has not been set. Please set the EMAIL_SCRIPT_PATH environment variable to the appropriate script.")
-  (log/debug "email-address: " email-address "\nsubject: " subject "\nbody: " body))
-
-(defn stdout-renderer [email-data] {:subject nil :body email-data})
 
 (defn confirmation-email-body [base-url confirmation-id]
   (str
@@ -30,38 +46,19 @@
   {:subject (format "Confirm your email for %s" (:app-name email-data))
    :body (confirmation-email-body (:base-url email-data) (:confirmation-id email-data))})
 
-(defn send! [template email-address email-data]
+(defn send! [sender template email-address email-data]
   (log/debug (format "sending template '%s' to '%s'." template email-address))
   (let [{:keys [subject body]} ((template @template-to-renderer-map) email-data)]
-    (@sender email-address subject body)))
-
-(defn bash-sender [email-script-path email-address subject body]
-  (log/debug (format "sending email to '%s' using bash script: '%s'." email-address email-script-path))
-  (try (let [shell-response (shell/sh email-script-path 
-                                      (str email-address)
-                                      (str subject)
-                                      (str body))]
-         (log/debug (format "script returned exit code: '%s'" (:exit shell-response)))
-         (when-not (= 0 (:exit shell-response))
-           (log/error (format "script failed to send email. Here is the output of the script: '%s'" (:out shell-response))))
-         shell-response)
-       (catch Exception e (log/error e (format "Failed while calling '%s'." email-script-path)))))
+    (send-email! sender email-address subject body)))
 
 (defn bash-sender-factory [email-script-path]
   (if email-script-path
-    (fn [email-address subject body]
-      (bash-sender email-script-path email-address subject body)) 
-    stdout-sender))
+    (create-bash-email-sender email-script-path)
+    (create-stdout-email-sender)))
 
-(defn reset-email-configuration! []
-  (reset! sender nil)
-  (reset! template-to-renderer-map nil))
-
-(defn initialise! [sender-fn template-to-renderer-config]
-  (reset! sender sender-fn)  
+(defn initialise! [template-to-renderer-config]
   (reset! template-to-renderer-map template-to-renderer-config))
 
-(defn configure-email [path]
-  (log/debug (format "Initialising email sender to path: '%s'." path))
-  (initialise! (bash-sender-factory path)
-               {:confirmation confirmation-renderer}))
+(initialise! {:confirmation confirmation-renderer})
+
+
