@@ -56,11 +56,9 @@
 (def confirm-email-request
   (th/create-request :get confirm-email-path {:confirmation-id confirmation-id}))
 
-(background (before :facts (do (storage/setup-in-memory-stores!)
-                               (email/initialise! test-email-sender!
+(background (before :facts (do (email/initialise! test-email-sender!
                                                   {:confirmation test-email-renderer}))
-                    :after (do (storage/reset-in-memory-stores!)
-                               (email/reset-email-configuration!)
+                    :after (do (email/reset-email-configuration!)
                                (reset! most-recent-email nil))))
 
 (facts "about confirm-email-with-id"

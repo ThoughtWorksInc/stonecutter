@@ -8,11 +8,9 @@
             [stonecutter.routes :as routes]
             [stonecutter.handler :as h]
             [stonecutter.logging :as l]
-            [stonecutter.db.storage :as storage]
-            [clauth.store :as cl-store]))
+            [stonecutter.db.storage :as storage]))
 
 (l/init-logger!)
-(storage/setup-in-memory-stores!)
 
 (def stores-m (storage/create-in-memory-stores))
 

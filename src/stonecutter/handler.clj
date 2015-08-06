@@ -148,7 +148,6 @@
     (vh/enable-template-caching!)
     (let [db (mongo/get-mongo-db (config/mongo-uri config-m))
           stores (storage/create-mongo-stores db)]
-      (s/setup-mongo-stores! db)
       (migration/run-migrations db)
       (email/configure-email (config/email-script-path config-m))
       (client-seed/load-client-credentials-and-store-clients (storage/get-client-store stores) (config/client-credentials-file-path config-m))

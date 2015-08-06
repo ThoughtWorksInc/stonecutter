@@ -14,7 +14,6 @@
   (let [config-m (config/create-config)
         stores (s/create-in-memory-stores)]
     (vh/disable-template-caching!)
-    (s/setup-in-memory-stores!)
     (email/configure-email (config/email-script-path config-m))
     (client-seed/load-client-credentials-and-store-clients (s/get-client-store stores) (config/client-credentials-file-path config-m))
     (alter-var-root #'lein-app (constantly (h/create-app (config/create-config) stores :dev-mode? true)))))

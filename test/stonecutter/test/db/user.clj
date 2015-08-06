@@ -3,12 +3,9 @@
             [clauth.user :as cl-user]
             [clauth.auth-code :as cl-auth-code]
             [stonecutter.db.mongo :as m]
-            [stonecutter.db.storage :as s]
             [stonecutter.util.uuid :as uuid]
-            [stonecutter.db.user :as user]
-            [stonecutter.db.storage :as storage]))
+            [stonecutter.db.user :as user]))
 
-(s/setup-in-memory-stores!)
 (def user-store (m/create-memory-store))
 
 (facts "about storage of users - user storage journey"

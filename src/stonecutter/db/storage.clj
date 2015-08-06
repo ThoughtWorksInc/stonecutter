@@ -3,17 +3,6 @@
             [stonecutter.db.session :as session]
             [ring.middleware.session.memory :as mem-session]))
 
-(defonce auth-code-store (atom (m/create-memory-store)))
-
-(defn setup-mongo-stores! [db]
-  (reset! auth-code-store (m/create-auth-code-store db)))
-
-(defn setup-in-memory-stores! []
-  (reset! auth-code-store (m/create-memory-store)))
-
-(defn reset-in-memory-stores! []
-  (setup-in-memory-stores!))
-
 (defn create-mongo-stores [db]
   {:auth-code-store    (m/create-auth-code-store db)
    :user-store         (m/create-user-store db)

@@ -16,10 +16,6 @@
             [stonecutter.db.mongo :as m])
   (:import (org.apache.commons.codec.binary Base64)))
 
-(background
-  (before :facts (storage/setup-in-memory-stores!)
-          :after (storage/reset-in-memory-stores!)))
-
 (def user-email "email@user.com")
 (def client-url "https://client-app.com")
 
