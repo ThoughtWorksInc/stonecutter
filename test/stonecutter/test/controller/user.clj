@@ -337,13 +337,13 @@
 (facts "about show-profile"
        (fact "user's authorised clients passed to html-response"
              (->> (th/create-request :get (routes/path :show-profile) nil {:user-login ...email...})
-                  (u/show-profile @storage/client-store ...user-store...)
+                  (u/show-profile ...client-store... ...user-store...)
                   :body) => (contains #"CLIENT 1[\s\S]+CLIENT 2")
              (provided
               (user/retrieve-user ...user-store... ...email...) => {:login              ...email...
                                                                     :authorised-clients [...client-id-1... ...client-id-2...]}
-               (c/retrieve-client anything ...client-id-1...) => {:name "CLIENT 1"}
-               (c/retrieve-client anything ...client-id-2...) => {:name "CLIENT 2"}))
+               (c/retrieve-client ...client-store... ...client-id-1...) => {:name "CLIENT 1"}
+               (c/retrieve-client ...client-store... ...client-id-2...) => {:name "CLIENT 2"}))
 
        (tabular
          (fact "user confirmation status is displayed appropriately"
@@ -352,7 +352,7 @@
                                                                       :confirmed? ?confirmed})
                (let [enlive-snippet
                      (->> (th/create-request :get (routes/path :show-profile) nil {:user-login ...email...})
-                          (u/show-profile @storage/client-store ...user-store...)
+                          (u/show-profile (m/create-memory-store) ...user-store...)
                           :body
                           html/html-snippet)]
 
@@ -369,7 +369,7 @@
                     (let [request (th/create-request :get (routes/path :show-unshare-profile-card)
                                                   {:client_id "client-id"}
                                                   {:user-login ...email...})]
-                      (-> (u/show-unshare-profile-card @storage/client-store ...user-store... request)
+                      (-> (u/show-unshare-profile-card ...client-store... ...user-store... request)
                           :body
                           html/html-snippet
                           (html/select [:.clj--client-id__input])
@@ -378,30 +378,30 @@
                           :value)) => "client-id"
                     (provided
                      (user/is-authorised-client-for-user? ...user-store... ...email... "client-id") => true
-                     (c/retrieve-client anything "client-id") => {:client-id "client-id" :name "CLIENT_NAME"}))
+                     (c/retrieve-client ...client-store... "client-id") => {:client-id "client-id" :name "CLIENT_NAME"}))
 
               (fact "client name is correctly shown on the page"
                     (let [element-has-correct-client-name-fn (fn [element] (= (html/text element) "CLIENT_NAME"))
                           request (th/create-request :get (routes/path :show-unshare-profile-card)
                                                   {:client_id "client-id"}
                                                   {:user-login ...email...})]
-                      (-> (u/show-unshare-profile-card @storage/client-store ...user-store... request)
+                      (-> (u/show-unshare-profile-card ...client-store... ...user-store... request)
                           :body
                           html/html-snippet
                           (html/select [:.clj--client-name])) => (has some element-has-correct-client-name-fn)
                       (provided
                        (user/is-authorised-client-for-user? ...user-store... ...email... "client-id") => true
-                       (c/retrieve-client anything "client-id") => {:client-id "client-id" :name "CLIENT_NAME"})))
+                       (c/retrieve-client ...client-store... "client-id") => {:client-id "client-id" :name "CLIENT_NAME"})))
 
               (fact "missing client_id query param responds with 404"
                     (->> (th/create-request :get (routes/path :show-unshare-profile-card) nil)
-                         (u/show-unshare-profile-card @storage/client-store ...user-store...)) => {:status 404})
+                         (u/show-unshare-profile-card (m/create-memory-store) ...user-store...)) => {:status 404})
 
               (fact "user is redirected to /profile if client_id is not in user's list of authorised clients"
                     (->> (th/create-request :get (routes/path :show-unshare-profile-card)
                                             {:client_id ...client-id...}
                                             {:user-login ...email...})
-                         (u/show-unshare-profile-card @storage/client-store ...user-store...)) => (check-redirects-to "/profile")
+                         (u/show-unshare-profile-card ...client-store... ...user-store...)) => (check-redirects-to "/profile")
                     (provided
                      (user/is-authorised-client-for-user? ...user-store... ...email... ...client-id...) => false)))
 

@@ -2,11 +2,14 @@
   (:require [midje.sweet :refer :all]
             [clauth.client :as cl-client]
             [stonecutter.db.storage :as storage]
-            [stonecutter.db.client-seed :as cs]))
+            [stonecutter.db.client-seed :as cs]
+            [stonecutter.db.mongo :as m]
+            [clauth.store :as cl-store]))
+
+(def client-store (m/create-memory-store))
 
 (background
-  (before :facts (storage/setup-in-memory-stores!)
-          :after (storage/reset-in-memory-stores!)))
+  (before :facts (cl-store/reset-store! client-store)))
 
 (fact "can load client-credentials from a resource"
       (cs/load-client-credentials-from-resource
@@ -31,8 +34,8 @@
                                                                :url "http://bluefile.org"}))
 
 (fact "will load client credentials and store clients from a resource if provided a resource name"
-      (cs/load-client-credentials-and-store-clients @storage/client-store "test-client-credentials.yml")
-      (cl-client/clients @storage/client-store) => '({:client-id "M4DPY7IO5KZ77KRHMXYTACUZEEZEK4FH"
+      (cs/load-client-credentials-and-store-clients client-store "test-client-credentials.yml")
+      (cl-client/clients client-store) => '({:client-id "M4DPY7IO5KZ77KRHMXYTACUZEEZEK4FH"
                                 :name "Red Resource Party"
                                 :client-secret "VZ27BQ5GWLWXVFQQBPGDIPY4QTDEUZNM"
                                 :url "https://redresource.org"}
@@ -42,8 +45,8 @@
                                 :url "http://greenresource.org"}))
 
 (fact "will load and store client-credentials from a file if provided a file path"
-      (cs/load-client-credentials-and-store-clients @storage/client-store "test-var/var/test-client-credentials-file.yml")
-      (cl-client/clients @storage/client-store) => '({:client-id "F7ZFMTRJLS5FF6DTWMBCGWA7CXEQTH24"
+      (cs/load-client-credentials-and-store-clients client-store "test-var/var/test-client-credentials-file.yml")
+      (cl-client/clients client-store) => '({:client-id "F7ZFMTRJLS5FF6DTWMBCGWA7CXEQTH24"
                                 :name "Blue File Party"
                                 :client-secret "ISLS5HVYP65QE6OROI43FLHFFOBGISOG"
                                 :url "http://bluefile.org"}

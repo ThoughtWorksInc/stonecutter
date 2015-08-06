@@ -4,15 +4,12 @@
             [ring.middleware.session.memory :as mem-session]))
 
 (defonce auth-code-store (atom (m/create-memory-store)))
-(defonce client-store (atom (m/create-memory-store)))
 
 (defn setup-mongo-stores! [db]
-  (reset! auth-code-store (m/create-auth-code-store db))
-  (reset! client-store (m/create-client-store db)))
+  (reset! auth-code-store (m/create-auth-code-store db)))
 
 (defn setup-in-memory-stores! []
-  (reset! auth-code-store (m/create-memory-store))
-  (reset! client-store (m/create-memory-store)))
+  (reset! auth-code-store (m/create-memory-store)))
 
 (defn reset-in-memory-stores! []
   (setup-in-memory-stores!))
@@ -20,14 +17,14 @@
 (defn create-mongo-stores [db]
   {:auth-code-store    (m/create-auth-code-store db)
    :user-store         (m/create-user-store db)
-   :client-store       @client-store
+   :client-store       (m/create-client-store db)
    :token-store        (m/create-token-store db)
    :confirmation-store (m/create-confirmation-store db)})
 
 (defn create-in-memory-stores []
   {:auth-code-store    (m/create-memory-store)
    :user-store         (m/create-memory-store)
-   :client-store       @client-store
+   :client-store       (m/create-memory-store)
    :token-store        (m/create-memory-store)
    :confirmation-store (m/create-memory-store)})
 
