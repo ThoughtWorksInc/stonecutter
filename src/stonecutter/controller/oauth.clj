@@ -8,8 +8,7 @@
             [stonecutter.db.client :as client]
             [stonecutter.view.authorise :as authorise]
             [stonecutter.view.authorise-failure :as authorise-failure]
-            [stonecutter.helper :as sh]
-            [stonecutter.db.storage :as storage]))
+            [stonecutter.helper :as sh]))
 
 (defn show-authorise-form [client-store request]
   (let [client-id (get-in request [:params :client_id])]

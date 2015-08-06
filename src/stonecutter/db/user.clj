@@ -4,8 +4,7 @@
             [clauth.store :as cl-store]
             [clojure.string :as s]
             [stonecutter.db.mongo :as m]
-            [stonecutter.util.uuid :as uuid]
-            [stonecutter.db.storage :as storage]))
+            [stonecutter.util.uuid :as uuid]))
 
 (defn create-user [id-gen email password]
   (let [lower-email (s/lower-case email)]

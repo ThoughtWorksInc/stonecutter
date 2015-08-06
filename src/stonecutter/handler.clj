@@ -1,6 +1,5 @@
 (ns stonecutter.handler
   (:require [ring.middleware.defaults :as ring-mw]
-            [ring.middleware.file :as ring-mf]
             [ring.middleware.content-type :as ring-mct]
             [ring.util.response :as r]
             [ring.adapter.jetty :as ring-jetty]
@@ -10,7 +9,6 @@
             [stonecutter.view.view-helpers :as vh]
             [stonecutter.helper :as sh]
             [stonecutter.routes :as routes]
-            [stonecutter.logging :as log-config]
             [stonecutter.controller.email-confirmations :as ec]
             [stonecutter.controller.user :as user]
             [stonecutter.controller.oauth :as oauth]

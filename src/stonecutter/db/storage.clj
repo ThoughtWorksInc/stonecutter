@@ -1,7 +1,6 @@
 (ns stonecutter.db.storage
   (:require [stonecutter.db.mongo :as m]
-            [ring.middleware.session.memory :as mem-session]
-            [monger.ring.session-store :as mongo-session]))
+            [ring.middleware.session.memory :as mem-session]))
 
 (defn create-mongo-stores [db]
   {:auth-code-store    (m/create-auth-code-store db)

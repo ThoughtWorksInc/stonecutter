@@ -3,7 +3,6 @@
             [ring.util.response :as r]
             [stonecutter.controller.user :as u]
             [stonecutter.db.confirmation :as conf]
-            [stonecutter.db.storage :as storage]
             [stonecutter.db.user :as user]
             [stonecutter.helper :as sh]
             [stonecutter.routes :as routes]

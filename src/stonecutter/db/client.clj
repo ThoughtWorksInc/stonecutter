@@ -1,8 +1,7 @@
 (ns stonecutter.db.client
   (:require [clauth.client :as cl-client]
             [schema.core :as schema]
-            [clojure.string :as s]
-            [stonecutter.db.storage :as storage]))
+            [clojure.string :as s]))
 
 (def not-blank? (complement s/blank?))
 

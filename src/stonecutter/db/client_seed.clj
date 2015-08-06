@@ -1,7 +1,6 @@
 (ns stonecutter.db.client-seed
   (:require [clj-yaml.core :as yaml]
             [clojure.java.io :as io]
-            [stonecutter.db.storage :as storage]
             [stonecutter.db.client :as client]))
 
 (defn load-client-credentials-from-string [s]

@@ -1,9 +1,7 @@
 (ns stonecutter.controller.user
   (:require [clauth.token :as cl-token]
             [clauth.endpoints :as cl-ep]
-            [clojure.tools.logging :as log]
             [ring.util.response :as r]
-            [stonecutter.util.ring :as util-ring]
             [stonecutter.routes :as routes]
             [stonecutter.view.sign-in :as sign-in]
             [stonecutter.validation :as v]
@@ -19,7 +17,6 @@
             [stonecutter.view.unshare-profile-card :as unshare-profile-card]
             [stonecutter.util.uuid :as uuid]
             [stonecutter.helper :as sh]
-            [stonecutter.db.storage :as storage]
             [stonecutter.config :as config]))
 
 (declare redirect-to-profile-created redirect-to-profile-deleted)
