@@ -124,10 +124,11 @@
         (cl-user/fetch-user ...user-store... "email@server.com") => ...a-user...))
 
 (fact "can retrieve user using auth-code"
-      (let [auth-code-record (cl-auth-code/create-auth-code @storage/auth-code-store ...client... ...user... ...redirect-uri...)]
-        (user/retrieve-user-with-auth-code @storage/auth-code-store "code") => ...user...
+      (let [auth-code-store (m/create-memory-store)
+            auth-code-record (cl-auth-code/create-auth-code auth-code-store ...client... ...user... ...redirect-uri...)]
+        (user/retrieve-user-with-auth-code auth-code-store "code") => ...user...
         (provided
-          (cl-auth-code/fetch-auth-code @storage/auth-code-store "code") => auth-code-record)))
+         (cl-auth-code/fetch-auth-code auth-code-store "code") => auth-code-record)))
 
 (facts "about adding client ids to users with add-client-id"
        (fact "returns a function which adds client-id to a user's authorised clients"

@@ -27,13 +27,14 @@
        (fact "request with client-id, response_type and redirect_uri returns redirect to login page if there is no user session"
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
+                   auth-code-store (m/create-memory-store)
                    client-details (cl-client/register-client @storage/client-store "ClientTestApp" client-url) ;FORMAT => {:client-secret "XLFCQRKJXSV3T6YQJL5ZJJVGFUJNT6LD", :client-id "RXBX6ZXAER5KPDSZ3ZCZJDOBS27FLDE7", :name "ClientTestApp", :url "localhost:3001"}
                    request (-> (th/create-request-with-query-string :get (routes/path :authorise)
                                                                     {:client_id     (:client-id client-details)
                                                                      :response_type "code"
                                                                      :redirect_uri  client-url})
                                (r/header "accept" "text/html"))
-                   response (oauth/authorise @storage/auth-code-store @storage/client-store user-store token-store request)]
+                   response (oauth/authorise auth-code-store @storage/client-store user-store token-store request)]
                (:status response) => 302
                (-> response (get-in [:headers "Location"])) => "/sign-in"
                (-> response (get-in [:session :return-to])) => (format "/authorisation?client_id=%s&response_type=code&redirect_uri=%s" (:client-id client-details) (hiccup/url-encode client-url))))
@@ -41,6 +42,7 @@
        (fact "valid request goes to authorisation page with auth_code and email when there is an existing user session"
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
+                   auth-code-store (m/create-memory-store)
                    user (user/store-user! user-store user-email "password")
                    client-details (cl-client/register-client @storage/client-store "MYAPP" client-url) ; NB this saves into the client store
                    access-token (cl-token/create-token token-store client-details user) ; NB this saves into the token store
@@ -54,7 +56,7 @@
                                (assoc-in [:context :translator] {})
                                ;the csrf-token key in session will stop clauth from refreshing the csrf-token in request
                                (assoc-in [:session :csrf-token] "staleCSRFtoken"))
-                   response (oauth/authorise @storage/auth-code-store @storage/client-store user-store token-store request)]
+                   response (oauth/authorise auth-code-store @storage/client-store user-store token-store request)]
                (:status response) => 200
                (get-in response [:session :access_token]) => (:token access-token)
                (get response :body) => (contains "Share Profile Card")
@@ -64,6 +66,7 @@
        (fact "posting to authorisation endpoint redirects to callback with auth code and adds the client to the user's authorised clients"
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
+                   auth-code-store (m/create-memory-store)
                    user (user/store-user! user-store user-email "password")
                    client-details (cl-client/register-client @storage/client-store "MYAPP" "myapp.com")
                    access-token (cl-token/create-token token-store client-details user)
@@ -75,13 +78,14 @@
                                (assoc-in [:session :csrf-token] csrf-token)
                                (assoc :content-type "application/x-www-form-urlencoded") ;To mock a form post
                                (assoc-in [:session :user-login] user-email))]
-               (oauth/authorise-client @storage/auth-code-store @storage/client-store user-store token-store request) => (contains {:status 302 :headers (contains {"Location" (contains "callback?code=")})})
+               (oauth/authorise-client auth-code-store @storage/client-store user-store token-store request) => (contains {:status 302 :headers (contains {"Location" (contains "callback?code=")})})
                (provided
                 (user/add-authorised-client-for-user! user-store user-email anything) => ...user...)))
        
        (fact "valid request redirects to callback with auth code when there is an existing user session and the user has previously authorised the app"
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
+                   auth-code-store (m/create-memory-store)
                    user (user/store-user! user-store user-email "password")
                    client-details (cl-client/register-client @storage/client-store "MYAPP" "https://myapp.com")
                    updated-user (user/add-authorised-client-for-user! user-store user-email (:client-id client-details))
@@ -91,13 +95,14 @@
                                                                      :redirect_uri "https://myapp.com/callback"})
                                (assoc-in [:session :access_token] (:token access-token))
                                (assoc-in [:session :user-login] (:login user)))
-                   response (oauth/authorise @storage/auth-code-store @storage/client-store user-store token-store request)]
+                   response (oauth/authorise auth-code-store @storage/client-store user-store token-store request)]
                (:status response) => 302
                (get-in response [:headers "Location"]) => (contains "callback?code=")))
 
        (fact "request to authorisation endpoint with an incorrect redirect url does not redirect to the invalid url"
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
+                   auth-code-store (m/create-memory-store)
                    user (user/store-user! user-store user-email "password")
                    client-details (cl-client/register-client @storage/client-store "MYAPP" "https://myapp.com")
                    updated-user (user/add-authorised-client-for-user! user-store user-email (:client-id client-details))
@@ -107,12 +112,13 @@
                                                                      :redirect_uri "https://invalidcallback.com"})
                                (assoc-in [:session :access_token] (:token access-token))
                                (assoc-in [:session :user-login] (:login user)))
-                   response (oauth/authorise @storage/auth-code-store @storage/client-store user-store token-store request)]
+                   response (oauth/authorise auth-code-store @storage/client-store user-store token-store request)]
                (:status response) =not=> 302))
 
        (fact "return-to session key is refreshed when accessing authorisation endpoint without being signed in"
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
+                   auth-code-store (m/create-memory-store)
                    client-details (cl-client/register-client @storage/client-store "MYAPP" "https://myapp.com")
                    client-id (:client-id client-details)
                    redirect-uri "https://myapp.com/callback"
@@ -122,7 +128,7 @@
                                                           :response_type "code"
                                                           :redirect_uri  redirect-uri}
                                            :session      {:return-to ...old-return-to-uri...}}
-                                          (oauth/authorise @storage/auth-code-store @storage/client-store user-store token-store)
+                                          (oauth/authorise auth-code-store @storage/client-store user-store token-store)
                                           :session
                                           :return-to)]
                new-return-to-uri => (contains ...new-uri...)
@@ -131,6 +137,7 @@
        (fact "user-login and access_token in session stay in session if user is logged in"
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
+                   auth-code-store (m/create-memory-store)
                    user (user/store-user! user-store user-email "password")
                    client-details (cl-client/register-client @storage/client-store "MYAPP" client-url)
                    access-token (cl-token/create-token token-store client-details user)
@@ -141,7 +148,7 @@
                                (assoc-in [:session :user-login] (:login user))
                                ;; stale csrf token can cause session to be lost
                                (assoc-in [:session :csrf-token] "staleCSRFtoken"))
-                   response (oauth/authorise @storage/auth-code-store @storage/client-store user-store token-store request)]
+                   response (oauth/authorise auth-code-store @storage/client-store user-store token-store request)]
                (:status response) => 302
                (get-in response [:headers "Location"]) => (contains (str client-url "?code="))
                (get-in response [:session :access_token]) => (:token access-token)
