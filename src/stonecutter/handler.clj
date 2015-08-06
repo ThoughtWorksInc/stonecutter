@@ -98,10 +98,11 @@
                                           :confirmation-sign-in-form :confirmation-sign-in}))))
 
 (defn api-handlers [stores-m]
-  (let [user-store (storage/get-user-store stores-m)
+  (let [auth-code-store (storage/get-auth-code-store stores-m)
+        user-store (storage/get-user-store stores-m)
         client-store (storage/get-client-store stores-m)
         token-store (storage/get-token-store stores-m)]
-    {:validate-token (partial oauth/validate-token client-store user-store token-store)}))
+    {:validate-token (partial oauth/validate-token auth-code-store client-store user-store token-store)}))
 
 (defn splitter [site api]
   (fn [request]
