@@ -57,8 +57,9 @@
   (let [user-store (storage/get-user-store stores-m)
         client-store (storage/get-client-store stores-m)
         token-store (storage/get-token-store stores-m)
-        confirmation-store (storage/get-confirmation-store stores-m)]
-    (->
+        confirmation-store (storage/get-confirmation-store stores-m)
+        auth-code-store (storage/get-auth-code-store stores-m)]
+  (->
       {:home                             user/home
        :ping                             ping
        :theme-css                        stylesheets/theme-css
@@ -80,8 +81,8 @@
        :show-change-password-form        user/show-change-password-form
        :change-password                  (partial user/change-password user-store)
        :show-authorise-form              (partial oauth/show-authorise-form client-store)
-       :authorise                        (partial oauth/authorise client-store user-store token-store)
-       :authorise-client                 (partial oauth/authorise-client client-store user-store token-store)
+       :authorise                        (partial oauth/authorise auth-code-store client-store user-store token-store)
+       :authorise-client                 (partial oauth/authorise-client auth-code-store client-store user-store token-store)
        :show-authorise-failure           (partial oauth/show-authorise-failure client-store)}
       (m/wrap-handlers #(m/wrap-handle-404 % not-found) #{})
       (m/wrap-handlers #(m/wrap-handle-403 % forbidden-err-handler) #{})

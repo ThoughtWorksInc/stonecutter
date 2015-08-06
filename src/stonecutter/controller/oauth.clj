@@ -40,20 +40,20 @@
         user-email (get-in request [:session :user-login])]
     (user/is-authorised-client-for-user? user-store user-email client-id)))
 
-(defn auth-handler [client-store user-store token-store request]
+(defn auth-handler [auth-code-store client-store user-store token-store request]
   ((cl-ep/authorization-handler
      client-store
      token-store
-     @storage/auth-code-store
+     auth-code-store
      {:auto-approver                  (partial auto-approver user-store)
       :user-session-required-redirect (routes/path :show-sign-in-form)
       :authorization-form             (partial show-authorise-form client-store)
       }) request))
 
-(defn authorise-client [client-store user-store token-store request]
+(defn authorise-client [auth-code-store client-store user-store token-store request]
   (let [client-id (get-in request [:params :client_id])
         user-email (get-in request [:session :user-login])
-        response (auth-handler client-store user-store token-store request)]
+        response (auth-handler auth-code-store client-store user-store token-store request)]
     (user/add-authorised-client-for-user! user-store user-email client-id)
     response))
 
@@ -68,14 +68,14 @@
 (defn add-html-accept [request]
   (assoc-in request [:headers "accept"] "text/html"))
 
-(defn authorise [client-store user-store token-store request]
+(defn authorise [auth-code-store client-store user-store token-store request]
   (let [client-id (get-in request [:params :client_id])
         redirect-uri (get-in request [:params :redirect_uri])
         user-login (get-in request [:session :user-login])
         clauth-request (-> request remove-csrf-token add-html-accept)
         access-token (get-in request [:session :access_token])]
     (if (is-redirect-uri-valid? client-store client-id redirect-uri)
-      (-> (auth-handler client-store user-store token-store clauth-request)
+      (-> (auth-handler auth-code-store client-store user-store token-store clauth-request)
           (assoc-in [:session :user-login] user-login)
           (assoc-in [:session :access_token] access-token))
       (do

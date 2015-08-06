@@ -1,6 +1,7 @@
 (ns stonecutter.integration.integration-helpers
   (:require [monger.core :as monger]
-            [monger.collection :as mc]))
+            [monger.collection :as mc]
+            [stonecutter.db.mongo :as sc-m]))
 
 (def test-db-name "stonecutter-test")
 (def test-db-uri (format "mongodb://localhost:27017/%s" test-db-name))
@@ -20,7 +21,7 @@
 
 (defn clear-collections []
   (let [db (get-test-db)]
-    (doseq [coll ["users" "clients" "confirmations" "tokens"]]
+    (doseq [coll sc-m/collections]
       (mc/remove db coll {}))))
 
 (defn teardown-db []

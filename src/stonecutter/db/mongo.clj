@@ -10,6 +10,9 @@
 (def client-collection "clients")
 (def confirmation-collection "confirmations")
 
+(def collections [user-collection token-collection auth-code-collection
+                  client-collection confirmation-collection])
+
 (defprotocol StonecutterStore
   (update! [e k update-fn]
            "Update the item found using key k by running the update-fn on it and storing it"))
