@@ -116,7 +116,7 @@
                    user (user/store-user! user-store email "password")
                    request (-> confirm-email-request
                                (with-signed-in-user token-store user))]
-               (ec/confirm-email-with-id user-store confirmation-store request) => (check-redirects-to (routes/path :sign-in)))))
+               (ec/confirm-email-with-id user-store confirmation-store request) => {:status 404})))
 
 (facts "about confirmation sign in"
        (fact "when password matches login of confirmation id, user is logged in")

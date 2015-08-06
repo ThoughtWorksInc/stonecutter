@@ -45,7 +45,7 @@
           (confirm-users-email! user-store confirmation-store user (:confirmation-id confirmation))
           (mismatch-confirmation-id-response request)))
       (redirect-to-confirmation-sign-in-form request))
-    (r/redirect (routes/path :sign-in))))
+    (r/status {} 404)))
 
 (defn confirmation-sign-in [user-store token-store confirmation-store request]
   (let [confirmation-id (get-in request [:params :confirmation-id])
