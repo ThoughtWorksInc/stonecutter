@@ -7,7 +7,7 @@
                 :theme :secure :email-script-path :app-name
                 :header-bg-color :inactive-tab-font-color
                 :static-resources-dir-path :logo-file-name
-                :favicon-file-name})
+                :favicon-file-name :admin-login :admin-password})
 
 (defn create-config []
   (select-keys env/env env-vars))
@@ -73,7 +73,11 @@
   (get-env config-m :favicon-file-name))
 
 (defn admin-login [config-m]
-  (get-env config-m :admin-login))
+  (if-let [result (get-env config-m :admin-login)]
+    result
+    (log/warn "no ADMIN_LOGIN provided. Please provide this environment variable to create an admin account.")))
 
 (defn admin-password [config-m]
-  (get-env config-m :admin-password))
+  (if-let [result (get-env config-m :admin-password)]
+    result
+    (log/warn "no ADMIN_PASSWORD provided. Please provide this environment variable to create an admin account.")))
