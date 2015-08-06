@@ -78,7 +78,7 @@
   (mc/ensure-index db collection {index 1} {:unique true})
   (new-mongo-store db collection))
 
-(defn create-mongo-user-store [db]
+(defn create-user-store [db]
   (create-mongo-store db user-collection :login))
 
 (defn create-token-store [db]

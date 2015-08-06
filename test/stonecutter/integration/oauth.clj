@@ -70,13 +70,12 @@
 (def email "email@server.com")
 (def password "valid-password")
 
-(defn setup []
+(defn setup [stores]
   (let [client (cl-client/register-client @storage/client-store  "myclient" "http://myclient.com")
         client-id (:client-id client)
         client-secret (:client-secret client)
         invalid-client-secret (string/reverse client-secret)
-        user (-> (s/get-user-store (s/create-in-memory-stores))
-                 (user/store-user! email password))]
+        user (-> (s/get-user-store stores) (user/store-user! email password))]
     {:client-id             client-id
      :client-secret         client-secret
      :client-name           (:name client)
@@ -92,8 +91,9 @@
 
 (facts "user authorising client-apps"
        (facts "user can sign in through client"
-              (let [{:keys [client-id client-secret]} (setup)]
-                (-> (k/session (h/app (s/create-in-memory-stores)))
+              (let [stores (s/create-in-memory-stores)
+                    {:keys [client-id client-secret]} (setup stores)]
+                (-> (k/session (h/app stores))
                     (browser-sends-authorisation-request-from-client-redirect client-id)
                     (k/follow-redirect)
                     ;; login
@@ -111,8 +111,9 @@
                     (kh/response-has-id))))
 
        (facts "user who has already authorised client does not need to authorise client again"
-              (let [{:keys [client-id client-secret client-name]} (setup)]
-                (-> (k/session (h/app (s/create-in-memory-stores)))
+              (let [stores (s/create-in-memory-stores)
+                    {:keys [client-id client-secret client-name]} (setup stores)]
+                (-> (k/session (h/app stores))
                     ;; authorise client for the first time
                     (browser-sends-authorisation-request-from-client-redirect client-id)
                     (k/follow-redirect)
@@ -130,8 +131,9 @@
                     (kh/response-has-id))))
 
        (facts "user is redirected to authorisation-failure page when cancelling authorisation"
-              (let [{:keys [client-id client-secret]} (setup)]
-                (-> (k/session (h/app (s/create-in-memory-stores)))
+              (let [stores (s/create-in-memory-stores)
+                    {:keys [client-id client-secret]} (setup stores)]
+                (-> (k/session (h/app stores))
                     (browser-sends-authorisation-request-from-client-redirect client-id)
                     (k/follow-redirect)
                     ;; login
@@ -147,8 +149,9 @@
 
 (facts "no access token will be issued with invalid credentials"
        (facts "user cannot sign in with invalid client secret"
-              (let [{:keys [client-id invalid-client-secret]} (setup)]
-                (-> (k/session (h/app (s/create-in-memory-stores)))
+              (let [stores (s/create-in-memory-stores)
+                    {:keys [client-id invalid-client-secret]} (setup stores)]
+                (-> (k/session (h/app stores))
                     (browser-sends-authorisation-request-from-client-redirect client-id)
                     (k/follow-redirect)
                     ;; login
@@ -164,8 +167,9 @@
                     :status)) => 400)
 
        (facts "user cannot sign in with invalid password"
-              (let [{:keys [client-id]} (setup)]
-                (-> (k/session (h/app (s/create-in-memory-stores)))
+              (let [stores (s/create-in-memory-stores)
+                    {:keys [client-id]} (setup stores)]
+                (-> (k/session (h/app stores))
                     (browser-sends-authorisation-request-from-client-redirect client-id)
                     (k/follow-redirect)
                     ;; login
