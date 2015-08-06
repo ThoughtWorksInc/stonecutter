@@ -112,7 +112,7 @@
 (facts "about confirmation sign in"
        (fact "when password matches login of confirmation id, user is logged in")
        (->> (th/create-request :post (routes/path :confirmation-sign-in) {:confirmation-id confirmation-id :password password})
-            (ec/confirmation-sign-in ...user-store...)) => (contains {:status  302
+            (ec/confirmation-sign-in ...user-store... @storage/token-store)) => (contains {:status  302
                                                                          :headers {"Location" confirm-email-path}
                                                                          :session {:user-login   ...user-login...
                                                                                    :access_token ...token...}})
@@ -127,7 +127,7 @@
               (conf/fetch @storage/confirmation-store confirmation-id) => {:login email :confirmation-id confirmation-id})
              (let [response (->> (th/create-request :post (routes/path :confirmation-sign-in)
                                                     {:confirmation-id confirmation-id :password "Invalid password"})
-                                 (ec/confirmation-sign-in ...user-store...))]
+                                 (ec/confirmation-sign-in ...user-store... @storage/token-store))]
                response => (contains {:status 200})
                response =not=> (contains {:session {:user-login   anything
                                                     :access_token anything}})

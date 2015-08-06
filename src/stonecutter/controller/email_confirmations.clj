@@ -47,12 +47,12 @@
       (redirect-to-confirmation-sign-in-form request))
     (r/redirect (routes/path :sign-in))))
 
-(defn confirmation-sign-in [user-store request]
+(defn confirmation-sign-in [user-store token-store request]
   (let [confirmation-id (get-in request [:params :confirmation-id])
         password (get-in request [:params :password])
         email (:login (conf/fetch @storage/confirmation-store confirmation-id))]
     (if-let [user (user/authenticate-and-retrieve-user user-store email password)]
-        (let [access-token (u/generate-login-access-token @storage/token-store user)]
+        (let [access-token (u/generate-login-access-token token-store user)]
           (-> (r/redirect (routes/path :confirm-email-with-id
                                        :confirmation-id confirmation-id))
               (assoc-in [:session :user-login] (:login user))

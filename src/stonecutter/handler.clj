@@ -68,7 +68,7 @@
        :sign-out                         user/sign-out
        :confirm-email-with-id            (partial ec/confirm-email-with-id user-store)
        :confirmation-sign-in-form        ec/show-confirm-sign-in-form
-       :confirmation-sign-in             (partial ec/confirmation-sign-in user-store)
+       :confirmation-sign-in             (partial ec/confirmation-sign-in user-store token-store)
        :show-profile                     (partial user/show-profile client-store user-store)
        :show-profile-created             user/show-profile-created
        :show-profile-deleted             user/show-profile-deleted
