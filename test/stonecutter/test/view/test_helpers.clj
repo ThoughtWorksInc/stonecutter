@@ -1,6 +1,9 @@
 (ns stonecutter.test.view.test-helpers
   (:require [midje.sweet :refer :all]
-            [net.cgrand.enlive-html :as html]))
+            [net.cgrand.enlive-html :as html]
+            [stonecutter.helper :as helper]
+            [stonecutter.translation :as t]
+            [stonecutter.view.forgotten-password :as fp]))
 
 (defn create-request
   ([]
@@ -27,3 +30,11 @@
 
 (defn work-in-progress-removed [enlive-map]
   (empty? (html/select enlive-map [:.clj-wip])))
+
+(defn test-translations [page-name view-fn]
+  (fact {:midje/name (format "there are no missing translations for page: %s" page-name)}
+        (let [translator (t/translations-fn t/translation-map)
+              page (-> (create-request translator)
+                       view-fn
+                       (helper/enlive-response {:translator translator}) :body)]
+          page => no-untranslated-strings)))

@@ -21,6 +21,7 @@
       (update-app-name context)
       (set-favicon context)
       (t/context-translate context)
+      vh/remove-work-in-progress
       vh/enlive-to-str
       r/response
       (r/content-type "text/html")))

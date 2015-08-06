@@ -57,7 +57,7 @@
         token-store (storage/get-token-store stores-m)
         confirmation-store (storage/get-confirmation-store stores-m)
         auth-code-store (storage/get-auth-code-store stores-m)]
-  (->
+    (->
       {:home                             user/home
        :ping                             ping
        :theme-css                        stylesheets/theme-css
@@ -78,6 +78,7 @@
        :delete-account                   (partial user/delete-account user-store)
        :show-change-password-form        user/show-change-password-form
        :change-password                  (partial user/change-password user-store)
+       :show-forgotten-password-form     user/show-forgotten-password-form
        :show-authorise-form              (partial oauth/show-authorise-form client-store)
        :authorise                        (partial oauth/authorise auth-code-store client-store user-store token-store)
        :authorise-client                 (partial oauth/authorise-client auth-code-store client-store user-store token-store)
@@ -93,7 +94,8 @@
                                           :ping
                                           :theme-css
                                           :confirm-email-with-id
-                                          :confirmation-sign-in-form :confirmation-sign-in}))))
+                                          :confirmation-sign-in-form :confirmation-sign-in
+                                          :show-forgotten-password-form}))))
 
 (defn api-handlers [stores-m]
   (let [auth-code-store (storage/get-auth-code-store stores-m)
@@ -134,7 +136,7 @@
       (ring-mw/wrap-defaults (if (config/secure? config-m)
                                (assoc ring-mw/secure-api-defaults :proxy true)
                                ring-mw/api-defaults))
-      (m/wrap-error-handling err-handler dev-mode?))) ;; TODO create json error handler
+      (m/wrap-error-handling err-handler dev-mode?)))       ;; TODO create json error handler
 
 (defn create-app [config-m stores-m & {dev-mode? :dev-mode?}]
   (splitter (create-site-app config-m stores-m dev-mode?) (create-api-app config-m stores-m dev-mode?)))

@@ -15,6 +15,7 @@
             [stonecutter.view.delete-account :as delete-account]
             [stonecutter.view.change-password :as change-password]
             [stonecutter.view.unshare-profile-card :as unshare-profile-card]
+            [stonecutter.view.forgotten-password :as forgotten-password]
             [stonecutter.util.uuid :as uuid]
             [stonecutter.helper :as sh]
             [stonecutter.config :as config]))
@@ -170,3 +171,6 @@
 
 (defn home [request]
   (r/redirect (routes/path :show-profile)))
+
+(defn show-forgotten-password-form [request]
+  (sh/enlive-response (forgotten-password/forgotten-password-form request) (:context request)))

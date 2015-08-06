@@ -15,6 +15,8 @@ GET     /delete-account                          show-delete-account-confirmatio
 POST    /delete-account                          delete-account
 GET     /change-password                         show-change-password-form
 POST    /change-password                         change-password
+GET     /forgotten-password                      show-forgotten-password-form
+POST    /forgotten-password                      send-forgotten-password-email
 GET     /authorisation                           authorise
 POST    /authorisation                           authorise-client
 GET     /authorise-form                          show-authorise-form

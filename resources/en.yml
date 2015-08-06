@@ -34,6 +34,12 @@ change-password-form:
   form-button: Save changes
   cancel-button: Cancel
 
+forgot-password:
+  title: Forgotten password
+  email-label: Email address
+  invalid-email: Enter a valid email address
+  submit: Send link to change password
+
 register-now:
   title-before-app-name: "New to "
   title-after-app-name: "?"
