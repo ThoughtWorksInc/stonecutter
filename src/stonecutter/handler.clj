@@ -11,6 +11,7 @@
             [stonecutter.routes :as routes]
             [stonecutter.controller.email-confirmations :as ec]
             [stonecutter.controller.user :as user]
+            [stonecutter.controller.forgotten-password :as forgotten-password]
             [stonecutter.controller.oauth :as oauth]
             [stonecutter.controller.stylesheets :as stylesheets]
             [stonecutter.translation :as t]
@@ -79,7 +80,7 @@
        :delete-account                   (partial user/delete-account user-store)
        :show-change-password-form        user/show-change-password-form
        :change-password                  (partial user/change-password user-store)
-       :show-forgotten-password-form     user/show-forgotten-password-form
+       :show-forgotten-password-form     forgotten-password/show-forgotten-password-form
        :show-authorise-form              (partial oauth/show-authorise-form client-store)
        :authorise                        (partial oauth/authorise auth-code-store client-store user-store token-store)
        :authorise-client                 (partial oauth/authorise-client auth-code-store client-store user-store token-store)

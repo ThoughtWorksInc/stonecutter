@@ -102,3 +102,10 @@
   ""                        ""                  "newPassword"               {:current-password :blank
                                                                              :new-password :blank
                                                                              :confirm-new-password :invalid})
+
+(tabular
+ (fact "validating forgotten-password"
+       (v/validate-forgotten-password {:email ?email}) => ?validations)
+ ?email              ?validations
+ "valid@email.com"   {}
+ "invalid"           {:email :invalid})

@@ -76,3 +76,12 @@
   (->> (change-password-validations params)
        (remove (comp nil? second))
        (into {})))
+
+(defn forgotten-password-validations [params]
+  (let [email (:email params)]
+    {:email (validate-sign-in-email email)}))
+
+(defn validate-forgotten-password [params]
+  (->> (forgotten-password-validations params)
+       (remove (comp nil? second))
+       (into {})))
