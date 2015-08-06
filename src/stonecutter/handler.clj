@@ -56,19 +56,20 @@
 (defn site-handlers [stores-m]
   (let [user-store (storage/get-user-store stores-m)
         client-store (storage/get-client-store stores-m)
-        token-store (storage/get-token-store stores-m)]
+        token-store (storage/get-token-store stores-m)
+        confirmation-store (storage/get-confirmation-store stores-m)]
     (->
       {:home                             user/home
        :ping                             ping
        :theme-css                        stylesheets/theme-css
        :show-registration-form           user/show-registration-form
-       :register-user                    (partial user/register-user user-store token-store)
+       :register-user                    (partial user/register-user user-store token-store confirmation-store)
        :show-sign-in-form                user/show-sign-in-form
        :sign-in                          (partial user/sign-in user-store token-store)
        :sign-out                         user/sign-out
-       :confirm-email-with-id            (partial ec/confirm-email-with-id user-store)
+       :confirm-email-with-id            (partial ec/confirm-email-with-id user-store confirmation-store)
        :confirmation-sign-in-form        ec/show-confirm-sign-in-form
-       :confirmation-sign-in             (partial ec/confirmation-sign-in user-store token-store)
+       :confirmation-sign-in             (partial ec/confirmation-sign-in user-store token-store confirmation-store)
        :show-profile                     (partial user/show-profile client-store user-store)
        :show-profile-created             user/show-profile-created
        :show-profile-deleted             user/show-profile-deleted

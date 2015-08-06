@@ -67,71 +67,76 @@
        (fact "if the confirmation UUID in the query string matches that of the signed in user's user record confirm the account and redirect to profile view"
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
+                   confirmation-store (m/create-memory-store)
                    user (user/store-user! user-store email "password")
-                   confirmation (conf/store! @storage/confirmation-store email confirmation-id)
+                   confirmation (conf/store! confirmation-store email confirmation-id)
                    request (-> confirm-email-request
                                (with-signed-in-user token-store user))]
-               (ec/confirm-email-with-id user-store request) => (check-redirects-to (routes/path :show-profile))
+               (ec/confirm-email-with-id user-store confirmation-store request) => (check-redirects-to (routes/path :show-profile))
                (user/retrieve-user user-store (:login user)) =not=> (contains {:confirmation-id anything})
                (user/retrieve-user user-store (:login user)) => (contains {:confirmed? true})))
 
        (fact "when confirmation UUID in the query string does not match that of the signed in user's user record, signs the user out and redirects to confirmation endpoint with the original confirmation UUID from the query string"
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
+                   confirmation-store (m/create-memory-store)
                    signed-in-user (user/store-user! user-store "signed-in@email.com" "password")
                    confirming-user (user/store-user! user-store "confirming@email.com" "password")
-                   confirmation (conf/store! @storage/confirmation-store "confirming@email.com" confirmation-id)
+                   confirmation (conf/store! confirmation-store "confirming@email.com" confirmation-id)
                    request (-> confirm-email-request
                                (with-signed-in-user token-store signed-in-user))
-                   response (ec/confirm-email-with-id user-store request)]
+                   response (ec/confirm-email-with-id user-store confirmation-store request)]
                response =not=> (check-signed-in request signed-in-user)
                response => (check-redirects-to confirm-email-path)))
 
        (fact "when user is not signed in, redirects to sign-in form with the confirmation endpoint (including confirmation UUID query string) as the successful sign-in redirect target"
              (let [user-store (m/create-memory-store)
+                   confirmation-store (m/create-memory-store)
                    confirming-user (user/store-user! user-store email "password")
-                   confirmation (conf/store! @storage/confirmation-store email confirmation-id)
-                   response (ec/confirm-email-with-id user-store confirm-email-request)]
+                   confirmation (conf/store! confirmation-store email confirmation-id)
+                   response (ec/confirm-email-with-id user-store confirmation-store confirm-email-request)]
                response => (check-redirects-to (routes/path :confirmation-sign-in-form
                                                             :confirmation-id confirmation-id))))
 
        (fact "when email confirmation is complete confirmation-id is revoked"
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
+                   confirmation-store (m/create-memory-store)
                    user (user/store-user! user-store email "password")
-                   confirmation (conf/store! @storage/confirmation-store email confirmation-id)
+                   confirmation (conf/store! confirmation-store email confirmation-id)
                    request (-> confirm-email-request
                                (with-signed-in-user token-store user))]
-               (ec/confirm-email-with-id user-store request)
-               (conf/fetch @storage/confirmation-store confirmation-id) => nil))
+               (ec/confirm-email-with-id user-store confirmation-store request)
+               (conf/fetch confirmation-store confirmation-id) => nil))
 
        (fact "when the confirmation id does not exist in the db"
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
+                   confirmation-store (m/create-memory-store)
                    user (user/store-user! user-store email "password")
                    request (-> confirm-email-request
                                (with-signed-in-user token-store user))]
-               (ec/confirm-email-with-id user-store request) => (check-redirects-to (routes/path :sign-in)))))
+               (ec/confirm-email-with-id user-store confirmation-store request) => (check-redirects-to (routes/path :sign-in)))))
 
 (facts "about confirmation sign in"
        (fact "when password matches login of confirmation id, user is logged in")
        (->> (th/create-request :post (routes/path :confirmation-sign-in) {:confirmation-id confirmation-id :password password})
-            (ec/confirmation-sign-in ...user-store... ...token-store...)) => (contains {:status  302
+            (ec/confirmation-sign-in ...user-store... ...token-store... ...confirmation-store...)) => (contains {:status  302
                                                                          :headers {"Location" confirm-email-path}
                                                                          :session {:user-login   ...user-login...
                                                                                    :access_token ...token...}})
        (provided
         (user/authenticate-and-retrieve-user ...user-store... email password) => {:login ...user-login...}
-        (conf/fetch @storage/confirmation-store confirmation-id) => {:login email :confirmation-id confirmation-id}
+        (conf/fetch ...confirmation-store... confirmation-id) => {:login email :confirmation-id confirmation-id}
         (cl-token/create-token ...token-store... nil {:login ...user-login...}) => {:token ...token...})
 
        (fact "when credentials are invalid, redirect back to form with invalid error"
              (against-background
               (user/authenticate-and-retrieve-user ...user-store... email "Invalid password") => nil
-              (conf/fetch @storage/confirmation-store confirmation-id) => {:login email :confirmation-id confirmation-id})
+              (conf/fetch ...confirmation-store... confirmation-id) => {:login email :confirmation-id confirmation-id})
              (let [response (->> (th/create-request :post (routes/path :confirmation-sign-in)
                                                     {:confirmation-id confirmation-id :password "Invalid password"})
-                                 (ec/confirmation-sign-in ...user-store... ...token-store...))]
+                                 (ec/confirmation-sign-in ...user-store... ...token-store... ...confirmation-store...))]
                response => (contains {:status 200})
                response =not=> (contains {:session {:user-login   anything
                                                     :access_token anything}})

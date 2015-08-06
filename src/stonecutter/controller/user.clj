@@ -43,7 +43,7 @@
                                       :base-url base-url}))
   user)
 
-(defn register-user [user-store token-store request]
+(defn register-user [user-store token-store confirmation-store request]
   (let [params (:params request)
         email (:email params)
         password (:password params)
@@ -52,7 +52,7 @@
         err (v/validate-registration params (partial user/is-duplicate-user? user-store))
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
-      (do (conf/store! @storage/confirmation-store email confirmation-id)
+      (do (conf/store! confirmation-store email confirmation-id)
           (-> (user/store-user! user-store email password)
               (send-confirmation-email! email confirmation-id config-m)
               (#(redirect-to-profile-created token-store % request))

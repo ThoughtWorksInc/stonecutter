@@ -19,14 +19,12 @@
   (reset! user-store (m/create-mongo-user-store db))
   (reset! auth-code-store (m/create-auth-code-store db))
   (reset! client-store (m/create-client-store db))
-  (reset! confirmation-store (m/create-confirmation-store db))
   (reset! session-store (session/mongo-session-store db)))
 
 (defn setup-in-memory-stores! []
   (reset! user-store (m/create-memory-store))
   (reset! auth-code-store (m/create-memory-store))
   (reset! client-store (m/create-memory-store))
-  (reset! confirmation-store (m/create-memory-store))
   (reset! session-store (mem-session/memory-store (atom {}))))
 
 (defn reset-in-memory-stores! []
@@ -35,12 +33,14 @@
 (defn create-mongo-stores [db]
   {:user-store @user-store
    :client-store @client-store
-   :token-store (m/create-token-store db)})
+   :token-store (m/create-token-store db)
+   :confirmation-store (m/create-confirmation-store db)})
 
 (defn create-in-memory-stores []
   {:user-store @user-store
    :client-store @client-store
-   :token-store (m/create-memory-store)})
+   :token-store (m/create-memory-store)
+   :confirmation-store (m/create-memory-store)})
 
 (defn get-user-store [store-m]
   (:user-store store-m))
@@ -50,3 +50,6 @@
 
 (defn get-token-store [store-m]
   (:token-store store-m))
+
+(defn get-confirmation-store [store-m]
+  (:confirmation-store store-m))
