@@ -14,6 +14,9 @@
       (assoc :confirmed? false)
       (assoc :uid (id-gen)))))
 
+(defn create-admin [id-gen email password]
+   (assoc (create-user id-gen email password) :role :admin))
+
 (defn store-user! [user-store email password]
   (let [user (create-user uuid/uuid email password)]
     (-> (cl-user/store-user user-store user)

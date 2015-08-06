@@ -71,3 +71,9 @@
 
 (defn favicon-file-name [config-m]
   (get-env config-m :favicon-file-name))
+
+(defn admin-login [config-m]
+  (get-env config-m :admin-login))
+
+(defn admin-password [config-m]
+  (get-env config-m :admin-password))

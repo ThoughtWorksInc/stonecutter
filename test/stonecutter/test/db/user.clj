@@ -180,3 +180,19 @@
                (update-password-function user) => {:password "new-hashed-password" :some-key "some-value"}
                (provided
                  (cl-user/bcrypt "new-raw-password") => "new-hashed-password"))))
+
+(facts "about admins"
+       (fact "creating an admin user"
+             (let [email "email@admin.com"
+                   password "stubpassword"
+                   hashed-password "ABE1234SJD1234"
+                   id "random-uuid-1234"
+                   id-gen (constantly id)]
+
+             (user/create-admin id-gen email password) => {:login email
+                                                           :password hashed-password
+                                                           :confirmed? false
+                                                           :uid id
+                                                           :role :admin}
+             (provided
+               (cl-user/new-user email password) => {:login email :password hashed-password}))))
