@@ -23,6 +23,7 @@
             [stonecutter.db.migration :as migration]
             [stonecutter.db.mongo :as mongo]
             [stonecutter.config :as config]
+            [stonecutter.admin :as admin]
             [stonecutter.db.storage :as storage])
   (:gen-class))
 
@@ -143,15 +144,6 @@
 (defn create-app [config-m stores-m & {dev-mode? :dev-mode?}]
   (splitter (create-site-app config-m stores-m dev-mode?) (create-api-app config-m stores-m dev-mode?)))
 
-(defn create-admin-user [config-m user-store]
-  (let [admin-login (config/admin-login config-m)
-        admin-password (config/admin-password config-m)]
-    (when (and admin-login admin-password)
-      (u/store-admin!
-        user-store
-        admin-login
-        admin-password))))
-
 (defn -main [& args]
   (let [config-m (config/create-config)]
     (vh/enable-template-caching!)
@@ -160,6 +152,6 @@
           app (create-app config-m stores-m :dev-mode? false)]
       (migration/run-migrations db)
       (email/configure-email (config/email-script-path config-m))
-      (create-admin-user config-m (storage/get-user-store stores-m))
+      (admin/create-admin-user config-m (storage/get-user-store stores-m))
       (client-seed/load-client-credentials-and-store-clients (storage/get-client-store stores-m) (config/client-credentials-file-path config-m))
       (ring-jetty/run-jetty app {:port (config/port config-m) :host (config/host config-m)}))))
