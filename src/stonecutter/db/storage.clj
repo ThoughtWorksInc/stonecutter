@@ -18,14 +18,14 @@
   (setup-in-memory-stores!))
 
 (defn create-mongo-stores [db]
-  {:auth-code-store    @auth-code-store
+  {:auth-code-store    (m/create-auth-code-store db)
    :user-store         (m/create-user-store db)
    :client-store       @client-store
    :token-store        (m/create-token-store db)
    :confirmation-store (m/create-confirmation-store db)})
 
 (defn create-in-memory-stores []
-  {:auth-code-store    @auth-code-store
+  {:auth-code-store    (m/create-memory-store)
    :user-store         (m/create-memory-store)
    :client-store       @client-store
    :token-store        (m/create-memory-store)
