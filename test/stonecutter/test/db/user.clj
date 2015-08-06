@@ -182,17 +182,29 @@
                  (cl-user/bcrypt "new-raw-password") => "new-hashed-password"))))
 
 (facts "about admins"
-       (fact "creating an admin user"
+       (fact "creating an admin user includes the role :admin"
              (let [email "email@admin.com"
                    password "stubpassword"
                    hashed-password "ABE1234SJD1234"
                    id "random-uuid-1234"
                    id-gen (constantly id)]
 
-             (user/create-admin id-gen email password) => {:login email
-                                                           :password hashed-password
-                                                           :confirmed? false
-                                                           :uid id
-                                                           :role :admin}
-             (provided
-               (cl-user/new-user email password) => {:login email :password hashed-password}))))
+               (user/create-admin id-gen email password) => {:login email
+                                                             :password hashed-password
+                                                             :confirmed? false
+                                                             :uid id
+                                                             :role :admin}
+               (provided
+                 (cl-user/new-user email password) => {:login email :password hashed-password})))
+
+       (let [admin-login "admin@email.com"
+             password "password456"
+             hashed-password "PA134SN"]
+       (fact "storing an admin calls create admin user"
+             (against-background
+               (user/create-admin anything admin-login password) => {:login admin-login :password hashed-password :role :admin})
+
+             (user/store-admin! user-store admin-login password) 
+             (user/retrieve-user user-store admin-login ) => {:login admin-login 
+                                                                    :password hashed-password
+                                                                    :role :admin})))

@@ -21,6 +21,11 @@
     (-> (cl-user/store-user user-store user)
         (dissoc :password))))
 
+(defn store-admin! [user-store email password]
+  (let [user (create-admin uuid/uuid email password)]
+    (-> (cl-user/store-user user-store user)
+        (dissoc :password))))
+
 (defn retrieve-user [user-store email]
   (cl-user/fetch-user user-store email))
 
