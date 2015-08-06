@@ -62,8 +62,9 @@
 (facts "about registration"
        (fact "user can register with valid credentials and is redirected to profile-created page, with user-login and access_token added to session"
              (let [user-store (m/create-memory-store)
+                   token-store (m/create-memory-store)
                    response (->> (th/create-request :post (routes/path :register-user) default-register-user-params {:some "session-data"})
-                                 (u/register-user user-store))
+                                 (u/register-user user-store token-store))
                    registered-user (user/retrieve-user user-store default-email)]
                response => (check-redirects-to (routes/path :show-profile-created))
                response => (contains {:session (contains {:user-login   (:login registered-user)
@@ -71,15 +72,17 @@
 
        (fact "session is not lost when redirecting from registration"
              (let [user-store (m/create-memory-store)
+                   token-store (m/create-memory-store)
                    response (->> (th/create-request :post (routes/path :register-user) default-register-user-params {:some "session-data"})
-                                 (u/register-user user-store))]
+                                 (u/register-user user-store token-store))]
                response => (check-redirects-to (routes/path :show-profile-created))
                response => (contains {:session (contains {:some "session-data"})})))
 
        (fact "user data is saved"
-             (let [user-store (m/create-memory-store)]
+             (let [user-store (m/create-memory-store)
+                   token-store (m/create-memory-store)]
                (->> (th/create-request :post (routes/path :register-user) default-register-user-params)
-                    (u/register-user user-store))) => anything
+                    (u/register-user user-store token-store))) => anything
              (provided
               (user/store-user! anything "valid@email.com" "password") => ...user...))
 
@@ -87,8 +90,9 @@
              (against-background
                (uuid/uuid) => confirmation-id)
              (let [user-store (m/create-memory-store)
+                   token-store (m/create-memory-store)
                    response (->> (th/create-request :post (routes/path :register-user) default-register-user-params)
-                                 (u/register-user user-store))
+                                 (u/register-user user-store token-store))
                    registered-user (user/retrieve-user user-store default-email)]
                (:email @most-recent-email) => default-email
                (:body @most-recent-email) => (contains {:confirmation-id confirmation-id})))
@@ -97,16 +101,18 @@
              (against-background
                (uuid/uuid) => confirmation-id)
              (let [user-store (m/create-memory-store)
+                   token-store (m/create-memory-store)
                    response (->> (th/create-request :post (routes/path :register-user) default-register-user-params)
-                                 (u/register-user user-store))]
+                                 (u/register-user user-store token-store))]
                (:flash response) => :confirm-email-sent)))
 
 (facts "about registration validation errors"
        (fact "email must not be a duplicate"
              (let [user-store (m/create-memory-store)
+                   token-store (m/create-memory-store)
                    original-user (user/store-user! user-store default-email default-password)
                    html-response (->> (th/create-request :post "/register" (register-user-params default-email default-password default-password))
-                                      (u/register-user user-store)
+                                      (u/register-user user-store token-store)
                                       :body
                                       html/html-snippet)]
                (-> (html/select html-response [:.form-row--validation-error])
@@ -115,16 +121,18 @@
                    :class)) => (contains "clj--registration-email"))
 
        (fact "user isn't saved to the database if email is invalid"
-             (let [user-store (m/create-memory-store)]
-               (->> (th/create-request :post "/register" {:email "invalid"}) (u/register-user user-store))) => anything
+             (let [user-store (m/create-memory-store)
+                   token-store (m/create-memory-store)]
+               (->> (th/create-request :post "/register" {:email "invalid"}) (u/register-user user-store token-store))) => anything
              (provided
                (cl-user/new-user anything anything) => anything :times 0
                (cl-user/store-user anything anything) => anything :times 0))
 
        (facts "registration page is rendered with errors"
               (let [user-store (m/create-memory-store)
+                    token-store (m/create-memory-store)
                     html-response (->> (th/create-request :post "/register" {:email "invalid"})
-                                       (u/register-user user-store)
+                                       (u/register-user user-store token-store)
                                        :body
                                        html/html-snippet)]
                 (fact "email field should have validation error class"

@@ -43,7 +43,7 @@
                                       :base-url base-url}))
   user)
 
-(defn register-user [user-store request]
+(defn register-user [user-store token-store request]
   (let [params (:params request)
         email (:email params)
         password (:password params)
@@ -55,7 +55,7 @@
       (do (conf/store! @storage/confirmation-store email confirmation-id)
           (-> (user/store-user! user-store email password)
               (send-confirmation-email! email confirmation-id config-m)
-              (redirect-to-profile-created request)
+              (#(redirect-to-profile-created token-store % request))
               (assoc :flash :confirm-email-sent))) 
       (show-registration-form request-with-validation-errors))))
 
@@ -118,11 +118,11 @@
     (user/delete-user! user-store email)
     (redirect-to-profile-deleted)))
 
-(defn redirect-to-profile-created [user request]
+(defn redirect-to-profile-created [token-store user request]
   (-> (r/redirect (routes/path :show-profile-created))
       (preserve-session request)
       (assoc-in [:session :user-login] (:login user))
-      (assoc-in [:session :access_token] (generate-login-access-token @storage/token-store user))))
+      (assoc-in [:session :access_token] (generate-login-access-token token-store user))))
 
 (defn redirect-to-profile-deleted []
   (assoc (r/redirect (routes/path :show-profile-deleted)) :session nil))

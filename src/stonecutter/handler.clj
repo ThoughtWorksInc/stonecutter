@@ -62,7 +62,7 @@
        :ping                             ping
        :theme-css                        stylesheets/theme-css
        :show-registration-form           user/show-registration-form
-       :register-user                    (partial user/register-user user-store)
+       :register-user                    (partial user/register-user user-store token-store)
        :show-sign-in-form                user/show-sign-in-form
        :sign-in                          (partial user/sign-in user-store token-store)
        :sign-out                         user/sign-out
