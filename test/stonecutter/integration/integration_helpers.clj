@@ -14,17 +14,18 @@
 (defn get-test-db-connection []
   (:conn @db-and-conn))
 
+
+(defn- drop-db [db-and-conn]
+  (monger/drop-db (:conn db-and-conn) test-db-name)
+  db-and-conn)
+
 (defn setup-db []
   (->>
    (monger/connect-via-uri test-db-uri)
+   drop-db
    (reset! db-and-conn)))
 
-(defn clear-collections []
-  (let [db (get-test-db)]
-    (doseq [coll sc-m/collections]
-      (mc/remove db coll {}))))
-
 (defn teardown-db []
-  (monger/drop-db (get-test-db-connection) test-db-name)
+  (drop-db @db-and-conn)
   (monger/disconnect (get-test-db-connection))
   (reset! db-and-conn nil))

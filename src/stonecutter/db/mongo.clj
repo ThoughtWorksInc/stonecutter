@@ -2,16 +2,15 @@
   (:require [clauth.store :as cl-s]
             [monger.collection :as mc]
             [monger.core :as mongo]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [monger.ring.session-store :as mongo-session]))
 
-(def user-collection "users")
-(def token-collection "tokens")
-(def auth-code-collection "auth-codes")
-(def client-collection "clients")
-(def confirmation-collection "confirmations")
-
-(def collections [user-collection token-collection auth-code-collection
-                  client-collection confirmation-collection])
+(def ^:private user-collection "users")
+(def ^:private token-collection "tokens")
+(def ^:private auth-code-collection "auth-codes")
+(def ^:private client-collection "clients")
+(def ^:private confirmation-collection "confirmations")
+(def ^:private session-collection "sessions")
 
 (defprotocol StonecutterStore
   (update! [e k update-fn]
@@ -92,3 +91,6 @@
 
 (defn create-confirmation-store [db]
   (create-mongo-store db confirmation-collection :confirmation-id))
+
+(defn create-session-store [db]
+  (mongo-session/session-store db session-collection))

@@ -3,8 +3,6 @@
             [kerodon.core :as k]
             [clauth.client :as cl-client]
             [clojure.java.io :as io]
-            [clojure.string :as string]
-            [stonecutter.config :as config]
             [stonecutter.email :as email]
             [stonecutter.integration.integration-helpers :as ih]
             [stonecutter.integration.kerodon-helpers :as kh]
@@ -15,11 +13,10 @@
             [stonecutter.logging :as l]
             [stonecutter.db.user :as user]
             [stonecutter.view.register :as register-view]
-            [stonecutter.db.storage :as storage]))
+            ))
 
 (l/init-logger!)
 (ih/setup-db)
-(ih/clear-collections)
 
 (def stores-m (s/create-mongo-stores (ih/get-test-db)))
 

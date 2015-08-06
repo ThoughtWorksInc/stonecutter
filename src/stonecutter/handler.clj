@@ -115,15 +115,16 @@
   (log/warn "ANTI_FORGERY_ERROR - headers: " (:headers req))
   (csrf-err-handler req))
 
-(defn wrap-defaults-config [secure?]
+(defn wrap-defaults-config [session-store secure?]
   (-> (if secure? (assoc ring-mw/secure-site-defaults :proxy true) ring-mw/site-defaults)
       (assoc-in [:session :cookie-attrs :max-age] 3600)
       (assoc-in [:session :cookie-name] "stonecutter-session")
+      (assoc-in [:session :store] session-store)
       (assoc-in [:security :anti-forgery] {:error-handler handle-anti-forgery-error})))
 
 (defn create-site-app [config-m stores-m dev-mode?]
   (-> (scenic/scenic-handler routes/routes (site-handlers stores-m) not-found)
-      (ring-mw/wrap-defaults (wrap-defaults-config (config/secure? config-m)))
+      (ring-mw/wrap-defaults (wrap-defaults-config (s/get-session-store stores-m) (config/secure? config-m)))
       m/wrap-translator
       (m/wrap-config config-m)
       (m/wrap-error-handling err-handler dev-mode?)
