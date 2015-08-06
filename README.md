@@ -144,3 +144,10 @@ For the mailgun example, the following environment variables are also required:
 
 - EMAIL_DOMAIN_NAME --- the domain name that has been linked to mailgun
 - MAILGUN_API_KEY --- the mailgun api username + key (i.e. a string in the form: "api:_api-key_"), provided by Mailgun.
+
+### Adding an Admin
+
+A single admin user can be added on deployment, simply set two environment variables as follow.
+
+- ADMIN_LOGIN --- this needs to be an email address, same format and validations apply as a normal login
+- ADMIN_PASSWORD --- same format and validations apply just like a password for a user
