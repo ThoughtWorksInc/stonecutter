@@ -141,15 +141,13 @@
 (defn create-app [config-m stores-m & {dev-mode? :dev-mode?}]
   (splitter (create-site-app config-m stores-m dev-mode?) (create-api-app config-m stores-m dev-mode?)))
 
-(defn app [stores-m]
-  (create-app (config/create-config) stores-m :dev-mode? false))
-
 (defn -main [& args]
   (let [config-m (config/create-config)]
     (vh/enable-template-caching!)
     (let [db (mongo/get-mongo-db (config/mongo-uri config-m))
-          stores (storage/create-mongo-stores db)]
+          stores-m (storage/create-mongo-stores db)
+          app (create-app config-m stores-m :dev-mode? false)]
       (migration/run-migrations db)
       (email/configure-email (config/email-script-path config-m))
-      (client-seed/load-client-credentials-and-store-clients (storage/get-client-store stores) (config/client-credentials-file-path config-m))
-      (ring-jetty/run-jetty (app (storage/create-mongo-stores db)) {:port (config/port config-m) :host (config/host config-m)}))))
+      (client-seed/load-client-credentials-and-store-clients (storage/get-client-store stores-m) (config/client-credentials-file-path config-m))
+      (ring-jetty/run-jetty app {:port (config/port config-m) :host (config/host config-m)}))))
