@@ -28,10 +28,9 @@
             page (-> (th/create-request) sign-in-form (helper/enlive-response {:translator translator}) :body)]
         page => th/no-untranslated-strings))
 
-(facts "about removing elements when there are no errors"
+(facts "error classes are not present when there are no errors"
        (let [page (-> (th/create-request)
-                      sign-in-form
-                      html/html-snippet)]
+                      sign-in-form)]
          (fact "no elements have class for styling errors"
                (html/select page [:.form-row--validation-error]) => empty?)
          (fact "email validation element is removed"
