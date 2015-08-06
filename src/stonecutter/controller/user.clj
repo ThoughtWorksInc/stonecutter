@@ -129,12 +129,14 @@
   (let [email (get-in request [:session :user-login])
         user (user/retrieve-user user-store email)
         confirmed? (:confirmed? user)
+        role (:role user)
         authorised-client-ids (:authorised-clients user)
         authorised-clients (map #(c/retrieve-client client-store %)
                                 authorised-client-ids)]
     (-> request
         (assoc-in [:context :authorised-clients] authorised-clients)
         (assoc-in [:context :confirmed?] confirmed?)
+        (assoc-in [:context :role] role)
         profile/profile
         (sh/enlive-response (:context request)))))
 

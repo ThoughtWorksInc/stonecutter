@@ -48,6 +48,11 @@
         (html/at enlive-m [:.clj--email-not-confirmed-message] nil)
         (html/at enlive-m [:.clj--email-confirmed-message] nil))))
 
+(defn hide-admin-span [request enlive-m]
+  (let [role (get-in request [:context :role])]
+    (html/at enlive-m [:.clj--admin__span]
+             (when (= role "admin") identity))))
+
 (defn profile [request]
   (->> (vh/load-template "public/profile.html")
        (vh/set-flash-message request :password-changed)
@@ -57,4 +62,5 @@
        set-sign-out-link
        set-change-password-link
        set-delete-account-link
+       (hide-admin-span request)
        vh/remove-work-in-progress))

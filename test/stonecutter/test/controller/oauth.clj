@@ -218,7 +218,7 @@
              client-store (m/create-memory-store)
              token-store (m/create-memory-store)
              auth-code-store (m/create-memory-store)
-             user (user/store-user! user-store user-email "password")
+             user (user/store-admin! user-store user-email "password")
              client-details (cl-client/register-client client-store "MYAPP" "http://myapp.com")
              auth-code (cl-auth-code/create-auth-code auth-code-store client-details user "http://myapp.com/callback")
              request (-> (th/create-request-with-query-string :get (routes/path :validate-token) {:grant_type   "authorization_code"
@@ -240,7 +240,9 @@
                (:user-id response-body) => (:uid user)
                (:uid user) =not=> nil?)
          (fact "email confirmed status is returned in the body after validating token"
-               (:user-email-confirmed response-body) => (:confirmed? user))))
+               (:user-email-confirmed response-body) => (:confirmed? user))
+         (fact "roles for admin is returned in the body after validating token"
+               (:role response-body) => (name (:role user)))))
 
 
 (facts "about auto-approver"

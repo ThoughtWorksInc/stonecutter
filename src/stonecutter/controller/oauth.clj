@@ -93,6 +93,7 @@
         user-login (:login user)
         user-id (:uid user)
         confirmed? (:confirmed? user)
+        role (:role user)
         response (token-handler auth-code-store client-store user-store token-store request)
         body (-> response
                  :body
@@ -100,6 +101,7 @@
                  (assoc :user-email user-login)
                  (assoc :user-id user-id)
                  (assoc :user-email-confirmed confirmed?)
+                 (assoc :role role)
                  (json/generate-string))]
     (-> response
         (assoc :body body))))

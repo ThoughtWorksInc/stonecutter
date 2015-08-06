@@ -359,7 +359,25 @@
 
          ?confirmed ?should-show ?should-hide
          true :.clj--email-confirmed-message :.clj--email-not-confirmed-message
-         false :.clj--email-not-confirmed-message :.clj--email-confirmed-message))
+         false :.clj--email-not-confirmed-message :.clj--email-confirmed-message)
+
+       (tabular
+         (fact "admin status is displayed appropriately"
+               (against-background
+                (user/retrieve-user ...user-store... ...email...) => {:login      ...email...
+                                                                      :role ?role})
+               (let [enlive-snippet
+                     (->> (th/create-request :get (routes/path :show-profile) nil {:user-login ...email...})
+                          (u/show-profile (m/create-memory-store) ...user-store...)
+                          :body
+                          html/html-snippet)]
+
+                 (html/select enlive-snippet [:.clj--admin__span]) => ?result))
+
+         ?role   ?result
+         "admin"  (one-of anything)
+         "nobody" empty?
+         nil     empty?))
 
 (facts "about unsharing profile cards"
        (facts "about get requests to /unshare-profile-card"

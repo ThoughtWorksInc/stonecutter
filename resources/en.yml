@@ -82,6 +82,7 @@ profile:
   delete-button: Delete account
   email-not-confirmed: Your email address is not yet confirmed.
   email-confirmed: Your email address has been confirmed.
+  admin-span: ", Mighty Admin!"
 
 applications:
   title: Applications
