@@ -1,6 +1,5 @@
 (ns stonecutter.db.storage
   (:require [stonecutter.db.mongo :as m]
-            [stonecutter.db.session :as session]
             [ring.middleware.session.memory :as mem-session]
             [monger.ring.session-store :as mongo-session]))
 
