@@ -145,12 +145,12 @@
 
 (fact "user can sign in with valid credentials and is redirected to profile, with user-login and access_token added to session"
       (->> (th/create-request :post "/sign-in" sign-in-user-params)
-           (u/sign-in ...user-store... @storage/token-store)) => (contains {:status  302 :headers {"Location" (routes/path :show-profile)}
+           (u/sign-in ...user-store... ...token-store...)) => (contains {:status  302 :headers {"Location" (routes/path :show-profile)}
                                                        :session {:user-login   ...user-login...
                                                                  :access_token ...token...}})
       (provided
        (user/authenticate-and-retrieve-user ...user-store... default-email default-password) => {:login ...user-login...}
-       (cl-token/create-token @storage/token-store nil {:login ...user-login...}) => {:token ...token...}))
+       (cl-token/create-token ...token-store... nil {:login ...user-login...}) => {:token ...token...}))
 
 (fact "signed-in? returns true only when user-login and access_token are in the session"
       (tabular
@@ -180,11 +180,11 @@
 
 (fact "when user signs in, if the session contains return-to, then redirect to that address"
       (->> (th/create-request :post "/sign-in" sign-in-user-params {:return-to ...return-to-url...})
-           (u/sign-in ...user-store... @storage/token-store)) => (contains {:status  302 :headers {"Location" ...return-to-url...}
+           (u/sign-in ...user-store... ...token-store...)) => (contains {:status  302 :headers {"Location" ...return-to-url...}
                                                        :session {:access_token ...token... :user-login ...user-login...}})
       (provided
        (user/authenticate-and-retrieve-user ...user-store... default-email default-password) => {:login ...user-login...}
-       (cl-token/create-token @storage/token-store nil {:login ...user-login...}) => {:token ...token...}))
+       (cl-token/create-token ...token-store... nil {:login ...user-login...}) => {:token ...token...}))
 
 (facts "about sign-in validation errors"
        (let [user-store (m/create-memory-store)

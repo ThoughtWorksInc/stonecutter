@@ -17,7 +17,6 @@
 
 (defn setup-mongo-stores! [db]
   (reset! user-store (m/create-mongo-user-store db))
-  (reset! token-store (m/create-token-store db))
   (reset! auth-code-store (m/create-auth-code-store db))
   (reset! client-store (m/create-client-store db))
   (reset! confirmation-store (m/create-confirmation-store db))
@@ -25,7 +24,6 @@
 
 (defn setup-in-memory-stores! []
   (reset! user-store (m/create-memory-store))
-  (reset! token-store (m/create-memory-store))
   (reset! auth-code-store (m/create-memory-store))
   (reset! client-store (m/create-memory-store))
   (reset! confirmation-store (m/create-memory-store))
@@ -37,12 +35,12 @@
 (defn create-mongo-stores [db]
   {:user-store @user-store
    :client-store @client-store
-   :token-store @token-store})
+   :token-store (m/create-token-store db)})
 
 (defn create-in-memory-stores []
   {:user-store @user-store
    :client-store @client-store
-   :token-store @token-store})
+   :token-store (m/create-memory-store)})
 
 (defn get-user-store [store-m]
   (:user-store store-m))
