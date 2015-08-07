@@ -7,6 +7,11 @@
 
 (def password-max-length 254)
 
+(defn remove-nil-values [m]
+  (->> m
+       (remove (comp nil? second))
+       (into {})))
+
 (defn is-email-valid? [email]
   (when email
     (re-matches #"\b[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]+\b" email)))
@@ -52,8 +57,7 @@
 
 (defn validate-registration [params duplicate-user-fn]
   (->> (registration-validations params duplicate-user-fn)
-       (remove (comp nil? second))
-       (into {})))
+        remove-nil-values))
 
 (defn sign-in-validations [params]
   (let [{:keys [email password]} params]
@@ -62,8 +66,7 @@
 
 (defn validate-sign-in [params]
   (->> (sign-in-validations params)
-       (remove (comp nil? second))
-       (into {})))
+       remove-nil-values))
 
 (defn change-password-validations [params]
   (let [{:keys [current-password new-password confirm-new-password]} params]
@@ -74,14 +77,9 @@
 
 (defn validate-change-password [params]
   (->> (change-password-validations params)
-       (remove (comp nil? second))
-       (into {})))
-
-(defn forgotten-password-validations [params]
-  (let [email (:email params)]
-    {:email (validate-sign-in-email email)}))
+       remove-nil-values))
 
 (defn validate-forgotten-password [params]
-  (->> (forgotten-password-validations params)
-       (remove (comp nil? second))
-       (into {})))
+  (let [email (:email params)]
+    (-> {:email (validate-sign-in-email email)}
+        remove-nil-values)))
