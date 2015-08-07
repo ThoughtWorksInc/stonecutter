@@ -103,7 +103,7 @@
           (:user-id response-body) =not=> string/blank?))
   state)
 
-;; FIXME can't reuse the body because it's a buffered input stream
+;; FIXME can't reuse the body because it's a buffered input stream - 06 Jul 2015
 (defn replay-last-request [state]
   (let [request (-> state :request)]
     (k/visit state (:uri request) :body (:body state) :headers (:headers state) :request-method :post)))
