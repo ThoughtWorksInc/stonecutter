@@ -10,6 +10,7 @@
 (def ^:private auth-code-collection "auth-codes")
 (def ^:private client-collection "clients")
 (def ^:private confirmation-collection "confirmations")
+(def ^:private forgotten-password-collection "forgotten-passwords")
 (def ^:private session-collection "sessions")
 
 (defprotocol StonecutterStore
@@ -73,24 +74,26 @@
     (log/debug "Connected to mongo.")
     db))
 
-(defn- create-mongo-store [db collection index]
-  (mc/ensure-index db collection {index 1} {:unique true})
+(defn- create-mongo-store [db collection]
   (new-mongo-store db collection))
 
 (defn create-user-store [db]
-  (create-mongo-store db user-collection :login))
+  (create-mongo-store db user-collection))
 
 (defn create-token-store [db]
-  (create-mongo-store db token-collection :token))
+  (create-mongo-store db token-collection))
 
 (defn create-auth-code-store [db]
-  (create-mongo-store db auth-code-collection :code))
+  (create-mongo-store db auth-code-collection))
 
 (defn create-client-store [db]
-  (create-mongo-store db client-collection :client-id))
+  (create-mongo-store db client-collection))
 
 (defn create-confirmation-store [db]
-  (create-mongo-store db confirmation-collection :confirmation-id))
+  (create-mongo-store db confirmation-collection))
+
+(defn create-forgotten-password-store [db]
+  (create-mongo-store db forgotten-password-collection))
 
 (defn create-session-store [db]
   (mongo-session/session-store db session-collection))

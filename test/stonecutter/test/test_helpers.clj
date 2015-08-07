@@ -19,6 +19,9 @@
    (-> (create-request-with-query-string method url params)
        (assoc :session session))))
 
+(defn add-config-request-context [request config]
+  (assoc-in request [:context :config-m] config))
+
 (defn create-user [login password]
   {:login    login
    :password password

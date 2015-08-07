@@ -48,9 +48,14 @@
    :body (confirmation-email-body (:base-url email-data) (:confirmation-id email-data))})
 
 (defn forgotten-password-renderer [email-data]
-  (let [reset-path (r/path :show-reset-password-form :forgotten-password-id (:forgotten-password-id email-data))
-        reset-url (str (:base-url email-data) reset-path)]
-    {:subject (format "Reset password for %s" (:app-name email-data))
+  (let [forgotten-password-id (:forgotten-password-id email-data)
+        base-url (:base-url email-data)
+        app-name (:app-name email-data)
+        reset-path (r/path :show-reset-password-form :forgotten-password-id forgotten-password-id)
+        reset-url (str base-url reset-path)]
+    (prn "Base url: " base-url)
+    (prn "App name: " app-name)
+    {:subject (format "Reset password for %s" app-name)
      :body    reset-url}))
 
 (defn send! [sender template email-address email-data]
@@ -66,6 +71,7 @@
 (defn initialise! [template-to-renderer-config]
   (reset! template-to-renderer-map template-to-renderer-config))
 
-(initialise! {:confirmation confirmation-renderer})
+(initialise! {:confirmation confirmation-renderer
+              :forgotten-password forgotten-password-renderer})
 
 

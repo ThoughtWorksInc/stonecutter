@@ -74,13 +74,6 @@
         (cl-s/store! store :login {:login "userA"})
         (cl-s/fetch store "userA") => {:login "userA"}))
 
-(fact "check that unique index exists for 'login' field"
-      (let [store (create-user-store @db)]
-        (c/indexes-on @db coll) => (contains [(contains {:name "login_1"})])
-        (c/insert @db coll {:login "userA"})
-        (c/insert @db coll {:login "userA"}) => (throws Exception)))
-
-
 (fact "can update a user with a supplied function"
       (let [store (create-user-store @db)
             update-with-new-key (fn [user] (assoc user :new-key "new-value"))]

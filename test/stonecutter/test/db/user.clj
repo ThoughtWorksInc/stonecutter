@@ -12,9 +12,9 @@
        (fact "can store a user"
              (user/store-user! user-store "email@server.com" "password")
              => (just {:login      "email@server.com"
-                          :name       nil
-                          :url        nil
-                          :confirmed? false
+                       :name       nil
+                       :url        nil
+                       :confirmed? false
                        :uid        anything}))
 
        (fact "can authenticate a user"
@@ -125,7 +125,7 @@
             auth-code-record (cl-auth-code/create-auth-code auth-code-store ...client... ...user... ...redirect-uri...)]
         (user/retrieve-user-with-auth-code auth-code-store "code") => ...user...
         (provided
-         (cl-auth-code/fetch-auth-code auth-code-store "code") => auth-code-record)))
+          (cl-auth-code/fetch-auth-code auth-code-store "code") => auth-code-record)))
 
 (facts "about adding client ids to users with add-client-id"
        (fact "returns a function which adds client-id to a user's authorised clients"
@@ -189,22 +189,22 @@
                    id "random-uuid-1234"
                    id-gen (constantly id)]
 
-               (user/create-admin id-gen email password) => {:login email
-                                                             :password hashed-password
+               (user/create-admin id-gen email password) => {:login      email
+                                                             :password   hashed-password
                                                              :confirmed? false
-                                                             :uid id
-                                                             :role "admin"}
+                                                             :uid        id
+                                                             :role       "admin"}
                (provided
                  (cl-user/new-user email password) => {:login email :password hashed-password})))
 
        (let [admin-login "admin@email.com"
              password "password456"
              hashed-password "PA134SN"]
-       (fact "storing an admin calls create admin user"
-             (against-background
-               (user/create-admin anything admin-login password) => {:login admin-login :password hashed-password :role "admin"})
+         (fact "storing an admin calls create admin user"
+               (against-background
+                 (user/create-admin anything admin-login password) => {:login admin-login :password hashed-password :role "admin"})
 
-             (user/store-admin! user-store admin-login password) 
-             (user/retrieve-user user-store admin-login ) => {:login admin-login 
-                                                                    :password hashed-password
-                                                                    :role "admin"})))
+               (user/store-admin! user-store admin-login password)
+               (user/retrieve-user user-store admin-login) => {:login    admin-login
+                                                               :password hashed-password
+                                                               :role     "admin"})))
