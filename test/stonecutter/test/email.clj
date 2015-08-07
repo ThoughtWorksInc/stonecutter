@@ -36,3 +36,12 @@
           (:email sent-email) => ...email-address...
           (:subject sent-email) => ...subject...
           (:body sent-email) => ...body...)))
+
+(fact "testing the forgotten password renderer"
+      (let [app-name "MyTestApp"
+            base-url "base-url"
+            email-data {:app-name app-name :base-url base-url :forgotten-password-id "forgotten-password-id"}
+            email (email/forgotten-password-renderer email-data)]
+
+        (:subject email) => (str "Reset password for " app-name)
+        (:body email) => (str base-url "/reset-password/forgotten-password-id")))

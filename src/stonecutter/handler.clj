@@ -158,3 +158,5 @@
       (admin/create-admin-user config-m (storage/get-user-store stores-m))
       (client-seed/load-client-credentials-and-store-clients (storage/get-client-store stores-m) (config/client-credentials-file-path config-m))
       (ring-jetty/run-jetty app {:port (config/port config-m) :host (config/host config-m)}))))
+
+

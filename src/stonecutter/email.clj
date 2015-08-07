@@ -1,6 +1,7 @@
 (ns stonecutter.email
   (:require [clojure.java.shell :as shell]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [stonecutter.routes :as r]))
 
 (defprotocol EmailSender
   (send-email! [this email-address subject body]))
@@ -38,13 +39,19 @@
   (str
     "Hi,\n"
     "Click this link to confirm your email address:\n"
-    base-url "/confirm-email/" confirmation-id
+    base-url (r/path :confirm-email-with-id :confirmation-id confirmation-id)
     "\nCheers,"
     "\nAdmin"))
 
 (defn confirmation-renderer [email-data]
   {:subject (format "Confirm your email for %s" (:app-name email-data))
    :body (confirmation-email-body (:base-url email-data) (:confirmation-id email-data))})
+
+(defn forgotten-password-renderer [email-data]
+  (let [reset-path (r/path :show-reset-password-form :forgotten-password-id (:forgotten-password-id email-data))
+        reset-url (str (:base-url email-data) reset-path)]
+    {:subject (format "Reset password for %s" (:app-name email-data))
+     :body    reset-url}))
 
 (defn send! [sender template email-address email-data]
   (log/debug (format "sending template '%s' to '%s'." template email-address))
