@@ -33,5 +33,22 @@
                {:admin-login invalid-admin-login
                :admin-password admin-password} user-store) => (throws Exception)
              (provided
-               (u/store-admin! user-store invalid-admin-login admin-password) => :return :times 0)))
+               (u/store-admin! user-store invalid-admin-login admin-password) => :return :times 0))
+       
+       (def string-of-255 (apply str (repeat 255 "x")))
+
+       (tabular
+         (fact "password of incorrect length throws an exception"
+               (against-background
+                 (u/is-duplicate-user? user-store ?admin-login) => false)
+
+               (admin/create-admin-user
+                 {:admin-login ?admin-login
+                  :admin-password ?password} user-store) => (throws Exception)
+               (provided
+                 (u/store-admin! user-store ?admin-login ?password) => :return :times 0))
+
+        ?admin-login        ?password
+        "admin@admin.com"   "short"
+        "admin2@admin.com"  string-of-255))
 

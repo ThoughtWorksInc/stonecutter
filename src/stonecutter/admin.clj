@@ -8,11 +8,14 @@
   (let [admin-login (config/admin-login config-m)
         admin-password (config/admin-password config-m)
         duplication-checker (partial u/is-duplicate-user? user-store)
-        errors (v/validate-registration-email admin-login duplication-checker)]
+        errors (or (v/validate-registration-email admin-login duplication-checker)
+                   (v/validate-password admin-password))]
     (when (and admin-login admin-password)
       (case errors
         :duplicate (log/info "Admin account already exists.")
-        :invalid (throw (Exception. "INVALID ADMIN DETAILS - please check that admin login is in the correct format"))
+        :invalid   (throw (Exception. "INVALID ADMIN LOGIN DETAILS - please check that admin login is in the correct format"))
+        :too-short (throw (Exception. "ADMIN PASSWORD is too short - please check that admin password is in the correct format"))
+        :too-long  (throw (Exception. "ADMIN PASSWORD is too long - please check that admin password is in the correct format"))
         nil (u/store-admin!
               user-store
               admin-login
