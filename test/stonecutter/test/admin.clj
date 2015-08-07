@@ -5,6 +5,7 @@
             [stonecutter.admin :as admin]))
 
 (def admin-login "admin@stonecutter.com")
+(def invalid-admin-login "admin")
 (def admin-password "validpassword123")
 (def user-store (m/create-memory-store))
 
@@ -22,4 +23,15 @@
 
              (provided
                (u/is-duplicate-user? user-store admin-login) => true
-               (u/store-admin! user-store admin-login admin-password) => :return :times 0)))
+               (u/store-admin! user-store admin-login admin-password) => :return :times 0))
+
+       (fact "login not in email format throws an exception"
+             (against-background
+               (u/is-duplicate-user? user-store invalid-admin-login) => false)
+
+             (admin/create-admin-user
+               {:admin-login invalid-admin-login
+               :admin-password admin-password} user-store) => (throws Exception)
+             (provided
+               (u/store-admin! user-store invalid-admin-login admin-password) => :return :times 0)))
+
