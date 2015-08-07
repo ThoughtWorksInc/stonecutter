@@ -3,18 +3,23 @@
             [clauth.auth-code :as cl-auth-code]
             [clauth.store :as cl-store]
             [clojure.string :as s]
+            [stonecutter.config :as config]
             [stonecutter.db.mongo :as m]
             [stonecutter.util.uuid :as uuid]))
 
-(defn create-user [id-gen email password]
-  (let [lower-email (s/lower-case email)]
-    (->
-      (cl-user/new-user lower-email password)
-      (assoc :confirmed? false)
-      (assoc :uid (id-gen)))))
+(defn create-user 
+  ([id-gen email password]
+   (create-user id-gen email password (:default config/roles)))
+  ([id-gen email password role]
+   (let [lower-email (s/lower-case email)]
+     (->
+       (cl-user/new-user lower-email password)
+       (assoc :confirmed? false)
+       (assoc :uid (id-gen))
+       (assoc :role role)))))
 
 (defn create-admin [id-gen email password]
-   (assoc (create-user id-gen email password) :role "admin"))
+  (create-user id-gen email password (:admin config/roles)))
 
 (defn store-user! [user-store email password]
   (let [user (create-user uuid/uuid email password)]

@@ -1,6 +1,7 @@
 (ns stonecutter.view.profile
   (:require [traduki.core :as t]
             [net.cgrand.enlive-html :as html]
+            [stonecutter.config :as config]
             [stonecutter.routes :as r]
             [stonecutter.view.view-helpers :as vh]))
 
@@ -51,7 +52,7 @@
 (defn hide-admin-span [request enlive-m]
   (let [role (get-in request [:context :role])]
     (html/at enlive-m [:.clj--admin__span]
-             (when (= role "admin") identity))))
+             (when (= role (:admin config/roles)) identity))))
 
 (defn profile [request]
   (->> (vh/load-template "public/profile.html")

@@ -4,6 +4,7 @@
             [clauth.auth-code :as cl-auth-code]
             [stonecutter.db.mongo :as m]
             [stonecutter.util.uuid :as uuid]
+            [stonecutter.config :as config]
             [stonecutter.db.user :as user]))
 
 (def user-store (m/create-memory-store))
@@ -15,7 +16,8 @@
                        :name       nil
                        :url        nil
                        :confirmed? false
-                       :uid        anything}))
+                       :uid        anything
+                       :role       (:default config/roles)}))
 
        (fact "can authenticate a user"
              (user/authenticate-and-retrieve-user user-store "email@server.com" "password")
@@ -79,7 +81,7 @@
 (fact "about creating a user record"
       (let [id-gen (constantly "id")]
         (fact "a uuid is added"
-              (user/create-user id-gen "email" "password") => {:login "email" :password "encrypted_password" :uid "id" :name nil :url nil :confirmed? false}
+              (user/create-user id-gen "email" "password") => {:login "email" :password "encrypted_password" :uid "id" :name nil :url nil :confirmed? false :role (:default config/roles)}
               (provided (cl-user/bcrypt "password") => "encrypted_password"))
         (fact "email is lower-cased"
               (user/create-user id-gen "EMAIL" "password") => (contains {:login "email"}))))
@@ -192,8 +194,8 @@
                (user/create-admin id-gen email password) => {:login      email
                                                              :password   hashed-password
                                                              :confirmed? false
-                                                             :uid        id
-                                                             :role       "admin"}
+                                                             :uid id
+                                                             :role (:admin config/roles)}
                (provided
                  (cl-user/new-user email password) => {:login email :password hashed-password})))
 
@@ -202,9 +204,9 @@
              hashed-password "PA134SN"]
          (fact "storing an admin calls create admin user"
                (against-background
-                 (user/create-admin anything admin-login password) => {:login admin-login :password hashed-password :role "admin"})
+                 (user/create-admin anything admin-login password) => {:login admin-login :password hashed-password :role (:admin config/roles)})
 
-               (user/store-admin! user-store admin-login password)
-               (user/retrieve-user user-store admin-login) => {:login    admin-login
-                                                               :password hashed-password
-                                                               :role     "admin"})))
+               (user/store-admin! user-store admin-login password) 
+               (user/retrieve-user user-store admin-login ) => {:login admin-login 
+                                                                :password hashed-password
+                                                                :role (:admin config/roles)})))

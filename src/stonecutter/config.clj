@@ -9,6 +9,9 @@
                 :static-resources-dir-path :logo-file-name
                 :favicon-file-name :admin-login :admin-password})
 
+(def roles {:default "default"
+            :admin "admin"})
+
 (defn create-config []
   (select-keys env/env env-vars))
 

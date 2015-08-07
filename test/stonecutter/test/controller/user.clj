@@ -6,6 +6,7 @@
             [stonecutter.test.test-helpers :as th]
             [stonecutter.email :as email]
             [stonecutter.routes :as routes]
+            [stonecutter.config :as config]
             [stonecutter.controller.user :as u]
             [stonecutter.db.client :as c]
             [stonecutter.db.user :as user]
@@ -367,10 +368,10 @@
 
                  (html/select enlive-snippet [:.clj--admin__span]) => ?result))
 
-         ?role   ?result
-         "admin"  (one-of anything)
-         "nobody" empty?
-         nil     empty?))
+         ?role                 ?result
+         (:admin config/roles)  (one-of anything)
+         "nobody"              empty?
+         nil                   empty?))
 
 (facts "about unsharing profile cards"
        (facts "about get requests to /unshare-profile-card"
