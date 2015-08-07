@@ -1,0 +1,17 @@
+This file is the text use on http://bramp.github.io/js-sequence-diagrams
+to generate the diagram.svg
+
+Title: Stonecutter Auth Journey 07/08/2015
+User->Client: :GET /login
+#Client is stonecutter-client and stonecutter-oauth.client
+Client-->StoneCutter: :GET /authorisation\n{:client-id <id>\n:response_type "code"\n:redirect_uri <callback>}
+StoneCutter->>Clauth: clauth.endpoint/authorization-handler\n:auto-approver false\n:user-session-required-redirect\n:authorization-form
+Clauth->StoneCutter: <callback-uri>?code=<auth_code>
+Note over StoneCutter: preserves session\n{:user-login\n:access_token
+StoneCutter->Client: :GET :status 302\nto: <callback-uri>
+Client->StoneCutter: :POST /api/token\n{:grant_type :redirect_uri :code :client_id :client_secret}
+StoneCutter->Clauth: token-request-handler
+Clauth->StoneCutter: json {:access_token <token> :token_type "bearer"}
+StoneCutter->Client: json with keys {:access_token :token_type \n:user-email :user-id :user-email-confirmed :role}
+Note over Client: Redirects to /voting
+Client->User:session {:access-token :user\n:user-email-confirmed :role} 
