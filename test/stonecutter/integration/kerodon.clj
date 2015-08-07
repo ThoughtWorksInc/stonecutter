@@ -326,6 +326,7 @@
           (k/visit "/sign-in")
           (kh/selector-includes-content [ks/sign-in-app-name] "My App Name")))
 
+;; 06 Jul 2015
 (future-fact "Replaying the same post will generate a 403 from the csrf handling"
              (-> (k/session test-app)
                  (register "csrf@email.com")
