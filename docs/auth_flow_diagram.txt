@@ -7,7 +7,7 @@ User->Client: :GET /login
 Client-->StoneCutter: :GET /authorisation\n{:client-id <id>\n:response_type "code"\n:redirect_uri <callback>}
 StoneCutter->>Clauth: clauth.endpoint/authorization-handler\n:auto-approver false\n:user-session-required-redirect\n:authorization-form
 Clauth->StoneCutter: <callback-uri>?code=<auth_code>
-Note over StoneCutter: preserves session\n{:user-login\n:access_token
+Note over StoneCutter: preserves session\n{:user-login\n:access_token}
 StoneCutter->Client: :GET :status 302\nto: <callback-uri>
 Client->StoneCutter: :POST /api/token\n{:grant_type :redirect_uri :code :client_id :client_secret}
 StoneCutter->Clauth: token-request-handler
