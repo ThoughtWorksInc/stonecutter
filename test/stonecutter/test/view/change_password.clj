@@ -17,14 +17,11 @@
       (let [page (-> (th/create-request) change-password-form)]
         page => th/work-in-progress-removed))
 
-(fact "there are no missing translations"
-      (let [translator (t/translations-fn t/translation-map)
-            page (-> (th/create-request) change-password-form (helper/enlive-response {:translator translator}) :body)]
-        page => th/no-untranslated-strings))
+(fact (th/test-translations "Change password" change-password-form))
 
 (fact "form posts to correct endpoint"
       (let [page (-> (th/create-request) change-password-form)]
-        (-> page (html/select [:form]) first :attrs :action) => (r/path :change-password)))
+        page => (th/has-form-action? (r/path :change-password))))
 
 (fact "cancel link should go to correct endpoint"
       (let [page (-> (th/create-request) change-password-form)]
@@ -41,8 +38,8 @@
        (tabular
          (let [page (-> (th/create-request {} ?errors) change-password-form)]
            (fact "validation-summary--show class is added to the validation summary element"
-                 (-> (html/select page [:.clj--validation-summary])
-                     first :attrs :class) => (contains "validation-summary--show"))
+                 (-> (html/select page [[:.clj--validation-summary :.validation-summary--show]])
+                     ) =not=> empty?)
            (fact "validation message is present as a validation summary item"
                  (html/select page [:.clj--validation-summary__item]) =not=> empty?)
            (fact "correct error messages are displayed"

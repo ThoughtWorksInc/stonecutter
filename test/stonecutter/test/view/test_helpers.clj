@@ -38,3 +38,24 @@
                        view-fn
                        (helper/enlive-response {:translator translator}) :body)]
           page => no-untranslated-strings)))
+
+(defn enlive-m->attr [enlive-m selector attr]
+  (-> enlive-m (html/select selector) first :attrs attr))
+
+(defn has-attr? [selector attr attr-val]
+  (chatty-checker [enlive-m]
+                  (= attr-val (enlive-m->attr enlive-m selector attr))))
+
+(defn has-form-action?
+  ([path]
+   (has-form-action? [:form] path))
+  
+  ([form-selector path]
+   (has-attr? form-selector :action path)))
+
+(defn has-form-method?
+  ([method]
+   (has-form-method? [:form] method))
+
+  ([form-selector method]
+   (has-attr? form-selector :method method)))
