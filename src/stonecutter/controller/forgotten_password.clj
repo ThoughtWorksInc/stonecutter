@@ -9,7 +9,8 @@
             [stonecutter.email :as email]
             [stonecutter.routes :as routes]
             [stonecutter.util.uuid :as uuid]
-            [stonecutter.db.user :as user]))
+            [stonecutter.db.user :as user]
+            [clojure.tools.logging :as log]))
 
 (defn request->forgotten-password-id [request]
   (get-in request [:params :forgotten-password-id]))
@@ -26,10 +27,11 @@
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
       (do
-        (when (user/retrieve-user user-store email-address)
+        (if (user/retrieve-user user-store email-address)
           (let [forgotten-password-id (uuid/uuid)]
             (cl-store/store! forgotten-password-store :forgotten-password-id {:forgotten-password-id forgotten-password-id :login email-address})
-            (email/send! email-sender :forgotten-password email-address {:app-name app-name :base-url base-url :forgotten-password-id forgotten-password-id})))
+            (email/send! email-sender :forgotten-password email-address {:app-name app-name :base-url base-url :forgotten-password-id forgotten-password-id}))
+          (log/warn (format "User %s does not exist so reset password e-mail not sent." email-address)))
         (response/redirect (routes/path :show-forgotten-password-confirmation)))
       (show-forgotten-password-form request-with-validation-errors))))
 
@@ -39,5 +41,8 @@
 (defn show-reset-password-form [forgotten-password-store user-store request]
   (let [forgotten-password-id (request->forgotten-password-id request)]
     (when-let [forgotten-password-record (cl-store/fetch forgotten-password-store forgotten-password-id)]
+      (prn "Forgotten-password-record" forgotten-password-record)
       (when-let [user (user/retrieve-user user-store (:login forgotten-password-record))]
-        (response/response "password reset form")))))
+        (prn "Forgotten-password-user" user)
+        (-> (response/response "password reset form")
+            (response/content-type "text/html"))))))
