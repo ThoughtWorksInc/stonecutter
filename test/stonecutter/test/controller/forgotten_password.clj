@@ -67,8 +67,9 @@
                                                               :login email-address})
                    test-request (th/create-request :get (routes/path :show-reset-password-form
                                                                      :forgotten-password-id forgotten-password-id)
-                                                   {:forgotten-password-id forgotten-password-id})]
-               (:status (fp/show-reset-password-form forgotten-password-store user-store test-request)) => 200))
+                                                   {:forgotten-password-id forgotten-password-id})
+                   response (fp/show-reset-password-form forgotten-password-store user-store test-request)]
+               (:status response) => 200))
 
        (fact "if there is no forgotten password record with an id matching that in the URL, a 404 is returned"
              (let [user-store (m/create-memory-store)

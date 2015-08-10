@@ -6,16 +6,16 @@
             [net.cgrand.enlive-html :as html]))
 
 (fact
- (th/test-translations "Reset password" rp/reset-password))
+ (th/test-translations "Reset password" rp/reset-password-form))
 
 (fact "form posts to correct endpoint"
-      (let [page (-> (th/create-request nil nil {:forgotten-password-id "some-uuid"}) rp/reset-password)]
+      (let [page (-> (th/create-request nil nil {:forgotten-password-id "some-uuid"}) rp/reset-password-form)]
         page => (th/has-form-action? (r/path :reset-password :forgotten-password-id "some-uuid"))
         page => (th/has-form-method? "post")))
 
 (facts "about displaying errors"
        (tabular
-         (let [page (-> (th/create-request {} ?errors {:forgotten-password-id "some-uuid"}) rp/reset-password)]
+         (let [page (-> (th/create-request {} ?errors {:forgotten-password-id "some-uuid"}) rp/reset-password-form)]
            (fact "validation-summary--show class is added to the validation summary element"
                  (-> (html/select page [[:.clj--validation-summary :.validation-summary--show]])) =not=> empty?)
            (fact "validation message is present as a validation summary item"

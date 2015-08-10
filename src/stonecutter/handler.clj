@@ -62,33 +62,34 @@
         auth-code-store (storage/get-auth-code-store stores-m)
         forgotten-password-store (storage/get-forgotten-password-store stores-m)]
     (->
-      {:home                             user/home
-       :ping                             ping
-       :theme-css                        stylesheets/theme-css
-       :show-registration-form           user/show-registration-form
-       :register-user                    (partial user/register-user user-store token-store confirmation-store email-sender)
-       :show-sign-in-form                user/show-sign-in-form
-       :sign-in                          (partial user/sign-in user-store token-store)
-       :sign-out                         user/sign-out
-       :confirm-email-with-id            (partial ec/confirm-email-with-id user-store confirmation-store)
-       :confirmation-sign-in-form        ec/show-confirm-sign-in-form
-       :confirmation-sign-in             (partial ec/confirmation-sign-in user-store token-store confirmation-store)
-       :show-profile                     (partial user/show-profile client-store user-store)
-       :show-profile-created             user/show-profile-created
-       :show-profile-deleted             user/show-profile-deleted
-       :show-unshare-profile-card        (partial user/show-unshare-profile-card client-store user-store)
-       :unshare-profile-card             (partial user/unshare-profile-card user-store)
-       :show-delete-account-confirmation user/show-delete-account-confirmation
-       :delete-account                   (partial user/delete-account user-store)
-       :show-change-password-form        user/show-change-password-form
-       :change-password                  (partial user/change-password user-store)
-       :show-forgotten-password-form     forgotten-password/show-forgotten-password-form
-       :send-forgotten-password-email    (partial forgotten-password/forgotten-password-form-post email-sender user-store forgotten-password-store)
+      {:home                                 user/home
+       :ping                                 ping
+       :theme-css                            stylesheets/theme-css
+       :show-registration-form               user/show-registration-form
+       :register-user                        (partial user/register-user user-store token-store confirmation-store email-sender)
+       :show-sign-in-form                    user/show-sign-in-form
+       :sign-in                              (partial user/sign-in user-store token-store)
+       :sign-out                             user/sign-out
+       :confirm-email-with-id                (partial ec/confirm-email-with-id user-store confirmation-store)
+       :confirmation-sign-in-form            ec/show-confirm-sign-in-form
+       :confirmation-sign-in                 (partial ec/confirmation-sign-in user-store token-store confirmation-store)
+       :show-profile                         (partial user/show-profile client-store user-store)
+       :show-profile-created                 user/show-profile-created
+       :show-profile-deleted                 user/show-profile-deleted
+       :show-unshare-profile-card            (partial user/show-unshare-profile-card client-store user-store)
+       :unshare-profile-card                 (partial user/unshare-profile-card user-store)
+       :show-delete-account-confirmation     user/show-delete-account-confirmation
+       :delete-account                       (partial user/delete-account user-store)
+       :show-change-password-form            user/show-change-password-form
+       :change-password                      (partial user/change-password user-store)
+       :show-forgotten-password-form         forgotten-password/show-forgotten-password-form
+       :send-forgotten-password-email        (partial forgotten-password/forgotten-password-form-post email-sender user-store forgotten-password-store)
        :show-forgotten-password-confirmation forgotten-password/show-forgotten-password-confirmation
-       :show-authorise-form              (partial oauth/show-authorise-form client-store)
-       :authorise                        (partial oauth/authorise auth-code-store client-store user-store token-store)
-       :authorise-client                 (partial oauth/authorise-client auth-code-store client-store user-store token-store)
-       :show-authorise-failure           (partial oauth/show-authorise-failure client-store)}
+       :show-reset-password-form             (partial forgotten-password/show-reset-password-form forgotten-password-store user-store)
+       :show-authorise-form                  (partial oauth/show-authorise-form client-store)
+       :authorise                            (partial oauth/authorise auth-code-store client-store user-store token-store)
+       :authorise-client                     (partial oauth/authorise-client auth-code-store client-store user-store token-store)
+       :show-authorise-failure               (partial oauth/show-authorise-failure client-store)}
       (m/wrap-handlers #(m/wrap-handle-404 % not-found) #{})
       (m/wrap-handlers #(m/wrap-handle-403 % forbidden-err-handler) #{})
       (m/wrap-handlers m/wrap-disable-caching #{:theme-css})
@@ -102,7 +103,8 @@
                                           :confirm-email-with-id
                                           :confirmation-sign-in-form :confirmation-sign-in
                                           :show-forgotten-password-form :send-forgotten-password-email
-                                          :show-forgotten-password-confirmation}))))
+                                          :show-forgotten-password-confirmation
+                                          :show-reset-password-form}))))
 
 (defn api-handlers [stores-m]
   (let [auth-code-store (storage/get-auth-code-store stores-m)
@@ -147,7 +149,7 @@
 
 (defn create-app
   ([config-m stores-m email-sender]
-    (create-app config-m stores-m email-sender false))
+   (create-app config-m stores-m email-sender false))
   ([config-m stores-m email-sender prone-stacktraces?]
    (splitter (create-site-app config-m stores-m email-sender prone-stacktraces?) (create-api-app config-m stores-m prone-stacktraces?))))
 

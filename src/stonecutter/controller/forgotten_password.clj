@@ -6,6 +6,7 @@
             [stonecutter.validation :as v]
             [stonecutter.view.forgotten-password :as forgotten-password-view]
             [stonecutter.view.forgotten-password-confirmation :as forgotten-password-confirmation-view]
+            [stonecutter.view.reset-password :as reset-password]
             [stonecutter.helper :as sh]
             [stonecutter.email :as email]
             [stonecutter.routes :as routes]
@@ -43,8 +44,5 @@
 (defn show-reset-password-form [forgotten-password-store user-store request]
   (let [forgotten-password-id (request->forgotten-password-id request)]
     (when-let [forgotten-password-record (cl-store/fetch forgotten-password-store forgotten-password-id)]
-      (prn "Forgotten-password-record" forgotten-password-record)
       (when-let [user (user/retrieve-user user-store (:login forgotten-password-record))]
-        (prn "Forgotten-password-user" user)
-        (-> (response/response "password reset form")
-            (response/content-type "text/html"))))))
+        (sh/enlive-response (reset-password/reset-password-form request) (:context request))))))

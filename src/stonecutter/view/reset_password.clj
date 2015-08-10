@@ -7,7 +7,7 @@
 (defn set-form-action [enlive-m forgotten-password-id]
   (html/at enlive-m [:form] (html/set-attr :action (r/path :reset-password :forgotten-password-id forgotten-password-id))))
 
-(defn reset-password [request]
+(defn reset-password-form [request]
   (let [err (get-in request [:context :errors])
         forgotten-password-id (get-in request [:params :forgotten-password-id] "no-id-provided")]
     (->
