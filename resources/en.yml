@@ -34,6 +34,14 @@ change-password-form:
   form-button: Save changes
   cancel-button: Cancel
 
+reset-password-form:
+  title: Reset your password
+  page-header: Reset your password
+  new-password: New password
+  confirm-new-password: Confirm new password
+  confirm-password-invalid-validation-message: Confirm new password must match new password
+  form-button: Reset password
+
 forgot-password:
   title: Forgotten password
   email-label: Email address
