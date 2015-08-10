@@ -10,6 +10,9 @@
             [stonecutter.db.user :as user]
             [clauth.store :as cl-store]))
 
+(def email-address "email@address.com")
+(def forgotten-password-id "SOME-UUID")
+
 (fact "about validation checks on posting email address"
       (let [email-sender (test-email/create-test-email-sender)
             response (->> (th/create-request :post "/forgotten-password" {:email "invalid email"})
@@ -53,3 +56,35 @@
                 (fp/forgotten-password-form-post email-sender user-store forgotten-password-store test-request) => (th/check-redirects-to (routes/path :show-forgotten-password-confirmation))
                 (test-email/last-sent-email email-sender) => nil
                 (cl-store/entries forgotten-password-store) => empty?))))
+
+(facts "about reset password form"
+       (fact "if the forgotten-password-id in the URL corresponds to a non-expired forgotten-password record, the reset password form is displayed"
+             (let [user-store (m/create-memory-store)
+                   user (user/store-user! user-store email-address "old-password")
+                   forgotten-password-store (m/create-memory-store)
+                   forgotten-password-entry (cl-store/store! forgotten-password-store :forgotten-password-id
+                                                             {:forgotten-password-id forgotten-password-id
+                                                              :login email-address})
+                   test-request (th/create-request :get (routes/path :show-reset-password-form
+                                                                     :forgotten-password-id forgotten-password-id)
+                                                   {:forgotten-password-id forgotten-password-id})]
+               (:status (fp/show-reset-password-form forgotten-password-store user-store test-request)) => 200))
+
+       (fact "if there is no forgotten password record with an id matching that in the URL, a 404 is returned"
+             (let [user-store (m/create-memory-store)
+                   forgotten-password-store (m/create-memory-store)
+                   test-request (th/create-request :get (routes/path :show-reset-password-form
+                                                                     :forgotten-password-id forgotten-password-id)
+                                                   {:forgotten-password-id forgotten-password-id})]
+               (:status (fp/show-reset-password-form forgotten-password-store user-store test-request)) => nil))
+
+       (fact "if a non-expired forgotten-password record can be found, but there is no corresponding user, a 404 is returned"
+             (let [user-store (m/create-memory-store)
+                   forgotten-password-store (m/create-memory-store)
+                   forgotten-password-entry (cl-store/store! forgotten-password-store :forgotten-password-id
+                                                             {:forgotten-password-id forgotten-password-id
+                                                              :login email-address})
+                   test-request (th/create-request :get (routes/path :show-reset-password-form
+                                                                     :forgotten-password-id forgotten-password-id)
+                                                   {:forgotten-password-id forgotten-password-id})]
+               (:status (fp/show-reset-password-form forgotten-password-store user-store test-request)) => nil)))

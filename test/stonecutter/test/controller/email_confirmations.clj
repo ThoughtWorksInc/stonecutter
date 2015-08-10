@@ -33,7 +33,7 @@
   (th/create-request :get confirm-email-path {:confirmation-id confirmation-id}))
 
 (facts "about confirm-email-with-id"
-       (fact "if the confirmation UUID in the query string matches that of the signed in user's user record confirm the account and redirect to profile view"
+       (fact "if the confirmation UUID in the URL matches that of the signed in user's user record confirm the account and redirect to profile view"
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
@@ -45,7 +45,7 @@
                (user/retrieve-user user-store (:login user)) =not=> (contains {:confirmation-id anything})
                (user/retrieve-user user-store (:login user)) => (contains {:confirmed? true})))
 
-       (fact "when confirmation UUID in the query string does not match that of the signed in user's user record, signs the user out and redirects to confirmation endpoint with the original confirmation UUID from the query string"
+       (fact "when confirmation UUID in the URL does not match that of the signed in user's user record, signs the user out and redirects to confirmation endpoint with the original confirmation UUID from the query string"
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
@@ -58,7 +58,7 @@
                response =not=> (th/check-signed-in request signed-in-user)
                response => (th/check-redirects-to confirm-email-path)))
 
-       (fact "when user is not signed in, redirects to sign-in form with the confirmation endpoint (including confirmation UUID query string) as the successful sign-in redirect target"
+       (fact "when user is not signed in, redirects to sign-in form with the confirmation endpoint (including confirmation UUID URL) as the successful sign-in redirect target"
              (let [user-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
                    confirming-user (user/store-user! user-store email "password")

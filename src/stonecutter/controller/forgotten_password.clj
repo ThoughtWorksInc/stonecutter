@@ -11,6 +11,9 @@
             [stonecutter.util.uuid :as uuid]
             [stonecutter.db.user :as user]))
 
+(defn request->forgotten-password-id [request]
+  (get-in request [:params :forgotten-password-id]))
+
 (defn show-forgotten-password-form [request]
   (sh/enlive-response (forgotten-password-view/forgotten-password-form request) (:context request)))
 
@@ -32,3 +35,9 @@
 
 (defn show-forgotten-password-confirmation [request]
   (sh/enlive-response (forgotten-password-confirmation-view/forgotten-password-confirmation request) (:context request)))
+
+(defn show-reset-password-form [forgotten-password-store user-store request]
+  (let [forgotten-password-id (request->forgotten-password-id request)]
+    (when-let [forgotten-password-record (cl-store/fetch forgotten-password-store forgotten-password-id)]
+      (when-let [user (user/retrieve-user user-store (:login forgotten-password-record))]
+        (response/response "password reset form")))))
