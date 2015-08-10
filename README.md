@@ -151,3 +151,9 @@ A single admin user can be added on deployment, simply set two environment varia
 
 - ADMIN_LOGIN --- this needs to be an email address, same format and validations apply as a normal login
 - ADMIN_PASSWORD --- same format and validations apply just like a password for a user
+
+### Architecture
+
+The Continuous Delivery build and deployment architecture is documented [here] (https://docs.google.com/a/thoughtworks.com/drawings/d/1FZ35v27_pBym_NqzLbqVP_TwnHVBHNwFQss_Lzbs1bU/edit?usp=sharing)
+
+The Hosting Architecture is documented [here] (https://docs.google.com/a/thoughtworks.com/drawings/d/1mgdxe0Q0uYZloZLFLvlwyKRx4iUangEAn4aV2qm-zWs/edit?usp=sharing).
