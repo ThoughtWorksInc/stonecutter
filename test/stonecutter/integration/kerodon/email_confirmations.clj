@@ -1,4 +1,4 @@
-(ns stonecutter.integration.kerodon.confirmations
+(ns stonecutter.integration.kerodon.email-confirmations
   (:require [midje.sweet :refer :all]
             [kerodon.core :as k]
             [clojure.java.io :as io]
@@ -55,7 +55,7 @@
   {:subject ""
    :body    (str email-data)})
 
-(email/initialise! {:confirmation test-email-renderer})
+(background (email/get-confirmation-renderer) => test-email-renderer)
 
 (def email-sender (email/bash-sender-factory "test-resources/mail_stub.sh"))
 
@@ -110,5 +110,4 @@
            (kh/selector-not-present [:.clj--email-not-confirmed-message])
            (kh/selector-exists [:.clj--email-confirmed-message])
 
-           (teardown-test-directory)
-           ))
+           (teardown-test-directory)))

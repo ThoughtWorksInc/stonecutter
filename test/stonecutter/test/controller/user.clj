@@ -18,20 +18,6 @@
 (def check-body-not-blank
   (checker [response] (not (empty? (:body response)))))
 
-(defn check-redirects-to [path]
-  (checker [response] (and
-                        (= (:status response) 302)
-                        (= (get-in response [:headers "Location"]) path))))
-
-(defn check-signed-in [request user]
-  (let [is-signed-in? #(and (= (:login user) (get-in % [:session :user-login]))
-                            (contains? (:session %) :access_token))]
-    (checker [response]
-             (let [session-not-changed (not (contains? response :session))]
-               (or (and (is-signed-in? request)
-                        session-not-changed)
-                   (is-signed-in? response))))))
-
 (def default-email "valid@email.com")
 (def default-password "password")
 (def confirmation-id "1234-ABCD")
@@ -46,20 +32,19 @@
   {:subject "confirmation"
    :body    email-data})
 
-(def test-email-sender (test-email/create-test-email-sender))
-
-(background (before :facts (do (email/initialise! {:confirmation test-email-renderer}))
-                    :after (do (test-email/reset-emails! test-email-sender ))))
+(background
+ (email/get-confirmation-renderer) => test-email-renderer)
 
 (facts "about registration"
        (fact "user can register with valid credentials and is redirected to profile-created page, with user-login and access_token added to session"
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
+                   test-email-sender (test-email/create-test-email-sender)
                    response (->> (th/create-request :post (routes/path :register-user) default-register-user-params {:some "session-data"})
                                  (u/register-user user-store token-store confirmation-store test-email-sender))
                    registered-user (user/retrieve-user user-store default-email)]
-               response => (check-redirects-to (routes/path :show-profile-created))
+               response => (th/check-redirects-to (routes/path :show-profile-created))
                response => (contains {:session (contains {:user-login   (:login registered-user)
                                                           :access_token (complement nil?)})})))
 
@@ -67,15 +52,17 @@
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
+                   test-email-sender (test-email/create-test-email-sender)
                    response (->> (th/create-request :post (routes/path :register-user) default-register-user-params {:some "session-data"})
                                  (u/register-user user-store token-store confirmation-store test-email-sender))]
-               response => (check-redirects-to (routes/path :show-profile-created))
+               response => (th/check-redirects-to (routes/path :show-profile-created))
                response => (contains {:session (contains {:some "session-data"})})))
 
        (fact "user data is saved"
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
-                   confirmation-store (m/create-memory-store)]
+                   confirmation-store (m/create-memory-store)
+                   test-email-sender (test-email/create-test-email-sender)]
                (->> (th/create-request :post (routes/path :register-user) default-register-user-params)
                     (u/register-user user-store token-store confirmation-store test-email-sender))) => anything
              (provided
@@ -87,6 +74,7 @@
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
+                   test-email-sender (test-email/create-test-email-sender)
                    response (->> (th/create-request :post (routes/path :register-user) default-register-user-params)
                                  (u/register-user user-store token-store confirmation-store test-email-sender))
                    registered-user (user/retrieve-user user-store default-email)]
@@ -99,6 +87,7 @@
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
+                   test-email-sender (test-email/create-test-email-sender)
                    response (->> (th/create-request :post (routes/path :register-user) default-register-user-params)
                                  (u/register-user user-store token-store confirmation-store test-email-sender))]
                (:flash response) => :confirm-email-sent)))
@@ -108,6 +97,7 @@
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
+                   test-email-sender (test-email/create-test-email-sender)
                    original-user (user/store-user! user-store default-email default-password)
                    html-response (->> (th/create-request :post "/register" (register-user-params default-email default-password default-password))
                                       (u/register-user user-store token-store confirmation-store test-email-sender)
@@ -121,7 +111,8 @@
        (fact "user isn't saved to the database if email is invalid"
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
-                   confirmation-store (m/create-memory-store)]
+                   confirmation-store (m/create-memory-store)
+                   test-email-sender (test-email/create-test-email-sender)]
                (->> (th/create-request :post "/register" {:email "invalid"}) (u/register-user user-store token-store confirmation-store test-email-sender))) => anything
              (provided
                (cl-user/new-user anything anything) => anything :times 0
@@ -131,6 +122,7 @@
               (let [user-store (m/create-memory-store)
                     token-store (m/create-memory-store)
                     confirmation-store (m/create-memory-store)
+                    test-email-sender (test-email/create-test-email-sender)
                     html-response (->> (th/create-request :post "/register" {:email "invalid"})
                                        (u/register-user user-store token-store confirmation-store test-email-sender)
                                        :body
@@ -174,7 +166,7 @@
            (assoc-in [:session :user-login] ...user-login...)
            (assoc-in [:session :access_token] ...token...)
            u/show-sign-in-form) => (every-checker
-                                     (check-redirects-to "/")
+                                     (th/check-redirects-to "/")
                                      (contains {:session {:user-login   ...user-login...
                                                           :access_token ...token...}})))
 
@@ -227,7 +219,7 @@
       (->> (th/create-request :post "/delete-account" nil {:user-login   "account_to_be@deleted.com"
                                                         :access_token ...token...})
            (u/delete-account ...user-store...)) => (every-checker
-                                                    (check-redirects-to "/profile-deleted")
+                                                    (th/check-redirects-to "/profile-deleted")
                                                     (contains {:session nil}))
       (provided
        (user/delete-user! ...user-store... "account_to_be@deleted.com") => anything))
@@ -242,7 +234,7 @@
                                                                         :new-password         "newPassword"
                                                                         :confirm-new-password "newPassword"}
                                               {:user-login "user_who_is@changing_password.com"})]
-               (u/change-password ...user-store... request) => (every-checker (check-redirects-to "/profile")
+               (u/change-password ...user-store... request) => (every-checker (th/check-redirects-to "/profile")
                                                                               (contains {:flash :password-changed}))
                (provided
                 (user/authenticate-and-retrieve-user ...user-store... "user_who_is@changing_password.com" "currentPassword") => ...user...
@@ -411,13 +403,13 @@
                     (->> (th/create-request :get (routes/path :show-unshare-profile-card)
                                             {:client_id ...client-id...}
                                             {:user-login ...email...})
-                         (u/show-unshare-profile-card ...client-store... ...user-store...)) => (check-redirects-to "/profile")
+                         (u/show-unshare-profile-card ...client-store... ...user-store...)) => (th/check-redirects-to "/profile")
                     (provided
                      (user/is-authorised-client-for-user? ...user-store... ...email... ...client-id...) => false)))
 
        (facts "about post requests to /unshare-profile-card"
               (fact "posting to /unshare-profile-card with client-id in the form params should remove client-id from the user's authorised clients and then redirect the user to the profile page"
                     (->> (th/create-request :post "/unshare-profile-card" {:client_id "client-id"} {:user-login "user@email.com"})
-                         (u/unshare-profile-card ...user-store...)) => (check-redirects-to "/profile")
+                         (u/unshare-profile-card ...user-store...)) => (th/check-redirects-to "/profile")
                     (provided
                      (user/remove-authorised-client-for-user! ...user-store... "user@email.com" "client-id") => anything))))

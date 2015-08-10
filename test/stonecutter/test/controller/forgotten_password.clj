@@ -3,6 +3,7 @@
             [net.cgrand.enlive-html :as html]
             [stonecutter.test.test-helpers :as th]
             [stonecutter.controller.forgotten-password :as fp]
+            [stonecutter.routes :as routes]
             [stonecutter.email :as email]
             [stonecutter.test.email :as test-email]
             [stonecutter.db.mongo :as m]
@@ -23,18 +24,19 @@
   {:subject "TEST EMAIL"
    :body email-data})
 
-(email/initialise! {:forgotten-password test-renderer})
+(background (email/get-forgotten-password-renderer) => test-renderer)
 
 (fact "about valid email address"
       (let [user-store (m/create-memory-store)
             user (user/store-user! user-store "admin@admin.admin" "password")]
 
-        (fact "if user exists then forgotten-password-id is created and stored and e-mail is sent"
+        (fact "if user exists then forgotten-password-id is created and stored, e-mail is sent, and user is redirected to confirmation page"
               (let [email-sender (test-email/create-test-email-sender)
                     forgotten-password-store (m/create-memory-store)
                     test-request (-> (th/create-request :post "/forgotten-password" {:email "admin@admin.admin"})
                                      (th/add-config-request-context {:app-name "My App" :base-url "https://myapp.com"}))]
-                (fp/forgotten-password-form-post email-sender user-store forgotten-password-store test-request) => (contains {:body "email sent"})
+                (fp/forgotten-password-form-post email-sender user-store forgotten-password-store test-request) => (th/check-redirects-to (routes/path :show-forgotten-password-confirmation))
+                
                 (let [last-email (test-email/last-sent-email email-sender)
                       forgotten-password-id (-> last-email :body :forgotten-password-id)
                       forgotten-password-entry (cl-store/fetch forgotten-password-store forgotten-password-id)]
@@ -48,6 +50,6 @@
                     forgotten-password-store (m/create-memory-store)
                     test-request (-> (th/create-request :post "/forgotten-password" {:email "nonexistent@blah.com"})
                                      (th/add-config-request-context {:app-name "My App" :base-url "https://myapp.com"}))]
-                (fp/forgotten-password-form-post email-sender user-store forgotten-password-store test-request) => (contains {:body "email sent"})
+                (fp/forgotten-password-form-post email-sender user-store forgotten-password-store test-request) => (th/check-redirects-to (routes/path :show-forgotten-password-confirmation))
                 (test-email/last-sent-email email-sender) => nil
                 (cl-store/entries forgotten-password-store) => empty?))))

@@ -29,9 +29,10 @@
     {:subject subject :body body}))
 
 (fact "renders and sends an email generated using the specified template"
+      (against-background
+       (email/get-confirmation-renderer) => (test-email-renderer ...subject... ...body...))
       (let [email-sender (create-test-email-sender)]
-        (email/initialise! {:template-label (test-email-renderer ...subject... ...body...)})
-        (email/send! email-sender :template-label ...email-address... ...email-data-map...)
+        (email/send! email-sender :confirmation ...email-address... ...email-data-map...)
         (let [sent-email (last-sent-email email-sender)]
           (:email sent-email) => ...email-address...
           (:subject sent-email) => ...subject...

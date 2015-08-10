@@ -83,8 +83,6 @@
   {:subject ""
    :body (str email-data)})
 
-(email/initialise! {:confirmation test-email-renderer})
-
 (def email-sender (email/bash-sender-factory "test-resources/mail_stub.sh"))
 
 (def test-app (h/create-app {:secure "false"} stores-m email-sender))
@@ -119,13 +117,6 @@
            (kh/response-status-is 200)
            (kh/selector-exists [ks/registration-page-body])))
 
-(facts "Registering a new user should call out to script to send a confirmation email"
-       (-> (k/session test-app)
-           (setup-test-directory)
-           (register "new-user@email.com")
-           (checks-email-is-sent "new-user@email.com")
-           (teardown-test-directory)))
-
 (facts "Register page redirects to profile-created page when registered and
        user-login is in the session so that email address is displayed on profile card"
        (-> (k/session test-app)
@@ -142,6 +133,8 @@
            (kh/selector-includes-content [:body] "email@server.com")))
 
 (facts "User is not confirmed when first registering for an account; Hitting the confirmation endpoint confirms the user account when the UUID in the query string matches that for the signed in user's account"
+       (against-background
+        (email/get-confirmation-renderer) => test-email-renderer)
        (-> (k/session test-app)
 
            (setup-test-directory)
@@ -163,6 +156,8 @@
            (teardown-test-directory)))
 
 (facts "The account confirmation flow can be followed by a user who is not signed in when first accessing the confirmation endpoint"
+       (against-background
+        (email/get-confirmation-renderer) => test-email-renderer)
        (-> (k/session test-app)
            (setup-test-directory)
 
@@ -284,6 +279,23 @@
            (kh/page-uri-is "/profile-deleted")
            (kh/response-status-is 200)
            (kh/selector-exists [ks/profile-deleted-page-body])))
+
+(facts "User can reset a forgotten password"
+       (against-background
+        (email/get-forgotten-password-renderer) => test-email-renderer)
+       (-> (k/session test-app)
+           (setup-test-directory)
+
+           ;; TODO - DM+JC 2015-08-10: follow forgotten password link rather than directly hit endpoint
+           (k/visit "/forgotten-password")
+           (k/fill-in ks/forgotten-password-email "user@withclient.com")
+           (k/press ks/forgotten-password-submit)
+           (kh/check-and-follow-redirect)
+           (kh/page-uri-is "/forgotten-password-email-sent")
+           (kh/response-status-is 200)
+           ;;(kh/selector-exists [ks/forgotten-password-email-sent-page-body])
+
+           (teardown-test-directory)))
 
 (facts "Not found page is shown for unknown url"
        (-> (k/session test-app)

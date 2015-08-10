@@ -17,6 +17,7 @@ GET     /change-password                         show-change-password-form
 POST    /change-password                         change-password
 GET     /forgotten-password                      show-forgotten-password-form
 POST    /forgotten-password                      send-forgotten-password-email
+GET     /forgotten-password-email-sent           show-forgotten-password-confirmation
 GET     /reset-password/:forgotten-password-id   show-reset-password-form
 GET     /authorisation                           authorise
 POST    /authorisation                           authorise-client

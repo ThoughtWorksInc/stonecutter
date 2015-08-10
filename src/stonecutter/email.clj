@@ -33,8 +33,6 @@
 (defn create-stdout-email-sender []
   (StdoutSender. ))
 
-(def template-to-renderer-map (atom nil))
-
 (defn confirmation-email-body [base-url confirmation-id]
   (str
     "Hi,\n"
@@ -58,9 +56,19 @@
     {:subject (format "Reset password for %s" app-name)
      :body    reset-url}))
 
+(defn get-confirmation-renderer []
+  confirmation-renderer)
+
+(defn get-forgotten-password-renderer []
+  forgotten-password-renderer)
+
+(defn renderer-retrievers []
+  {:confirmation (get-confirmation-renderer)
+   :forgotten-password (get-forgotten-password-renderer)})
+
 (defn send! [sender template email-address email-data]
   (log/debug (format "sending template '%s' to '%s'." template email-address))
-  (let [{:keys [subject body]} ((template @template-to-renderer-map) email-data)]
+  (let [{:keys [subject body]} ((template (renderer-retrievers)) email-data)]
     (send-email! sender email-address subject body)))
 
 (defn bash-sender-factory [email-script-path]
@@ -68,10 +76,5 @@
     (create-bash-email-sender email-script-path)
     (create-stdout-email-sender)))
 
-(defn initialise! [template-to-renderer-config]
-  (reset! template-to-renderer-map template-to-renderer-config))
-
-(initialise! {:confirmation confirmation-renderer
-              :forgotten-password forgotten-password-renderer})
 
 

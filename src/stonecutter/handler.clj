@@ -59,7 +59,8 @@
         client-store (storage/get-client-store stores-m)
         token-store (storage/get-token-store stores-m)
         confirmation-store (storage/get-confirmation-store stores-m)
-        auth-code-store (storage/get-auth-code-store stores-m)]
+        auth-code-store (storage/get-auth-code-store stores-m)
+        forgotten-password-store (storage/get-forgotten-password-store stores-m)]
     (->
       {:home                             user/home
        :ping                             ping
@@ -82,6 +83,8 @@
        :show-change-password-form        user/show-change-password-form
        :change-password                  (partial user/change-password user-store)
        :show-forgotten-password-form     forgotten-password/show-forgotten-password-form
+       :send-forgotten-password-email    (partial forgotten-password/forgotten-password-form-post email-sender user-store forgotten-password-store)
+       :show-forgotten-password-confirmation forgotten-password/show-forgotten-password-confirmation
        :show-authorise-form              (partial oauth/show-authorise-form client-store)
        :authorise                        (partial oauth/authorise auth-code-store client-store user-store token-store)
        :authorise-client                 (partial oauth/authorise-client auth-code-store client-store user-store token-store)
@@ -98,7 +101,8 @@
                                           :theme-css
                                           :confirm-email-with-id
                                           :confirmation-sign-in-form :confirmation-sign-in
-                                          :show-forgotten-password-form}))))
+                                          :show-forgotten-password-form :send-forgotten-password-email
+                                          :show-forgotten-password-confirmation}))))
 
 (defn api-handlers [stores-m]
   (let [auth-code-store (storage/get-auth-code-store stores-m)

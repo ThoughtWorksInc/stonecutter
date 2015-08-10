@@ -6,6 +6,7 @@
             [stonecutter.view.forgotten-password :as forgotten-password-view]
             [stonecutter.helper :as sh]
             [stonecutter.email :as email]
+            [stonecutter.routes :as routes]
             [stonecutter.util.uuid :as uuid]
             [stonecutter.db.user :as user]))
 
@@ -25,5 +26,8 @@
           (let [forgotten-password-id (uuid/uuid)]
             (cl-store/store! forgotten-password-store :forgotten-password-id {:forgotten-password-id forgotten-password-id :login email-address})
             (email/send! email-sender :forgotten-password email-address {:app-name app-name :base-url base-url :forgotten-password-id forgotten-password-id})))
-        (response/response "email sent"))
+        (response/redirect (routes/path :show-forgotten-password-confirmation)))
       (show-forgotten-password-form request-with-validation-errors))))
+
+(defn show-forgotten-password-confirmation [request]
+  (response/response "email sent"))

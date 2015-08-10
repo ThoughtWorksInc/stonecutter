@@ -11,25 +11,11 @@
             [stonecutter.db.mongo :as m]
             [stonecutter.test.email :as test-email]))
 
-(defn check-redirects-to [path]
-  (checker [response] (and
-                        (= (:status response) 302)
-                        (= (get-in response [:headers "Location"]) path))))
-
 (defn with-signed-in-user [ring-map token-store user]
   (let [access-token (cl-token/create-token token-store nil user)]
     (-> ring-map
         (assoc-in [:session :access_token] (:token access-token))
         (assoc-in [:session :user-login] (:login user)))))
-
-(defn check-signed-in [request user]
-  (let [is-signed-in? #(and (= (:login user) (get-in % [:session :user-login]))
-                            (contains? (:session %) :access_token))]
-    (checker [response]
-             (let [session-not-changed (not (contains? response :session))]
-               (or (and (is-signed-in? request)
-                        session-not-changed)
-                   (is-signed-in? response))))))
 
 (def email "dummy@email.com")
 (def confirmation-id "RANDOM-ID-12345")
@@ -46,11 +32,6 @@
 (def confirm-email-request
   (th/create-request :get confirm-email-path {:confirmation-id confirmation-id}))
 
-(def test-email-sender (test-email/create-test-email-sender))
-
-(background (before :facts (do (email/initialise! {:confirmation test-email-renderer})
-                               (test-email/reset-emails! test-email-sender))))
-
 (facts "about confirm-email-with-id"
        (fact "if the confirmation UUID in the query string matches that of the signed in user's user record confirm the account and redirect to profile view"
              (let [user-store (m/create-memory-store)
@@ -60,7 +41,7 @@
                    confirmation (conf/store! confirmation-store email confirmation-id)
                    request (-> confirm-email-request
                                (with-signed-in-user token-store user))]
-               (ec/confirm-email-with-id user-store confirmation-store request) => (check-redirects-to (routes/path :show-profile))
+               (ec/confirm-email-with-id user-store confirmation-store request) => (th/check-redirects-to (routes/path :show-profile))
                (user/retrieve-user user-store (:login user)) =not=> (contains {:confirmation-id anything})
                (user/retrieve-user user-store (:login user)) => (contains {:confirmed? true})))
 
@@ -74,8 +55,8 @@
                    request (-> confirm-email-request
                                (with-signed-in-user token-store signed-in-user))
                    response (ec/confirm-email-with-id user-store confirmation-store request)]
-               response =not=> (check-signed-in request signed-in-user)
-               response => (check-redirects-to confirm-email-path)))
+               response =not=> (th/check-signed-in request signed-in-user)
+               response => (th/check-redirects-to confirm-email-path)))
 
        (fact "when user is not signed in, redirects to sign-in form with the confirmation endpoint (including confirmation UUID query string) as the successful sign-in redirect target"
              (let [user-store (m/create-memory-store)
@@ -83,7 +64,7 @@
                    confirming-user (user/store-user! user-store email "password")
                    confirmation (conf/store! confirmation-store email confirmation-id)
                    response (ec/confirm-email-with-id user-store confirmation-store confirm-email-request)]
-               response => (check-redirects-to (routes/path :confirmation-sign-in-form
+               response => (th/check-redirects-to (routes/path :confirmation-sign-in-form
                                                             :confirmation-id confirmation-id))))
 
        (fact "when email confirmation is complete confirmation-id is revoked"
