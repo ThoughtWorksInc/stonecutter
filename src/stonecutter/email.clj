@@ -51,8 +51,6 @@
         app-name (:app-name email-data)
         reset-path (r/path :show-reset-password-form :forgotten-password-id forgotten-password-id)
         reset-url (str base-url reset-path)]
-    (prn "Base url: " base-url)
-    (prn "App name: " app-name)
     {:subject (format "Reset password for %s" app-name)
      :body    reset-url}))
 
