@@ -4,6 +4,7 @@
             [ring.util.response :as response]
             [stonecutter.validation :as v]
             [stonecutter.view.forgotten-password :as forgotten-password-view]
+            [stonecutter.view.forgotten-password-confirmation :as forgotten-password-confirmation-view]
             [stonecutter.helper :as sh]
             [stonecutter.email :as email]
             [stonecutter.routes :as routes]
@@ -30,4 +31,4 @@
       (show-forgotten-password-form request-with-validation-errors))))
 
 (defn show-forgotten-password-confirmation [request]
-  (response/response "email sent"))
+  (sh/enlive-response (forgotten-password-confirmation-view/forgotten-password-confirmation request) (:context request)))

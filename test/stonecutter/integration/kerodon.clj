@@ -293,7 +293,7 @@
            (kh/check-and-follow-redirect)
            (kh/page-uri-is "/forgotten-password-email-sent")
            (kh/response-status-is 200)
-           ;;(kh/selector-exists [ks/forgotten-password-email-sent-page-body])
+           (kh/selector-exists [ks/forgotten-password-email-sent-page-body])
 
            (teardown-test-directory)))
 
