@@ -76,6 +76,10 @@ app.get('/forgot-password-confirmation', function (req, res) {
   customRender(res, 'forgot-password-confirmation', pageData);
 });
 
+app.get('/reset-password', function(req, res) {
+  customRender(res, 'reset-password', pageData)
+});
+
 app.all('/profile', function (req, res) {
   customRender(res, 'profile', pageData);
 });
