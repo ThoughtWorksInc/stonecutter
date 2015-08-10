@@ -57,29 +57,29 @@
 
 (defn validate-registration [params duplicate-user-fn]
   (->> (registration-validations params duplicate-user-fn)
-        remove-nil-values))
-
-(defn sign-in-validations [params]
-  (let [{:keys [email password]} params]
-    {:email     (validate-sign-in-email email)
-     :password  (validate-password password)}))
+       remove-nil-values))
 
 (defn validate-sign-in [params]
-  (->> (sign-in-validations params)
-       remove-nil-values))
-
-(defn change-password-validations [params]
-  (let [{:keys [current-password new-password confirm-new-password]} params]
-    {:current-password     (validate-password current-password)
-     :new-password         (or (validate-password new-password)
-                               (validate-passwords-are-different current-password new-password))
-     :confirm-new-password (validate-passwords-match new-password confirm-new-password)}))
+  (let [{:keys [email password]} params]
+    (-> {:email    (validate-sign-in-email email)
+         :password (validate-password password)}
+        remove-nil-values)))
 
 (defn validate-change-password [params]
-  (->> (change-password-validations params)
-       remove-nil-values))
+  (let [{:keys [current-password new-password confirm-new-password]} params]
+    (-> {:current-password     (validate-password current-password)
+         :new-password         (or (validate-password new-password)
+                                   (validate-passwords-are-different current-password new-password))
+         :confirm-new-password (validate-passwords-match new-password confirm-new-password)}
+        remove-nil-values)))
 
 (defn validate-forgotten-password [params]
   (let [email (:email params)]
     (-> {:email (validate-sign-in-email email)}
+        remove-nil-values)))
+
+(defn validate-reset-password [params]
+  (let [{:keys [new-password confirm-new-password]} params]
+    (-> {:new-password         (validate-password new-password)
+         :confirm-new-password (validate-passwords-match new-password confirm-new-password)}
         remove-nil-values)))

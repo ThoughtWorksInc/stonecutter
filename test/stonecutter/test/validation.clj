@@ -109,3 +109,16 @@
  ?email              ?validations
  "valid@email.com"   {}
  "invalid"           {:email :invalid})
+
+(tabular
+  (fact "validating reset-password"
+        (v/validate-reset-password {:new-password ?new-password
+                                    :confirm-new-password ?confirm-new-password}) => ?validations)
+  ?new-password           ?confirm-new-password   ?validations
+  "newPassword"           "newPassword"           {}
+  ""                      "newPassword"           {:new-password :blank :confirm-new-password :invalid}
+  "blah"                  "blah"                  {:new-password :too-short}
+  (string-of-length 255)  (string-of-length 255)  {:new-password :too-long}
+  "newPassword"           "nonMatching"           {:confirm-new-password :invalid}
+  "newPassword"           ""                      {:confirm-new-password :invalid}
+  "newPassword"           "newpassword"           {:confirm-new-password :invalid})
