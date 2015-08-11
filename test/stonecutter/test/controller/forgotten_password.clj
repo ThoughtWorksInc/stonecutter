@@ -31,31 +31,47 @@
 
 (fact "about valid email address"
       (let [user-store (m/create-memory-store)
-            user (user/store-user! user-store "admin@admin.admin" "password")]
+            user (user/store-user! user-store email-address "password")]
 
         (fact "if user exists then forgotten-password-id is created and stored, e-mail is sent, and user is redirected to confirmation page"
               (let [email-sender (test-email/create-test-email-sender)
                     forgotten-password-store (m/create-memory-store)
-                    test-request (-> (th/create-request :post "/forgotten-password" {:email "admin@admin.admin"})
+                    test-request (-> (th/create-request :post "/forgotten-password" {:email email-address})
                                      (th/add-config-request-context {:app-name "My App" :base-url "https://myapp.com"}))]
-                (fp/forgotten-password-form-post email-sender user-store forgotten-password-store test-request) => (th/check-redirects-to (routes/path :show-forgotten-password-confirmation))
+                (fp/forgotten-password-form-post email-sender user-store forgotten-password-store test-request)
+                => (th/check-redirects-to (routes/path :show-forgotten-password-confirmation))
 
                 (let [last-email (test-email/last-sent-email email-sender)
                       forgotten-password-id (-> last-email :body :forgotten-password-id)
                       forgotten-password-entry (cl-store/fetch forgotten-password-store forgotten-password-id)]
-                  last-email => {:email   "admin@admin.admin"
+                  last-email => {:email   email-address
                                  :subject "TEST EMAIL"
                                  :body    {:forgotten-password-id forgotten-password-id :app-name "My App" :base-url "https://myapp.com"}}
-                  (:login forgotten-password-entry) => "admin@admin.admin")))
+                  (:login forgotten-password-entry) => email-address)))
 
         (fact "if user doesn't exist then e-mail is not sent and forgotten password id is not store"
               (let [email-sender (test-email/create-test-email-sender)
                     forgotten-password-store (m/create-memory-store)
                     test-request (-> (th/create-request :post "/forgotten-password" {:email "nonexistent@blah.com"})
                                      (th/add-config-request-context {:app-name "My App" :base-url "https://myapp.com"}))]
-                (fp/forgotten-password-form-post email-sender user-store forgotten-password-store test-request) => (th/check-redirects-to (routes/path :show-forgotten-password-confirmation))
+                (fp/forgotten-password-form-post email-sender user-store forgotten-password-store test-request)
+                => (th/check-redirects-to (routes/path :show-forgotten-password-confirmation))
                 (test-email/last-sent-email email-sender) => nil
-                (cl-store/entries forgotten-password-store) => empty?))))
+                (cl-store/entries forgotten-password-store) => empty?))
+
+        (fact "if forgotten-password record already exists for user, then new id is not written to store and current one is reused"
+              (let [email-sender (test-email/create-test-email-sender)
+                    forgotten-password-store (m/create-memory-store)
+                    existing-id "existing-forgotten-password-id"
+                    test-request (-> (th/create-request :post "/forgotten-password" {:email email-address})
+                                     (th/add-config-request-context {:app-name "My App" :base-url "https://myapp.com"}))]
+                (fpdb/store-id-for-user! forgotten-password-store existing-id email-address)
+                (fp/forgotten-password-form-post email-sender user-store forgotten-password-store test-request)
+                => (th/check-redirects-to (routes/path :show-forgotten-password-confirmation))
+                (let [last-email (test-email/last-sent-email email-sender)
+                      forgotten-password-entries (cl-store/entries forgotten-password-store)]
+                  (-> last-email :body :forgotten-password-id) => existing-id
+                  forgotten-password-entries => [{:forgotten-password-id existing-id :login email-address}])))))
 
 (facts "about reset password form"
        (fact "if the forgotten-password-id in the URL corresponds to a non-expired forgotten-password record, the reset password form is displayed"

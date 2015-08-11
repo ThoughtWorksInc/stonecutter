@@ -27,6 +27,13 @@
 (defn show-forgotten-password-form [request]
   (sh/enlive-response (forgotten-password-view/forgotten-password-form request) (:context request)))
 
+(defn create-or-retrieve-id [forgotten-password-store email-address]
+  (if-let [existing-id (:forgotten-password-id (db/forgotten-password-doc-by-login forgotten-password-store email-address))]
+    existing-id
+    (let [forgotten-password-id (uuid/uuid)]
+      (db/store-id-for-user! forgotten-password-store forgotten-password-id email-address)
+      forgotten-password-id)))
+
 (defn forgotten-password-form-post [email-sender user-store forgotten-password-store request]
   (let [config-m (get-in request [:context :config-m])
         params (:params request)
@@ -38,8 +45,7 @@
     (if (empty? err)
       (do
         (if (user/retrieve-user user-store email-address)
-          (let [forgotten-password-id (uuid/uuid)]
-            (db/store-id-for-user! forgotten-password-store forgotten-password-id email-address)
+          (let [forgotten-password-id (create-or-retrieve-id forgotten-password-store email-address)]
             (email/send! email-sender :forgotten-password email-address {:app-name app-name :base-url base-url :forgotten-password-id forgotten-password-id}))
           (log/warn (format "User %s does not exist so reset password e-mail not sent." email-address)))
         (response/redirect (routes/path :show-forgotten-password-confirmation)))
