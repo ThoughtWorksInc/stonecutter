@@ -7,6 +7,7 @@
             [stonecutter.view.forgotten-password :as forgotten-password-view]
             [stonecutter.view.forgotten-password-confirmation :as forgotten-password-confirmation-view]
             [stonecutter.view.reset-password :as reset-password]
+            [stonecutter.db.forgotten-password :as db]
             [stonecutter.helper :as sh]
             [stonecutter.email :as email]
             [stonecutter.routes :as routes]
@@ -32,7 +33,7 @@
       (do
         (if (user/retrieve-user user-store email-address)
           (let [forgotten-password-id (uuid/uuid)]
-            (cl-store/store! forgotten-password-store :forgotten-password-id {:forgotten-password-id forgotten-password-id :login email-address})
+            (db/store-id-for-user! forgotten-password-store forgotten-password-id email-address)
             (email/send! email-sender :forgotten-password email-address {:app-name app-name :base-url base-url :forgotten-password-id forgotten-password-id}))
           (log/warn (format "User %s does not exist so reset password e-mail not sent." email-address)))
         (response/redirect (routes/path :show-forgotten-password-confirmation)))
