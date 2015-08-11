@@ -98,47 +98,45 @@
 
 (facts "about resetting a password"
        (let [user-store (m/create-memory-store)
-             forgotten-password-store (m/create-memory-store)]
+             forgotten-password-store (m/create-memory-store)
+             token-store (m/create-memory-store)]
          (user/store-user! user-store email-address "password")
          (fpdb/store-id-for-user! forgotten-password-store forgotten-password-id email-address)
 
          (fact "if there are validation errors, then the reset password form is returned with the validation errors"
                (let [test-request (create-reset-password-post forgotten-password-id "" "")
-                     response (fp/reset-password-form-post forgotten-password-store user-store test-request)]
+                     response (fp/reset-password-form-post forgotten-password-store user-store token-store test-request)]
                  (:status response) => 200
                  (vth/response->enlive-m response) => (vth/element-exists? [:.form-row--validation-error])))
 
          (fact "if the validation id doesn't exist and params are invalid then nil (404) is returned"
                (->> (create-reset-password-post "unknown-forgotten-password-id" "" "")
-                    (fp/reset-password-form-post forgotten-password-store user-store)) => nil)
+                    (fp/reset-password-form-post forgotten-password-store user-store token-store)) => nil)
 
          (fact "if the validation id doesn't exist and params are valid then nil (404) is returned"
                (->> (create-reset-password-post "unknown-forgotten-password-id" "new-password" "new-password")
-                    (fp/reset-password-form-post forgotten-password-store user-store)) => nil)
+                    (fp/reset-password-form-post forgotten-password-store user-store token-store)) => nil)
 
          (fact "if validation id exists and params are valid, but related user no longer exists, then nil (404) is returned"
                (let [forgotten-password-store (m/create-memory-store)]
                  (fpdb/store-id-for-user! forgotten-password-store "id-without-user" "nonexistant@user.com")
                  (->> (create-reset-password-post "id-without-user" "new-password" "new-password")
-                      (fp/reset-password-form-post forgotten-password-store user-store)) => nil))
+                      (fp/reset-password-form-post forgotten-password-store user-store token-store)) => nil))
 
          (fact "if the password and confirm password is valid"
                (let [valid-request (create-reset-password-post forgotten-password-id "new-password" "new-password" {:other-value "other-value"})
-                     response (fp/reset-password-form-post forgotten-password-store user-store valid-request)]
+                     response (fp/reset-password-form-post forgotten-password-store user-store token-store valid-request)]
                  (fact "the new password is successfully saved"
                        (let [new-encrypted-password (:password (user/retrieve-user user-store email-address))]
                          (BCrypt/checkpw "password" new-encrypted-password) => false
                          (BCrypt/checkpw "new-password" new-encrypted-password) => true))
                  (fact "the user is logged in and existing session values are not preserved"
                        (-> response :session :user-login) => email-address
-                       (future-fact
-                         (-> response :session :access_token) =not=> nil?)
-                       (future-fact
-                         (-> response :session count) => 2))
+                       (-> response :session :access_token) =not=> nil?
+                       (-> response :session :access_token) => (-> (cl-store/entries token-store) first :token)
+                       (-> (cl-store/entries token-store) first :subject) => (user/retrieve-user user-store email-address)
+                       (-> response :session count) => 2)
                  (fact "the user is redirected to the profile page"
                        response => (th/check-redirects-to (r/path :home)))
                  (fact "the forgotten password id record is removed"
-                       (cl-store/entries forgotten-password-store) => empty?)
-                 ))
-
-         ))
+                       (cl-store/entries forgotten-password-store) => empty?)))))

@@ -15,7 +15,8 @@
             [stonecutter.db.user :as user]
             [stonecutter.config :as config]
             [stonecutter.util.ring :as ring-util]
-            [stonecutter.routes :as r]))
+            [stonecutter.routes :as r]
+            [stonecutter.db.token :as token]))
 
 (defn request->forgotten-password-id [request]
   (get-in request [:params :forgotten-password-id]))
@@ -53,7 +54,7 @@
       (when (user/retrieve-user user-store (:login forgotten-password-record))
         (sh/enlive-response (reset-password/reset-password-form request) (:context request))))))
 
-(defn reset-password-form-post [forgotten-password-store user-store request]
+(defn reset-password-form-post [forgotten-password-store user-store token-store request]
   (let [params (:params request)
         err (v/validate-reset-password params)
         request-with-validation-errors (assoc-in request [:context :errors] err)
@@ -61,10 +62,11 @@
         new-password (request->new-password request)]
     (when-let [forgotten-password-record (cl-store/fetch forgotten-password-store forgotten-password-id)]
       (let [email-address (:login forgotten-password-record)]
-        (when (user/retrieve-user user-store email-address)
+        (when-let [user (user/retrieve-user user-store email-address)]
           (if (empty? err)
-            (do (user/change-password! user-store email-address new-password)
-                (cl-store/revoke! forgotten-password-store forgotten-password-id)
+            (let [updated-user (user/change-password! user-store email-address new-password)]
+              (cl-store/revoke! forgotten-password-store forgotten-password-id)
                 (-> (response/redirect (r/path :home))
-                    (assoc-in [:session :user-login] email-address)))
+                    (assoc-in [:session :user-login] email-address) ;; TODO JOHN 11/08/2015 pull this session assoc into utility function
+                    (assoc-in [:session :access_token] (token/generate-login-access-token token-store updated-user))))
             (show-reset-password-form forgotten-password-store user-store request-with-validation-errors)))))))
