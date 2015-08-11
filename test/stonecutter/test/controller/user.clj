@@ -383,9 +383,9 @@
                        (user/is-authorised-client-for-user? ...user-store... ...email... "client-id") => true
                        (c/retrieve-client ...client-store... "client-id") => {:client-id "client-id" :name "CLIENT_NAME"})))
 
-              (fact "missing client_id query param responds with 404"
+              (fact "missing client_id query param responds with nil (404)"
                     (->> (th/create-request :get (routes/path :show-unshare-profile-card) nil)
-                         (u/show-unshare-profile-card (m/create-memory-store) ...user-store...)) => {:status 404})
+                         (u/show-unshare-profile-card (m/create-memory-store) ...user-store...)) => nil)
 
               (fact "user is redirected to /profile if client_id is not in user's list of authorised clients"
                     (->> (th/create-request :get (routes/path :show-unshare-profile-card)

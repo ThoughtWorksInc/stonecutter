@@ -91,7 +91,6 @@
        :authorise                            (partial oauth/authorise auth-code-store client-store user-store token-store)
        :authorise-client                     (partial oauth/authorise-client auth-code-store client-store user-store token-store)
        :show-authorise-failure               (partial oauth/show-authorise-failure client-store)}
-      (m/wrap-handlers #(m/wrap-handle-404 % not-found) #{})
       (m/wrap-handlers #(m/wrap-handle-403 % forbidden-err-handler) #{})
       (m/wrap-handlers m/wrap-disable-caching #{:theme-css})
       (m/wrap-handlers m/wrap-signed-in #{:show-registration-form :register-user

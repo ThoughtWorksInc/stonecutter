@@ -12,12 +12,11 @@
 
 (defn show-authorise-form [client-store request]
   (let [client-id (get-in request [:params :client_id])]
-    (if-let [client (client/retrieve-client client-store client-id)]
+    (when-let [client (client/retrieve-client client-store client-id)]
       (let [context (assoc (:context request) :client client)]
         (-> (assoc request :context context)
             authorise/authorise-form
-            (sh/enlive-response context)))
-      {:status 404})))
+            (sh/enlive-response context))))))
 
 (defn add-error-to-uri [uri]
   (str uri "?error=access_denied"))

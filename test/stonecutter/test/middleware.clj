@@ -23,12 +23,6 @@
               ((:handler-2 wrapped-handlers) "request") => "wrap function return value"
               ((:handler-3 wrapped-handlers) "request") => "return value")))
 
-(fact "renders 404 error page when response status is 404"
-      (let [handler-that-always-404s (fn [req] {:status 404})
-            stub-error-404-handler (fn [req] ...error-404-response...)
-            wrapped-handler (middleware/wrap-handle-404 handler-that-always-404s stub-error-404-handler)]
-        (wrapped-handler ...request...) => ...error-404-response...))
-
 (fact "renders 403 error page when response status is 403"
       (let [handler-that-always-403s (fn [req] {:status 403})
             stub-error-403-handler (fn [req] ...error-403-response...)

@@ -95,22 +95,22 @@
                    response (fp/show-reset-password-form forgotten-password-store user-store test-request)]
                (:status response) => 200))
 
-       (fact "if there is no forgotten password record with an id matching that in the URL, a 404 is returned"
+       (fact "if there is no forgotten password record with an id matching that in the URL, nil (404) is returned"
              (let [user-store (m/create-memory-store)
                    forgotten-password-store (m/create-memory-store)
                    test-request (th/create-request :get (routes/path :show-reset-password-form
                                                                      :forgotten-password-id forgotten-password-id)
                                                    {:forgotten-password-id forgotten-password-id})]
-               (:status (fp/show-reset-password-form forgotten-password-store user-store test-request)) => nil))
+               (fp/show-reset-password-form forgotten-password-store user-store test-request) => nil))
 
-       (fact "if a non-expired forgotten-password record can be found, but there is no corresponding user, a 404 is returned"
+       (fact "if a non-expired forgotten-password record can be found, but there is no corresponding user, nil (404) is returned"
              (let [user-store (m/create-memory-store)
                    forgotten-password-store (m/create-memory-store)
                    _ (fpdb/store-id-for-user! forgotten-password-store forgotten-password-id email-address)
                    test-request (th/create-request :get (routes/path :show-reset-password-form
                                                                      :forgotten-password-id forgotten-password-id)
                                                    {:forgotten-password-id forgotten-password-id})]
-               (:status (fp/show-reset-password-form forgotten-password-store user-store test-request)) => nil)))
+               (fp/show-reset-password-form forgotten-password-store user-store test-request) => nil)))
 
 (defn create-reset-password-post
   ([forgotten-password-id new-password confirm-password]

@@ -78,14 +78,14 @@
                (ec/confirm-email-with-id user-store confirmation-store request)
                (conf/fetch confirmation-store confirmation-id) => nil))
 
-       (fact "when the confirmation id does not exist in the db"
+       (fact "when the confirmation id does not exist in the db it returns nil (404)"
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
                    user (user/store-user! user-store email "password")
                    request (-> confirm-email-request
                                (with-signed-in-user token-store user))]
-               (ec/confirm-email-with-id user-store confirmation-store request) => {:status 404})))
+               (ec/confirm-email-with-id user-store confirmation-store request) => nil)))
 
 (facts "about confirmation sign in"
        (fact "when password matches login of confirmation id, user is logged in")

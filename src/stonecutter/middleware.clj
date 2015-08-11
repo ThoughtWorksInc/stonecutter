@@ -19,13 +19,6 @@
           (err-handler request))))
     handler))
 
-(defn wrap-handle-404 [handler error-404-handler]
-  (fn [request]
-    (let [response (handler request)]
-      (if (= (:status response) 404)
-        (error-404-handler request)
-        response))))
-
 (defn wrap-handle-403 [handler error-403-handler]
   (fn [request]
     (let [response (handler request)]

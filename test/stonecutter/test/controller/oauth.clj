@@ -80,7 +80,7 @@
                (oauth/authorise-client auth-code-store client-store user-store token-store request) => (contains {:status 302 :headers (contains {"Location" (contains "callback?code=")})})
                (provided
                 (user/add-authorised-client-for-user! user-store user-email anything) => ...user...)))
-       
+
        (fact "valid request redirects to callback with auth code when there is an existing user session and the user has previously authorised the app"
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
@@ -168,10 +168,10 @@
                    (html/select [:.clj--client-name])) => (has some element-has-correct-client-name-fn)
                (provided (client/retrieve-client client-store "CLIENT_ID") => {:client-id "CLIENT_ID" :name "CLIENT_NAME"})))
 
-       (fact "redirects to error 404 page if client_id doesn't match a registered client"
+       (fact "returns nil (404) if client_id doesn't match a registered client"
              (let [client-store (m/create-memory-store)]
                (->> (th/create-request-with-query-string :get (routes/path :show-authorise-form) {:client_id "CLIENT_ID"})
-                    (oauth/show-authorise-form client-store)) => (contains {:status 404})
+                    (oauth/show-authorise-form client-store)) => nil
                (provided (client/retrieve-client client-store "CLIENT_ID") => nil))))
 
 (facts "about show-authorise-failure"
