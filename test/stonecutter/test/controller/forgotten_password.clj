@@ -72,7 +72,7 @@
                 (let [last-email (test-email/last-sent-email email-sender)
                       forgotten-password-entries (cl-store/entries forgotten-password-store)]
                   (-> last-email :body :forgotten-password-id) => existing-id
-                  forgotten-password-entries => [{:forgotten-password-id existing-id :login email-address}])))
+                  (first forgotten-password-entries) => (contains {:forgotten-password-id existing-id :login email-address}))))
 
         (fact "users email is lower-cased"
               (let [email-sender (test-email/create-test-email-sender)

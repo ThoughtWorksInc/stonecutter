@@ -6,4 +6,4 @@
   (-> (t/now) c/to-long))
 
 (defn now-plus-hours-in-millis [plus-hours]
-  (-> (t/now) (t/plus (t/hours plus-hours))))
+  (-> (t/now) (t/plus (t/hours plus-hours)) c/to-long))
