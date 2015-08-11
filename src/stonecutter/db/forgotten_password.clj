@@ -1,9 +1,10 @@
 (ns stonecutter.db.forgotten-password
   (:require [clauth.store :as cl-store]
-            [stonecutter.db.mongo :as m]))
+            [stonecutter.db.mongo :as m]
+            [stonecutter.util.time :as time]))
 
 (defn store-id-for-user! [forgotten-password-store forgotten-password-id login]
-  (let [doc {:forgotten-password-id forgotten-password-id :login login}]
+  (let [doc {:forgotten-password-id forgotten-password-id :login login :expiry (time/now-plus-hours-in-millis 24)}]
     (cl-store/store! forgotten-password-store :forgotten-password-id doc)))
 
 (defn forgotten-password-doc-by-login [forgotten-password-store login]
