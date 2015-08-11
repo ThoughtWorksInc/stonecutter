@@ -15,7 +15,9 @@
 
 (defprotocol StonecutterStore
   (update! [e k update-fn]
-           "Update the item found using key k by running the update-fn on it and storing it"))
+    "Update the item found using key k by running the update-fn on it and storing it")
+  (query [e query]
+    "Items are returned using a query map"))
 
 (defrecord MongoStore [mongo-db coll]
   cl-s/Store
@@ -39,7 +41,10 @@
     (when-let [item (mc/find-map-by-id mongo-db coll t)]
       (let [updated-item (update-fn item)]
         (-> (mc/save-and-return mongo-db coll updated-item)
-            (dissoc :_id))))))
+            (dissoc :_id)))))
+  (query [this query]
+    (->> (mc/find-maps mongo-db coll query)
+         (map #(dissoc % :_id)))))
 
 (defrecord MemoryStore [data]
   cl-s/Store
@@ -56,13 +61,15 @@
     (when-let [item (@data t)]
       (let [updated-item (update-fn item)]
         (swap! data assoc t updated-item)
-        updated-item))))
+        updated-item)))
+  (query [this query]
+    (filter #(= query (select-keys % (keys query))) (vals @data))))
 
 (defn create-memory-store
   "Create a memory token store"
   ([] (create-memory-store {}))
   ([data]
-     (MemoryStore. (atom data))))
+   (MemoryStore. (atom data))))
 
 (defn new-mongo-store [mongo-db coll]
   (MongoStore. mongo-db coll))
