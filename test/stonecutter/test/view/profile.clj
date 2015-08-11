@@ -17,25 +17,21 @@
 
 (fact "sign out link should go to correct endpoint"
       (let [page (-> (th/create-request) profile)]
-        (-> page (html/select [:.clj--sign-out__link])
-            first :attrs :href) => (r/path :sign-out)))
+        page => (th/has-attr? [:.clj--sign-out__link] :href (r/path :sign-out))))
 
 (fact "change password link should go to correct endpoint"
       (let [page (-> (th/create-request) profile)]
-        (-> page (html/select [:.clj--change-password__link])
-            first :attrs :href) => (r/path :show-change-password-form)))
+        page => (th/has-attr? [:.clj--change-password__link] :href (r/path :show-change-password-form))))
 
 (fact "delete account link should go to correct endpoint"
       (let [page (-> (th/create-request) profile)]
-        (-> page (html/select [:.clj--delete-account__link])
-            first :attrs :href) => (r/path :show-delete-account-confirmation)))
+        page => (th/has-attr? [:.clj--delete-account__link] :href (r/path :show-delete-account-confirmation))))
 
-(fact "there are no missing translations"
-      (let [translator (t/translations-fn t/translation-map)
-            page (-> (th/create-request translator)
-                     (assoc-in [:context :authorised-clients] [{:name "Bloc Party" :client-id "some-client-id"}])
-                     profile (helper/enlive-response {:translator translator}) :body)]
-        page => th/no-untranslated-strings))
+(fact
+ (let [translator (t/translations-fn t/translation-map)
+       request (-> (th/create-request translator)
+                   (assoc-in [:context :authorised-clients] [{:name "Bloc Party" :client-id "some-client-id"}]))]
+   (th/test-translations "profile" profile request)))
 
 (facts "about flash messages"
        (fact "no flash messages are displayed by default"
@@ -70,10 +66,8 @@
                    page (-> (th/create-request)
                             (assoc-in [:context :authorised-clients] [{:name "Bloc Party" :client-id client-id}])
                             profile)]
-               (-> page (html/select [:.clj--app-item__unshare-link])
-                   first
-                   :attrs
-                   :href) => (str (r/path :show-unshare-profile-card) "?client_id=" client-id)))
+               page => (th/has-attr? [:.clj--app-item__unshare-link]
+                                     :href (str (r/path :show-unshare-profile-card) "?client_id=" client-id))))
 
        (fact "empty application-list item is used when there are no authorised clients"
              (let [page (-> (th/create-request)

@@ -31,13 +31,17 @@
 (defn work-in-progress-removed [enlive-map]
   (empty? (html/select enlive-map [:.clj-wip])))
 
-(defn test-translations [page-name view-fn]
-  (fact {:midje/name (format "there are no missing translations for page: %s" page-name)}
-        (let [translator (t/translations-fn t/translation-map)
-              page (-> (create-request translator)
-                       view-fn
-                       (helper/enlive-response {:translator translator}) :body)]
-          page => no-untranslated-strings)))
+(defn test-translations
+  ([page-name view-fn]
+   (let [translator (t/translations-fn t/translation-map)]
+     (test-translations page-name view-fn (create-request translator))))
+  
+  ([page-name view-fn request]
+   (fact {:midje/name (format "there are no missing translations for page: %s" page-name)}
+         (let [page (-> request
+                        view-fn
+                        (helper/enlive-response (:context request)) :body)]
+           page => no-untranslated-strings))))
 
 (defn enlive-m->attr [enlive-m selector attr]
   (-> enlive-m (html/select selector) first :attrs attr))
@@ -49,6 +53,10 @@
 (defn element-exists? [selector]
   (chatty-checker [enlive-m]
                   (not (empty? (html/select enlive-m selector)))))
+
+(defn element-absent? [selector]
+  (chatty-checker [enlive-m]
+                  (empty? (html/select enlive-m selector))))
 
 (defn response->enlive-m [response]
   (-> response :body html/html-snippet))
