@@ -46,6 +46,13 @@
   (chatty-checker [enlive-m]
                   (= attr-val (enlive-m->attr enlive-m selector attr))))
 
+(defn element-exists? [selector]
+  (chatty-checker [enlive-m]
+                  (not (empty? (html/select enlive-m selector)))))
+
+(defn response->enlive-m [response]
+  (-> response :body html/html-snippet))
+
 (defn has-form-action?
   ([path]
    (has-form-action? [:form] path))

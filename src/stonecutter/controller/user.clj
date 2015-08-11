@@ -17,17 +17,14 @@
             [stonecutter.view.unshare-profile-card :as unshare-profile-card]
             [stonecutter.util.uuid :as uuid]
             [stonecutter.helper :as sh]
-            [stonecutter.config :as config]))
+            [stonecutter.config :as config]
+            [stonecutter.util.ring :as ring-util]))
 
 (declare redirect-to-profile-created redirect-to-profile-deleted)
 
 (defn signed-in? [request]
   (let [session (:session request)]
     (and (:user-login session) (:access_token session))))
-
-(defn preserve-session [response request]
-  (-> response
-      (assoc :session (:session request))))
 
 (defn show-registration-form [request]
   (sh/enlive-response (register/registration-form request) (:context request)))
@@ -78,7 +75,7 @@
 
 (defn show-sign-in-form [request]
   (if (signed-in? request)
-    (-> (r/redirect (routes/path :home)) (preserve-session request))
+    (-> (r/redirect (routes/path :home)) (ring-util/preserve-session request))
     (sh/enlive-response (sign-in/sign-in-form request) (:context request))))
 
 (defn generate-login-access-token [token-store user]
@@ -117,7 +114,7 @@
 
 (defn redirect-to-profile-created [token-store user request]
   (-> (r/redirect (routes/path :show-profile-created))
-      (preserve-session request)
+      (ring-util/preserve-session request)
       (assoc-in [:session :user-login] (:login user))
       (assoc-in [:session :access_token] (generate-login-access-token token-store user))))
 
@@ -148,7 +145,7 @@
 (defn show-profile-created [request]
   (let [request (assoc request :params {:from-app (from-app? request)})]
     (-> (sh/enlive-response (profile-created/profile-created request) (:context request))
-        (preserve-session request)
+        (ring-util/preserve-session request)
         (update-in [:session] #(dissoc % :return-to)))))
 
 (defn show-profile-deleted [request]

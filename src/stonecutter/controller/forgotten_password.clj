@@ -13,10 +13,15 @@
             [stonecutter.routes :as routes]
             [stonecutter.util.uuid :as uuid]
             [stonecutter.db.user :as user]
-            [stonecutter.config :as config]))
+            [stonecutter.config :as config]
+            [stonecutter.util.ring :as ring-util]
+            [stonecutter.routes :as r]))
 
 (defn request->forgotten-password-id [request]
   (get-in request [:params :forgotten-password-id]))
+
+(defn request->new-password [request]
+  (get-in request [:params :new-password]))
 
 (defn show-forgotten-password-form [request]
   (sh/enlive-response (forgotten-password-view/forgotten-password-form request) (:context request)))
@@ -45,5 +50,21 @@
 (defn show-reset-password-form [forgotten-password-store user-store request]
   (let [forgotten-password-id (request->forgotten-password-id request)]
     (when-let [forgotten-password-record (cl-store/fetch forgotten-password-store forgotten-password-id)]
-      (when-let [user (user/retrieve-user user-store (:login forgotten-password-record))]
+      (when (user/retrieve-user user-store (:login forgotten-password-record))
         (sh/enlive-response (reset-password/reset-password-form request) (:context request))))))
+
+(defn reset-password-form-post [forgotten-password-store user-store request]
+  (let [params (:params request)
+        err (v/validate-reset-password params)
+        request-with-validation-errors (assoc-in request [:context :errors] err)
+        forgotten-password-id (request->forgotten-password-id request)
+        new-password (request->new-password request)]
+    (when-let [forgotten-password-record (cl-store/fetch forgotten-password-store forgotten-password-id)]
+      (let [email-address (:login forgotten-password-record)]
+        (when (user/retrieve-user user-store email-address)
+          (if (empty? err)
+            (do (user/change-password! user-store email-address new-password)
+                (cl-store/revoke! forgotten-password-store forgotten-password-id)
+                (-> (response/redirect (r/path :home))
+                    (assoc-in [:session :user-login] email-address)))
+            (show-reset-password-form forgotten-password-store user-store request-with-validation-errors)))))))

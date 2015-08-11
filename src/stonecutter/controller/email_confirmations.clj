@@ -1,12 +1,13 @@
 (ns stonecutter.controller.email-confirmations
   (:require [clojure.tools.logging :as log]
             [ring.util.response :as r]
-            [stonecutter.controller.user :as u]
+            [stonecutter.controller.user :as u]             ;; FIXME John 11/08/2015 remove dependency on user controller
             [stonecutter.db.confirmation :as conf]
             [stonecutter.db.user :as user]
             [stonecutter.helper :as sh]
             [stonecutter.routes :as routes]
-            [stonecutter.view.sign-in :as sign-in]))
+            [stonecutter.view.sign-in :as sign-in]
+            [stonecutter.util.ring :as ring-util]))
 
 (defn show-confirm-sign-in-form [request]
   (sh/enlive-response (sign-in/confirmation-sign-in-form request) (:context request)))
@@ -15,20 +16,20 @@
   (log/debug (format "confirmation-ids match. Confirming user's email."))
   (user/confirm-email! user-store user)
   (conf/revoke! confirmation-store confirmation-id)
-  (r/redirect (routes/path :show-profile)))
+  (r/redirect (routes/path :show-profile)))                 ;; FIXME JOHN 11/08/2015 just redirect to home page, this should then reroute to show profile
 
 (defn mismatch-confirmation-id-response [request]
   (log/debug (format "confirmation-ids DID NOT match. SIGNING OUT"))
   (-> (r/redirect (routes/path :confirm-email-with-id
                                :confirmation-id (get-in request [:params :confirmation-id])))
-      (u/preserve-session request)
+      (ring-util/preserve-session request)
       (update-in [:session] #(dissoc % :user-login :access_token))))
 
 (defn redirect-to-confirmation-sign-in-form [request]
   (do (log/debug "Confirm-email user not signed in.")
       (-> (r/redirect (routes/path :confirmation-sign-in-form
                                    :confirmation-id (get-in request [:params :confirmation-id])))
-          (u/preserve-session request))))
+          (ring-util/preserve-session request))))
 
 (defn confirmation-id-exists? [confirmation-store confirmation-id]
   (not (= nil (conf/fetch confirmation-store confirmation-id))))
