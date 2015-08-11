@@ -14,9 +14,7 @@
             [stonecutter.routes :as routes]
             [stonecutter.util.uuid :as uuid]
             [stonecutter.db.user :as user]
-            [stonecutter.config :as config]
-            [stonecutter.routes :as r]
-            [stonecutter.db.token :as token]))
+            [stonecutter.config :as config]))
 
 (defn request->forgotten-password-id [request]
   (get-in request [:params :forgotten-password-id]))

@@ -10,7 +10,8 @@
             [stonecutter.db.mongo :as m]
             [stonecutter.db.user :as user]
             [stonecutter.db.forgotten-password :as fpdb]
-            [stonecutter.routes :as r])
+            [stonecutter.routes :as r]
+            [clojure.string :as string])
   (:import (org.mindrot.jbcrypt BCrypt)))
 
 (def email-address "email@address.com")
@@ -71,7 +72,16 @@
                 (let [last-email (test-email/last-sent-email email-sender)
                       forgotten-password-entries (cl-store/entries forgotten-password-store)]
                   (-> last-email :body :forgotten-password-id) => existing-id
-                  forgotten-password-entries => [{:forgotten-password-id existing-id :login email-address}])))))
+                  forgotten-password-entries => [{:forgotten-password-id existing-id :login email-address}])))
+
+        (fact "users email is lower-cased"
+              (let [email-sender (test-email/create-test-email-sender)
+                    forgotten-password-store (m/create-memory-store)
+                    test-request (-> (th/create-request :post "/forgotten-password" {:email (string/upper-case email-address)}))]
+                (fp/forgotten-password-form-post email-sender user-store forgotten-password-store test-request)
+                (-> (test-email/last-sent-email email-sender) :email) => email-address
+                (-> (cl-store/entries forgotten-password-store) first :login) => email-address))
+        ))
 
 (facts "about reset password form"
        (fact "if the forgotten-password-id in the URL corresponds to a non-expired forgotten-password record, the reset password form is displayed"
