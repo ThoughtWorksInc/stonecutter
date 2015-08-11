@@ -38,8 +38,7 @@
   (update! [this t update-fn]
     (when-let [item (mc/find-map-by-id mongo-db coll t)]
       (let [updated-item (update-fn item)]
-        (mc/update-by-id mongo-db coll t updated-item)
-        (-> (mc/find-map-by-id mongo-db coll t)
+        (-> (mc/save-and-return mongo-db coll updated-item)
             (dissoc :_id))))))
 
 (defrecord MemoryStore [data]
