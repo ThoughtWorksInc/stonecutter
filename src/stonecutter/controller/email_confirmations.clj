@@ -7,7 +7,8 @@
             [stonecutter.helper :as sh]
             [stonecutter.routes :as routes]
             [stonecutter.view.sign-in :as sign-in]
-            [stonecutter.util.ring :as ring-util]))
+            [stonecutter.util.ring :as ring-util]
+            [stonecutter.db.token :as token]))
 
 (defn show-confirm-sign-in-form [request]
   (sh/enlive-response (sign-in/confirmation-sign-in-form request) (:context request)))
@@ -52,7 +53,7 @@
         password (get-in request [:params :password])
         email (:login (conf/fetch confirmation-store confirmation-id))]
     (if-let [user (user/authenticate-and-retrieve-user user-store email password)]
-        (let [access-token (u/generate-login-access-token token-store user)]
+        (let [access-token (token/generate-login-access-token token-store user)]
           (-> (r/redirect (routes/path :confirm-email-with-id
                                        :confirmation-id confirmation-id))
               (assoc-in [:session :user-login] (:login user))

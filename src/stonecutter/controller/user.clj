@@ -1,6 +1,5 @@
 (ns stonecutter.controller.user
-  (:require [clauth.token :as cl-token]
-            [clauth.endpoints :as cl-ep]
+  (:require [clauth.endpoints :as cl-ep]
             [ring.util.response :as r]
             [stonecutter.routes :as routes]
             [stonecutter.view.sign-in :as sign-in]
@@ -8,6 +7,7 @@
             [stonecutter.db.user :as user]
             [stonecutter.db.client :as c]
             [stonecutter.db.confirmation :as conf]
+            [stonecutter.db.token :as token]
             [stonecutter.email :as email]
             [stonecutter.view.register :as register]
             [stonecutter.view.profile-created :as profile-created]
@@ -78,9 +78,6 @@
     (-> (r/redirect (routes/path :home)) (ring-util/preserve-session request))
     (sh/enlive-response (sign-in/sign-in-form request) (:context request))))
 
-(defn generate-login-access-token [token-store user]
-  (:token (cl-token/create-token token-store nil user)))
-
 (defn sign-in [user-store token-store request]
   (let [params (:params request)
         email (:email params)
@@ -89,7 +86,7 @@
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
       (if-let [user (user/authenticate-and-retrieve-user user-store email password)]
-        (let [access-token (generate-login-access-token token-store user)]
+        (let [access-token (token/generate-login-access-token token-store user)]
           (-> request
               (cl-ep/return-to-handler (routes/path :show-profile))
               (assoc-in [:session :user-login] (:login user))
@@ -116,7 +113,7 @@
   (-> (r/redirect (routes/path :show-profile-created))
       (ring-util/preserve-session request)
       (assoc-in [:session :user-login] (:login user))
-      (assoc-in [:session :access_token] (generate-login-access-token token-store user))))
+      (assoc-in [:session :access_token] (token/generate-login-access-token token-store user))))
 
 (defn redirect-to-profile-deleted []
   (assoc (r/redirect (routes/path :show-profile-deleted)) :session nil))
