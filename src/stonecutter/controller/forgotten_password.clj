@@ -7,6 +7,7 @@
             [stonecutter.view.forgotten-password :as forgotten-password-view]
             [stonecutter.view.forgotten-password-confirmation :as forgotten-password-confirmation-view]
             [stonecutter.view.reset-password :as reset-password]
+            [stonecutter.controller.common :as common]
             [stonecutter.db.forgotten-password :as db]
             [stonecutter.helper :as sh]
             [stonecutter.email :as email]
@@ -65,7 +66,5 @@
           (if (empty? err)
             (let [updated-user (user/change-password! user-store email-address new-password)]
               (cl-store/revoke! forgotten-password-store forgotten-password-id)
-                (-> (response/redirect (r/path :home))
-                    (assoc-in [:session :user-login] email-address) ;; TODO JOHN 11/08/2015 pull this session assoc into utility function
-                    (assoc-in [:session :access_token] (token/generate-login-access-token token-store updated-user))))
+              (common/sign-in-user token-store updated-user))
             (show-reset-password-form forgotten-password-store user-store request-with-validation-errors)))))))

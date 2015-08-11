@@ -18,13 +18,8 @@
             [stonecutter.util.uuid :as uuid]
             [stonecutter.helper :as sh]
             [stonecutter.config :as config]
-            [stonecutter.util.ring :as ring-util]))
-
-(declare redirect-to-profile-created redirect-to-profile-deleted)
-
-(defn signed-in? [request]
-  (let [session (:session request)]
-    (and (:user-login session) (:access_token session))))
+            [stonecutter.util.ring :as ring-util]
+            [stonecutter.controller.common :as common]))
 
 (defn show-registration-form [request]
   (sh/enlive-response (register/registration-form request) (:context request)))
@@ -47,10 +42,10 @@
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
       (do (conf/store! confirmation-store email confirmation-id)
-          (-> (user/store-user! user-store email password)
-              (#(send-confirmation-email! email-sender % email confirmation-id config-m))
-              (#(redirect-to-profile-created token-store % request)) ;; FIXME tidy this up a bit
-              (assoc :flash :confirm-email-sent)))
+          (let [user (user/store-user! user-store email password)]
+            (send-confirmation-email! email-sender user email confirmation-id config-m)
+            (-> (common/sign-in-user token-store user (routes/path :show-profile-created) (:session request))
+                (assoc :flash :confirm-email-sent))))
       (show-registration-form request-with-validation-errors))))
 
 (defn show-change-password-form [request]
@@ -74,7 +69,7 @@
       (show-change-password-form request-with-validation-errors))))
 
 (defn show-sign-in-form [request]
-  (if (signed-in? request)
+  (if (common/signed-in? request)
     (-> (r/redirect (routes/path :home)) (ring-util/preserve-session request))
     (sh/enlive-response (sign-in/sign-in-form request) (:context request))))
 
@@ -88,7 +83,7 @@
       (if-let [user (user/authenticate-and-retrieve-user user-store email password)]
         (let [access-token (token/generate-login-access-token token-store user)]
           (-> request
-              (cl-ep/return-to-handler (routes/path :show-profile))
+              (cl-ep/return-to-handler (routes/path :home)) ;; FIXME JOHN 11/08/2015 make use of sign in code in common controller?
               (assoc-in [:session :user-login] (:login user))
               (assoc-in [:session :access_token] access-token)))
         (-> request-with-validation-errors
@@ -104,19 +99,14 @@
 (defn show-delete-account-confirmation [request]
   (sh/enlive-response (delete-account/delete-account-confirmation request) (:context request)))
 
+(defn redirect-to-profile-deleted []
+  (assoc (r/redirect (routes/path :show-profile-deleted)) :session nil))
+
 (defn delete-account [user-store request]
   (let [email (get-in request [:session :user-login])]
     (user/delete-user! user-store email)
     (redirect-to-profile-deleted)))
 
-(defn redirect-to-profile-created [token-store user request]
-  (-> (r/redirect (routes/path :show-profile-created))
-      (ring-util/preserve-session request)
-      (assoc-in [:session :user-login] (:login user))
-      (assoc-in [:session :access_token] (token/generate-login-access-token token-store user))))
-
-(defn redirect-to-profile-deleted []
-  (assoc (r/redirect (routes/path :show-profile-deleted)) :session nil))
 
 (defn show-profile [client-store user-store request]
   (let [email (get-in request [:session :user-login])

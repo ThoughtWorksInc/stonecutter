@@ -6,7 +6,8 @@
             [stonecutter.routes :as routes]
             [stonecutter.controller.user :as user]
             [stonecutter.helper :as helper]
-            [stonecutter.config :as config]))
+            [stonecutter.config :as config]
+            [stonecutter.controller.common :as common]))
 
 (defn wrap-error-handling [handler err-handler dev-mode?]
   (if-not dev-mode?
@@ -56,7 +57,7 @@
 
 (defn wrap-signed-in [handler]
   (fn [request]
-    (if (user/signed-in? request)
+    (if (common/signed-in? request)
       (handler request)
       (r/redirect (routes/path :sign-in)))))
 

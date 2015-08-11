@@ -1,14 +1,13 @@
 (ns stonecutter.controller.email-confirmations
   (:require [clojure.tools.logging :as log]
             [ring.util.response :as r]
-            [stonecutter.controller.user :as u]             ;; FIXME John 11/08/2015 remove dependency on user controller
             [stonecutter.db.confirmation :as conf]
             [stonecutter.db.user :as user]
             [stonecutter.helper :as sh]
             [stonecutter.routes :as routes]
             [stonecutter.view.sign-in :as sign-in]
             [stonecutter.util.ring :as ring-util]
-            [stonecutter.db.token :as token]))
+            [stonecutter.controller.common :as common]))
 
 (defn show-confirm-sign-in-form [request]
   (sh/enlive-response (sign-in/confirmation-sign-in-form request) (:context request)))
@@ -17,7 +16,7 @@
   (log/debug (format "confirmation-ids match. Confirming user's email."))
   (user/confirm-email! user-store user)
   (conf/revoke! confirmation-store confirmation-id)
-  (r/redirect (routes/path :show-profile)))                 ;; FIXME JOHN 11/08/2015 just redirect to home page, this should then reroute to show profile
+  (r/redirect (routes/path :home)))
 
 (defn mismatch-confirmation-id-response [request]
   (log/debug (format "confirmation-ids DID NOT match. SIGNING OUT"))
@@ -37,7 +36,7 @@
 
 (defn confirm-email-with-id [user-store confirmation-store request]
   (if (confirmation-id-exists? confirmation-store (get-in request [:params :confirmation-id]))
-    (if (u/signed-in? request)
+    (if (common/signed-in? request)
       (let [user-email (get-in request [:session :user-login])
             user (user/retrieve-user user-store user-email)
             confirmation (conf/fetch confirmation-store (get-in request [:params :confirmation-id]))]
@@ -51,13 +50,10 @@
 (defn confirmation-sign-in [user-store token-store confirmation-store request]
   (let [confirmation-id (get-in request [:params :confirmation-id])
         password (get-in request [:params :password])
-        email (:login (conf/fetch confirmation-store confirmation-id))]
+        email (:login (conf/fetch confirmation-store confirmation-id))
+        confirm-email-path (routes/path :confirm-email-with-id  :confirmation-id confirmation-id)]
     (if-let [user (user/authenticate-and-retrieve-user user-store email password)]
-        (let [access-token (token/generate-login-access-token token-store user)]
-          (-> (r/redirect (routes/path :confirm-email-with-id
-                                       :confirmation-id confirmation-id))
-              (assoc-in [:session :user-login] (:login user))
-              (assoc-in [:session :access_token] access-token)))
+      (common/sign-in-user token-store user confirm-email-path)
         (-> request
             (assoc-in [:context :errors :credentials] :confirmation-invalid)
             show-confirm-sign-in-form))))

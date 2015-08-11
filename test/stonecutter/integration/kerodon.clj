@@ -12,8 +12,7 @@
             [stonecutter.db.storage :as s]
             [stonecutter.logging :as l]
             [stonecutter.db.user :as user]
-            [stonecutter.view.register :as register-view]
-            [stonecutter.test.email :as test-email]))
+            [stonecutter.view.register :as register-view]))
 
 (l/init-logger!)
 (ih/setup-db)
@@ -54,11 +53,6 @@
 
 (defn parse-test-email []
   (read-string (slurp "test-tmp/test-email.txt")))
-
-(defn checks-email-is-sent [state email-address]
-  (fact {:midje/name "Check send email script is called"}
-      (parse-test-email) => (contains {:email-address email-address}))
-  state)
 
 (defn delete-directory [directory-path]
   (->> (io/file directory-path)
@@ -148,8 +142,10 @@
            (k/visit (routes/path :confirm-email-with-id
                                  :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
            (k/follow-redirect)
-
+           (kh/page-uri-is (routes/path :home))
+           (k/follow-redirect)
            (kh/page-uri-is (routes/path :show-profile))
+
            (kh/selector-not-present [:.clj--email-not-confirmed-message])
            (kh/selector-exists [:.clj--email-confirmed-message])
 
@@ -180,6 +176,8 @@
            (kh/page-uri-is (routes/path :confirm-email-with-id
                                         :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
            (k/follow-redirect)
+           (kh/page-uri-is (routes/path :home))
+           (k/follow-redirect)
            (kh/page-uri-is (routes/path :show-profile))
            (kh/selector-not-present [:.clj--email-not-confirmed-message])
            (kh/selector-exists [:.clj--email-confirmed-message])
@@ -197,6 +195,8 @@
 (facts "User can sign in"
        (-> (k/session test-app)
            (sign-in "email@server.com")
+           (k/follow-redirect)
+           (kh/page-uri-is "/")
            (k/follow-redirect)
            (kh/page-uri-is "/profile")
            (kh/response-status-is 200)

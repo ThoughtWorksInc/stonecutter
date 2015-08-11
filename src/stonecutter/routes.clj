@@ -8,6 +8,6 @@
 (defn path [action & params]
   (try
     (apply bidi/path-for routes action params)
-    (catch clojure.lang.ArityException e
+    (catch Exception e
       (log/warn (format "Key: '%s' probably does not match a route.\n%s" action e))
       (throw (Exception. (format "Error constructing url for action '%s', with params '%s'" action params))))))

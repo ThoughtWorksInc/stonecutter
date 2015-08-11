@@ -135,26 +135,14 @@
                           :attrs
                           :value) => "invalid"))))
 
-(fact "user can sign in with valid credentials and is redirected to profile, with user-login and access_token added to session"
+(fact "user can sign in with valid credentials and is redirected to home, with user-login and access_token added to session"
       (->> (th/create-request :post "/sign-in" sign-in-user-params)
-           (u/sign-in ...user-store... ...token-store...)) => (contains {:status  302 :headers {"Location" (routes/path :show-profile)}
+           (u/sign-in ...user-store... ...token-store...)) => (contains {:status  302 :headers {"Location" (routes/path :home)}
                                                        :session {:user-login   ...user-login...
                                                                  :access_token ...token...}})
       (provided
        (user/authenticate-and-retrieve-user ...user-store... default-email default-password) => {:login ...user-login...}
        (cl-token/create-token ...token-store... nil {:login ...user-login...}) => {:token ...token...}))
-
-(fact "signed-in? returns true only when user-login and access_token are in the session"
-      (tabular
-        (u/signed-in? ?request) => ?expected-result
-        ?request ?expected-result
-        {:session {:user-login ...user-login... :access_token ...token...}} truthy
-        {:session {:user-login nil :access_token ...token...}} falsey
-        {:session {:user-login ...user-login... :access_token nil}} falsey
-        {:session {:user-login nil :access_token nil}} falsey
-        {:session {}} falsey
-        {:session nil} falsey
-        {} falsey))
 
 (facts "accessing sign-in form"
        (fact "without user-login and access_token in session shows the sign-in form"

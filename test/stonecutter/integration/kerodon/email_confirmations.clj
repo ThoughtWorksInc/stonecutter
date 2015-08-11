@@ -73,12 +73,15 @@
            (k/visit (routes/path :confirm-email-with-id
                                  :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
            (kh/check-and-follow-redirect)
-
+           (kh/page-uri-is (routes/path :home))
+           (k/follow-redirect)
            (kh/page-uri-is (routes/path :show-profile))
            (kh/selector-not-present [:.clj--email-not-confirmed-message])
            (kh/selector-exists [:.clj--email-confirmed-message])
 
-           (teardown-test-directory)))
+           (teardown-test-directory)
+
+           ))
 
 (facts "The account confirmation flow can be followed by a user who is not signed in when first accessing the confirmation endpoint"
        (-> (k/session (h/create-app {:secure "false"} stores-m email-sender))
@@ -105,6 +108,8 @@
            (kh/page-uri-is (routes/path :confirm-email-with-id
                                         :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
 
+           (k/follow-redirect)
+           (kh/page-uri-is (routes/path :home))
            (k/follow-redirect)
            (kh/page-uri-is (routes/path :show-profile))
            (kh/selector-not-present [:.clj--email-not-confirmed-message])
