@@ -14,7 +14,6 @@
             [stonecutter.util.uuid :as uuid]
             [stonecutter.db.user :as user]
             [stonecutter.config :as config]
-            [stonecutter.util.ring :as ring-util]
             [stonecutter.routes :as r]
             [stonecutter.db.token :as token]))
 
@@ -62,7 +61,7 @@
         new-password (request->new-password request)]
     (when-let [forgotten-password-record (cl-store/fetch forgotten-password-store forgotten-password-id)]
       (let [email-address (:login forgotten-password-record)]
-        (when-let [user (user/retrieve-user user-store email-address)]
+        (when (user/retrieve-user user-store email-address)
           (if (empty? err)
             (let [updated-user (user/change-password! user-store email-address new-password)]
               (cl-store/revoke! forgotten-password-store forgotten-password-id)
