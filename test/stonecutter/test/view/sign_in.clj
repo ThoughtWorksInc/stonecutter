@@ -7,22 +7,23 @@
             [stonecutter.view.sign-in :refer [sign-in-form confirmation-sign-in-form]]
             [stonecutter.helper :as helper]))
 
-(fact "sign-in-form should return some html"
-      (let [page (-> (th/create-request) sign-in-form)]
-        (html/select page [:form]) =not=> empty?))
 
-(fact "work in progress should be removed from page"
-      (let [page (-> (th/create-request) sign-in-form)]
-        page => th/work-in-progress-removed))
+(facts "about sign-in-form"
+       (let [page (-> (th/create-request) sign-in-form)]
+         (fact "sign-in-form should return some html"
+               (html/select page [:form]) =not=> empty?)
 
-(fact "register link should go to correct endpoint"
-      (let [page (-> (th/create-request) sign-in-form)]
-        page => (th/has-attr? [:.func--register__link]
-                              :href (r/path :show-registration-form))))
+         (fact "work in progress should be removed from page"
+               page => th/work-in-progress-removed)
 
-(fact "sign in form posts to correct endpoint"
-      (let [page (-> (th/create-request) sign-in-form)]
-        page => (th/has-form-action? (r/path :sign-in))))
+         (fact "register link should go to correct endpoint"
+               page => (th/has-attr? [:.func--register__link]
+                                     :href (r/path :show-registration-form)))
+         (fact "sign in form posts to correct endpoint"
+               page => (th/has-form-action? (r/path :sign-in)))
+         (fact "forgotten-password button should link to correct page"
+               page => (th/has-attr? [:.clj--forgot-password]
+                                     :href (r/path :show-forgotten-password-form)))))
 
 (fact
  (th/test-translations "sign in form" sign-in-form))
@@ -110,27 +111,29 @@
                                            :data-l8n "content:sign-in-form/password-too-long-validation-message")))))
 
 (facts "about confirmation sign in form"
-       (fact "confirmation sign-in-form should return some html"
-             (let [page (-> (th/create-request) confirmation-sign-in-form)]
-               page => (th/element-exists? [:form])))
+       (let [page (-> (th/create-request) confirmation-sign-in-form)]
+         (fact "confirmation sign-in-form should return some html"
+               page => (th/element-exists? [:form]))
 
-       (fact "there are no missing translations"
-             (th/test-translations "confirmation sign in form" confirmation-sign-in-form))
+         (fact "there are no missing translations"
+               (th/test-translations "confirmation sign in form" confirmation-sign-in-form))
 
-       (fact "work in progress should be removed from page"
-             (let [page (-> (th/create-request) confirmation-sign-in-form)]
-               page => th/work-in-progress-removed))
+         (fact "work in progress should be removed from page"
+               page => th/work-in-progress-removed)
 
-       (fact "form should post to correct endpoint"
-             (let [page (-> (th/create-request) confirmation-sign-in-form)]
-               page => (th/has-form-action? (r/path :confirmation-sign-in))))
-       
-       (fact "confirmation id should be set in form"
-             (let [confirmation-id "confirmation-123"
-                   page (-> (th/create-request {} nil {:confirmation-id confirmation-id}) confirmation-sign-in-form)]
-               page => (th/has-attr? [:.clj--confirmation-id__input] :value confirmation-id))))
+         (fact "form should post to correct endpoint"
+               page => (th/has-form-action? (r/path :confirmation-sign-in)))
 
- ( facts "about displaying errors"
+         (fact "confirmation id should be set in form"
+               (let [confirmation-id "confirmation-123"
+                     page (-> (th/create-request {} nil {:confirmation-id confirmation-id}) confirmation-sign-in-form)]
+                 page => (th/has-attr? [:.clj--confirmation-id__input] :value confirmation-id)))
+
+         (fact "forgotten-password button should link to correct page"
+               page => (th/has-attr? [:.clj--forgot-password]
+                                     :href (r/path :show-forgotten-password-form)))))
+
+ (facts "about displaying errors"
        (facts "when password is invalid"
               (let [errors {:credentials :confirmation-invalid}
                     page (-> (th/create-request {} errors {}) confirmation-sign-in-form)]

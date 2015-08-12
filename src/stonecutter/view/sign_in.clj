@@ -61,22 +61,25 @@
 (defn set-form-action [path enlive-m]
   (html/at enlive-m [:form] (html/set-attr :action path)))
 
+(defn set-forgotten-password-link [enlive-m]
+  (html/at enlive-m [:.clj--forgot-password] (html/set-attr :href (r/path :show-forgotten-password-form))))
+
 (defn sign-in-form [request]
   (let [context (:context request)
         params (:params request)
         err (:errors context)]
     (->> (vh/load-template "public/sign-in.html")
          set-registration-link
+         set-forgotten-password-link
          (set-form-action (r/path :sign-in))
          (add-sign-in-errors err)
          (set-email-input params)
-         vh/remove-work-in-progress
          vh/add-anti-forgery)))
 
 (defn confirmation-sign-in-form [request]
-  (->>  (vh/load-template "public/confirmation-sign-in.html")
+  (->> (vh/load-template "public/confirmation-sign-in.html")
        (set-form-action (r/path :confirmation-sign-in))
+       set-forgotten-password-link
        (set-confirmation-id (:params request))
        (add-invalid-credentials-error (get-in request [:context :errors]))
-       vh/remove-work-in-progress
        vh/add-anti-forgery))
