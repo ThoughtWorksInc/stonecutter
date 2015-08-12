@@ -116,25 +116,26 @@
                    test-request (th/create-request :get (routes/path :show-reset-password-form
                                                                      :forgotten-password-id forgotten-password-id)
                                                    {:forgotten-password-id forgotten-password-id})
-                   response (fp/show-reset-password-form forgotten-password-store user-store test-request)]
+                   response (fp/show-reset-password-form forgotten-password-store user-store test-clock test-request)]
                (:status response) => 200))
 
-       (fact "if there is no forgotten password record with an id matching that in the URL, nil (404) is returned"
+       (fact "if there is no forgotten password record with an id matching that in the URL, then redirect to resend e-mail"
              (let [user-store (m/create-memory-store)
                    forgotten-password-store (m/create-memory-store)
                    test-request (th/create-request :get (routes/path :show-reset-password-form
                                                                      :forgotten-password-id forgotten-password-id)
                                                    {:forgotten-password-id forgotten-password-id})]
-               (fp/show-reset-password-form forgotten-password-store user-store test-request) => nil))
+               (fp/show-reset-password-form forgotten-password-store user-store test-clock test-request) => (th/check-redirects-to (r/path :show-forgotten-password-form))))
 
-       (fact "if a non-expired forgotten-password record can be found, but there is no corresponding user, nil (404) is returned"
+       (fact "if a non-expired forgotten-password record can be found, but there is no corresponding user, then redirect to resend e-mail"
              (let [user-store (m/create-memory-store)
                    forgotten-password-store (m/create-memory-store)
                    _ (fpdb/store-id-for-user! forgotten-password-store test-clock forgotten-password-id email-address)
                    test-request (th/create-request :get (routes/path :show-reset-password-form
                                                                      :forgotten-password-id forgotten-password-id)
                                                    {:forgotten-password-id forgotten-password-id})]
-               (fp/show-reset-password-form forgotten-password-store user-store test-request) => nil)))
+               (fp/show-reset-password-form forgotten-password-store user-store test-clock test-request) => (th/check-redirects-to (r/path :show-forgotten-password-form))))
+       )
 
 (defn create-reset-password-post
   ([forgotten-password-id new-password confirm-password]
@@ -155,31 +156,41 @@
 
          (fact "if there are validation errors, then the reset password form is returned with the validation errors"
                (let [test-request (create-reset-password-post forgotten-password-id "" "")
-                     response (fp/reset-password-form-post forgotten-password-store user-store token-store test-request)]
+                     response (fp/reset-password-form-post forgotten-password-store user-store token-store test-clock test-request)]
                  (:status response) => 200
                  (vth/response->enlive-m response) => (vth/element-exists? [:.form-row--validation-error])))
 
-         (fact "if the validation id doesn't exist and params are invalid then nil (404) is returned"
+         (fact "if the id doesn't exist and params are invalid then redirect to resend e-mail"
                (let [response (->> (create-reset-password-post "unknown-forgotten-password-id" "" "")
-                                   (fp/reset-password-form-post forgotten-password-store user-store token-store))]
+                                   (fp/reset-password-form-post forgotten-password-store user-store token-store test-clock))]
                  response => (th/check-redirects-to (r/path :show-forgotten-password-form))
                  (:flash response) => :expired-password-reset))
 
-         (fact "if the validation id doesn't exist and params are valid then nil (404) is returned"
+         (fact "if the id doesn't exist and params are valid then redirect to resend e-mail"
                (->> (create-reset-password-post "unknown-forgotten-password-id" "new-password" "new-password")
-                    (fp/reset-password-form-post forgotten-password-store user-store token-store))
+                    (fp/reset-password-form-post forgotten-password-store user-store token-store test-clock))
                => (th/check-redirects-to (r/path :show-forgotten-password-form)))
 
-         (fact "if validation id exists and params are valid, but related user no longer exists, then nil (404) is returned"
+         (fact "if id exists and params are valid, but related user no longer exists, then redirect to resend e-mail"
                (let [forgotten-password-store (m/create-memory-store)]
                  (fpdb/store-id-for-user! forgotten-password-store test-clock "id-without-user" "nonexistant@user.com")
                  (->> (create-reset-password-post "id-without-user" "new-password" "new-password")
-                      (fp/reset-password-form-post forgotten-password-store user-store token-store))
+                      (fp/reset-password-form-post forgotten-password-store user-store token-store test-clock))
+                 => (th/check-redirects-to (r/path :show-forgotten-password-form))))
+
+         (fact "if id exists and params are valid, but id has expired then redirect to resend e-mail"
+               (let [forgotten-password-store (m/create-memory-store)
+                     clock (test-time/new-stub-clock 0)]
+                 (fpdb/store-id-for-user! forgotten-password-store clock forgotten-password-id email-address)
+                 ;; move forward in time
+                 (test-time/update-time clock (partial + (* 2 time/day)))
+                 (->> (create-reset-password-post forgotten-password-id "new-password" "new-password")
+                      (fp/reset-password-form-post forgotten-password-store user-store token-store clock))
                  => (th/check-redirects-to (r/path :show-forgotten-password-form))))
 
          (fact "if the password and confirm password is valid"
                (let [valid-request (create-reset-password-post forgotten-password-id "new-password" "new-password" {:other-value "other-value"})
-                     response (fp/reset-password-form-post forgotten-password-store user-store token-store valid-request)]
+                     response (fp/reset-password-form-post forgotten-password-store user-store token-store test-clock valid-request)]
                  (fact "the new password is successfully saved"
                        (let [new-encrypted-password (:password (user/retrieve-user user-store email-address))]
                          (BCrypt/checkpw "password" new-encrypted-password) => false

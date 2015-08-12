@@ -87,8 +87,8 @@
        :show-forgotten-password-form         forgotten-password/show-forgotten-password-form
        :send-forgotten-password-email        (partial forgotten-password/forgotten-password-form-post email-sender user-store forgotten-password-store clock)
        :show-forgotten-password-confirmation forgotten-password/show-forgotten-password-confirmation
-       :show-reset-password-form             (partial forgotten-password/show-reset-password-form forgotten-password-store user-store)
-       :reset-password                       (partial forgotten-password/reset-password-form-post forgotten-password-store user-store token-store)
+       :show-reset-password-form             (partial forgotten-password/show-reset-password-form forgotten-password-store user-store clock)
+       :reset-password                       (partial forgotten-password/reset-password-form-post forgotten-password-store user-store token-store clock)
        :show-authorise-form                  (partial oauth/show-authorise-form client-store)
        :authorise                            (partial oauth/authorise auth-code-store client-store user-store token-store)
        :authorise-client                     (partial oauth/authorise-client auth-code-store client-store user-store token-store)
