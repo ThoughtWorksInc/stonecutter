@@ -11,7 +11,10 @@
             [stonecutter.db.user :as user]
             [stonecutter.db.forgotten-password :as fpdb]
             [stonecutter.routes :as r]
-            [clojure.string :as string])
+            [clojure.string :as string]
+            [clj-time.core :as t]
+            [clj-time.coerce :as c]
+            [stonecutter.util.time :as time])
   (:import (org.mindrot.jbcrypt BCrypt)))
 
 (def email-address "email@address.com")
@@ -73,6 +76,29 @@
                       forgotten-password-entries (cl-store/entries forgotten-password-store)]
                   (-> last-email :body :forgotten-password-id) => existing-id
                   (first forgotten-password-entries) => (contains {:forgotten-password-id existing-id :login email-address}))))
+
+        (fact "if forgotten-password record already exists for user, but has expired, then record is removed and replaced with new id"
+              (let [email-sender (test-email/create-test-email-sender)
+                    forgotten-password-store (m/create-memory-store)
+                    test-request (-> (th/create-request :post "/forgotten-password" {:email email-address})
+                                     (th/add-config-request-context {:app-name "My App" :base-url "https://myapp.com"}))
+                    old-time (-> (t/now) c/to-long)
+                    now (-> (t/now) (t/plus (t/hours 25)) c/to-long)]
+
+                (fpdb/store-id-for-user! forgotten-password-store "old-id" email-address) => anything
+                (provided (time/now-plus-hours-in-millis 24) => old-time)
+
+                (fp/forgotten-password-form-post email-sender user-store forgotten-password-store test-request)
+                => (th/check-redirects-to (routes/path :show-forgotten-password-confirmation))
+                (provided
+                  (time/now-in-millis) => now
+                  (time/now-plus-hours-in-millis 24) => 99)
+
+                (let [last-email (test-email/last-sent-email email-sender)]
+                  (-> last-email :body :forgotten-password-id) =not=> "old-id"
+                  (count (cl-store/entries forgotten-password-store)) => 1
+                  (-> (cl-store/entries forgotten-password-store) first :forgotten-password-id) =not=> "old-id"
+                  (-> (cl-store/entries forgotten-password-store) first :expiry) => 99)))
 
         (fact "users email is lower-cased"
               (let [email-sender (test-email/create-test-email-sender)
