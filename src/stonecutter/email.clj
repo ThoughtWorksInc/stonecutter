@@ -45,14 +45,22 @@
   {:subject (format "Confirm your email for %s" (:app-name email-data))
    :body (confirmation-email-body (:base-url email-data) (:confirmation-id email-data))})
 
+(defn forgotten-password-email-body [base-url forgotten-password-id]
+  (let [reset-path (r/path :show-reset-password-form :forgotten-password-id forgotten-password-id)
+        reset-url (str base-url reset-path)]
+    (str
+      "Hi,\n"
+      "Click this link to reset your password:\n"
+      reset-url
+      "\nCheers,"
+      "\nAdmin")))
+
 (defn forgotten-password-renderer [email-data]
   (let [forgotten-password-id (:forgotten-password-id email-data)
         base-url (:base-url email-data)
-        app-name (:app-name email-data)
-        reset-path (r/path :show-reset-password-form :forgotten-password-id forgotten-password-id)
-        reset-url (str base-url reset-path)]
+        app-name (:app-name email-data)]
     {:subject (format "Reset password for %s" app-name)
-     :body    reset-url}))
+     :body    (forgotten-password-email-body base-url forgotten-password-id)}))
 
 (defn get-confirmation-renderer []
   confirmation-renderer)

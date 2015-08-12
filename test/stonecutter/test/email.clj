@@ -45,4 +45,4 @@
             email (email/forgotten-password-renderer email-data)]
 
         (:subject email) => (str "Reset password for " app-name)
-        (:body email) => (str base-url "/reset-password/forgotten-password-id")))
+        (:body email) => (contains (str base-url "/reset-password/forgotten-password-id"))))
