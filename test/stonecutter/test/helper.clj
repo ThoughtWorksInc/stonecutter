@@ -9,7 +9,10 @@
       (let [r (-> (response/response "a-response") h/disable-caching)]
         (get-in r [:headers "Pragma"]) => "no-cache"
         (get-in r [:headers "Cache-Control"]) => "no-cache, no-store, must-revalidate"
-        (get-in r [:headers "Expires"]) => "0"))
+        (get-in r [:headers "Expires"]) => "0")
+
+      (fact "if response is nil, then should return nil"
+            (h/disable-caching nil) => nil))
 
 (defn get-link-href [enlive-m]
   (-> enlive-m (html/select [:link]) first :attrs :href))

@@ -39,7 +39,8 @@
       (r/content-type "text/html")))
 
 (defn disable-caching [response]
-  (-> response
-      (assoc-in [:headers "Cache-Control"] "no-cache, no-store, must-revalidate")
-      (assoc-in [:headers "Pragma"] "no-cache")
-      (assoc-in [:headers "Expires"] "0")))
+  (when response
+    (-> response
+        (assoc-in [:headers "Cache-Control"] "no-cache, no-store, must-revalidate")
+        (assoc-in [:headers "Pragma"] "no-cache")
+        (assoc-in [:headers "Expires"] "0"))))
