@@ -32,4 +32,5 @@
        set-form-action
        (add-email-error (get-in request [:context :errors]))
        (set-email-input (get-in request [:params :email]))
+       (vh/set-flash-message request :expired-password-reset)
        vh/add-anti-forgery))

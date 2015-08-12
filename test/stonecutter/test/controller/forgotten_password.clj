@@ -160,18 +160,22 @@
                  (vth/response->enlive-m response) => (vth/element-exists? [:.form-row--validation-error])))
 
          (fact "if the validation id doesn't exist and params are invalid then nil (404) is returned"
-               (->> (create-reset-password-post "unknown-forgotten-password-id" "" "")
-                    (fp/reset-password-form-post forgotten-password-store user-store token-store)) => nil)
+               (let [response (->> (create-reset-password-post "unknown-forgotten-password-id" "" "")
+                                   (fp/reset-password-form-post forgotten-password-store user-store token-store))]
+                 response => (th/check-redirects-to (r/path :show-forgotten-password-form))
+                 (:flash response) => :expired-password-reset))
 
          (fact "if the validation id doesn't exist and params are valid then nil (404) is returned"
                (->> (create-reset-password-post "unknown-forgotten-password-id" "new-password" "new-password")
-                    (fp/reset-password-form-post forgotten-password-store user-store token-store)) => nil)
+                    (fp/reset-password-form-post forgotten-password-store user-store token-store))
+               => (th/check-redirects-to (r/path :show-forgotten-password-form)))
 
          (fact "if validation id exists and params are valid, but related user no longer exists, then nil (404) is returned"
                (let [forgotten-password-store (m/create-memory-store)]
                  (fpdb/store-id-for-user! forgotten-password-store test-clock "id-without-user" "nonexistant@user.com")
                  (->> (create-reset-password-post "id-without-user" "new-password" "new-password")
-                      (fp/reset-password-form-post forgotten-password-store user-store token-store)) => nil))
+                      (fp/reset-password-form-post forgotten-password-store user-store token-store))
+                 => (th/check-redirects-to (r/path :show-forgotten-password-form))))
 
          (fact "if the password and confirm password is valid"
                (let [valid-request (create-reset-password-post forgotten-password-id "new-password" "new-password" {:other-value "other-value"})

@@ -49,3 +49,13 @@
                     (html/select page [:.clj--forgotten-password-email__validation]) =not=> empty?)
               (fact "correct error message is displayed"
                     (html/select page [[:.clj--forgotten-password-email__validation (html/attr= :data-l8n "content:forgot-password/email-address-too-long-validation-message")]]) =not=> empty?))))
+
+(facts "about flash messages"
+       (fact "no flash messages are displayed by default"
+             (let [page (-> (th/create-request) fp/forgotten-password-form)]
+               (-> page (html/select [:.clj--flash-message-container])) => empty?))
+
+       (fact "expired-reset flash message is displayed on page if it is in the flash of request"
+             (let [page (-> (th/create-request) (assoc :flash :expired-password-reset) fp/forgotten-password-form)]
+               (-> page (html/select [:.clj--flash-message-container])) =not=> empty?)))
+
