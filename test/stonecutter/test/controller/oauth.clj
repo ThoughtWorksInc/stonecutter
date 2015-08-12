@@ -221,9 +221,10 @@
              user (user/store-admin! user-store user-email "password")
              client-details (cl-client/register-client client-store "MYAPP" "http://myapp.com")
              auth-code (cl-auth-code/create-auth-code auth-code-store client-details user "http://myapp.com/callback")
-             request (-> (th/create-request-with-query-string :get (routes/path :validate-token) {:grant_type   "authorization_code"
-                                                                                                  :redirect_uri "http://myapp.com/callback"
-                                                                                                  :code         (:code auth-code)})
+             request (-> (th/create-request-with-query-string :get (routes/path :validate-token)
+                                                              {:grant_type   "authorization_code"
+                                                               :redirect_uri "http://myapp.com/callback"
+                                                               :code         (:code auth-code)})
                          (create-auth-header client-details))
              response (oauth/validate-token auth-code-store client-store user-store token-store request)
              response-body (-> response :body (json/parse-string keyword))]
@@ -233,17 +234,26 @@
                (:access_token response-body) => (just #"[A-Z0-9]{32}")
                (:token_type response-body) => "bearer")
 
-         (fact "user-email in session is returned in body after validating token"
-               (:user-email response-body) => user-email)
+         (fact "user-email in the response body matches that of the authenticated user"
+               (get-in response-body [:user-info :email]) => user-email)
 
-         (fact "user id in session is returned in body after validating token"
-               (:user-id response-body) => (:uid user)
-               (:uid user) =not=> nil?)
+         (fact "user-info includes :sub key matching the authenticated user's uid"
+               (let [sub (get-in response-body [:user-info :sub])]
+                 sub => (:uid user)
+                 sub =not=> nil?))
+
          (fact "email confirmed status is returned in the body after validating token"
-               (:user-email-confirmed response-body) => (:confirmed? user))
-         (fact "roles for admin is returned in the body after validating token"
-               (:role response-body) => (name (:role user)))))
+               (get-in response-body [:user-info :email_verified]) => (:confirmed? user))
 
+         (fact "roles for admin is returned in the body after validating token"
+               (get-in response-body [:user-info :role]) => (name (:role user)))
+
+         ;; 20150812 NOTE DM, RS: WIP OpenId Connect claims
+         (future-fact "response should not contain user-id, role, user-email, user-email-confirmed"
+               response-body =not=> (contains {:user-id anything })
+               response-body =not=> (contains {:user-email-confirmed anything})
+               response-body =not=> (contains {:user-email anything})
+               response-body =not=> (contains {:role anything}))))
 
 (facts "about auto-approver"
        (fact "returns true if user has authorised the client"

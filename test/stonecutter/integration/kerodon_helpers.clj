@@ -85,23 +85,15 @@
           (:token_type response-body) => "bearer"))
   state)
 
-(defn response-has-user-email [state email]
-  (fact {:midje/name "Checking if response has user email"}
+(defn response-has-user-info [state]
+  (fact {:midje/name "Checking if response includes user info"}
         (let [response-body (-> state
                                 :response
                                 :body
                                 (json/parse-string keyword))]
-          (:user-email response-body) => email))
+          response-body => (contains {:user-info anything})))
   state)
 
-(defn response-has-id [state]
-  (fact {:midje/name "Checking if response has user id"}
-        (let [response-body (-> state
-                                :response
-                                :body
-                                (json/parse-string keyword))]
-          (:user-id response-body) =not=> string/blank?))
-  state)
 
 ;; FIXME can't reuse the body because it's a buffered input stream - 06 Jul 2015
 (defn replay-last-request [state]

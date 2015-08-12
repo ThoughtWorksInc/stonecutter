@@ -106,8 +106,7 @@
                     (client-sends-http-token-request client-id client-secret)
                     ; return 200 with new access_token
                     (kh/response-has-access-token)
-                    (kh/response-has-user-email email)
-                    (kh/response-has-id))))
+                    (kh/response-has-user-info))))
 
        (facts "user who has already authorised client does not need to authorise client again"
               (let [stores (s/create-in-memory-stores)
@@ -126,8 +125,7 @@
                     (client-sends-http-token-request client-id client-secret)
                     ;; return 200 with new access_token
                     (kh/response-has-access-token)
-                    (kh/response-has-user-email email)
-                    (kh/response-has-id))))
+                    (kh/response-has-user-info))))
 
        (facts "user is redirected to authorisation-failure page when cancelling authorisation"
               (let [stores (s/create-in-memory-stores)

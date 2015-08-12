@@ -23,9 +23,7 @@
       (k/press ks/registration-submit)))
 
 (defn parse-test-email []
-  (let [m (read-string (slurp "test-tmp/test-email.txt"))]
-    (prn m)
-    m))
+  (read-string (slurp "test-tmp/test-email.txt")))
 
 (defn checks-email-is-sent [state email-address]
   (fact {:midje/name "Check send email script is called"}
