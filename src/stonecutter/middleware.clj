@@ -15,7 +15,7 @@
       (try
         (handler request)
         (catch Exception e
-          (log/error e)
+          (log/error e e)
           (err-handler request))))
     handler))
 
