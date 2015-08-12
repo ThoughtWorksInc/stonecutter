@@ -3,8 +3,8 @@
             [stonecutter.db.mongo :as m]
             [stonecutter.util.time :as time]))
 
-(defn store-id-for-user! [forgotten-password-store forgotten-password-id login]
-  (let [doc {:forgotten-password-id forgotten-password-id :login login :expiry (time/now-plus-hours-in-millis 24)}]
+(defn store-id-for-user! [forgotten-password-store clock forgotten-password-id login]
+  (let [doc {:forgotten-password-id forgotten-password-id :login login :expiry (time/now-plus-hours-in-millis clock 24)}]
     (cl-store/store! forgotten-password-store :forgotten-password-id doc)))
 
 (defn forgotten-password-doc-by-login [forgotten-password-store login]

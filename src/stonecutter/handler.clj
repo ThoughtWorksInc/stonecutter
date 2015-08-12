@@ -24,7 +24,8 @@
             [stonecutter.db.mongo :as mongo]
             [stonecutter.config :as config]
             [stonecutter.admin :as admin]
-            [stonecutter.db.storage :as storage])
+            [stonecutter.db.storage :as storage]
+            [stonecutter.util.time :as time])
   (:gen-class))
 
 (def default-context {:translator (t/translations-fn t/translation-map)})
@@ -60,7 +61,8 @@
         token-store (storage/get-token-store stores-m)
         confirmation-store (storage/get-confirmation-store stores-m)
         auth-code-store (storage/get-auth-code-store stores-m)
-        forgotten-password-store (storage/get-forgotten-password-store stores-m)]
+        forgotten-password-store (storage/get-forgotten-password-store stores-m)
+        clock (time/new-clock)]
     (->
       {:home                                 user/home
        :ping                                 ping
@@ -83,7 +85,7 @@
        :show-change-password-form            user/show-change-password-form
        :change-password                      (partial user/change-password user-store)
        :show-forgotten-password-form         forgotten-password/show-forgotten-password-form
-       :send-forgotten-password-email        (partial forgotten-password/forgotten-password-form-post email-sender user-store forgotten-password-store)
+       :send-forgotten-password-email        (partial forgotten-password/forgotten-password-form-post email-sender user-store forgotten-password-store clock)
        :show-forgotten-password-confirmation forgotten-password/show-forgotten-password-confirmation
        :show-reset-password-form             (partial forgotten-password/show-reset-password-form forgotten-password-store user-store)
        :reset-password                       (partial forgotten-password/reset-password-form-post forgotten-password-store user-store token-store)
