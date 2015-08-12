@@ -1,15 +1,14 @@
 (ns stonecutter.db.forgotten-password
-  (:require [clauth.store :as cl-store]
-            [stonecutter.db.mongo :as m]
+  (:require [stonecutter.db.expiry :as e]
             [stonecutter.util.time :as time]))
 
 (defn store-id-for-user! [forgotten-password-store clock forgotten-password-id login]
-  (let [doc {:forgotten-password-id forgotten-password-id :login login :expiry (time/now-plus-hours-in-millis clock 24)}]
-    (cl-store/store! forgotten-password-store :forgotten-password-id doc)))
+  (let [doc {:forgotten-password-id forgotten-password-id :login login}]
+    (e/store-with-expiry! forgotten-password-store clock :forgotten-password-id doc time/day)))
 
-(defn forgotten-password-doc-by-login [forgotten-password-store login]
-  (let [docs (m/query forgotten-password-store {:login login})]
+(defn forgotten-password-doc-by-login [forgotten-password-store clock login]
+  (let [docs (e/query-with-expiry forgotten-password-store clock :forgotten-password-id {:login login})]
     (case (count docs)
       0 nil
       1 (first docs)
-      (throw (Exception. (format "Multiple forgotten password records found for login [%s]" login))))))
+      (throw (Exception. (format "Multiple forgotten password records found for login [%s]" login)))))) ;; FIXME JOHN 12/08/2015 make this more general

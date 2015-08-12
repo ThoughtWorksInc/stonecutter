@@ -96,8 +96,7 @@
                 (let [last-email (test-email/last-sent-email email-sender)]
                   (-> last-email :body :forgotten-password-id) =not=> "old-id"
                   (count (cl-store/entries forgotten-password-store)) => 1
-                  (-> (cl-store/entries forgotten-password-store) first :forgotten-password-id) =not=> "old-id"
-                  (-> (cl-store/entries forgotten-password-store) first :expiry) => (+ (time/now-in-millis clock) time/day))))
+                  (-> (cl-store/entries forgotten-password-store) first :forgotten-password-id) =not=> "old-id")))
 
         (fact "users email is lower-cased"
               (let [email-sender (test-email/create-test-email-sender)

@@ -14,8 +14,7 @@
             [stonecutter.routes :as routes]
             [stonecutter.util.uuid :as uuid]
             [stonecutter.db.user :as user]
-            [stonecutter.config :as config]
-            [stonecutter.util.time :as time]))
+            [stonecutter.config :as config]))
 
 (defn request->forgotten-password-id [request]
   (get-in request [:params :forgotten-password-id]))
@@ -26,19 +25,8 @@
 (defn show-forgotten-password-form [request]
   (sh/enlive-response (forgotten-password-view/forgotten-password-form request) (:context request)))
 
-(defn expired-doc? [clock doc]
-  (<= (:expiry doc) (time/now-in-millis clock)))
-
-(defn retrieve-existing-id [forgotten-password-store clock email-address]
-  (let [doc (db/forgotten-password-doc-by-login forgotten-password-store email-address)
-        id (:forgotten-password-id doc)]
-    (if (and doc (expired-doc? clock doc))
-      (do (cl-store/revoke! forgotten-password-store id)
-          nil)
-      id)))
-
 (defn create-or-retrieve-id [forgotten-password-store clock email-address]
-  (if-let [existing-id (retrieve-existing-id forgotten-password-store clock email-address)]
+  (if-let [existing-id (:forgotten-password-id (db/forgotten-password-doc-by-login forgotten-password-store clock email-address))]
     existing-id
     (let [forgotten-password-id (uuid/uuid)]
       (db/store-id-for-user! forgotten-password-store clock forgotten-password-id email-address)
