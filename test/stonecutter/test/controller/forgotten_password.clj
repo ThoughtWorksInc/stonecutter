@@ -72,7 +72,7 @@
                     existing-id "existing-forgotten-password-id"
                     test-request (-> (th/create-request :post "/forgotten-password" {:email email-address})
                                      (th/add-config-request-context {:app-name "My App" :base-url "https://myapp.com"}))]
-                (fpdb/store-id-for-user! forgotten-password-store test-clock existing-id email-address)
+                (fpdb/store-id-for-user! forgotten-password-store test-clock existing-id email-address 24)
                 (fp/forgotten-password-form-post email-sender user-store forgotten-password-store test-clock test-request)
                 => (th/check-redirects-to (routes/path :show-forgotten-password-confirmation))
                 (let [last-email (test-email/last-sent-email email-sender)
@@ -86,7 +86,7 @@
                     clock (test-time/new-stub-clock 0)
                     test-request (-> (th/create-request :post "/forgotten-password" {:email email-address})
                                      (th/add-config-request-context {:app-name "My App" :base-url "https://myapp.com"}))]
-                (fpdb/store-id-for-user! forgotten-password-store test-clock "old-id" email-address) => anything
+                (fpdb/store-id-for-user! forgotten-password-store test-clock "old-id" email-address 24) => anything
 
                 ; Move clock forward by 24 hours
                 (test-time/update-time clock (partial + time/day))
@@ -112,7 +112,7 @@
              (let [user-store (m/create-memory-store)
                    forgotten-password-store (m/create-memory-store)
                    _ (user/store-user! user-store email-address "password")
-                   _ (fpdb/store-id-for-user! forgotten-password-store test-clock forgotten-password-id email-address)
+                   _ (fpdb/store-id-for-user! forgotten-password-store test-clock forgotten-password-id email-address 24)
                    test-request (th/create-request :get (routes/path :show-reset-password-form
                                                                      :forgotten-password-id forgotten-password-id)
                                                    {:forgotten-password-id forgotten-password-id})
@@ -130,7 +130,7 @@
        (fact "if a non-expired forgotten-password record can be found, but there is no corresponding user, then redirect to resend e-mail"
              (let [user-store (m/create-memory-store)
                    forgotten-password-store (m/create-memory-store)
-                   _ (fpdb/store-id-for-user! forgotten-password-store test-clock forgotten-password-id email-address)
+                   _ (fpdb/store-id-for-user! forgotten-password-store test-clock forgotten-password-id email-address 24)
                    test-request (th/create-request :get (routes/path :show-reset-password-form
                                                                      :forgotten-password-id forgotten-password-id)
                                                    {:forgotten-password-id forgotten-password-id})]
@@ -152,7 +152,7 @@
              forgotten-password-store (m/create-memory-store)
              token-store (m/create-memory-store)]
          (user/store-user! user-store email-address "password")
-         (fpdb/store-id-for-user! forgotten-password-store test-clock forgotten-password-id email-address)
+         (fpdb/store-id-for-user! forgotten-password-store test-clock forgotten-password-id email-address 24)
 
          (fact "if there are validation errors, then the reset password form is returned with the validation errors"
                (let [test-request (create-reset-password-post forgotten-password-id "" "")
@@ -173,7 +173,7 @@
 
          (fact "if id exists and params are valid, but related user no longer exists, then redirect to resend e-mail"
                (let [forgotten-password-store (m/create-memory-store)]
-                 (fpdb/store-id-for-user! forgotten-password-store test-clock "id-without-user" "nonexistant@user.com")
+                 (fpdb/store-id-for-user! forgotten-password-store test-clock "id-without-user" "nonexistant@user.com" 24)
                  (->> (create-reset-password-post "id-without-user" "new-password" "new-password")
                       (fp/reset-password-form-post forgotten-password-store user-store token-store test-clock))
                  => (th/check-redirects-to (r/path :show-forgotten-password-form))))
@@ -181,7 +181,7 @@
          (fact "if id exists and params are valid, but id has expired then redirect to resend e-mail"
                (let [forgotten-password-store (m/create-memory-store)
                      clock (test-time/new-stub-clock 0)]
-                 (fpdb/store-id-for-user! forgotten-password-store clock forgotten-password-id email-address)
+                 (fpdb/store-id-for-user! forgotten-password-store clock forgotten-password-id email-address 24)
                  ;; move forward in time
                  (test-time/update-time clock (partial + (* 2 time/day)))
                  (->> (create-reset-password-post forgotten-password-id "new-password" "new-password")

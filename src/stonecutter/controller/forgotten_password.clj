@@ -26,11 +26,11 @@
 (defn show-forgotten-password-form [request]
   (sh/enlive-response (forgotten-password-view/forgotten-password-form request) (:context request)))
 
-(defn create-or-retrieve-id [forgotten-password-store clock email-address]
+(defn create-or-retrieve-id [forgotten-password-store clock email-address expiry-hours]
   (if-let [existing-id (:forgotten-password-id (db/forgotten-password-doc-by-login forgotten-password-store clock email-address))]
     existing-id
     (let [forgotten-password-id (uuid/uuid)]
-      (db/store-id-for-user! forgotten-password-store clock forgotten-password-id email-address)
+      (db/store-id-for-user! forgotten-password-store clock forgotten-password-id email-address expiry-hours)
       forgotten-password-id)))
 
 (defn forgotten-password-form-post [email-sender user-store forgotten-password-store clock request]
@@ -40,11 +40,12 @@
         err (v/validate-forgotten-password params)
         app-name (config/app-name config-m)
         base-url (config/base-url config-m)
-        request-with-validation-errors (assoc-in request [:context :errors] err)]
+        request-with-validation-errors (assoc-in request [:context :errors] err)
+        email-expiry (config/password-reset-expiry config-m)]
     (if (empty? err)
       (do
         (if (user/retrieve-user user-store email-address)
-          (let [forgotten-password-id (create-or-retrieve-id forgotten-password-store clock email-address)]
+          (let [forgotten-password-id (create-or-retrieve-id forgotten-password-store clock email-address email-expiry)]
             (email/send! email-sender :forgotten-password email-address {:app-name app-name :base-url base-url :forgotten-password-id forgotten-password-id}))
           (log/warn (format "User %s does not exist so reset password e-mail not sent." email-address)))
         (response/redirect (routes/path :show-forgotten-password-confirmation)))

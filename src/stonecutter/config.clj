@@ -7,7 +7,8 @@
                 :theme :secure :email-script-path :app-name
                 :header-bg-color :inactive-tab-font-color
                 :static-resources-dir-path :logo-file-name
-                :favicon-file-name :admin-login :admin-password})
+                :favicon-file-name :admin-login :admin-password
+                :password-reset-expiry})
 
 (def roles {:default "default"
             :admin "admin"})
@@ -84,3 +85,6 @@
   (if-let [result (get-env config-m :admin-password)]
     result
     (log/warn "no ADMIN_PASSWORD provided. Please provide this environment variable to create an admin account.")))
+
+(defn password-reset-expiry [config-m]
+  (Integer. (get-env config-m :password-reset-expiry "24")))

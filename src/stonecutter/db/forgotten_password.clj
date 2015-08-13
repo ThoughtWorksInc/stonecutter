@@ -2,9 +2,9 @@
   (:require [stonecutter.db.expiry :as e]
             [stonecutter.util.time :as time]))
 
-(defn store-id-for-user! [forgotten-password-store clock forgotten-password-id login]
+(defn store-id-for-user! [forgotten-password-store clock forgotten-password-id login expiry-hours]
   (let [doc {:forgotten-password-id forgotten-password-id :login login}]
-    (e/store-with-expiry! forgotten-password-store clock :forgotten-password-id doc time/day)))
+    (e/store-with-expiry! forgotten-password-store clock :forgotten-password-id doc (* time/hour expiry-hours))))
 
 (defn forgotten-password-doc-by-login [forgotten-password-store clock login]
   (let [docs (e/query-with-expiry forgotten-password-store clock :forgotten-password-id {:login login})]
