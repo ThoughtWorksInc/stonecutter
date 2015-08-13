@@ -3,9 +3,7 @@
             [stonecutter.db.mongo :as m]
             [clauth.store :as cl-store]
             [stonecutter.db.expiry :as e]
-            [stonecutter.test.util.time :as test-time]
-            [stonecutter.util.time :as time]
-            [stonecutter.db.mongo :as mongo]))
+            [stonecutter.test.util.time :as test-time]))
 
 (fact "storing record with expiry"
       (let [clock (test-time/new-stub-clock 100)
