@@ -54,7 +54,7 @@ forgot-password:
 forgot-password-confirmation:
   title: Forgotten password - email sent
   page-header: Email sent
-  helper-text: Assuming you gave us the correct email address, we sent you a link to reset your password!
+  helper-text: You should shortly receive an email with a link to reset your password.
   home-link: Return home
 
 register-now:
