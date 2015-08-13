@@ -8,19 +8,12 @@
             [stonecutter.routes :as routes]
             [stonecutter.handler :as h]
             [stonecutter.logging :as l]
-            [stonecutter.db.storage :as storage]))
+            [stonecutter.db.storage :as storage]
+            [stonecutter.integration.kerodon.steps :as steps]))
 
 (l/init-logger!)
 
 (def stores-m (storage/create-in-memory-stores))
-
-(defn register [state email]
-  (-> state
-      (k/visit "/register")
-      (k/fill-in ks/registration-email-input email)
-      (k/fill-in ks/registration-password-input "valid-password")
-      (k/fill-in ks/registration-confirm-input "valid-password")
-      (k/press ks/registration-submit)))
 
 (defn parse-test-email []
   (read-string (slurp "test-tmp/test-email.txt")))
@@ -62,7 +55,7 @@
 
            (setup-test-directory)
 
-           (register "confirmation-test@email.com")
+           (steps/register "confirmation-test@email.com" "valid-password")
 
            (k/visit (routes/path :show-profile))
            (kh/selector-exists [:.clj--email-not-confirmed-message])
@@ -86,7 +79,7 @@
 
            (setup-test-directory)
 
-           (register "confirmation-test-2@email.com")
+           (steps/register "confirmation-test-2@email.com" "valid-password")
            (k/visit "/profile")
            (k/follow ks/sign-out-link)
            (kh/check-and-follow-redirect "just signed out")

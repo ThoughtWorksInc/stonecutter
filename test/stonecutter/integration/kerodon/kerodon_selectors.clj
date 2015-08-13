@@ -39,6 +39,7 @@
 (def change-password-submit :.func--change-password__button)
 (def change-password-page-body :.func--change-password-page)
 
+(def forgotten-password-button :.func--forgot-password__button)
 (def forgotten-password-email :.func--email__input)
 (def forgotten-password-submit :.func--send-forgotten-password-email__button)
 (def forgotten-password-email-sent-page-body :.func--forgotten-password-confirmation-page)

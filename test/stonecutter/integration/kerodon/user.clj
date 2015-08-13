@@ -4,15 +4,17 @@
             [clauth.client :as cl-client]
             [clojure.java.io :as io]
             [stonecutter.email :as email]
-            [stonecutter.integration.integration-helpers :as ih]
-            [stonecutter.integration.kerodon.kerodon-checkers :as kh]
-            [stonecutter.integration.kerodon.kerodon-selectors :as ks]
             [stonecutter.routes :as routes]
             [stonecutter.handler :as h]
             [stonecutter.db.storage :as s]
             [stonecutter.logging :as l]
             [stonecutter.db.user :as user]
-            [stonecutter.view.register :as register-view]))
+            [stonecutter.view.register :as register-view]
+            [stonecutter.integration.integration-helpers :as ih]
+            [stonecutter.integration.kerodon.kerodon-selectors :as ks]
+            [stonecutter.integration.kerodon.kerodon-checkers :as kh]
+            [stonecutter.integration.kerodon.steps :as steps]
+            ))
 
 (l/init-logger!)
 (ih/setup-db)
@@ -23,33 +25,6 @@
   (let [client (cl-client/register-client (s/get-client-store stores-m) client-name "myclient.com")
         client-id (:client-id client)]
     (user/add-authorised-client-for-user! (s/get-user-store stores-m) email client-id)))
-
-(defn print-enlive [state]
-  (prn (-> state :enlive))
-  state)
-
-(defn print-request [state]
-  (prn (-> state :request))
-  state)
-
-(defn print-state [state]
-  (prn state)
-  state)
-
-(defn register [state email]
-  (-> state
-      (k/visit "/register")
-      (k/fill-in ks/registration-email-input email)
-      (k/fill-in ks/registration-password-input "valid-password")
-      (k/fill-in ks/registration-confirm-input "valid-password")
-      (k/press ks/registration-submit)))
-
-(defn sign-in [state email]
-  (-> state
-      (k/visit "/sign-in")
-      (k/fill-in ks/sign-in-email-input email)
-      (k/fill-in ks/sign-in-password-input "valid-password")
-      (k/press ks/sign-in-submit)))
 
 (defn parse-test-email []
   (read-string (slurp "test-tmp/test-email.txt")))
@@ -101,7 +76,7 @@
 
 (facts "User is returned to same page when existing email is used"
        (-> (k/session test-app)
-           (register "existing@user.com")
+           (steps/register "existing@user.com" "password")
            (k/visit "/register")
            (k/fill-in ks/registration-email-input "existing@user.com")
            (k/fill-in ks/registration-password-input "password")
@@ -114,7 +89,7 @@
 (facts "Register page redirects to profile-created page when registered and
        user-login is in the session so that email address is displayed on profile card"
        (-> (k/session test-app)
-           (register "email@server.com")
+           (steps/register "email@server.com" "valid-password")
            (k/follow-redirect)
            (kh/page-uri-is "/profile-created")
            (kh/response-status-is 200)
@@ -133,7 +108,7 @@
 
            (setup-test-directory)
 
-           (register "confirmation-test@email.com")
+           (steps/register "confirmation-test@email.com" "valid-password")
 
            (k/visit (routes/path :show-profile))
            (kh/selector-exists [:.clj--email-not-confirmed-message])
@@ -157,7 +132,7 @@
        (-> (k/session test-app)
            (setup-test-directory)
 
-           (register "confirmation-test-2@email.com")
+           (steps/register "confirmation-test-2@email.com" "valid-password")
            (k/visit "/profile")
            (k/follow ks/sign-out-link)
            (k/follow-redirect)
@@ -194,7 +169,7 @@
 
 (facts "User can sign in"
        (-> (k/session test-app)
-           (sign-in "email@server.com")
+           (steps/sign-in "email@server.com" "valid-password")
            (k/follow-redirect)
            (kh/page-uri-is "/")
            (k/follow-redirect)
@@ -205,7 +180,7 @@
 
 (facts "User can sign out"
        (-> (k/session test-app)
-           (sign-in "email@server.com")
+           (steps/sign-in "email@server.com" "valid-password")
            (k/visit "/profile")
            (k/follow ks/sign-out-link)
            (k/follow-redirect)
@@ -215,30 +190,30 @@
 
 (facts "Home url redirects to profile page if user is signed in"
        (-> (k/session test-app)
-           (sign-in "email@server.com")
+           (steps/sign-in "email@server.com" "valid-password")
            (k/visit "/")
            (k/follow-redirect)
            (kh/page-uri-is "/profile")))
 
 (facts "Home url redirects to profile page if user is registered"
        (-> (k/session test-app)
-           (register "email2@server.com")
+           (steps/register "email2@server.com" "valid-password")
            (k/visit "/")
            (k/follow-redirect)
            (kh/page-uri-is "/profile")))
 
 (facts "Clients appear on user profile page"
        (-> (k/session test-app)
-           (register "user@withclient.com"))
+           (steps/register "user@withclient.com" "valid-password"))
        (setup-add-client-to-user! "user@withclient.com" "myapp")
        (-> (k/session test-app)
-           (sign-in "user@withclient.com")
+           (steps/sign-in "user@withclient.com" "valid-password")
            (k/visit "/profile")
            (kh/selector-includes-content [ks/profile-authorised-client-list] "myapp")))
 
 (facts "User can unshare profile card"
        (-> (k/session test-app)
-           (sign-in "user@withclient.com")
+           (steps/sign-in "user@withclient.com" "valid-password")
            (k/visit "/profile")
            (kh/selector-includes-content [ks/profile-authorised-client-list] "myapp")
            (k/follow ks/profile-authorised-client-unshare-link)
@@ -250,7 +225,7 @@
 
 (facts "User can change password"
        (-> (k/session test-app)
-           (sign-in "user@withclient.com")
+           (steps/sign-in "user@withclient.com" "valid-password")
            (k/visit "/profile")
            (k/follow ks/profile-change-password-link)
            (kh/page-uri-is "/change-password")
@@ -268,7 +243,7 @@
 
 (facts "User can delete account"
        (-> (k/session test-app)
-           (register "account_to_be@deleted.com")
+           (steps/register "account_to_be@deleted.com" "valid-password")
            (k/visit "/profile")
            (k/follow ks/profile-delete-account-link)
            (kh/page-uri-is "/delete-account")
@@ -279,23 +254,6 @@
            (kh/page-uri-is "/profile-deleted")
            (kh/response-status-is 200)
            (kh/selector-exists [ks/profile-deleted-page-body])))
-
-(facts "User can reset a forgotten password"
-       (against-background
-        (email/get-forgotten-password-renderer) => test-email-renderer)
-       (-> (k/session test-app)
-           (setup-test-directory)
-
-           ;; TODO - DM+JC 2015-08-10: follow forgotten password link rather than directly hit endpoint
-           (k/visit "/forgotten-password")
-           (k/fill-in ks/forgotten-password-email "user@withclient.com")
-           (k/press ks/forgotten-password-submit)
-           (kh/check-and-follow-redirect)
-           (kh/page-uri-is "/forgotten-password-email-sent")
-           (kh/response-status-is 200)
-           (kh/selector-exists [ks/forgotten-password-email-sent-page-body])
-
-           (teardown-test-directory)))
 
 (facts "Not found page is shown for unknown url"
        (-> (k/session test-app)
@@ -341,7 +299,7 @@
 ;; 06 Jul 2015
 (future-fact "Replaying the same post will generate a 403 from the csrf handling"
              (-> (k/session test-app)
-                 (register "csrf@email.com")
-                 (sign-in "csrf@email.com")
+                 (steps/register "csrf@email.com" "valid-password")
+                 (steps/sign-in "csrf@email.com" "valid-password")
                  (kh/replay-last-request)
                  (kh/response-status-is 403)))
