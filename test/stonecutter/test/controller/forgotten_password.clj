@@ -201,6 +201,8 @@
                        (-> response :session :access_token) => (-> (cl-store/entries token-store) first :token)
                        (-> (cl-store/entries token-store) first :subject) => (user/retrieve-user user-store email-address)
                        (-> response :session count) => 2)
+                 (fact "the response has a flash message indicating that the user's password has been changed"
+                       (-> response :flash) => :password-changed)
                  (fact "the user is redirected to the profile page"
                        response => (th/check-redirects-to (r/path :home)))
                  (fact "the forgotten password id record is removed"

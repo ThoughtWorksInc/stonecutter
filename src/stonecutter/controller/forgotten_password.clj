@@ -78,7 +78,8 @@
           (if (empty? err)
             (let [updated-user (user/change-password! user-store email-address new-password)]
               (cl-store/revoke! forgotten-password-store forgotten-password-id)
-              (common/sign-in-user token-store updated-user))
+              (-> (common/sign-in-user token-store updated-user)
+                  (assoc :flash :password-changed)))
             (show-reset-password-form forgotten-password-store user-store clock request-with-validation-errors))
           (redirect-to-forgotten-password-form)))
       (redirect-to-forgotten-password-form))))
