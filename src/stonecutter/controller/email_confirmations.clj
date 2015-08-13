@@ -7,7 +7,8 @@
             [stonecutter.routes :as routes]
             [stonecutter.view.sign-in :as sign-in]
             [stonecutter.util.ring :as ring-util]
-            [stonecutter.controller.common :as common]))
+            [stonecutter.controller.common :as common]
+            [ring.util.response :as response]))
 
 (defn show-confirm-sign-in-form [request]
   (sh/enlive-response (sign-in/confirmation-sign-in-form request) (:context request)))
@@ -50,9 +51,10 @@
   (let [confirmation-id (get-in request [:params :confirmation-id])
         password (get-in request [:params :password])
         email (:login (conf/fetch confirmation-store confirmation-id))
-        confirm-email-path (routes/path :confirm-email-with-id  :confirmation-id confirmation-id)]
+        confirm-email-path (routes/path :confirm-email-with-id :confirmation-id confirmation-id)]
     (if-let [user (user/authenticate-and-retrieve-user user-store email password)]
-      (common/sign-in-user token-store user confirm-email-path)
-        (-> request
-            (assoc-in [:context :errors :credentials] :confirmation-invalid)
-            show-confirm-sign-in-form))))
+      (-> (response/redirect confirm-email-path)
+          (common/sign-in-user token-store user))
+      (-> request
+          (assoc-in [:context :errors :credentials] :confirmation-invalid)
+          show-confirm-sign-in-form))))

@@ -4,23 +4,24 @@
             [stonecutter.controller.common :as common]
             [stonecutter.test.test-helpers :as th]
             [stonecutter.routes :as r]
-            [clauth.store :as cl-store]))
+            [clauth.store :as cl-store]
+            [ring.util.response :as response]))
 
 (facts "about signing in user"
        (let [token-store (m/create-memory-store)
              existing-session {:other "value"}
              user {:login "user@user.com"}
-             response (common/sign-in-user token-store user "/path" existing-session)]
+             response (common/sign-in-user (response/redirect "/path") token-store user existing-session)]
          response => (th/check-redirects-to "/path")
          (-> response :session :user-login) => "user@user.com"
          (-> response :session :access_token) =not=> nil
          (-> response :session :access_token) => (-> (cl-store/entries token-store) first :token)
          (-> response :session :other) => "value")
 
-       (fact "if path is not supplied then defaults to home"
+       (fact "if response is not supplied then defaults to home redirect"
              (let [token-store (m/create-memory-store)
                    user {:login "user@user.com"}]
-                (common/sign-in-user token-store user) => (th/check-redirects-to (r/path :home)))))
+                (common/sign-in-to-home token-store user) => (th/check-redirects-to (r/path :home)))))
 
 (fact "signed-in? returns true only when user-login and access_token are in the session"
       (tabular

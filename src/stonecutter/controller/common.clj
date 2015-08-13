@@ -5,15 +5,20 @@
             ))
 
 (defn sign-in-user
-  ([token-store user]
-   (sign-in-user token-store user (r/path :home) {}))
-  ([token-store user path]
-   (sign-in-user token-store user path {}))
-  ([token-store user path existing-session]
-   (-> (response/redirect path)
+  ([response token-store user]
+   (sign-in-user response token-store user {}))
+  ([response token-store user existing-session]
+   (-> response
        (assoc :session existing-session)
        (assoc-in [:session :user-login] (:login user))
        (assoc-in [:session :access_token] (token/generate-login-access-token token-store user)))))
+
+(defn sign-in-to-home
+  ([token-store user]
+   (sign-in-to-home token-store user {}))
+  ([token-store user existing-session]
+   (-> (response/redirect (r/path :home))
+       (sign-in-user token-store user existing-session))))
 
 (defn signed-in? [request]
   (let [session (:session request)]

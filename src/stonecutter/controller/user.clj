@@ -19,7 +19,8 @@
             [stonecutter.helper :as sh]
             [stonecutter.config :as config]
             [stonecutter.util.ring :as ring-util]
-            [stonecutter.controller.common :as common]))
+            [stonecutter.controller.common :as common]
+            [ring.util.response :as response]))
 
 (defn show-registration-form [request]
   (sh/enlive-response (register/registration-form request) (:context request)))
@@ -44,7 +45,8 @@
       (do (conf/store! confirmation-store email confirmation-id)
           (let [user (user/store-user! user-store email password)]
             (send-confirmation-email! email-sender user email confirmation-id config-m)
-            (-> (common/sign-in-user token-store user (routes/path :show-profile-created) (:session request))
+            (-> (response/redirect (routes/path :show-profile-created))
+                (common/sign-in-user token-store user (:session request))
                 (assoc :flash :confirm-email-sent))))
       (show-registration-form request-with-validation-errors))))
 
@@ -81,11 +83,9 @@
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
       (if-let [user (user/authenticate-and-retrieve-user user-store email password)]
-        (let [access-token (token/generate-login-access-token token-store user)]
-          (-> request
-              (cl-ep/return-to-handler (routes/path :home)) ;; FIXME JOHN 11/08/2015 make use of sign in code in common controller?
-              (assoc-in [:session :user-login] (:login user))
-              (assoc-in [:session :access_token] access-token)))
+        (-> request
+            (cl-ep/return-to-handler (routes/path :home))
+            (common/sign-in-user token-store user))
         (-> request-with-validation-errors
             (assoc-in [:context :errors :credentials] :invalid)
             show-sign-in-form))
