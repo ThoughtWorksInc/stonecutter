@@ -1,7 +1,8 @@
 (ns stonecutter.integration.kerodon.steps
   (:require [kerodon.core :as k]
             [stonecutter.integration.kerodon.kerodon-selectors :as ks]
-            [stonecutter.routes :as r]))
+            [stonecutter.routes :as r]
+            [stonecutter.integration.kerodon.kerodon-helpers :as kh]))
 
 (defn register [state email password]
   (-> state
@@ -17,3 +18,7 @@
       (k/fill-in ks/sign-in-email-input email)
       (k/fill-in ks/sign-in-password-input password)
       (k/press ks/sign-in-submit)))
+
+(defn sign-out [state]
+  (-> state
+      (k/visit (r/path :sign-out))))

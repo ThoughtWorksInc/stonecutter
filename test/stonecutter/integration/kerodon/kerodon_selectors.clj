@@ -44,6 +44,10 @@
 (def forgotten-password-submit :.func--send-forgotten-password-email__button)
 (def forgotten-password-email-sent-page-body :.func--forgotten-password-confirmation-page)
 
+(def reset-password-field :.func--new-password__input)
+(def reset-confirm-password-field :.func--confirm-new-password__input)
+(def reset-password-submit :.func--reset-password__button)
+
 (def error-404-page-body :.func--error-404-page)
 (def error-500-page-body :.func--error-500-page)
 

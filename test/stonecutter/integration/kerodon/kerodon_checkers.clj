@@ -3,7 +3,8 @@
             [cheshire.core :as json]
             [net.cgrand.enlive-html :as html]
             [kerodon.core :as k]
-            [clojure.string :as string]))
+            [clojure.string :as string]
+            [stonecutter.routes :as r]))
 
 (defn page-title [state]
   (-> state :enlive (html/select [:title]) first html/text))
@@ -17,6 +18,9 @@
   (fact {:midje/name "Checking page uri:"}
         (-> state :request :uri) => uri)
   state)
+
+(defn page-route-is [state scenic-action]
+  (page-uri-is state (r/path scenic-action)))
 
 (defn page-uri-contains [state uri]
   (fact {:midje/name (str "Checking if page uri contains " uri)}
