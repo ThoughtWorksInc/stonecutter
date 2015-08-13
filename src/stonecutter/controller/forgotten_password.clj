@@ -2,7 +2,6 @@
   (:require [clauth.store :as cl-store]
             [clojure.string :as string]
             [ring.util.response :as response]
-            [clojure.tools.logging :as log]
             [stonecutter.validation :as v]
             [stonecutter.view.forgotten-password :as forgotten-password-view]
             [stonecutter.view.forgotten-password-confirmation :as forgotten-password-confirmation-view]
@@ -15,7 +14,8 @@
             [stonecutter.util.uuid :as uuid]
             [stonecutter.db.user :as user]
             [stonecutter.config :as config]
-            [stonecutter.db.expiry :as e]))
+            [stonecutter.db.expiry :as e]
+            [stonecutter.routes :as r]))
 
 (defn request->forgotten-password-id [request]
   (get-in request [:params :forgotten-password-id]))
@@ -76,7 +76,8 @@
           (if (empty? err)
             (let [updated-user (user/change-password! user-store email-address new-password)]
               (cl-store/revoke! forgotten-password-store forgotten-password-id)
-              (-> (common/sign-in-to-home token-store updated-user)
+              (-> (response/redirect (r/path :show-profile))
+                  (common/sign-in-user token-store updated-user)
                   (assoc :flash :password-changed)))
             (show-reset-password-form forgotten-password-store user-store clock request-with-validation-errors))
           (redirect-to-forgotten-password-form)))

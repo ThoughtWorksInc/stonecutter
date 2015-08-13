@@ -81,7 +81,7 @@
                (:email (test-email/last-sent-email test-email-sender)) => default-email
                (:body (test-email/last-sent-email test-email-sender)) => (contains {:confirmation-id confirmation-id})))
 
-       (fact "when user email is send, flash message is assoc-ed in redirect"
+       (fact "when user email is send, flash message is assoc-ed in response"
              (against-background
                (uuid/uuid) => confirmation-id)
              (let [user-store (m/create-memory-store)

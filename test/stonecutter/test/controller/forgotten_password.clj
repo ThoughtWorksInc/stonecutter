@@ -194,6 +194,6 @@
                  (fact "the response has a flash message indicating that the user's password has been changed"
                        (-> response :flash) => :password-changed)
                  (fact "the user is redirected to the profile page"
-                       response => (th/check-redirects-to (r/path :home)))
+                       response => (th/check-redirects-to (r/path :show-profile)))
                  (fact "the forgotten password id record is removed"
                        (cl-store/entries forgotten-password-store) => empty?)))))

@@ -63,9 +63,10 @@
 
            ; user is signed in to profile
            (k/follow-redirect)
-           (kc/page-route-is :home)
-           (k/follow-redirect)
            (kc/page-route-is :show-profile)
+           
+           ; User should be shown flash message informing them that there password has changed
+           (kc/selector-exists [ks/profile-flash-message])
 
            ; When user signs out, then can sign back in with their new password
            (steps/sign-out)
