@@ -22,10 +22,10 @@
 (defn is-too-short? [string min-length]
   (< (count string) min-length))
 
-(defn validate-registration-email [email is-duplicate-user-fn]
+(defn validate-registration-email [email user-exists?-fn]
   (cond (is-too-long? email email-max-length) :too-long
         (not (is-email-valid? email)) :invalid
-        (is-duplicate-user-fn email) :duplicate
+        (user-exists?-fn email) :duplicate
         :default nil))
 
 (defn validate-sign-in-email [email]
@@ -49,15 +49,17 @@
     :unchanged
     nil))
 
-(defn registration-validations [params is-duplicate-user-fn]
+(defn validate-registration [params user-exists?-fn]
   (let [{:keys [email password confirm-password]} params]
-    {:email            (validate-registration-email email is-duplicate-user-fn)
-     :password         (validate-password password)
-     :confirm-password (validate-passwords-match password confirm-password)}))
+    (->
+      {:email            (validate-registration-email email user-exists?-fn)
+       :password         (validate-password password)
+       :confirm-password (validate-passwords-match password confirm-password)}
+      remove-nil-values)))
 
-(defn validate-registration [params duplicate-user-fn]
-  (->> (registration-validations params duplicate-user-fn)
-       remove-nil-values))
+(defn validate-user-exists [email user-exists?-fn]
+  (when-not (user-exists?-fn email)
+    :non-existent))
 
 (defn validate-sign-in [params]
   (let [{:keys [email password]} params]
@@ -73,9 +75,9 @@
          :confirm-new-password (validate-passwords-match new-password confirm-new-password)}
         remove-nil-values)))
 
-(defn validate-forgotten-password [params]
+(defn validate-forgotten-password [params user-exists?-fn]
   (let [email (:email params)]
-    (-> {:email (validate-sign-in-email email)}
+    (-> {:email (or (validate-sign-in-email email) (validate-user-exists email user-exists?-fn))}
         remove-nil-values)))
 
 (defn validate-reset-password [params]

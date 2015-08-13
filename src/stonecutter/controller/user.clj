@@ -38,7 +38,7 @@
         password (:password params)
         confirmation-id (uuid/uuid)
         config-m (get-in request [:context :config-m])
-        err (v/validate-registration params (partial user/is-duplicate-user? user-store))
+        err (v/validate-registration params (partial user/user-exists? user-store))
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
       (do (conf/store! confirmation-store email confirmation-id)

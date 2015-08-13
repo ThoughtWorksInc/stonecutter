@@ -7,7 +7,7 @@
 (defn create-admin-user [config-m user-store]
   (let [admin-login (config/admin-login config-m)
         admin-password (config/admin-password config-m)
-        duplication-checker (partial u/is-duplicate-user? user-store)
+        duplication-checker (partial u/user-exists? user-store)
         errors (or (v/validate-registration-email admin-login duplication-checker)
                    (v/validate-password admin-password))]
     (when (and admin-login admin-password)

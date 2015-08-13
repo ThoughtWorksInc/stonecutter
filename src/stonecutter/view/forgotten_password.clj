@@ -5,7 +5,8 @@
 
 (def error-translations
   {:email {:invalid "content:forgot-password/email-address-invalid-validation-message"
-           :too-long "content:forgot-password/email-address-too-long-validation-message"}})
+           :too-long "content:forgot-password/email-address-too-long-validation-message"
+           :non-existent "content:forgot-password/email-address-non-existent-validation-message"}})
 
 (defn set-form-action [enlive-m]
   (-> enlive-m

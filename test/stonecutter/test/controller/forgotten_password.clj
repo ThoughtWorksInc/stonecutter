@@ -56,16 +56,6 @@
                                  :body    {:forgotten-password-id forgotten-password-id :app-name "My App" :base-url "https://myapp.com"}}
                   (:login forgotten-password-entry) => email-address)))
 
-        (fact "if user doesn't exist then e-mail is not sent and forgotten password id is not store"
-              (let [email-sender (test-email/create-test-email-sender)
-                    forgotten-password-store (m/create-memory-store)
-                    test-request (-> (th/create-request :post "/forgotten-password" {:email "nonexistent@blah.com"})
-                                     (th/add-config-request-context {:app-name "My App" :base-url "https://myapp.com"}))]
-                (fp/forgotten-password-form-post email-sender user-store forgotten-password-store test-clock test-request)
-                => (th/check-redirects-to (routes/path :show-forgotten-password-confirmation))
-                (test-email/last-sent-email email-sender) => nil
-                (cl-store/entries forgotten-password-store) => empty?))
-
         (fact "if forgotten-password record already exists for user, then new id is not written to store and current one is reused"
               (let [email-sender (test-email/create-test-email-sender)
                     forgotten-password-store (m/create-memory-store)

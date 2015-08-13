@@ -37,17 +37,14 @@
   (let [config-m (get-in request [:context :config-m])
         params (:params request)
         email-address (string/lower-case (:email params))
-        err (v/validate-forgotten-password params)
+        err (v/validate-forgotten-password params (partial user/user-exists? user-store))
         app-name (config/app-name config-m)
         base-url (config/base-url config-m)
         request-with-validation-errors (assoc-in request [:context :errors] err)
         email-expiry (config/password-reset-expiry config-m)]
     (if (empty? err)
-      (do
-        (if (user/retrieve-user user-store email-address)
-          (let [forgotten-password-id (create-or-retrieve-id forgotten-password-store clock email-address email-expiry)]
-            (email/send! email-sender :forgotten-password email-address {:app-name app-name :base-url base-url :forgotten-password-id forgotten-password-id}))
-          (log/warn (format "User %s does not exist so reset password e-mail not sent." email-address)))
+      (let [forgotten-password-id (create-or-retrieve-id forgotten-password-store clock email-address email-expiry)]
+        (email/send! email-sender :forgotten-password email-address {:app-name app-name :base-url base-url :forgotten-password-id forgotten-password-id})
         (response/redirect (routes/path :show-forgotten-password-confirmation)))
       (show-forgotten-password-form request-with-validation-errors))))
 

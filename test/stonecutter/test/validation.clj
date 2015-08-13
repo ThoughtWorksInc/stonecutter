@@ -105,10 +105,13 @@
 
 (tabular
  (fact "validating forgotten-password"
-       (v/validate-forgotten-password {:email ?email}) => ?validations)
- ?email              ?validations
- "valid@email.com"   {}
- "invalid"           {:email :invalid})
+       (v/validate-forgotten-password {:email ?email} (constantly ?user-exists)) => ?validations)
+ ?email              ?user-exists       ?validations
+ "valid@email.com"   true               {}
+ "invalid"           true               {:email :invalid}
+ "invalid"           false              {:email :invalid}
+ "valid@email.com"   false              {:email :non-existent}
+ )
 
 (tabular
   (fact "validating reset-password"

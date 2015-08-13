@@ -34,6 +34,10 @@
               
               (fact "correct error message is displayed"
                     (html/select page [[:.clj--forgotten-password-email__validation (html/attr= :data-l8n "content:forgot-password/email-address-invalid-validation-message")]]) =not=> empty?)
+
+              (fact "non-existent user validation error"
+                    (let [page (-> (th/create-request {} {:email :non-existent} params) fp/forgotten-password-form)]
+                      (html/select page [[:.clj--forgotten-password-email__validation (html/attr= :data-l8n "content:forgot-password/email-address-non-existent-validation-message")]]) =not=> empty?))
               
               (fact "invalid value is preserved in input field"
                     (-> (html/select page [:.clj--forgotten-password-email__input]) first :attrs :value) => "invalid")))

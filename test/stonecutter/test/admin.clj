@@ -22,12 +22,12 @@
              => nil
 
              (provided
-               (u/is-duplicate-user? user-store admin-login) => true
+               (u/user-exists? user-store admin-login) => true
                (u/store-admin! user-store admin-login admin-password) => :return :times 0))
 
        (fact "login not in email format throws an exception"
              (against-background
-               (u/is-duplicate-user? user-store invalid-admin-login) => false)
+               (u/user-exists? user-store invalid-admin-login) => false)
 
              (admin/create-admin-user
                {:admin-login invalid-admin-login
@@ -40,7 +40,7 @@
        (tabular
          (fact "password of incorrect length throws an exception"
                (against-background
-                 (u/is-duplicate-user? user-store ?admin-login) => false)
+                 (u/user-exists? user-store ?admin-login) => false)
 
                (admin/create-admin-user
                  {:admin-login ?admin-login
