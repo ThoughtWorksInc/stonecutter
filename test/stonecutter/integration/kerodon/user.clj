@@ -1,12 +1,12 @@
-(ns stonecutter.integration.kerodon
+(ns stonecutter.integration.kerodon.user
   (:require [midje.sweet :refer :all]
             [kerodon.core :as k]
             [clauth.client :as cl-client]
             [clojure.java.io :as io]
             [stonecutter.email :as email]
             [stonecutter.integration.integration-helpers :as ih]
-            [stonecutter.integration.kerodon-helpers :as kh]
-            [stonecutter.integration.kerodon-selectors :as ks]
+            [stonecutter.integration.kerodon.kerodon-checkers :as kh]
+            [stonecutter.integration.kerodon.kerodon-selectors :as ks]
             [stonecutter.routes :as routes]
             [stonecutter.handler :as h]
             [stonecutter.db.storage :as s]

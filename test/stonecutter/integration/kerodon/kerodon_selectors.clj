@@ -1,4 +1,4 @@
-(ns stonecutter.integration.kerodon-selectors
+(ns stonecutter.integration.kerodon.kerodon-selectors
   (:require [net.cgrand.enlive-html :as html]))
 
 (def registration-email-input :.func--email__input)

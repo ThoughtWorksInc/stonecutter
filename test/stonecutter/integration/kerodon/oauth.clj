@@ -1,4 +1,4 @@
-(ns stonecutter.integration.oauth
+(ns stonecutter.integration.kerodon.oauth
   (:require [midje.sweet :refer :all]
             [kerodon.core :as k]
             [ring.mock.request :as r]
@@ -6,8 +6,8 @@
             [clauth.client :as cl-client]
             [stonecutter.handler :as h]
             [stonecutter.db.storage :as s]
-            [stonecutter.integration.kerodon-helpers :as kh]
-            [stonecutter.integration.kerodon-selectors :as ks]
+            [stonecutter.integration.kerodon.kerodon-checkers :as kh]
+            [stonecutter.integration.kerodon.kerodon-selectors :as ks]
             [stonecutter.db.user :as user]
             [stonecutter.test.email :as test-email]))
 

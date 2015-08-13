@@ -1,4 +1,4 @@
-(ns stonecutter.integration.kerodon-helpers
+(ns stonecutter.integration.kerodon.kerodon-checkers
   (:require [midje.sweet :refer :all]
             [cheshire.core :as json]
             [net.cgrand.enlive-html :as html]
