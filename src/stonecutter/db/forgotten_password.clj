@@ -11,4 +11,4 @@
     (case (count docs)
       0 nil
       1 (first docs)
-      (throw (Exception. (format "Multiple forgotten password records found for login [%s]" login)))))) ;; FIXME JOHN 12/08/2015 make this more general
+      (throw (Exception. (format "Multiple forgotten password records found for login [%s]" login))))))
