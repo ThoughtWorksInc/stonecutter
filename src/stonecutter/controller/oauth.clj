@@ -101,10 +101,6 @@
                  (assoc-in [:user-info :sub] user-id)
                  (assoc-in [:user-info :email_verified] confirmed?)
                  (assoc-in [:user-info :role] role)
-                 (assoc :user-email user-login)
-                 (assoc :user-id user-id)
-                 (assoc :user-email-confirmed confirmed?)
-                 (assoc :role role)
                  (json/generate-string))]
     (-> response
         (assoc :body body))))

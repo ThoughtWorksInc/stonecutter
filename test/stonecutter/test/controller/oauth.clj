@@ -246,14 +246,7 @@
                (get-in response-body [:user-info :email_verified]) => (:confirmed? user))
 
          (fact "roles for admin is returned in the body after validating token"
-               (get-in response-body [:user-info :role]) => (name (:role user)))
-
-         ;; 20150812 NOTE DM, RS: WIP OpenId Connect claims
-         (future-fact "response should not contain user-id, role, user-email, user-email-confirmed"
-               response-body =not=> (contains {:user-id anything })
-               response-body =not=> (contains {:user-email-confirmed anything})
-               response-body =not=> (contains {:user-email anything})
-               response-body =not=> (contains {:role anything}))))
+               (get-in response-body [:user-info :role]) => (name (:role user)))))
 
 (facts "about auto-approver"
        (fact "returns true if user has authorised the client"
