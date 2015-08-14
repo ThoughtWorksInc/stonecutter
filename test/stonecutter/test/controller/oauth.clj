@@ -8,6 +8,7 @@
             [cheshire.core :as json]
             [hiccup.util :as hiccup]
             [stonecutter.test.test-helpers :as th]
+            [stonecutter.util.time :as t]
             [stonecutter.routes :as routes]
             [stonecutter.controller.oauth :as oauth]
             [stonecutter.db.storage :as storage]
@@ -213,40 +214,81 @@
   (assoc-in request [:headers "authorization"]
             (encode-client-info client)))
 
+(defn stub-id-token-generator [iss sub aud email]
+  {:iss iss :sub sub :aud aud :email email})
+
 (facts "about token endpoint"
-       (let [user-store (m/create-memory-store)
-             client-store (m/create-memory-store)
-             token-store (m/create-memory-store)
-             auth-code-store (m/create-memory-store)
-             user (user/store-admin! user-store user-email "password")
-             client-details (cl-client/register-client client-store "MYAPP" "http://myapp.com")
-             auth-code (cl-auth-code/create-auth-code auth-code-store client-details user "http://myapp.com/callback")
-             request (-> (th/create-request-with-query-string :get (routes/path :validate-token)
-                                                              {:grant_type   "authorization_code"
-                                                               :redirect_uri "http://myapp.com/callback"
-                                                               :code         (:code auth-code)})
-                         (create-auth-header client-details))
-             response (oauth/validate-token auth-code-store client-store user-store token-store request)
-             response-body (-> response :body (json/parse-string keyword))]
+       (facts "with empty scope"
+              (let [config-m {}
+                    user-store (m/create-memory-store)
+                    client-store (m/create-memory-store)
+                    token-store (m/create-memory-store)
+                    auth-code-store (m/create-memory-store)
+                    user (user/store-admin! user-store user-email "password")
+                    client-details (cl-client/register-client client-store "MYAPP" "http://myapp.com")
+                    auth-code (cl-auth-code/create-auth-code auth-code-store client-details user "http://myapp.com/callback")
+                    request (-> (th/create-request-with-query-string :get (routes/path :validate-token)
+                                                                     {:grant_type   "authorization_code"
+                                                                      :redirect_uri "http://myapp.com/callback"
+                                                                      :code         (:code auth-code)})
+                                (create-auth-header client-details))
+                    response (oauth/validate-token config-m
+                                                   auth-code-store client-store user-store token-store
+                                                   stub-id-token-generator request)
+                    response-body (-> response :body (json/parse-string keyword))]
 
-         (fact "request with grant type authorization_code and correct credentials returns access token"
-               (:status response) => 200
-               (:access_token response-body) => (just #"[A-Z0-9]{32}")
-               (:token_type response-body) => "bearer")
+                (fact "request with grant type authorization_code and correct credentials returns access token"
+                      (:status response) => 200
+                      (:access_token response-body) => (just #"[A-Z0-9]{32}")
+                      (:token_type response-body) => "bearer")
 
-         (fact "user-email in the response body matches that of the authenticated user"
-               (get-in response-body [:user-info :email]) => user-email)
+                (fact "user-email in the response body matches that of the authenticated user"
+                      (get-in response-body [:user-info :email]) => user-email)
 
-         (fact "user-info includes :sub key matching the authenticated user's uid"
-               (let [sub (get-in response-body [:user-info :sub])]
-                 sub => (:uid user)
-                 sub =not=> nil?))
+                (fact "user-info includes :sub key matching the authenticated user's uid"
+                      (let [sub (get-in response-body [:user-info :sub])]
+                        sub => (:uid user)
+                        sub =not=> nil?))
 
-         (fact "email confirmed status is returned in the body after validating token"
-               (get-in response-body [:user-info :email_verified]) => (:confirmed? user))
+                (fact "response should not include an id_token record"
+                     (:id_token response-body) => nil?)
 
-         (fact "roles for admin is returned in the body after validating token"
-               (get-in response-body [:user-info :role]) => (name (:role user)))))
+                (fact "email confirmed status is returned in the body after validating token"
+                      (get-in response-body [:user-info :email_verified]) => (:confirmed? user))
+
+                (fact "roles for admin is returned in the body after validating token"
+                      (get-in response-body [:user-info :role]) => (name (:role user)))))
+
+       (facts "about openid connect"
+              (let [config-m {:base-url "http://stonecutter.base.url"}
+                    user-store (m/create-memory-store)
+                    client-store (m/create-memory-store)
+                    token-store (m/create-memory-store)
+                    auth-code-store (m/create-memory-store)
+                    user (user/store-user! user-store user-email "password")
+                    client-details (cl-client/register-client client-store "MYAPP" "http://myapp.com")
+                    auth-code (cl-auth-code/create-auth-code auth-code-store client-details user "http://myapp.com/callback" "openid" nil)
+                    expiry-seconds (t/to-epoch (:expires auth-code))
+                    request (-> (th/create-request-with-query-string :get (routes/path :validate-token)
+                                                                     {:grant_type   "authorization_code"
+                                                                      :redirect_uri "http://myapp.com/callback"
+                                                                      :code         (:code auth-code)})
+                                (create-auth-header client-details))
+                    response (oauth/validate-token config-m
+                                                   auth-code-store client-store user-store token-store
+                                                   stub-id-token-generator request)
+                    response-body (-> response :body (json/parse-string keyword))]
+
+              (fact "request with authorization_code with a scope of openid includes signed id_token in response"
+                    (:id_token response-body) => {:iss "http://stonecutter.base.url"
+                                                  :sub (:uid user)
+                                                  :aud (:client-id client-details)
+                                                  ;; TODO 2015-08-14 RS+DM
+                                                  ;;      :exp expiry-seconds
+                                                  :email user-email})
+
+              (fact "response body should not contain user-info record"
+                    (:user-info response-body) => nil?))))
 
 (facts "about auto-approver"
        (fact "returns true if user has authorised the client"

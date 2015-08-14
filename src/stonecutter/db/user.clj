@@ -7,7 +7,7 @@
             [stonecutter.db.mongo :as m]
             [stonecutter.util.uuid :as uuid]))
 
-(defn create-user 
+(defn create-user
   ([id-gen email password]
    (create-user id-gen email password (:default config/roles)))
   ([id-gen email password role]
@@ -46,6 +46,9 @@
 
 (defn retrieve-user-with-auth-code [auth-code-store code]
   (-> (cl-auth-code/fetch-auth-code auth-code-store code) :subject))
+
+(defn retrieve-auth-code [auth-code-store code]
+  (cl-auth-code/fetch-auth-code auth-code-store code))
 
 (defn confirm-email! [user-store user]
   (m/update! user-store (:login user)

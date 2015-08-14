@@ -1,5 +1,6 @@
 (ns stonecutter.util.time
   (:require [clj-time.core :as t]
+            [clj-time.format :as f]
             [clj-time.coerce :as c]))
 
 (def sec 1000)
@@ -26,3 +27,5 @@
       (c/from-long)
       (t/plus (t/hours plus-hours))
       c/to-long))
+
+(def to-epoch c/to-epoch)

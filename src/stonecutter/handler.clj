@@ -109,12 +109,13 @@
                                           :show-reset-password-form
                                           :reset-password}))))
 
-(defn api-handlers [stores-m]
+(defn api-handlers [config-m stores-m]
   (let [auth-code-store (storage/get-auth-code-store stores-m)
         user-store (storage/get-user-store stores-m)
         client-store (storage/get-client-store stores-m)
-        token-store (storage/get-token-store stores-m)]
-    {:validate-token (partial oauth/validate-token auth-code-store client-store user-store token-store)}))
+        token-store (storage/get-token-store stores-m)
+        id-token-generator (fn [& args] args)]
+    {:validate-token (partial oauth/validate-token config-m auth-code-store client-store user-store token-store id-token-generator)}))
 
 (defn splitter [site api]
   (fn [request]
@@ -144,7 +145,7 @@
       ring-mct/wrap-content-type))
 
 (defn create-api-app [config-m stores-m dev-mode?]
-  (-> (scenic/scenic-handler routes/routes (api-handlers stores-m) not-found)
+  (-> (scenic/scenic-handler routes/routes (api-handlers config-m stores-m) not-found)
       (ring-mw/wrap-defaults (if (config/secure? config-m)
                                (assoc ring-mw/secure-api-defaults :proxy true)
                                ring-mw/api-defaults))

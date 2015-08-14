@@ -3,6 +3,7 @@
             [cheshire.core :as json]
             [cemerick.url :as url]
             [clojure.tools.logging :as log]
+            [stonecutter.config :as c]
             [stonecutter.routes :as routes]
             [stonecutter.db.user :as user]
             [stonecutter.db.client :as client]
@@ -86,21 +87,32 @@
                         token-store
                         auth-code-store) request))
 
-(defn validate-token [auth-code-store client-store user-store token-store request]
+(defn generate-user-info [user]
+  {:email (:login user)
+   :sub (:uid user)
+   :email_verified (:confirmed? user)
+   :role (:role user)})
+
+(defn clauth-response->token-response [config-m id-token-generator clauth-response auth-code-record]
+  (let [user-info (generate-user-info (:subject auth-code-record))
+        scope (:scope auth-code-record)]
+    (case scope
+      "openid"
+      (let [id-token (id-token-generator (c/base-url config-m) (:sub user-info)
+                                         (get-in auth-code-record [:client :client-id])
+                                         (:email user-info))]
+        (assoc clauth-response :body (json/generate-string {:id_token id-token})))
+
+      (let [body (-> clauth-response
+                     :body
+                     (json/parse-string keyword)
+                     (assoc :user-info user-info)
+                     (json/generate-string))]
+        (-> clauth-response
+            (assoc :body body))))))
+
+(defn validate-token [config-m auth-code-store client-store user-store token-store id-token-generator request]
   (let [auth-code (get-in request [:params :code])
-        user (user/retrieve-user-with-auth-code auth-code-store auth-code)
-        user-login (:login user)
-        user-id (:uid user)
-        confirmed? (:confirmed? user)
-        role (:role user)
-        response (token-handler auth-code-store client-store user-store token-store request)
-        body (-> response
-                 :body
-                 (json/parse-string keyword)
-                 (assoc-in [:user-info :email] user-login)
-                 (assoc-in [:user-info :sub] user-id)
-                 (assoc-in [:user-info :email_verified] confirmed?)
-                 (assoc-in [:user-info :role] role)
-                 (json/generate-string))]
-    (-> response
-        (assoc :body body))))
+        auth-code-record (user/retrieve-auth-code auth-code-store auth-code)
+        clauth-response (token-handler auth-code-store client-store user-store token-store request)]
+    (clauth-response->token-response config-m id-token-generator clauth-response auth-code-record)))
