@@ -21,7 +21,6 @@
 (def base-url "https://myapp.com")
 (def user-email "user@blah.com")
 (def user-password "original-password")
-(def test-app (h/create-app {:secure false :base-url ""} stores-m email-sender))
 
 (defn visit-email-link [state test-email-sender base-url]
   (let [pattern (re-pattern (str base-url "([^\\s]+)"))

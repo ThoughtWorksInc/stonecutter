@@ -58,10 +58,11 @@
 
 (defn show-reset-password-form [forgotten-password-store user-store clock request]
   (let [forgotten-password-id (request->forgotten-password-id request)]
-    (let [forgotten-password-record (e/fetch-with-expiry forgotten-password-store clock forgotten-password-id)
-          user (user/retrieve-user user-store (:login forgotten-password-record))]
-      (if (and forgotten-password-record user)
-        (sh/enlive-response (reset-password/reset-password-form request) (:context request))
+    (let [forgotten-password-record (e/fetch-with-expiry forgotten-password-store clock forgotten-password-id)]
+      (if forgotten-password-record
+        (if (user/retrieve-user user-store (:login forgotten-password-record))
+          (sh/enlive-response (reset-password/reset-password-form request) (:context request))
+          (do (cl-store/revoke! forgotten-password-store forgotten-password-id) nil))
         (redirect-to-forgotten-password-form)))))
 
 (defn reset-password-form-post [forgotten-password-store user-store token-store clock request]
@@ -80,5 +81,5 @@
                   (common/sign-in-user token-store updated-user)
                   (assoc :flash :password-changed)))
             (show-reset-password-form forgotten-password-store user-store clock request-with-validation-errors))
-          (redirect-to-forgotten-password-form)))
+          (do (cl-store/revoke! forgotten-password-store forgotten-password-id) nil)))
       (redirect-to-forgotten-password-form))))

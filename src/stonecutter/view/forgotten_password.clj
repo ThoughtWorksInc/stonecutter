@@ -10,8 +10,8 @@
 
 (defn set-form-action [enlive-m]
   (-> enlive-m
-      (html/at [:.clj--forgotten-password__form] (html/set-attr :action (r/path :send-forgotten-password-email)))
-      (html/at [:.clj--forgotten-password__form] (html/set-attr :method "post"))))
+      (html/at [:.clj--forgotten-password__form] (html/do-> (html/set-attr :action (r/path :send-forgotten-password-email))
+                                                            (html/set-attr :method "post")))))
 
 (defn add-error-class [enlive-m field-row-selector]
   (html/at enlive-m field-row-selector (html/add-class "form-row--validation-error")))
