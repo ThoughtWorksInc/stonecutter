@@ -65,6 +65,13 @@
           (do (cl-store/revoke! forgotten-password-store forgotten-password-id) nil))
         (redirect-to-forgotten-password-form)))))
 
+(defn reset-password [forgotten-password-store user-store token-store email-address forgotten-password-id new-password]
+  (let [updated-user (user/change-password! user-store email-address new-password)]
+    (cl-store/revoke! forgotten-password-store forgotten-password-id)
+    (-> (response/redirect (r/path :show-profile))
+        (common/sign-in-user token-store updated-user)
+        (assoc :flash :password-changed))))
+
 (defn reset-password-form-post [forgotten-password-store user-store token-store clock request]
   (let [params (:params request)
         err (v/validate-reset-password params)
@@ -75,11 +82,7 @@
       (let [email-address (:login forgotten-password-record)]
         (if (user/retrieve-user user-store email-address)
           (if (empty? err)
-            (let [updated-user (user/change-password! user-store email-address new-password)]
-              (cl-store/revoke! forgotten-password-store forgotten-password-id)
-              (-> (response/redirect (r/path :show-profile))
-                  (common/sign-in-user token-store updated-user)
-                  (assoc :flash :password-changed)))
+            (reset-password forgotten-password-store user-store token-store email-address forgotten-password-id new-password)
             (show-reset-password-form forgotten-password-store user-store clock request-with-validation-errors))
           (do (cl-store/revoke! forgotten-password-store forgotten-password-id) nil)))
       (redirect-to-forgotten-password-form))))
