@@ -7,12 +7,12 @@ var gulp = require('gulp'),
     autoprefixer = require('gulp-autoprefixer'),
     minifyCSS = require('gulp-minify-css'),
     imagemin = require('gulp-imagemin'),
-    browsersync = require('browser-sync').create(),
     del = require('del'),
+    replace = require('gulp-replace'),
     runSequence = require('run-sequence'),
-    nodemon = require('gulp-nodemon'),
-    ghPages = require('gulp-gh-pages'),
-    replace = require('gulp-replace');
+    browsersync = '',
+    nodemon = '',
+    ghPages = '';
 
 var isDev = false;
 var staticMode = false;
@@ -108,6 +108,11 @@ gulp.task('browser-sync', ['nodemon'], function () {
     port: dev_path.port,  // use *different* port than above
     notify: true,
     open: true,
+    files: [build_path.images,
+      dev_path.jade,
+      dev_path.favicons,
+      dev_path.js,
+      build_path.css],
     ui: {
       port: 7079
     }
@@ -138,6 +143,10 @@ gulp.task('clj', function () {
 
 gulp.task('server', function (callback) {
   isDev = true;
+  browsersync = require('browser-sync').create();
+  nodemon = require('gulp-nodemon');
+  ghPages = require('gulp-gh-pages');
+
   runSequence('clean-build',
       ['sass', 'js', 'images', 'favicons', 'fonts', 'browser-sync', 'watch'],
       callback);
