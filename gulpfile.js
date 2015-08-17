@@ -56,8 +56,7 @@ gulp.task('jade', function () {
         this.emit('end');
       })
       .pipe(gulpif(staticMode, replace(/>!/g, '>')))
-      .pipe(gulp.dest(build_path.html))
-      .pipe(browsersync.stream());
+      .pipe(gulp.dest(build_path.html));
 });
 
 gulp.task('sass', function () {
@@ -69,8 +68,7 @@ gulp.task('sass', function () {
       })
       .pipe(autoprefixer())
       .pipe(gulpif(!isDev, minifyCSS({noAdvanced: true}))) // minify if Prod
-      .pipe(gulp.dest(build_path.css))
-      .pipe(browsersync.stream());
+      .pipe(gulp.dest(build_path.css));
 });
 
 gulp.task('js', function () {
@@ -79,22 +77,19 @@ gulp.task('js', function () {
         console.log(err);
         this.emit('end');
       })
-      .pipe(gulp.dest(build_path.js))
-      .pipe(browsersync.stream());
+      .pipe(gulp.dest(build_path.js));
 });
 
 gulp.task('images', function () {
   return gulp.src(dev_path.images)
       .pipe(imagemin({optimizationLevel: 3}))
-      .pipe(gulp.dest(build_path.images))
-      .pipe(browsersync.stream());
+      .pipe(gulp.dest(build_path.images));
 });
 
 gulp.task('favicons', function () {
   return gulp.src(dev_path.favicons)
       .pipe(imagemin({optimizationLevel: 3}))
-      .pipe(gulp.dest(build_path.html))
-      .pipe(browsersync.stream());
+      .pipe(gulp.dest(build_path.html));
 });
 
 gulp.task('fonts', function () {
