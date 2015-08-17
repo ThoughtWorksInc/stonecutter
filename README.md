@@ -14,9 +14,11 @@ You will need [Leiningen][] 2.0.0 or above installed.
 
 You can also develop and run the application in a VM.  You will need [Vagrant][] and [Ansible][] installed.
 
-navigate to the ops/ directory of the project and run:
+Navigate to the ops/ directory of the project and run:
 
     vagrant up
+
+The first time this is run, it will provision and configure a new VM.
 
 When the VM has started, access the virtual machine by running:
 
