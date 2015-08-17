@@ -115,7 +115,7 @@
         user-store (storage/get-user-store stores-m)
         client-store (storage/get-client-store stores-m)
         token-store (storage/get-token-store stores-m)
-        id-token-generator (fn [& args] args)]
+        id-token-generator (fn [& args] nil)]
     {:validate-token (partial oauth/validate-token config-m auth-code-store client-store user-store token-store id-token-generator)}))
 
 (defn splitter [site api]

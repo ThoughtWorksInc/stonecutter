@@ -96,10 +96,10 @@
         scope (:scope auth-code-record)]
     (case scope
       "openid"
-      (let [id-token (id-token-generator (c/base-url config-m) (:sub user-info)
+      (let [id-token (id-token-generator (:sub user-info)
                                          (get-in auth-code-record [:client :client-id])
                                          (c/open-id-connect-id-token-lifetime-minutes config-m)
-                                         (:email user-info))]
+                                         (dissoc user-info :sub))]
         (assoc clauth-response :body (json/generate-string {:id_token id-token})))
 
       (let [body (-> clauth-response

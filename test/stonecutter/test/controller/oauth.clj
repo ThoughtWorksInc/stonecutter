@@ -214,8 +214,8 @@
   (assoc-in request [:headers "authorization"]
             (encode-client-info client)))
 
-(defn stub-id-token-generator [iss sub aud token-lifetime-minutes email]
-  {:iss iss :sub sub :aud aud :token-lifetime-minutes token-lifetime-minutes :email email})
+(defn stub-id-token-generator [sub aud token-lifetime-minutes additional-claims]
+  (merge {:sub sub :aud aud :token-lifetime-minutes token-lifetime-minutes} additional-claims))
 
 (facts "about token endpoint"
        (facts "with empty scope"
@@ -281,11 +281,12 @@
                     response-body (-> response :body (json/parse-string keyword))]
 
               (fact "request with authorization_code with a scope of openid uses id-token-generator to create an id_token which is returned in the response"
-                    (:id_token response-body) => {:iss "http://stonecutter.base.url"
-                                                  :sub (:uid user)
+                    (:id_token response-body) => {:sub (:uid user)
                                                   :aud (:client-id client-details)
                                                   :token-lifetime-minutes 10
-                                                  :email user-email})
+                                                  :email user-email
+                                                  :email_verified false
+                                                  :role "default"})
 
               (fact "response body should not contain user-info record"
                     (:user-info response-body) => nil?))))
