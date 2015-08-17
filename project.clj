@@ -20,7 +20,8 @@
                            [prismatic/schema "0.4.3"]
                            [ragtime "0.4.2"]
                            [garden "1.2.5"]
-                           [clj-time "0.10.0"]]
+                           [clj-time "0.10.0"]
+                           [org.bitbucket.b_c/jose4j "0.4.4"]]
             :main stonecutter.handler
             :aot :all
             :profiles {:dev {:dependencies   [[ring-mock "0.1.5"]
