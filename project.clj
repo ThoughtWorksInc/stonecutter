@@ -45,5 +45,6 @@
                                               "integration" ["midje" "stonecutter.integration.*"]
                                               "auto-unit"   ["midje" ":autotest" "test/stonecutter/test/" "src/"]
                                               "gencred"     ["run" "-m" "stonecutter.util.gencred"]
+                                              "gen-keypair" ["run" "-m" "stonecutter.util.gen-key-pair"]
                                               "lint"        ["eastwood" "{:namespaces [:source-paths]}"]}
                              :env {:secure "false"}}})

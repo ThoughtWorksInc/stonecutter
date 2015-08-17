@@ -25,6 +25,7 @@
             [stonecutter.config :as config]
             [stonecutter.admin :as admin]
             [stonecutter.db.storage :as storage]
+            [stonecutter.jwt :as jwt]
             [stonecutter.util.time :as time])
   (:gen-class))
 
@@ -163,6 +164,8 @@
     (let [db (mongo/get-mongo-db (config/mongo-uri config-m))
           stores-m (storage/create-mongo-stores db)
           email-sender (email/bash-sender-factory (config/email-script-path config-m))
+       ;   id-token-generator (jwt/create-generator (jwt/load-key (config/rsa-key-path config-m))
+       ;                                            (config/base-url config-m))
           app (create-app config-m stores-m email-sender)]
       (migration/run-migrations db)
       (admin/create-admin-user config-m (storage/get-user-store stores-m))

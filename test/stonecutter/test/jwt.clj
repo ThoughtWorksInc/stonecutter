@@ -20,9 +20,17 @@
                         (.build))]
     (.getClaimsMap (.processToClaims jwtConsumer id-token))))
 
+(fact "parses json web key json string to key-pair object"
+      (let [rsa-key-pair (jwt/generate-rsa-key-pair "k2")
+            json (jwt/key-pair->json rsa-key-pair)
+            key-pair-from-json (jwt/json->key-pair json)]
+        (.getPublicKey key-pair-from-json) =not=> nil?
+        (.getPublicKey key-pair-from-json) => (.getPublicKey rsa-key-pair)
+        (.getPrivateKey key-pair-from-json) =not=> nil?
+        (.getPrivateKey key-pair-from-json) => (.getPrivateKey rsa-key-pair)))
+
 (facts "about generating id tokens"
-       (let [rsa-key-pair (doto (RsaJwkGenerator/generateJwk 2048)
-                            (.setKeyId  "k1"))
+       (let [rsa-key-pair (jwt/load-key-pair "./test-resources/test-key.json")
              id-token-generator (jwt/create-generator rsa-key-pair issuer)
              additional-claims {:some-claim "some claim value"
                                 :some-other-claim "some other claim value"}
@@ -41,13 +49,3 @@
                      expiry (get decoded-token "exp")
                      token-lifetime-in-seconds (* 60 token-lifetime-minutes)]
                  (- expiry issued-at) => token-lifetime-in-seconds))))
-
-(fact "parses json web key json string to key-pair object"
-      (let [rsa-key-pair (doto (RsaJwkGenerator/generateJwk 2048)
-                           (.setKeyId  "test-k1"))
-            json (.toJson rsa-key-pair JsonWebKey$OutputControlLevel/INCLUDE_PRIVATE)
-            key-pair-from-json (jwt/json->key-pair json)]
-        (.getPublicKey key-pair-from-json) =not=> nil?
-        (.getPublicKey key-pair-from-json) => (.getPublicKey rsa-key-pair)
-        (.getPrivateKey key-pair-from-json) =not=> nil?
-        (.getPrivateKey key-pair-from-json) => (.getPrivateKey rsa-key-pair)))
