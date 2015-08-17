@@ -20,14 +20,29 @@
                         (.build))]
     (.getClaimsMap (.processToClaims jwtConsumer id-token))))
 
-(fact "parses json web key json string to key-pair object"
-      (let [rsa-key-pair (jwt/generate-rsa-key-pair "k2")
-            json (jwt/key-pair->json rsa-key-pair)
-            key-pair-from-json (jwt/json->key-pair json)]
-        (.getPublicKey key-pair-from-json) =not=> nil?
-        (.getPublicKey key-pair-from-json) => (.getPublicKey rsa-key-pair)
-        (.getPrivateKey key-pair-from-json) =not=> nil?
-        (.getPrivateKey key-pair-from-json) => (.getPrivateKey rsa-key-pair)))
+(facts "about serialising and deserialising key-pairs as json"
+       (let [rsa-key-pair (jwt/generate-rsa-key-pair "k2")]
+         (fact "parses json web key json string to key-pair object"
+               (let [json (jwt/key-pair->json rsa-key-pair :include-private-key)
+                     key-pair-from-json (jwt/json->key-pair json)]
+
+                 (.getPublicKey key-pair-from-json) =not=> nil?
+                 (.getPublicKey key-pair-from-json) => (.getPublicKey rsa-key-pair)
+
+                 (.getPrivateKey key-pair-from-json) =not=> nil?
+                 (.getPrivateKey key-pair-from-json) => (.getPrivateKey rsa-key-pair)))
+
+         (fact "serialising does not include private key unless explicitly requested"
+               (let [only-public-key (-> (jwt/key-pair->json rsa-key-pair)
+                                         jwt/json->key-pair)
+                     with-private-key (-> (jwt/key-pair->json rsa-key-pair :include-private-key)
+                                          jwt/json->key-pair)]
+
+                 (.getPrivateKey only-public-key) => nil?
+                 (.getPrivateKey with-private-key) =not=> nil?
+
+                 (.getPublicKey only-public-key) =not=> nil?
+                 (.getPublicKey with-private-key) =not=> nil?))))
 
 (facts "about generating id tokens"
        (let [rsa-key-pair (jwt/load-key-pair "./test-resources/test-key.json")

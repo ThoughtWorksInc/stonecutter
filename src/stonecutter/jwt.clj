@@ -9,7 +9,14 @@
 
 (defn json->key-pair [json-string] (JsonWebKey$Factory/newJwk json-string))
 
-(defn key-pair->json [key-pair] (.toJson key-pair JsonWebKey$OutputControlLevel/INCLUDE_PRIVATE))
+(defn key-pair->json
+  ([key-pair]
+   (key-pair->json key-pair nil))
+
+  ([key-pair flag]
+   (if (= flag :include-private-key)
+     (.toJson key-pair JsonWebKey$OutputControlLevel/INCLUDE_PRIVATE)
+     (.toJson key-pair))))
 
 (defn load-key-pair [path]
   (-> (slurp path) json->key-pair))
