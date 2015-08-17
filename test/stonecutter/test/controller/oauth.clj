@@ -214,8 +214,8 @@
   (assoc-in request [:headers "authorization"]
             (encode-client-info client)))
 
-(defn stub-id-token-generator [iss sub aud email]
-  {:iss iss :sub sub :aud aud :email email})
+(defn stub-id-token-generator [iss sub aud token-lifetime-minutes email]
+  {:iss iss :sub sub :aud aud :token-lifetime-minutes token-lifetime-minutes :email email})
 
 (facts "about token endpoint"
        (facts "with empty scope"
@@ -260,7 +260,8 @@
                       (get-in response-body [:user-info :role]) => (name (:role user)))))
 
        (facts "about openid connect"
-              (let [config-m {:base-url "http://stonecutter.base.url"}
+              (let [config-m {:base-url "http://stonecutter.base.url"
+                              :open-id-connect-id-token-lifetime-minutes 10}
                     user-store (m/create-memory-store)
                     client-store (m/create-memory-store)
                     token-store (m/create-memory-store)
@@ -279,12 +280,11 @@
                                                    stub-id-token-generator request)
                     response-body (-> response :body (json/parse-string keyword))]
 
-              (fact "request with authorization_code with a scope of openid includes signed id_token in response"
+              (fact "request with authorization_code with a scope of openid uses id-token-generator to create an id_token which is returned in the response"
                     (:id_token response-body) => {:iss "http://stonecutter.base.url"
                                                   :sub (:uid user)
                                                   :aud (:client-id client-details)
-                                                  ;; TODO 2015-08-14 RS+DM
-                                                  ;;      :exp expiry-seconds
+                                                  :token-lifetime-minutes 10
                                                   :email user-email})
 
               (fact "response body should not contain user-info record"

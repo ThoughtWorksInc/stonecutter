@@ -100,6 +100,7 @@
       "openid"
       (let [id-token (id-token-generator (c/base-url config-m) (:sub user-info)
                                          (get-in auth-code-record [:client :client-id])
+                                         (c/open-id-connect-id-token-lifetime-minutes config-m)
                                          (:email user-info))]
         (assoc clauth-response :body (json/generate-string {:id_token id-token})))
 

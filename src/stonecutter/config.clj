@@ -8,7 +8,8 @@
                 :header-bg-color :inactive-tab-font-color
                 :static-resources-dir-path :logo-file-name
                 :favicon-file-name :admin-login :admin-password
-                :password-reset-expiry})
+                :password-reset-expiry
+                :open-id-connect-id-token-lifetime-minutes})
 
 (def roles {:default "default"
             :admin "admin"})
@@ -88,3 +89,6 @@
 
 (defn password-reset-expiry [config-m]
   (Integer. (get-env config-m :password-reset-expiry "24")))
+
+(defn open-id-connect-id-token-lifetime-minutes [config-m]
+  (Integer. (get-env config-m :open-id-connect-id-token-lifetime-minutes "10")))
