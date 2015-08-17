@@ -8,36 +8,32 @@
 (def iss "stonecutter-url")
 (def aud "client-id")
 (def token-lifetime-minutes 10)
-(def email "user@email.com")
 
 (defn decode [rsa-key-pair audience id-token]
   (let [jwtConsumer (-> (JwtConsumerBuilder.)
                         (.setExpectedAudience (into-array [audience]))
                         (.setVerificationKey (.getKey rsa-key-pair))
-                        (.build))
-        claims-set (.processToClaims jwtConsumer id-token)]
-    {:sub (.getSubject claims-set)
-     :iss (.getIssuer claims-set)
-     :aud (.getAudience claims-set)
-     :iat (-> claims-set .getIssuedAt .getValue)
-     :exp (-> claims-set .getExpirationTime .getValue)
-     :email (.getClaimValue claims-set "email")}))
+                        (.build))]
+    (.getClaimsMap (.processToClaims jwtConsumer id-token))))
 
 (facts "about generating id tokens"
        (let [rsa-key-pair (doto (RsaJwkGenerator/generateJwk 2048)
                             (.setKeyId  "k1"))
              id-token-generator (jwt/create-generator rsa-key-pair)
-             id-token (id-token-generator iss sub aud token-lifetime-minutes email)]
+             additional-claims {:some-claim "some claim value"
+                                :some-other-claim "some other claim value"}
+             id-token (id-token-generator iss sub aud token-lifetime-minutes additional-claims)
+             decoded-token (decode rsa-key-pair aud id-token)]
          (fact "id tokens can be generated and signed"
-               (:sub (decode rsa-key-pair aud id-token)) => sub
-               (:iss (decode rsa-key-pair aud id-token)) => iss
-               (:aud (decode rsa-key-pair aud id-token)) => [aud]
-               (:email (decode rsa-key-pair aud id-token)) => email)
+               (get decoded-token "sub") => sub
+               (get decoded-token "iss") => iss
+               (get decoded-token "aud") => aud
+               (get decoded-token "some-claim") => "some claim value"
+               (get decoded-token "some-other-claim") => "some other claim value")
 
          (fact "token expiry time is set correctly, based on token lifetime in minutes"
-               (let [decoded-token (decode rsa-key-pair aud id-token)
-                     issued-at (:iat decoded-token)
-                     expiry (:exp decoded-token)
+               (let [issued-at (get decoded-token "iat")
+                     expiry (get decoded-token "exp")
                      token-lifetime-in-seconds (* 60 token-lifetime-minutes)]
                  (- expiry issued-at) => token-lifetime-in-seconds))))
 

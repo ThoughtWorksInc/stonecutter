@@ -40,14 +40,12 @@
     (user/is-authorised-client-for-user? user-store user-email client-id)))
 
 (defn auth-handler [auth-code-store client-store user-store token-store request]
-  ((cl-ep/authorization-handler
-     client-store
-     token-store
-     auth-code-store
-     {:auto-approver                  (partial auto-approver user-store)
-      :user-session-required-redirect (routes/path :show-sign-in-form)
-      :authorization-form             (partial show-authorise-form client-store)
-      }) request))
+  (let [configuration {:auto-approver                  (partial auto-approver user-store)
+                       :user-session-required-redirect (routes/path :show-sign-in-form)
+                       :authorization-form             (partial show-authorise-form client-store)}
+        configured-authorization-handler (cl-ep/authorization-handler client-store token-store
+                                                                      auth-code-store configuration)]
+    (configured-authorization-handler request)))
 
 (defn authorise-client [auth-code-store client-store user-store token-store request]
   (let [client-id (get-in request [:params :client_id])

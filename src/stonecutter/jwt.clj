@@ -2,15 +2,18 @@
   (import [org.jose4j.jws JsonWebSignature AlgorithmIdentifiers]
           [org.jose4j.jwt JwtClaims]))
 
+(defn set-additional-claims [jwt-claims claims-m]
+  (doseq [[claim value] claims-m] (.setClaim jwt-claims (name claim) value)))
+
 (defn create-generator [rsa-key-pair]
-  (fn [iss sub aud token-lifetime-minutes email]
+  (fn [iss sub aud token-lifetime-minutes additional-claims]
     (let [jwt-claims (doto (JwtClaims.)
                        (.setIssuer iss)
                        (.setAudience aud)
                        (.setExpirationTimeMinutesInTheFuture token-lifetime-minutes)
                        (.setIssuedAtToNow)
                        (.setSubject sub)
-                       (.setClaim "email" email))
+                       (set-additional-claims additional-claims))
           jws (doto (JsonWebSignature.)
                 (.setPayload (.toJson jwt-claims))
                 (.setKey (.getPrivateKey rsa-key-pair))
