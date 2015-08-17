@@ -51,7 +51,7 @@
                         (get-in [:params "code"]))]
       auth-code)))
 
-(defn client-sends-http-token-request [state client-id client-secret]
+(defn client-sends-access-token-request [state client-id client-secret]
   (if-let [auth-code (get-auth-code state)]
     (-> state
         (dissoc :cookie-jar)                                ;; HTTP request so won't have browser cookie
@@ -103,7 +103,7 @@
                     (kh/page-uri-is "/authorisation")
                     (k/press ks/authorise-share-profile-button)
                     (kh/location-contains "callback?code=")
-                    (client-sends-http-token-request client-id client-secret)
+                    (client-sends-access-token-request client-id client-secret)
                     ; return 200 with new access_token
                     (kh/response-has-access-token)
                     (kh/response-has-user-info))))
@@ -122,7 +122,7 @@
                     ;; send authorisation request for the second time
                     (browser-sends-authorisation-request-from-client-redirect client-id)
                     (kh/location-contains "callback?code=")
-                    (client-sends-http-token-request client-id client-secret)
+                    (client-sends-access-token-request client-id client-secret)
                     ;; return 200 with new access_token
                     (kh/response-has-access-token)
                     (kh/response-has-user-info))))
@@ -159,7 +159,7 @@
                     (kh/page-uri-is "/authorisation")
                     (k/press ks/authorise-share-profile-button)
                     (kh/location-contains "callback?code=")
-                    (client-sends-http-token-request client-id invalid-client-secret)
+                    (client-sends-access-token-request client-id invalid-client-secret)
                     :response
                     :status)) => 400)
 

@@ -98,6 +98,15 @@
           response-body => (contains {:user-info anything})))
   state)
 
+(defn response-has-id-token [state]
+  (fact {:midje/name "Checking if response includes id_token"}
+               (let [response-body (-> state
+                                       :response
+                                       :body
+                                       (json/parse-string keyword))]
+          response-body => (contains {:id_token anything})))
+  state)
+
 
 ;; FIXME can't reuse the body because it's a buffered input stream - 06 Jul 2015
 (defn replay-last-request [state]
