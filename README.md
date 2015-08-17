@@ -12,7 +12,7 @@ You will need [Leiningen][] 2.0.0 or above installed.
 
 ## Development VM
 
-You can also develop and run the application in a VM.  You will need [Vagrant][] installed.
+You can also develop and run the application in a VM.  You will need [Vagrant][] and [Ansible][] installed.
 
 navigate to the ops/ directory of the project and run:
 
@@ -32,6 +32,7 @@ After initial setup you will need to run:
 This will take a while (upwards of 10 minutes).
 
 [Vagrant]: https://www.vagrantup.com
+[Ansible]: http://docs.ansible.com/ansible/intro_installation.html
 
 ## Running
 Before starting the server, build the views by running:
@@ -41,7 +42,7 @@ Before starting the server, build the views by running:
 To start a web server for the application in development mode, run:
 
     lein ring server-headless
-    
+
 NB: running the application like this will save users into an in memory cache that will be destroyed as soon as the app is shutdown.
 
 To start a web server with users persisted to mongodb, ensure you have mongo running locally and run:
@@ -62,15 +63,15 @@ npm install
 You also require gulp to be installed globally.
 
 ```
-npm install -g gulp 
+npm install -g gulp
 ```
 
 Depending on system privileges you may need to install it globally with sudo:
- 
+
 ```
-sudo npm install -g gulp 
+sudo npm install -g gulp
 ```
- 
+
 ### Running the prototype
 
 ####Simply type
