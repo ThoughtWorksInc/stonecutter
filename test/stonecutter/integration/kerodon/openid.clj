@@ -6,6 +6,7 @@
             [clauth.client :as cl-client]
             [stonecutter.handler :as h]
             [stonecutter.db.storage :as s]
+            [stonecutter.db.mongo :as m]
             [stonecutter.integration.kerodon.kerodon-checkers :as kh]
             [stonecutter.integration.kerodon.kerodon-selectors :as ks]
             [stonecutter.db.user :as user]
@@ -70,9 +71,8 @@
 
 (def test-email-sender (test-email/create-test-email-sender))
 
-(future-facts "user authorising client-apps using openid connect"
+(facts "user authorising client-apps using openid connect"
        (facts "user can sign in through client"
-              (prn "================================================================")
               (let [stores (s/create-in-memory-stores)
                     {:keys [client-id client-secret]} (setup stores)]
                 (-> (k/session (h/create-app {:secure "false"} stores test-email-sender))

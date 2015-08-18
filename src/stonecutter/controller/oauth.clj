@@ -91,27 +91,29 @@
    :email_verified (:confirmed? user)
    :role (:role user)})
 
-(defn clauth-response->token-response [config-m id-token-generator clauth-response auth-code-record]
-  (let [user-info (generate-user-info (:subject auth-code-record))
-        scope (:scope auth-code-record)]
-    (case scope
-      "openid"
-      (let [id-token (id-token-generator (:sub user-info)
-                                         (get-in auth-code-record [:client :client-id])
-                                         (c/open-id-connect-id-token-lifetime-minutes config-m)
-                                         (dissoc user-info :sub))]
-        (assoc clauth-response :body (json/generate-string {:id_token id-token})))
+(defn assoc-in-json [json k v]
+  (-> json 
+      (json/parse-string keyword)
+      (assoc k v)
+      (json/generate-string)))
 
-      (let [body (-> clauth-response
-                     :body
-                     (json/parse-string keyword)
-                     (assoc :user-info user-info)
-                     (json/generate-string))]
-        (-> clauth-response
-            (assoc :body body))))))
+(defn token-response-body [config-m id-token-generator clauth-response-body user-info auth-code-record]
+  (case (:scope auth-code-record) 
+    "openid"
+    (let [subject (:sub user-info)
+          client-id (get-in auth-code-record [:client :client-id])
+          id-token-lifetime (c/open-id-connect-id-token-lifetime-minutes config-m)
+          additional-claims (dissoc user-info :sub)
+          id-token (id-token-generator subject client-id id-token-lifetime additional-claims)]
+      (assoc-in-json clauth-response-body :id_token id-token)) 
+
+    ;default
+    (assoc-in-json clauth-response-body :user-info user-info)))
 
 (defn validate-token [config-m auth-code-store client-store user-store token-store id-token-generator request]
   (let [auth-code (get-in request [:params :code])
         auth-code-record (user/retrieve-auth-code auth-code-store auth-code)
-        clauth-response (token-handler auth-code-store client-store user-store token-store request)]
-    (clauth-response->token-response config-m id-token-generator clauth-response auth-code-record)))
+        clauth-response (token-handler auth-code-store client-store user-store token-store request)
+        user-info (generate-user-info (:subject auth-code-record)) 
+        body (token-response-body config-m id-token-generator (:body clauth-response) user-info auth-code-record)] 
+    (-> clauth-response (assoc :body body))))

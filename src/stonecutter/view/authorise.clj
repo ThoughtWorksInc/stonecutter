@@ -17,7 +17,8 @@
   (-> enlive-m
       (html/at [:.clj--authorise-client-id__input] (html/set-attr :value (:client_id params)))
       (html/at [:.clj--authorise-response-type__input] (html/set-attr :value (:response_type params)))
-      (html/at [:.clj--authorise-redirect-uri__input] (html/set-attr :value (:redirect_uri params)))))
+      (html/at [:.clj--authorise-redirect-uri__input] (html/set-attr :value (:redirect_uri params)))  
+      (html/at [:.clj--authorise-scope__input] (html/set-attr :value (:scope params)))))
 
 (defn set-client-name [client-name enlive-m]
   (html/at enlive-m
