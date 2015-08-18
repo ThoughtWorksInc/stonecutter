@@ -70,12 +70,13 @@
       (k/press ks/sign-in-submit)))
 
 (def test-email-sender (test-email/create-test-email-sender))
+(defn stub-token-generator [& args] "an-id-token")
 
 (facts "user authorising client-apps using openid connect"
        (facts "user can sign in through client"
               (let [stores (s/create-in-memory-stores)
                     {:keys [client-id client-secret]} (setup stores)]
-                (-> (k/session (h/create-app {:secure "false"} stores test-email-sender))
+                (-> (k/session (h/create-app {:secure "false"} stores test-email-sender stub-token-generator))
                     (browser-sends-authorisation-request-from-client-redirect client-id)
                     (k/follow-redirect)
                     ;; login
@@ -89,4 +90,4 @@
                     (client-sends-access-token-request client-id client-secret)
                     ; return 200 with new access_token
                     (kh/response-has-access-token)
-                    (kh/response-has-id-token)))))
+                    (kh/response-has-id-token-with-value "an-id-token")))))

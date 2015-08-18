@@ -9,7 +9,8 @@
                 :static-resources-dir-path :logo-file-name
                 :favicon-file-name :admin-login :admin-password
                 :password-reset-expiry
-                :open-id-connect-id-token-lifetime-minutes})
+                :open-id-connect-id-token-lifetime-minutes
+                :rsa-keypair-file-path})
 
 (def roles {:default "default"
             :admin "admin"})
@@ -92,3 +93,9 @@
 
 (defn open-id-connect-id-token-lifetime-minutes [config-m]
   (Integer. (get-env config-m :open-id-connect-id-token-lifetime-minutes "10")))
+
+(defn rsa-keypair-file-path [config-m]
+  (if-let [path (get-env config-m :rsa-keypair-file-path)]
+    path
+    (do (log/error "No RSA-keypair json file provided.")
+        (throw (Exception. "No RSA-keypair provided.  App startup aborted.")))))

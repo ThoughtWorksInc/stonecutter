@@ -49,9 +49,10 @@
 (background (email/get-confirmation-renderer) => test-email-renderer)
 
 (def email-sender (email/bash-sender-factory "test-resources/mail_stub.sh"))
+(defn stub-token-generator [& args] nil)
 
 (facts "User is not confirmed when first registering for an account; Hitting the confirmation endpoint confirms the user account when the UUID in the uri matches that for the signed in user's account"
-       (-> (k/session (h/create-app {:secure "false"} stores-m email-sender))
+       (-> (k/session (h/create-app {:secure "false"} stores-m email-sender stub-token-generator))
 
            (setup-test-directory)
 
@@ -75,7 +76,7 @@
            ))
 
 (facts "The account confirmation flow can be followed by a user who is not signed in when first accessing the confirmation endpoint"
-       (-> (k/session (h/create-app {:secure "false"} stores-m email-sender))
+       (-> (k/session (h/create-app {:secure "false"} stores-m email-sender stub-token-generator))
 
            (setup-test-directory)
 

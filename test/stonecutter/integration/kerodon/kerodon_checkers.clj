@@ -98,13 +98,13 @@
           response-body => (contains {:user-info anything})))
   state)
 
-(defn response-has-id-token [state]
+(defn response-has-id-token-with-value [state value]
   (fact {:midje/name "Checking if response includes id_token"}
                (let [response-body (-> state
                                        :response
                                        :body
                                        (json/parse-string keyword))]
-          response-body => (contains {:id_token anything})))
+          (:id_token response-body) => value))
   state)
 
 

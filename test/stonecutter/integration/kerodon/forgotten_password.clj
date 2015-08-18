@@ -17,6 +17,7 @@
 
 (def stores-m (storage/create-mongo-stores (ih/get-test-db)))
 (def email-sender (test-email/create-test-email-sender))
+(defn stub-token-generator [& args] nil)
 
 (def base-url "https://myapp.com")
 (def user-email "user@blah.com")
@@ -31,7 +32,7 @@
          (k/visit state))))
 
 (facts "User can receive a reset password e-mail by following forgotten password link"
-       (-> (k/session (h/create-app {:secure "false" :base-url base-url} stores-m email-sender))
+       (-> (k/session (h/create-app {:secure "false" :base-url base-url} stores-m email-sender stub-token-generator))
 
            ; User registers and signs out
            (steps/register user-email user-password)

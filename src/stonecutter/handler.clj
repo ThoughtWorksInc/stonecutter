@@ -110,12 +110,11 @@
                                           :show-reset-password-form
                                           :reset-password}))))
 
-(defn api-handlers [config-m stores-m]
+(defn api-handlers [config-m stores-m id-token-generator]
   (let [auth-code-store (storage/get-auth-code-store stores-m)
         user-store (storage/get-user-store stores-m)
         client-store (storage/get-client-store stores-m)
-        token-store (storage/get-token-store stores-m)
-        id-token-generator (fn [& args] nil)]
+        token-store (storage/get-token-store stores-m)]
     {:validate-token (partial oauth/validate-token config-m auth-code-store client-store user-store token-store id-token-generator)}))
 
 (defn splitter [site api]
@@ -145,18 +144,19 @@
       (m/wrap-custom-static-resources config-m)
       ring-mct/wrap-content-type))
 
-(defn create-api-app [config-m stores-m dev-mode?]
-  (-> (scenic/scenic-handler routes/routes (api-handlers config-m stores-m) not-found)
+(defn create-api-app [config-m stores-m id-token-generator dev-mode?]
+  (-> (scenic/scenic-handler routes/routes (api-handlers config-m stores-m id-token-generator) not-found)
       (ring-mw/wrap-defaults (if (config/secure? config-m)
                                (assoc ring-mw/secure-api-defaults :proxy true)
                                ring-mw/api-defaults))
       (m/wrap-error-handling err-handler dev-mode?)))       ;; TODO create json error handler
 
 (defn create-app
-  ([config-m stores-m email-sender]
-   (create-app config-m stores-m email-sender false))
-  ([config-m stores-m email-sender prone-stacktraces?]
-   (splitter (create-site-app config-m stores-m email-sender prone-stacktraces?) (create-api-app config-m stores-m prone-stacktraces?))))
+  ([config-m stores-m email-sender id-token-generator]
+   (create-app config-m stores-m email-sender id-token-generator false))
+  ([config-m stores-m email-sender id-token-generator prone-stacktraces?]
+   (splitter (create-site-app config-m stores-m email-sender prone-stacktraces?) 
+             (create-api-app config-m stores-m id-token-generator prone-stacktraces?))))
 
 (defn -main [& args]
   (let [config-m (config/create-config)]
@@ -164,9 +164,9 @@
     (let [db (mongo/get-mongo-db (config/mongo-uri config-m))
           stores-m (storage/create-mongo-stores db)
           email-sender (email/bash-sender-factory (config/email-script-path config-m))
-       ;   id-token-generator (jwt/create-generator (jwt/load-key (config/rsa-key-path config-m))
-       ;                                            (config/base-url config-m))
-          app (create-app config-m stores-m email-sender)]
+          id-token-generator (jwt/create-generator (jwt/load-key-pair (config/rsa-keypair-file-path config-m))
+                                                   (config/base-url config-m))
+          app (create-app config-m stores-m email-sender id-token-generator)]
       (migration/run-migrations db)
       (admin/create-admin-user config-m (storage/get-user-store stores-m))
       (client-seed/load-client-credentials-and-store-clients (storage/get-client-store stores-m) (config/client-credentials-file-path config-m))

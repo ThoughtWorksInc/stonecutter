@@ -53,8 +53,9 @@
    :body (str email-data)})
 
 (def email-sender (email/bash-sender-factory "test-resources/mail_stub.sh"))
+(defn stub-token-generator [& args] nil)
 
-(def test-app (h/create-app {:secure "false"} stores-m email-sender))
+(def test-app (h/create-app {:secure "false"} stores-m email-sender stub-token-generator))
 
 (facts "Home url redirects to sign-in page if user is not signed in"
        (-> (k/session test-app)
@@ -264,12 +265,12 @@
 (fact "Error page is shown if an exception is thrown"
       (against-background
         (register-view/registration-form anything) =throws=> (Exception.))
-      (-> (k/session (h/create-app {:secure "false"} stores-m email-sender))
+      (-> (k/session (h/create-app {:secure "false"} stores-m email-sender stub-token-generator))
           (k/visit "/register")
           (kh/response-status-is 500)
           (kh/selector-exists [ks/error-500-page-body]))
       (fact "if dev mode is enabled then error middleware isn't invoked (exception not caught)"
-            (-> (k/session (h/create-app {:secure "false"} stores-m email-sender true))
+            (-> (k/session (h/create-app {:secure "false"} stores-m email-sender stub-token-generator true))
                 (k/visit "/register")) => (throws Exception)))
 
 (fact "theme.css file is generated using environment variables"
@@ -279,7 +280,8 @@
                                     :static-resources-dir-path "./test-resources"
                                     :logo-file-name "beautiful_logo.png"}
                                    stores-m
-                                   email-sender))
+                                   email-sender
+                                   stub-token-generator))
           (k/visit "/stylesheets/theme.css")
           (kh/response-status-is 200)
           (kh/response-body-contains "#012345")
@@ -287,12 +289,12 @@
           (kh/response-body-contains "\"/beautiful_logo.png\"")))
 
 (fact "Correct css file is used when config includes a :theme"
-      (-> (k/session (h/create-app {:secure "false" :theme "MY_STYLING"} stores-m email-sender))
+      (-> (k/session (h/create-app {:secure "false" :theme "MY_STYLING"} stores-m email-sender stub-token-generator))
           (k/visit "/sign-in")
           (kh/selector-has-attribute-with-content [ks/css-link] :href "/stylesheets/application.css")))
 
 (fact "Correct app-name is used when config includes an :app-name"
-      (-> (k/session (h/create-app {:secure "false" :app-name "My App Name"} stores-m email-sender))
+      (-> (k/session (h/create-app {:secure "false" :app-name "My App Name"} stores-m email-sender stub-token-generator))
           (k/visit "/sign-in")
           (kh/selector-includes-content [ks/sign-in-app-name] "My App Name")))
 

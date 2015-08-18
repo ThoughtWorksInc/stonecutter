@@ -47,4 +47,5 @@
                                               "gencred"     ["run" "-m" "stonecutter.util.gencred"]
                                               "gen-keypair" ["run" "-m" "stonecutter.util.gen-key-pair"]
                                               "lint"        ["eastwood" "{:namespaces [:source-paths]}"]}
-                             :env {:secure "false"}}})
+                             :env {:secure "false"
+                                   :rsa-keypair-file-path "test-resources/test-key.json"}}})
