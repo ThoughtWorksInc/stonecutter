@@ -43,9 +43,9 @@ gulp.task('jade', function () {
       .pipe(jade({
         pretty: true,
         locals: {
-          "javascriptsBase": "javascripts",
-          "stylesheetsBase": "stylesheets",
-          "imagesBase": "images",
+          "javascriptsBase": "/javascripts",
+          "stylesheetsBase": "/stylesheets",
+          "imagesBase": "/images",
           "initData": "",
           "applicationName": "Stonecutter",
           "serviceName": "Objective8",
