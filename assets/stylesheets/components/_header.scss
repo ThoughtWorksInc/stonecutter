@@ -1,16 +1,17 @@
 $header_background_color: $light_grey !default;
 $header_logo_image_path: 'logo.svg' !default;
+$header--height: 110px;
 
 .header {
   @include clearfix;
-  min-height: 120px;
+  min-height: $header--height;
   margin-bottom: 40px;
   background-color: $header_background_color;
 
   &__inner {
     position: relative;
-    min-height: 120px;
-    padding-top: 35px;
+    min-height: $header--height;
+    padding-top: 30px;
     padding-left: 1rem;
     padding-right: 1rem;
     margin-bottom: 0;

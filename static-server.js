@@ -9,6 +9,7 @@ var pageData = {
   "stylesheetsBase": "/stylesheets",
   "imagesBase": "/images",
   "applicationName": "Stonecutter",
+  "serviceName": "Objective8",
   "demoAppURL": "http://localhost:7778"
 };
 

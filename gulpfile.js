@@ -48,6 +48,7 @@ gulp.task('jade', function () {
           "imagesBase": "images",
           "initData": "",
           "applicationName": "Stonecutter",
+          "serviceName": "Objective8",
           "staticMode": staticMode
         }
       }))

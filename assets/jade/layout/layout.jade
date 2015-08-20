@@ -27,6 +27,11 @@ html
 
   body(class="#{bodyClass}")
     a.skip-link(href="#main") Skip navigation
+    .back-to-app.clj-wip
+      a.back-to-app__link(href="#{}")
+        span Back to
+        = " "
+        span.clj--service-name #{serviceName}
     .header(role="banner")
       .header__inner.middle-container
         .header__logo

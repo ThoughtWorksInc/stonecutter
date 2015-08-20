@@ -1,0 +1,22 @@
+$back_to_app--height: 40px;
+.back-to-app {
+  height: $back_to_app--height;
+}
+.back-to-app__link {
+  position: fixed;
+  z-index: 10;
+  display: block;
+  height: $back_to_app--height;
+  width: 100%;
+  line-height: $back_to_app--height;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  background-color: $dark_grey;
+  color: $white;
+  text-decoration: none;
+  transition: background 250ms ease, color 250ms ease;
+  &:hover {
+    background-color: darken($dark_grey,10%);
+    text-decoration: underline;
+  }
+}
