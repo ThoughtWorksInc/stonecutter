@@ -1,4 +1,6 @@
 $back_to_app--height: 40px;
+$back_to_app--bg-color: rgba($dark_grey,0.95);
+
 .back-to-app {
   height: $back_to_app--height;
 }
@@ -11,12 +13,12 @@ $back_to_app--height: 40px;
   line-height: $back_to_app--height;
   padding-left: 1rem;
   padding-right: 1rem;
-  background-color: $dark_grey;
+  background-color: $back_to_app--bg-color;
   color: $white;
   text-decoration: none;
   transition: background 250ms ease, color 250ms ease;
   &:hover {
-    background-color: darken($dark_grey,10%);
+    background-color: darken($back_to_app--bg-color,10%);
     text-decoration: underline;
   }
 }
