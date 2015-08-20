@@ -23,7 +23,9 @@
 (fact "Enlive response injects the app name anywhere where class is clj--app-name"
       (let [html "<html><body><h1 class=\"clj--app-name\"></h1><span class=\"clj--app-name\"></span></body></html>"
             enlive-m (html/html-snippet html)]
-        (-> (helper/enlive-response enlive-m {:config-m {:app-name "My App"}}) get-response-enlive-m
+        (-> (helper/enlive-response enlive-m {:config-m {:app-name "My App"} :translator {}})
+            get-response-enlive-m
             (html/select [:h1]) first html/text) => "My App"
-        (-> (helper/enlive-response enlive-m {:config-m {:app-name "My App"}}) get-response-enlive-m
+        (-> (helper/enlive-response enlive-m {:config-m {:app-name "My App"} :translator {}})
+            get-response-enlive-m
             (html/select [:span]) first html/text) => "My App"))
