@@ -16,9 +16,10 @@
   @include font-size(22px);
   font-weight: 500;
   line-height: 1.2;
+  letter-spacing: -0.02em;
   color: $default_text_color;
   @include width-from($medium_device) {
-    @include font-size(28px);
+    @include font-size(26px);
   }
 }
 

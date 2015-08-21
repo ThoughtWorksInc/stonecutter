@@ -22,6 +22,7 @@ block content
 
     .card-preview
       h2 Your Profile Card
+        = " "
         span.clj--admin__span(data-l8n="content:profile/admin-span") !Mighty Admin
       p Manage your shared details with allowed applications.
       p.clj--email-not-confirmed-message(data-l8n="content:profile/email-not-confirmed") !Your email address is not yet confirmed.
@@ -42,6 +43,8 @@ block content
                 p Hoodie bespoke Tumblr, Pitchfork Etsy dreamcatcher cronut sartorial flexitarian vinyl synth PBR&B Neutra single-origin coffee.
           .card__row.clj-wip
             dl.card__items
+              dt.card__items-key Email
+              dd.card__items-value.clj--card-email name@domain.com
               dt.card__items-key PGP KeyID
               dd.card__items-value E97A7A5D
               dt.card__items-key Fingerprint

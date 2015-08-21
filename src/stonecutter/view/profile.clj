@@ -8,7 +8,8 @@
 (defn add-username [request enlive-m]
   (let [email (get-in request [:session :user-login])]
     (html/at enlive-m
-             [:.clj--card--name] (html/content email))))
+             [:.clj--card-
+              email] (html/content email))))
 
 (def library-template (vh/load-template "public/library.html"))
 
