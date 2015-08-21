@@ -100,7 +100,7 @@
            (kh/page-uri-is "/profile")
            (kh/response-status-is 200)
            (kh/selector-exists [ks/profile-page-body])
-           (kh/selector-includes-content [:body] "email@server.com")))
+           (kh/selector-includes-content [:.func--card-email] "email@server.com")))
 
 (facts "User is not confirmed when first registering for an account; Hitting the confirmation endpoint confirms the user account when the UUID in the query string matches that for the signed in user's account"
        (against-background
