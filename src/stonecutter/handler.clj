@@ -151,12 +151,11 @@
       (m/wrap-error-handling err-handler dev-mode?)))       ;; TODO create json error handler
 
 (defn create-app
-  ([config-m stores-m email-sender id-token-generator]
+  ([config-m clock stores-m email-sender id-token-generator]
    (create-app config-m stores-m email-sender id-token-generator false))
-  ([config-m stores-m email-sender id-token-generator prone-stacktraces?]
-   (let [clock (time/new-clock)]
-     (splitter (create-site-app clock config-m stores-m email-sender prone-stacktraces?) 
-               (create-api-app config-m stores-m id-token-generator prone-stacktraces?)))))
+  ([config-m clock stores-m email-sender id-token-generator prone-stacktraces?]
+   (splitter (create-site-app clock config-m stores-m email-sender prone-stacktraces?) 
+             (create-api-app config-m stores-m id-token-generator prone-stacktraces?))))
 
 (defn -main [& args]
   (let [config-m (config/create-config)]
@@ -167,7 +166,7 @@
           email-sender (email/bash-sender-factory (config/email-script-path config-m))
           id-token-generator (jwt/create-generator clock (jwt/load-key-pair (config/rsa-keypair-file-path config-m))
                                                    (config/base-url config-m))
-          app (create-app config-m stores-m email-sender id-token-generator)]
+          app (create-app config-m clock stores-m email-sender id-token-generator)]
       (migration/run-migrations db)
       (admin/create-admin-user config-m (storage/get-user-store stores-m))
       (client-seed/load-client-credentials-and-store-clients (storage/get-client-store stores-m) (config/client-credentials-file-path config-m))

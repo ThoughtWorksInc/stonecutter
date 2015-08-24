@@ -47,5 +47,5 @@
 
 (defn build-app [app-config-override-m]
   (let [{:keys [prone-stack-tracing? config-m stores-m
-                email-sender token-generator]} (merge (default-app-config-m) app-config-override-m)]
-    (h/create-app config-m stores-m email-sender token-generator prone-stack-tracing?)))
+                email-sender token-generator clock]} (merge (default-app-config-m) app-config-override-m)]
+    (h/create-app config-m clock stores-m email-sender token-generator prone-stack-tracing?)))
