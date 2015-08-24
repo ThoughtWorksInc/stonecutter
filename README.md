@@ -173,7 +173,7 @@ To generate a public-private keypair in Json Web-key (JWK) format, enter the fol
 > lein gen-keypair <key-id>
 ```
 
-where the key-id is a custom identifier for the key (for example "<YYYYMMDD>-stonecutter").
+where the key-id is a custom identifier for the key (for example "20150824-stonecutter").
 
 This will generate output similar to the following:
 ```
