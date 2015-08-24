@@ -21,8 +21,10 @@
 (defn get-env
   "Like a normal 'get' except it also ensures the key is in the env-vars set"
   ([config-m key]
-   (get config-m (env-vars key)))
+   (get-env config-m key nil))
   ([config-m key default]
+   (when-not (env-vars key)
+     (throw (Exception. (format "Trying to get-env with key '%s' which is not in the env-vars set" key))))
    (get config-m (env-vars key) default)))
 
 (defn port [config-m]
@@ -35,7 +37,7 @@
   (get-env config-m :base-url "http://localhost:3000"))
 
 (defn- get-docker-mongo-uri [config-m]
-  (when-let [mongo-ip (:mongo-port-27017-tcp-addr config-m)]
+  (when-let [mongo-ip (get-env config-m :mongo-port-27017-tcp-addr)]
     (format "mongodb://%s:27017/stonecutter" mongo-ip)))
 
 (defn mongo-uri [config-m]
