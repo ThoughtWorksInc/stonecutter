@@ -152,7 +152,7 @@
 
 (defn create-app
   ([config-m clock stores-m email-sender id-token-generator]
-   (create-app config-m stores-m email-sender id-token-generator false))
+   (create-app config-m clock stores-m email-sender id-token-generator false))
   ([config-m clock stores-m email-sender id-token-generator prone-stacktraces?]
    (splitter (create-site-app clock config-m stores-m email-sender prone-stacktraces?) 
              (create-api-app config-m stores-m id-token-generator prone-stacktraces?))))
