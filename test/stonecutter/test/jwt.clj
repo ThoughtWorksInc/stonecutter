@@ -1,15 +1,18 @@
 (ns stonecutter.test.jwt
   (:require [midje.sweet :refer :all]
-            [stonecutter.jwt :as jwt])
+            [stonecutter.jwt :as jwt]
+            [stonecutter.test.util.time :as test-time]
+            [stonecutter.util.time :as t])
   (:import [org.jose4j.jwk RsaJwkGenerator JsonWebKey$OutputControlLevel]
-           [org.jose4j.jwt.consumer JwtConsumerBuilder]))
+           [org.jose4j.jwt.consumer JwtConsumerBuilder]
+           [org.jose4j.jwt NumericDate]))
 
 (def sub "uid")
 (def issuer "stonecutter-url")
 (def aud "client-id")
 (def token-lifetime-minutes 10)
 
-(defn decode [rsa-key-pair audience issuer id-token]
+(defn decode [clock rsa-key-pair audience issuer id-token]
   (let [jwtConsumer (-> (JwtConsumerBuilder.)
                         (.setRequireExpirationTime)
                         (.setAllowedClockSkewInSeconds 30)
@@ -17,6 +20,7 @@
                         (.setExpectedIssuer issuer)
                         (.setExpectedAudience (into-array [audience]))
                         (.setVerificationKey (.getKey rsa-key-pair))
+                        (.setEvaluationTime (NumericDate/fromMilliseconds (t/now-in-millis clock)))
                         (.build))]
     (.getClaimsMap (.processToClaims jwtConsumer id-token))))
 
@@ -46,24 +50,18 @@
 
 (facts "about generating id tokens"
        (let [rsa-key-pair (jwt/load-key-pair "./test-resources/test-key.json")
-             id-token-generator (jwt/create-generator rsa-key-pair issuer)
+             stub-clock (test-time/new-stub-clock 0)
+             id-token-generator (jwt/create-generator stub-clock rsa-key-pair issuer)
              additional-claims {:some-claim "some claim value"
                                 :some-other-claim "some other claim value"}
              id-token (id-token-generator sub aud token-lifetime-minutes additional-claims)
-             decoded-token (decode rsa-key-pair aud issuer id-token)]
+             decoded-token (decode stub-clock rsa-key-pair aud issuer id-token)]
 
          (fact "id tokens can be generated and signed"
                (get decoded-token "iss") => issuer
                (get decoded-token "sub") => sub
                (get decoded-token "aud") => aud
                (get decoded-token "some-claim") => "some claim value"
-               (get decoded-token "some-other-claim") => "some other claim value")
-
-         ; FIXME - QUARANTINED: this is a flaky test -> (- expiry issued-at) is sometimes 599 seconds
-         (future-fact "token expiry time is set correctly, based on token lifetime in minutes"
-               (let [issued-at (get decoded-token "iat")
-                     expiry (get decoded-token "exp")
-                     token-lifetime-in-seconds (* 60 token-lifetime-minutes)]
-                 (- expiry issued-at) => token-lifetime-in-seconds))
-                 
-                 ))
+               (get decoded-token "some-other-claim") => "some other claim value"
+               (get decoded-token "iat") => 0
+               (get decoded-token "exp") => 600)))

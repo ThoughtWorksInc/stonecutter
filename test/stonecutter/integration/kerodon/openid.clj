@@ -9,6 +9,7 @@
             [stonecutter.db.mongo :as m]
             [stonecutter.integration.kerodon.kerodon-checkers :as kh]
             [stonecutter.integration.kerodon.kerodon-selectors :as ks]
+            [stonecutter.integration.integration-helpers :as ih]
             [stonecutter.db.user :as user]
             [stonecutter.test.email :as test-email]))
 
@@ -76,7 +77,7 @@
        (facts "user can sign in through client"
               (let [stores (s/create-in-memory-stores)
                     {:keys [client-id client-secret]} (setup stores)]
-                (-> (k/session (h/create-app {:secure "false"} stores test-email-sender stub-token-generator))
+                (-> (k/session (ih/build-app {:stores-m stores :token-generator stub-token-generator}))
                     (browser-sends-authorisation-request-from-client-redirect client-id)
                     (k/follow-redirect)
                     ;; login

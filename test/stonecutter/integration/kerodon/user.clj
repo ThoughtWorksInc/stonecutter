@@ -53,9 +53,8 @@
    :body (str email-data)})
 
 (def email-sender (email/bash-sender-factory "test-resources/mail_stub.sh"))
-(defn stub-token-generator [& args] nil)
 
-(def test-app (h/create-app {:secure "false"} stores-m email-sender stub-token-generator))
+(def test-app (ih/build-app {:stores-m stores-m :email-sender email-sender}))
 
 (facts "Home url redirects to sign-in page if user is not signed in"
        (-> (k/session test-app)
@@ -265,36 +264,34 @@
 (fact "Error page is shown if an exception is thrown"
       (against-background
         (register-view/registration-form anything) =throws=> (Exception.))
-      (-> (k/session (h/create-app {:secure "false"} stores-m email-sender stub-token-generator))
+      (-> (k/session (ih/build-app {:prone-stack-tracing? false}))
           (k/visit "/register")
           (kh/response-status-is 500)
           (kh/selector-exists [ks/error-500-page-body]))
-      (fact "if dev mode is enabled then error middleware isn't invoked (exception not caught)"
-            (-> (k/session (h/create-app {:secure "false"} stores-m email-sender stub-token-generator true))
+      (fact "if prone stack-tracing is enabled then error middleware isn't invoked (exception not caught)"
+            (-> (k/session (ih/build-app {:prone-stack-tracing? true}))
                 (k/visit "/register")) => (throws Exception)))
 
 (fact "theme.css file is generated using environment variables"
-      (-> (k/session (h/create-app {:secure "false"
-                                    :header-bg-color "#012345"
-                                    :inactive-tab-font-color "#FEDCBA"
-                                    :static-resources-dir-path "./test-resources"
-                                    :logo-file-name "beautiful_logo.png"}
-                                   stores-m
-                                   email-sender
-                                   stub-token-generator))
+      (-> (k/session (ih/build-app {:config-m {:secure "false"
+                                               :header-bg-color "#012345"
+                                               :inactive-tab-font-color "#FEDCBA"
+                                               :static-resources-dir-path "./test-resources"
+                                               :logo-file-name "beautiful_logo.png"}}))
           (k/visit "/stylesheets/theme.css")
           (kh/response-status-is 200)
           (kh/response-body-contains "#012345")
           (kh/response-body-contains "#fedcba")
           (kh/response-body-contains "\"/beautiful_logo.png\"")))
 
+;; 2015-08-24 DM+JC TODO: This test doesn't seem to do anything?
 (fact "Correct css file is used when config includes a :theme"
-      (-> (k/session (h/create-app {:secure "false" :theme "MY_STYLING"} stores-m email-sender stub-token-generator))
+      (-> (k/session (ih/build-app {:config-m {:secure "false" :theme "MY_STYLING"}}))
           (k/visit "/sign-in")
           (kh/selector-has-attribute-with-content [ks/css-link] :href "/stylesheets/application.css")))
 
 (fact "Correct app-name is used when config includes an :app-name"
-      (-> (k/session (h/create-app {:secure "false" :app-name "My App Name"} stores-m email-sender stub-token-generator))
+      (-> (k/session (ih/build-app {:config-m {:secure "false" :app-name "My App Name"}}))
           (k/visit "/sign-in")
           (kh/selector-includes-content [ks/sign-in-app-name] "My App Name")))
 

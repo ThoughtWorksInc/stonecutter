@@ -3,13 +3,13 @@
             [kerodon.core :as k]
             [stonecutter.integration.integration-helpers :as ih]
             [stonecutter.integration.kerodon.kerodon-selectors :as ks]
+            [stonecutter.integration.kerodon.kerodon-checkers :as kc]
+            [stonecutter.integration.kerodon.kerodon-helpers :as kh]
+            [stonecutter.integration.kerodon.steps :as steps]
             [stonecutter.db.storage :as storage]
             [stonecutter.handler :as h]
             [stonecutter.test.email :as test-email]
             [stonecutter.routes :as r]
-            [stonecutter.integration.kerodon.kerodon-checkers :as kc]
-            [stonecutter.integration.kerodon.kerodon-helpers :as kh]
-            [stonecutter.integration.kerodon.steps :as steps]
             [stonecutter.logging :as l]))
 
 (l/init-logger!)
@@ -17,7 +17,6 @@
 
 (def stores-m (storage/create-mongo-stores (ih/get-test-db)))
 (def email-sender (test-email/create-test-email-sender))
-(defn stub-token-generator [& args] nil)
 
 (def base-url "https://myapp.com")
 (def user-email "user@blah.com")
@@ -32,7 +31,9 @@
          (k/visit state))))
 
 (facts "User can receive a reset password e-mail by following forgotten password link"
-       (-> (k/session (h/create-app {:secure "false" :base-url base-url} stores-m email-sender stub-token-generator))
+       (-> (k/session (ih/build-app {:config-m {:secure "false" :base-url base-url}
+                                     :stores-m stores-m
+                                     :email-sender email-sender}))
 
            ; User registers and signs out
            (steps/register user-email user-password)

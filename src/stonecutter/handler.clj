@@ -56,14 +56,13 @@
   (-> (r/response "pong")
       (r/content-type "text/plain")))
 
-(defn site-handlers [stores-m email-sender]
+(defn site-handlers [clock stores-m email-sender]
   (let [user-store (storage/get-user-store stores-m)
         client-store (storage/get-client-store stores-m)
         token-store (storage/get-token-store stores-m)
         confirmation-store (storage/get-confirmation-store stores-m)
         auth-code-store (storage/get-auth-code-store stores-m)
-        forgotten-password-store (storage/get-forgotten-password-store stores-m)
-        clock (time/new-clock)]
+        forgotten-password-store (storage/get-forgotten-password-store stores-m)]
     (->
       {:home                                 user/home
        :ping                                 ping
@@ -135,8 +134,8 @@
       (assoc-in [:session :store] session-store)
       (assoc-in [:security :anti-forgery] {:error-handler handle-anti-forgery-error})))
 
-(defn create-site-app [config-m stores-m email-sender dev-mode?]
-  (-> (scenic/scenic-handler routes/routes (site-handlers stores-m email-sender) not-found)
+(defn create-site-app [clock config-m stores-m email-sender dev-mode?]
+  (-> (scenic/scenic-handler routes/routes (site-handlers clock stores-m email-sender) not-found)
       (ring-mw/wrap-defaults (wrap-defaults-config (s/get-session-store stores-m) (config/secure? config-m)))
       m/wrap-translator
       (m/wrap-config config-m)
@@ -155,16 +154,18 @@
   ([config-m stores-m email-sender id-token-generator]
    (create-app config-m stores-m email-sender id-token-generator false))
   ([config-m stores-m email-sender id-token-generator prone-stacktraces?]
-   (splitter (create-site-app config-m stores-m email-sender prone-stacktraces?) 
-             (create-api-app config-m stores-m id-token-generator prone-stacktraces?))))
+   (let [clock (time/new-clock)]
+     (splitter (create-site-app clock config-m stores-m email-sender prone-stacktraces?) 
+               (create-api-app config-m stores-m id-token-generator prone-stacktraces?)))))
 
 (defn -main [& args]
   (let [config-m (config/create-config)]
     (vh/enable-template-caching!)
     (let [db (mongo/get-mongo-db (config/mongo-uri config-m))
           stores-m (storage/create-mongo-stores db)
+          clock (time/new-clock)
           email-sender (email/bash-sender-factory (config/email-script-path config-m))
-          id-token-generator (jwt/create-generator (jwt/load-key-pair (config/rsa-keypair-file-path config-m))
+          id-token-generator (jwt/create-generator clock (jwt/load-key-pair (config/rsa-keypair-file-path config-m))
                                                    (config/base-url config-m))
           app (create-app config-m stores-m email-sender id-token-generator)]
       (migration/run-migrations db)

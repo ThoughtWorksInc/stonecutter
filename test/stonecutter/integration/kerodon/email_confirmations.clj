@@ -5,6 +5,7 @@
             [stonecutter.email :as email]
             [stonecutter.integration.kerodon.kerodon-checkers :as kh]
             [stonecutter.integration.kerodon.kerodon-selectors :as ks]
+            [stonecutter.integration.integration-helpers :as ih]
             [stonecutter.routes :as routes]
             [stonecutter.handler :as h]
             [stonecutter.logging :as l]
@@ -12,8 +13,6 @@
             [stonecutter.integration.kerodon.steps :as steps]))
 
 (l/init-logger!)
-
-(def stores-m (storage/create-in-memory-stores))
 
 (defn parse-test-email []
   (read-string (slurp "test-tmp/test-email.txt")))
@@ -49,10 +48,11 @@
 (background (email/get-confirmation-renderer) => test-email-renderer)
 
 (def email-sender (email/bash-sender-factory "test-resources/mail_stub.sh"))
-(defn stub-token-generator [& args] nil)
+
+(def test-app (ih/build-app {:email-sender email-sender}))
 
 (facts "User is not confirmed when first registering for an account; Hitting the confirmation endpoint confirms the user account when the UUID in the uri matches that for the signed in user's account"
-       (-> (k/session (h/create-app {:secure "false"} stores-m email-sender stub-token-generator))
+       (-> (k/session test-app)
 
            (setup-test-directory)
 
@@ -71,12 +71,10 @@
            (kh/selector-not-present [:.clj--email-not-confirmed-message])
            (kh/selector-exists [:.clj--email-confirmed-message])
 
-           (teardown-test-directory)
-
-           ))
+           (teardown-test-directory)))
 
 (facts "The account confirmation flow can be followed by a user who is not signed in when first accessing the confirmation endpoint"
-       (-> (k/session (h/create-app {:secure "false"} stores-m email-sender stub-token-generator))
+       (-> (k/session test-app)
 
            (setup-test-directory)
 

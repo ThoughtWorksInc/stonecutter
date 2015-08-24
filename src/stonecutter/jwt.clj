@@ -1,8 +1,9 @@
 (ns stonecutter.jwt
-  (:require [clojure.tools.logging :as log])
+  (:require [clojure.tools.logging :as log]
+            [stonecutter.util.time :as t])
   (:import [org.jose4j.jwk JsonWebKey$Factory JsonWebKey$OutputControlLevel RsaJwkGenerator]
            [org.jose4j.jws JsonWebSignature AlgorithmIdentifiers]
-           [org.jose4j.jwt JwtClaims]))
+           [org.jose4j.jwt JwtClaims NumericDate]))
 
 (defn generate-rsa-key-pair [key-id]
   (doto (RsaJwkGenerator/generateJwk 2048)
@@ -29,13 +30,15 @@
 (defn set-additional-claims [jwt-claims claims-m]
   (doseq [[claim value] claims-m] (.setClaim jwt-claims (name claim) value)))
 
-(defn create-generator [rsa-key-pair issuer]
+(defn create-generator [clock rsa-key-pair issuer]
   (fn [sub aud token-lifetime-minutes additional-claims]
-    (let [jwt-claims (doto (JwtClaims.)
+    (let [now (t/now-in-millis clock)
+          expiration-time (+ now (* token-lifetime-minutes 60 1000))
+          jwt-claims (doto (JwtClaims.)
                        (.setIssuer issuer)
                        (.setAudience aud)
-                       (.setExpirationTimeMinutesInTheFuture token-lifetime-minutes)
-                       (.setIssuedAtToNow)
+                       (.setExpirationTime (NumericDate/fromMilliseconds expiration-time))
+                       (.setIssuedAt (NumericDate/fromMilliseconds now))
                        (.setSubject sub)
                        (set-additional-claims additional-claims))
           jws (doto (JsonWebSignature.)
@@ -44,5 +47,3 @@
                 (.setKeyIdHeaderValue (.getKeyId rsa-key-pair))
                 (.setAlgorithmHeaderValue AlgorithmIdentifiers/RSA_USING_SHA256))]
       (.getCompactSerialization jws))))
-
-
