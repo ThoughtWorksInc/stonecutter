@@ -109,12 +109,13 @@
                                           :show-reset-password-form
                                           :reset-password}))))
 
-(defn api-handlers [config-m stores-m id-token-generator]
+(defn api-handlers [config-m stores-m id-token-generator json-web-key-set]
   (let [auth-code-store (storage/get-auth-code-store stores-m)
         user-store (storage/get-user-store stores-m)
         client-store (storage/get-client-store stores-m)
         token-store (storage/get-token-store stores-m)]
-    {:validate-token (partial oauth/validate-token config-m auth-code-store client-store user-store token-store id-token-generator)}))
+    {:validate-token (partial oauth/validate-token config-m auth-code-store client-store user-store token-store id-token-generator)
+     :jwk-set (partial oauth/jwk-set json-web-key-set)}))
 
 (defn splitter [site api]
   (fn [request]
@@ -143,19 +144,21 @@
       (m/wrap-custom-static-resources config-m)
       ring-mct/wrap-content-type))
 
-(defn create-api-app [config-m stores-m id-token-generator dev-mode?]
-  (-> (scenic/scenic-handler routes/routes (api-handlers config-m stores-m id-token-generator) not-found)
+(defn create-api-app [config-m stores-m id-token-generator json-web-key-set dev-mode?]
+  (-> (scenic/scenic-handler routes/routes
+                             (api-handlers config-m stores-m id-token-generator json-web-key-set)
+                             not-found)
       (ring-mw/wrap-defaults (if (config/secure? config-m)
                                (assoc ring-mw/secure-api-defaults :proxy true)
                                ring-mw/api-defaults))
       (m/wrap-error-handling err-handler dev-mode?)))       ;; TODO create json error handler
 
 (defn create-app
-  ([config-m clock stores-m email-sender id-token-generator]
+  ([config-m clock stores-m email-sender id-token-generator json-web-key-set]
    (create-app config-m clock stores-m email-sender id-token-generator false))
-  ([config-m clock stores-m email-sender id-token-generator prone-stacktraces?]
+  ([config-m clock stores-m email-sender id-token-generator json-web-key-set prone-stacktraces?]
    (splitter (create-site-app clock config-m stores-m email-sender prone-stacktraces?) 
-             (create-api-app config-m stores-m id-token-generator prone-stacktraces?))))
+             (create-api-app config-m stores-m id-token-generator json-web-key-set prone-stacktraces?))))
 
 (defn -main [& args]
   (let [config-m (config/create-config)]
@@ -164,9 +167,11 @@
           stores-m (storage/create-mongo-stores db)
           clock (time/new-clock)
           email-sender (email/bash-sender-factory (config/email-script-path config-m))
-          id-token-generator (jwt/create-generator clock (jwt/load-key-pair (config/rsa-keypair-file-path config-m))
+          json-web-key (jwt/load-key-pair (config/rsa-keypair-file-path config-m))
+          json-web-key-set (jwt/json-web-key->json-web-key-set json-web-key)
+          id-token-generator (jwt/create-generator clock json-web-key
                                                    (config/base-url config-m))
-          app (create-app config-m clock stores-m email-sender id-token-generator)]
+          app (create-app config-m clock stores-m email-sender id-token-generator json-web-key-set)]
       (migration/run-migrations db)
       (admin/create-admin-user config-m (storage/get-user-store stores-m))
       (client-seed/load-client-credentials-and-store-clients (storage/get-client-store stores-m) (config/client-credentials-file-path config-m))

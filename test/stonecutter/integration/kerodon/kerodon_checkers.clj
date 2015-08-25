@@ -107,6 +107,10 @@
           (:id_token response-body) => value))
   state)
 
+(defn response-type-is [state response-type]
+  (fact {:midje/name (str "Checking that response type is " response-type)}
+        (get-in state [:response :headers "Content-Type"]) => response-type)
+  state)
 
 ;; FIXME can't reuse the body because it's a buffered input stream - 06 Jul 2015
 (defn replay-last-request [state]

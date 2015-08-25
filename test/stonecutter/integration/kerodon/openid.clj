@@ -3,6 +3,7 @@
             [kerodon.core :as k]
             [ring.mock.request :as r]
             [clojure.string :as string]
+            [cheshire.core :as json]
             [clauth.client :as cl-client]
             [stonecutter.handler :as h]
             [stonecutter.db.storage :as s]
@@ -92,3 +93,17 @@
                     ; return 200 with new access_token
                     (kh/response-has-access-token)
                     (kh/response-has-id-token-with-value "an-id-token")))))
+
+(defn check-response-is-jwk-set [state]
+  (fact {:midje/name "Checking if response is a jwk-set"}
+        (let [response-body (-> state :response :body json/parse-string)]
+          (get-in state [:response :status]) => 200
+          (kh/response-type-is state "application/json")
+          response-body => (contains {"keys" anything})))
+  state)
+
+(fact "about the jwk-set endpoint"
+      (-> (k/session (ih/build-app {}))
+          (k/visit "/api/jwk-set")
+          (kh/page-uri-is "/api/jwk-set")
+          check-response-is-jwk-set))

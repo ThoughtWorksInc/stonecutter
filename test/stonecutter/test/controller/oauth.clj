@@ -348,3 +348,10 @@
              (oauth/is-redirect-uri-valid? ...client-store... ...client-id... correct-url) => nil
              (provided
               (client/retrieve-client ...client-store... ...client-id...) => {})))
+
+(fact "jwk-set returns the passed in string with json content type"
+      (let [jwk-set-json "{\"json-web-key-set\": \"stuff\"}"
+            response (oauth/jwk-set jwk-set-json {})]
+        (:status response) => 200
+        (:body response) => jwk-set-json
+        (get-in response [:headers "Content-Type"]) => "application/json"))

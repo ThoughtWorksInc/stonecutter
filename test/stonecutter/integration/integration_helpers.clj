@@ -37,15 +37,16 @@
   (reset! db-and-conn nil))
 
 (defn default-app-config-m []
-  {:prone-stack-tracing? false
-   :config-m {:secure "false"}
-   :stores-m (s/create-in-memory-stores)
-   :email-sender (e/create-test-email-sender)
-   :clock (t/new-clock)
-   :token-generator (jwt/create-generator (t/new-clock) (jwt/load-key-pair "test-resources/test-key.json")
-                                          (c/base-url {}))})
+  (let [json-web-key (jwt/load-key-pair "test-resources/test-key.json")]
+    {:prone-stack-tracing? false
+     :config-m {:secure "false"}
+     :stores-m (s/create-in-memory-stores)
+     :email-sender (e/create-test-email-sender)
+     :clock (t/new-clock)
+     :token-generator (jwt/create-generator (t/new-clock) json-web-key (c/base-url {}))
+     :json-web-key-set (jwt/json-web-key->json-web-key-set json-web-key)}))
 
 (defn build-app [app-config-override-m]
-  (let [{:keys [prone-stack-tracing? config-m stores-m
-                email-sender token-generator clock]} (merge (default-app-config-m) app-config-override-m)]
-    (h/create-app config-m clock stores-m email-sender token-generator prone-stack-tracing?)))
+  (let [{:keys [prone-stack-tracing? config-m stores-m json-web-key-set
+                email-sender token-generator clock ]} (merge (default-app-config-m) app-config-override-m)]
+    (h/create-app config-m clock stores-m email-sender token-generator json-web-key-set prone-stack-tracing?)))

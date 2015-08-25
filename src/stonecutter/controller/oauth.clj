@@ -1,5 +1,6 @@
 (ns stonecutter.controller.oauth
   (:require [clauth.endpoints :as cl-ep]
+            [ring.util.response :as r]
             [cheshire.core :as json]
             [cemerick.url :as url]
             [clojure.tools.logging :as log]
@@ -117,3 +118,7 @@
         user-info (generate-user-info (:subject auth-code-record)) 
         body (token-response-body config-m id-token-generator (:body clauth-response) user-info auth-code-record)] 
     (-> clauth-response (assoc :body body))))
+
+(defn jwk-set [json-web-key-set request]
+  (-> (r/response json-web-key-set)
+      (r/content-type "application/json")))

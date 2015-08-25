@@ -1,7 +1,7 @@
 (ns stonecutter.jwt
   (:require [clojure.tools.logging :as log]
             [stonecutter.util.time :as t])
-  (:import [org.jose4j.jwk JsonWebKey$Factory JsonWebKey$OutputControlLevel RsaJwkGenerator]
+  (:import [org.jose4j.jwk JsonWebKey$Factory JsonWebKey$OutputControlLevel RsaJwkGenerator JsonWebKeySet]
            [org.jose4j.jws JsonWebSignature AlgorithmIdentifiers]
            [org.jose4j.jwt JwtClaims NumericDate]))
 
@@ -19,6 +19,9 @@
    (if (= flag :include-private-key)
      (.toJson key-pair JsonWebKey$OutputControlLevel/INCLUDE_PRIVATE)
      (.toJson key-pair))))
+
+(defn json-web-key->json-web-key-set [json-web-key]
+  (.toJson (JsonWebKeySet. [json-web-key])))
 
 (defn load-key-pair [path]
   (try
