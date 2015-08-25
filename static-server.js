@@ -45,6 +45,10 @@ app.get(signInRoutes, function (req, res) {
   customRender(res, 'sign-in', pageData);
 });
 
+app.all('/home', function (req, res) {
+  customRender(res, 'home', pageData);
+});
+
 app.all('/register', function (req, res) {
   customRender(res, 'register', pageData);
 });
