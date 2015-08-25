@@ -1,11 +1,14 @@
 (ns stonecutter.test.jwt
   (:require [midje.sweet :refer :all]
+            [cheshire.core :as json]
             [stonecutter.jwt :as jwt]
+            [stonecutter.routes :as routes]
             [stonecutter.test.util.time :as test-time]
             [stonecutter.util.time :as t])
   (:import [org.jose4j.jwk RsaJwkGenerator JsonWebKey$OutputControlLevel]
            [org.jose4j.jwt.consumer JwtConsumerBuilder]
-           [org.jose4j.jwt NumericDate]))
+           [org.jose4j.jwt NumericDate]
+           [org.jose4j.jwx JsonWebStructure]))
 
 (def sub "uid")
 (def issuer "stonecutter-url")
@@ -64,4 +67,11 @@
                (get decoded-token "some-claim") => "some claim value"
                (get decoded-token "some-other-claim") => "some other claim value"
                (get decoded-token "iat") => 0
-               (get decoded-token "exp") => 600)))
+               (get decoded-token "exp") => 600)
+
+         (fact "the jwk set url is provided in the header"
+               (-> (JsonWebStructure/fromCompactSerialization id-token)
+                   .getHeaders
+                   .getFullHeaderAsJsonString
+                   json/parse-string
+                   (get "jku")) => (contains "/api/jwk-set"))))

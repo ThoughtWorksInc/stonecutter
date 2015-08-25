@@ -157,7 +157,7 @@
   ([config-m clock stores-m email-sender id-token-generator json-web-key-set]
    (create-app config-m clock stores-m email-sender id-token-generator false))
   ([config-m clock stores-m email-sender id-token-generator json-web-key-set prone-stacktraces?]
-   (splitter (create-site-app clock config-m stores-m email-sender prone-stacktraces?) 
+   (splitter (create-site-app clock config-m stores-m email-sender prone-stacktraces?)
              (create-api-app config-m stores-m id-token-generator json-web-key-set prone-stacktraces?))))
 
 (defn -main [& args]

@@ -1,9 +1,11 @@
 (ns stonecutter.jwt
   (:require [clojure.tools.logging :as log]
+            [stonecutter.routes :as routes]
             [stonecutter.util.time :as t])
   (:import [org.jose4j.jwk JsonWebKey$Factory JsonWebKey$OutputControlLevel RsaJwkGenerator JsonWebKeySet]
            [org.jose4j.jws JsonWebSignature AlgorithmIdentifiers]
-           [org.jose4j.jwt JwtClaims NumericDate]))
+           [org.jose4j.jwt JwtClaims NumericDate]
+           [org.jose4j.jwx HeaderParameterNames]))
 
 (defn generate-rsa-key-pair [key-id]
   (doto (RsaJwkGenerator/generateJwk 2048)
@@ -48,5 +50,6 @@
                 (.setPayload (.toJson jwt-claims))
                 (.setKey (.getPrivateKey rsa-key-pair))
                 (.setKeyIdHeaderValue (.getKeyId rsa-key-pair))
-                (.setAlgorithmHeaderValue AlgorithmIdentifiers/RSA_USING_SHA256))]
+                (.setAlgorithmHeaderValue AlgorithmIdentifiers/RSA_USING_SHA256)
+                (.setHeader HeaderParameterNames/JWK_SET_URL (str issuer (routes/path :jwk-set))))]
       (.getCompactSerialization jws))))
