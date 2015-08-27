@@ -33,15 +33,17 @@
   (th/create-request :get confirm-email-path {:confirmation-id confirmation-id}))
 
 (facts "about confirm-email-with-id"
-       (fact "if the confirmation UUID in the URL matches that of the signed in user's user record confirm the account and redirect home"
+       (fact "if the confirmation UUID in the URL matches that of the signed in user's user record confirm the account and redirect home with confirmation flash message"
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
                    user (user/store-user! user-store email "password")
                    confirmation (conf/store! confirmation-store email confirmation-id)
                    request (-> confirm-email-request
-                               (with-signed-in-user token-store user))]
-               (ec/confirm-email-with-id user-store confirmation-store request) => (th/check-redirects-to (routes/path :home))
+                               (with-signed-in-user token-store user))
+                   response (ec/confirm-email-with-id user-store confirmation-store request)]
+               response => (th/check-redirects-to (routes/path :home))
+               (:flash response) => :email-confirmed
                (user/retrieve-user user-store (:login user)) =not=> (contains {:confirmation-id anything})
                (user/retrieve-user user-store (:login user)) => (contains {:confirmed? true})))
 

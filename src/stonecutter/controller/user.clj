@@ -49,6 +49,7 @@
                 (common/sign-in-user token-store user (:session request))
                 (assoc :flash {:flash-type :confirm-email-sent
                                :email-address (:login user)}))))
+
       (show-registration-form request-with-validation-errors))))
 
 (defn show-change-password-form [request]
@@ -155,4 +156,7 @@
     (r/redirect (routes/path :show-profile))))
 
 (defn home [request]
-  (r/redirect (routes/path :show-profile)))
+  (let [response (r/redirect (routes/path :show-profile))]
+    (if-let [flash (:flash request)]
+      (assoc response :flash flash)
+      response)))

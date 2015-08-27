@@ -17,6 +17,7 @@
 (def profile-change-password-link :.func--change-password__link)
 (def profile-delete-account-link :.func--delete-account__link)
 (def profile-flash-message :.func--flash-message-container)
+(def profile-unconfirmed-email-message :.func--unconfirmed-email-message-container)
 
 (def unshare-profile-card-confirm-button :.func--unshare-profile-card__button)
 

@@ -18,15 +18,17 @@ block content
 
     .clj--flash-message-container.func--flash-message-container
       .flash-message.flash-message--success
-        p.flash-message__title(data-l8n="content:flash/password-changed") !Your password was saved successfully.
+        p.flash-message__title.clj--flash-message-text !Success Flash Message.
+
+    .clj--unconfirmed-email-message-container.func--unconfirmed-email-message-container
+      .flash-message.flash-message--fail
+        p.flash-message__title(data-l8n="content:profile/email-not-confirmed") !Your email address is not yet confirmed.
 
     .card-preview
       h2 Your Profile Card
         = " "
         span.clj--admin__span(data-l8n="content:profile/admin-span") !Mighty Admin
       p Manage your shared details with allowed applications.
-      p.clj--email-not-confirmed-message(data-l8n="content:profile/email-not-confirmed") !Your email address is not yet confirmed.
-      p.clj--email-confirmed-message(data-l8n="content:profile/email-confirmed") !Your email address has been confirmed.
       .wrapper__card
         .card
           .card__row.card__row--bottom-border

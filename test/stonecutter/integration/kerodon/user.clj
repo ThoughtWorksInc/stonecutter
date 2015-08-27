@@ -102,64 +102,6 @@
            (kh/selector-exists [ks/profile-page-body])
            (kh/selector-includes-content [:.func--card-email] "email@server.com")))
 
-(facts "User is not confirmed when first registering for an account; Hitting the confirmation endpoint confirms the user account when the UUID in the query string matches that for the signed in user's account"
-       (against-background
-        (email/get-confirmation-renderer) => test-email-renderer)
-       (-> (k/session test-app)
-
-           (setup-test-directory)
-
-           (steps/register "confirmation-test@email.com" "valid-password")
-
-           (k/visit (routes/path :show-profile))
-           (kh/selector-exists [:.clj--email-not-confirmed-message])
-           (kh/selector-not-present [:.clj--email-confirmed-message])
-
-           (k/visit (routes/path :confirm-email-with-id
-                                 :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
-           (k/follow-redirect)
-           (kh/page-uri-is (routes/path :home))
-           (k/follow-redirect)
-           (kh/page-uri-is (routes/path :show-profile))
-
-           (kh/selector-not-present [:.clj--email-not-confirmed-message])
-           (kh/selector-exists [:.clj--email-confirmed-message])
-
-           (teardown-test-directory)))
-
-(facts "The account confirmation flow can be followed by a user who is not signed in when first accessing the confirmation endpoint"
-       (against-background
-        (email/get-confirmation-renderer) => test-email-renderer)
-       (-> (k/session test-app)
-           (setup-test-directory)
-
-           (steps/register "confirmation-test-2@email.com" "valid-password")
-           (k/visit "/profile")
-           (k/follow ks/sign-out-link)
-           (k/follow-redirect)
-
-           (k/visit (routes/path :confirm-email-with-id
-                                 :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
-
-           (k/follow-redirect)
-           (kh/page-uri-is (routes/path :confirmation-sign-in-form
-                                        :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
-
-           (k/fill-in ks/sign-in-password-input "valid-password")
-           (k/press ks/sign-in-submit)
-
-           (k/follow-redirect)
-           (kh/page-uri-is (routes/path :confirm-email-with-id
-                                        :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
-           (k/follow-redirect)
-           (kh/page-uri-is (routes/path :home))
-           (k/follow-redirect)
-           (kh/page-uri-is (routes/path :show-profile))
-           (kh/selector-not-present [:.clj--email-not-confirmed-message])
-           (kh/selector-exists [:.clj--email-confirmed-message])
-
-           (teardown-test-directory)))
-
 (facts "User is redirected to sign-in page when accessing profile page not signed in"
        (-> (k/session test-app)
            (k/visit "/profile")

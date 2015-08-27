@@ -40,15 +40,25 @@
 
        (fact "password-changed flash message is displayed on page if it is in the flash of request"
              (let [page (-> (th/create-request) (assoc :flash :password-changed) profile)]
-               (-> page (html/select [:.clj--flash-message-container])) =not=> empty?)))
+               (-> page (html/select [:.clj--flash-message-container])) =not=> empty?
+               (-> page (html/select [:.clj--flash-message-text]) first :attrs :data-l8n)
+               => "content:flash/password-changed"))
+
+       (fact "email-confirmed flash message is displayed on page if it is in the flash of request"
+             (let [page (-> (th/create-request) (assoc :flash :email-confirmed) profile)]
+               (-> page (html/select [:.clj--flash-message-container])) =not=> empty?
+               (-> page (html/select [:.clj--flash-message-text]) first :attrs :data-l8n)
+               => "content:flash/email-confirmed")))
+
 
 (facts "about displaying email confirmation status"
-       (fact "accounts with unconfirmed email addresses display unconfirmed message and don't display confirmed message"
-             (let [page (-> (th/create-request)
-                            (assoc-in [:context :confirmed?] false)
-                            profile)]
-               (-> page (html/select [:.clj--email-not-confirmed-message])) =not=> empty?   
-               (-> page (html/select [:.clj--email-confirmed-message])) => empty?)))
+       (fact "the unconfirmed email message is removed when :confirmed? context is not false"
+             (let [page (-> (th/create-request) profile)]
+               (-> page (html/select [:.clj--unconfirmed-email-message-container])) => empty?))
+
+       (fact "accounts with unconfirmed email addresses display unconfirmed message as if it were a flash message"
+             (let [page (-> (th/create-request) (assoc-in [:context :confirmed?] false) profile)]
+               (-> page (html/select [:.clj--unconfirmed-email-message-container])) =not=> empty?)))
 
 (facts "about displaying authorised clients"
        (fact "names of authorised clients are displayed"

@@ -3,7 +3,8 @@
             [kerodon.core :as k]
             [clojure.java.io :as io]
             [stonecutter.email :as email]
-            [stonecutter.integration.kerodon.kerodon-checkers :as kh]
+            [stonecutter.integration.kerodon.kerodon-checkers :as kc]
+            [stonecutter.integration.kerodon.kerodon-helpers :as kh]
             [stonecutter.integration.kerodon.kerodon-selectors :as ks]
             [stonecutter.integration.integration-helpers :as ih]
             [stonecutter.routes :as routes]
@@ -59,17 +60,15 @@
            (steps/register "confirmation-test@email.com" "valid-password")
 
            (k/visit (routes/path :show-profile))
-           (kh/selector-exists [:.clj--email-not-confirmed-message])
-           (kh/selector-not-present [:.clj--email-confirmed-message])
+           (kc/selector-exists [ks/profile-unconfirmed-email-message])
 
            (k/visit (routes/path :confirm-email-with-id
                                  :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
-           (kh/check-and-follow-redirect)
-           (kh/page-uri-is (routes/path :home))
+           (kc/check-and-follow-redirect)
+           (kc/page-uri-is (routes/path :home))
            (k/follow-redirect)
-           (kh/page-uri-is (routes/path :show-profile))
-           (kh/selector-not-present [:.clj--email-not-confirmed-message])
-           (kh/selector-exists [:.clj--email-confirmed-message])
+           (kc/page-uri-is (routes/path :show-profile))
+           (kc/selector-exists [ks/profile-flash-message])
 
            (teardown-test-directory)))
 
@@ -81,28 +80,27 @@
            (steps/register "confirmation-test-2@email.com" "valid-password")
            (k/visit "/profile")
            (k/follow ks/sign-out-link)
-           (kh/check-and-follow-redirect "just signed out")
+           (kc/check-and-follow-redirect "just signed out")
 
            (k/visit (routes/path :confirm-email-with-id
                                  :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
-           (kh/page-uri-is (routes/path :confirm-email-with-id
+           (kc/page-uri-is (routes/path :confirm-email-with-id
                                         :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
 
-           (kh/check-and-follow-redirect "redirecting to sign in")
-           (kh/page-uri-is (routes/path :confirmation-sign-in-form
+           (kc/check-and-follow-redirect "redirecting to sign in")
+           (kc/page-uri-is (routes/path :confirmation-sign-in-form
                                         :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
            (k/fill-in ks/sign-in-password-input "valid-password")
            (k/press ks/sign-in-submit)
 
            (k/follow-redirect)
-           (kh/page-uri-is (routes/path :confirm-email-with-id
+           (kc/page-uri-is (routes/path :confirm-email-with-id
                                         :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
 
            (k/follow-redirect)
-           (kh/page-uri-is (routes/path :home))
+           (kc/page-uri-is (routes/path :home))
            (k/follow-redirect)
-           (kh/page-uri-is (routes/path :show-profile))
-           (kh/selector-not-present [:.clj--email-not-confirmed-message])
-           (kh/selector-exists [:.clj--email-confirmed-message])
+           (kc/page-uri-is (routes/path :show-profile))
+           (kc/selector-exists [ks/profile-flash-message])
 
            (teardown-test-directory)))

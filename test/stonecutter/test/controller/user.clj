@@ -35,6 +35,10 @@
 (background
   (email/get-confirmation-renderer) => test-email-renderer)
 
+(fact "home controller redirects to show-profile and passes on the flash message"
+      (u/home {:flash :foo}) => (every-checker (th/check-redirects-to (routes/path :show-profile))
+                                               (contains {:flash :foo})))
+
 (facts "about registration"
        (fact "user can register with valid credentials and is redirected to profile-created page, with user-login and access_token added to session"
              (let [user-store (m/create-memory-store)
@@ -320,7 +324,7 @@
                (c/retrieve-client ...client-store... ...client-id-2...) => {:name "CLIENT 2"}))
 
        (tabular
-         (fact "user confirmation status is displayed appropriately"
+         (fact "unconfirmed email message is displayed only when user :confirmed? is false"
                (against-background
                  (user/retrieve-user ...user-store... ...email...) => {:login      ...email...
                                                                        :confirmed? ?confirmed})
@@ -329,13 +333,13 @@
                           (u/show-profile (m/create-memory-store) ...user-store...)
                           :body
                           html/html-snippet)]
+                 (html/select enlive-snippet [:.clj--unconfirmed-email-message-container]) => ?check))
 
-                 (html/select enlive-snippet [?should-show]) => (one-of anything)
-                 (html/select enlive-snippet [?should-hide]) => empty?))
+         ?confirmed ?check
+         false      (one-of anything)
+         true       empty?
+         nil        empty?)
 
-         ?confirmed ?should-show ?should-hide
-         true :.clj--email-confirmed-message :.clj--email-not-confirmed-message
-         false :.clj--email-not-confirmed-message :.clj--email-confirmed-message)
 
        (tabular
          (fact "admin status is displayed appropriately"

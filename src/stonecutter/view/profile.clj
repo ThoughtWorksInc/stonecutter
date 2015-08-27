@@ -43,21 +43,26 @@
   (html/at enlive-m
            [:.clj--delete-account__link] (html/set-attr :href (r/path :show-delete-account-confirmation))))
 
-(defn display-email-confirmation-status [request enlive-m]
-    (let [confirmed? (get-in request [:context :confirmed?])]
-      (if confirmed?
-        (html/at enlive-m [:.clj--email-not-confirmed-message] nil)
-        (html/at enlive-m [:.clj--email-confirmed-message] nil))))
-
 (defn hide-admin-span [request enlive-m]
   (let [role (get-in request [:context :role])]
     (html/at enlive-m [:.clj--admin__span]
              (when (= role (:admin config/roles)) identity))))
 
+(defn diplay-email-unconfirmed-message [request enlive-m]
+  (if (= false (get-in request [:context :confirmed?]))
+    enlive-m
+    (vh/remove-element enlive-m [:.clj--unconfirmed-email-message-container])))
+
+(defn set-flash-message [request enlive-m]
+  (case (:flash request)
+    :password-changed (html/at enlive-m [:.clj--flash-message-text] (html/set-attr :data-l8n "content:flash/password-changed"))
+    :email-confirmed (html/at enlive-m [:.clj--flash-message-text] (html/set-attr :data-l8n "content:flash/email-confirmed"))
+    (vh/remove-element enlive-m [:.clj--flash-message-container])))
+
 (defn profile [request]
   (->> (vh/load-template "public/profile.html")
-       (vh/set-flash-message request :password-changed)
-       (display-email-confirmation-status request)
+       (set-flash-message request)
+       (diplay-email-unconfirmed-message request)
        (add-username request)
        (add-application-list request)
        set-sign-out-link

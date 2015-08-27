@@ -96,7 +96,6 @@ profile:
   change-password-button: Change password
   delete-button: Delete account
   email-not-confirmed: Your email address is not yet confirmed.
-  email-confirmed: Your email address has been confirmed.
   admin-span: ", Mighty Admin!"
 
 applications:
@@ -170,6 +169,7 @@ modal:
 
 flash:
   password-changed: "Your password has been changed!"
+  email-confirmed: "Your email address has been confirmed!"
   confirm-email-sent-pre-email-address: "A confirmation email has been sent to:"
   confirm-email-sent-post-email-address: "Please follow the instructions to confirm your email address."
   expired-password-reset: "This reset password link has already been used, or has expired -  please enter your e-mail below to receive a new email."

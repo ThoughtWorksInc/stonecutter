@@ -17,7 +17,8 @@
   (log/debug (format "confirmation-ids match. Confirming user's email."))
   (user/confirm-email! user-store user)
   (conf/revoke! confirmation-store confirmation-id)
-  (r/redirect (routes/path :home)))
+  (-> (r/redirect (routes/path :home))
+      (assoc :flash :email-confirmed)))
 
 (defn mismatch-confirmation-id-response [request]
   (log/debug (format "confirmation-ids DID NOT match. SIGNING OUT"))
