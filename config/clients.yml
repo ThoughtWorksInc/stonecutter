@@ -2,3 +2,8 @@
   client-id: AAAA
   client-secret: AAAA
   url: http://dummyparty.com
+
+- name: Mooncake
+  client-id: LOCALMOONCAKE
+  client-secret: MOONCAKESECRET
+  url: http://localhost:3000

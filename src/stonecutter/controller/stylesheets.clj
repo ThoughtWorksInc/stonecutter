@@ -14,13 +14,16 @@
                 [".tabs__item:not(.tabs__item--active)" {:color inactive-tab-font-color}])))
 
 (defn header-logo-css [config-m]
-  (when (config/static-resources-dir-path config-m)
-    (when-let [logo-file-name (config/logo-file-name config-m)]
-      (garden/css {:pretty-print? false}
-                  [:.header__logo {:background (str "url(\"/"  logo-file-name "\") 50% 0 no-repeat")}]))))
+  (when-let [logo-file-name (config/logo-file-name config-m)]
+    (garden/css {:pretty-print? false}
+                [:.header__logo {:background (str "url(" logo-file-name ") 50% 0 no-repeat")
+                                 :backgroundsize :contain}]
+
+                )))
 
 (defn generate-theme-css [config-m]
   (str
+    "/* Theme CSS */\n"
     (header-bg-color-css config-m)
     (header-logo-css config-m)
     (inactive-tab-font-color-css config-m)))

@@ -73,7 +73,7 @@
   (get-env config-m :static-resources-dir-path))
 
 (defn logo-file-name [config-m]
-  (get-env config-m :logo-file-name))
+  (get-env config-m :logo-file-name "../images/logo.svg"))
 
 (defn favicon-file-name [config-m]
   (get-env config-m :favicon-file-name))
