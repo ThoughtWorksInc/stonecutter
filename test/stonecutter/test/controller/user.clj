@@ -81,7 +81,7 @@
                (:email (test-email/last-sent-email test-email-sender)) => default-email
                (:body (test-email/last-sent-email test-email-sender)) => (contains {:confirmation-id confirmation-id})))
 
-       (fact "when user email is send, flash message is assoc-ed in response"
+       (fact "when user email is sent, flash message is assoc-ed in response"
              (against-background
                (uuid/uuid) => confirmation-id)
              (let [user-store (m/create-memory-store)
@@ -90,7 +90,9 @@
                    test-email-sender (test-email/create-test-email-sender)
                    response (->> (th/create-request :post (routes/path :register-user) default-register-user-params)
                                  (u/register-user user-store token-store confirmation-store test-email-sender))]
-               (:flash response) => :confirm-email-sent)))
+               (:flash response) => {:flash-type :confirm-email-sent
+                                     :email-address default-email})))
+
 
 (facts "about registration validation errors"
        (fact "email must not be a duplicate"

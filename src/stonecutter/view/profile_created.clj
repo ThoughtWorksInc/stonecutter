@@ -24,11 +24,19 @@
 (defn get-next-url [from-app request]
   (if from-app (get-in request [:session :return-to]) (r/path :show-profile)))
 
+(defn set-flash-message [request enlive-m]
+  (let [{:keys [flash-type email-address]} (:flash request)]
+    (if (and email-address (= flash-type :confirm-email-sent))
+      (html/at enlive-m
+               [:.clj--email-address] (html/content email-address))
+      (vh/remove-element enlive-m [:.clj--flash-message-container]))))
+
+
 (defn profile-created [request]
   (let [from-app (get-in request [:params :from-app])
         next-url (get-next-url from-app request)]
     (->> (vh/load-template "public/profile-created.html")
          (set-next-link next-url)
-         (vh/set-flash-message request :confirm-email-sent)
+         (set-flash-message request)
          (set-button-text from-app)
          vh/remove-work-in-progress)))

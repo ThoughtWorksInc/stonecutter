@@ -47,7 +47,8 @@
             (send-confirmation-email! email-sender user email confirmation-id config-m)
             (-> (response/redirect (routes/path :show-profile-created))
                 (common/sign-in-user token-store user (:session request))
-                (assoc :flash :confirm-email-sent))))
+                (assoc :flash {:flash-type :confirm-email-sent
+                               :email-address (:login user)}))))
       (show-registration-form request-with-validation-errors))))
 
 (defn show-change-password-form [request]

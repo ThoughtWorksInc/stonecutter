@@ -9,6 +9,7 @@
 (def registration-email-validation-element :.clj--registration-email__validation)
 
 (def profile-created-page-body :.func--profile-created-page)
+(def profile-created-flash :.func--flash-message-container)
 (def profile-page-body :.func--profile-page)
 (def profile-deleted-page-body :.func--profile-deleted-page)
 (def profile-authorised-client-list :.func--app__list)

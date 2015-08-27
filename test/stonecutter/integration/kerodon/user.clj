@@ -94,6 +94,7 @@
            (kh/page-uri-is "/profile-created")
            (kh/response-status-is 200)
            (kh/selector-exists [ks/profile-created-page-body])
+           (kh/selector-includes-content [ks/profile-created-flash] "email@server.com")
 
            (k/visit "/profile")
            (kh/page-uri-is "/profile")

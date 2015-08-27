@@ -18,8 +18,12 @@
 
 (fact "there are no missing translations"
       (let [translator (t/translations-fn t/translation-map)
-            page (-> (th/create-request) profile-created (helper/enlive-response {:translator translator}) :body)]
-        page => th/no-untranslated-strings))
+            page-with-flash (-> (th/create-request)
+                                (assoc :flash {:flash-type :confirm-email-sent :email-address "foo@bar.com"})
+                                profile-created
+                                (helper/enlive-response {:translator translator})
+                                :body)]
+        page-with-flash => th/no-untranslated-strings))
 
 (facts "when registering on stonecutter"
        (let [page (-> (th/create-request)
@@ -47,5 +51,6 @@
                (-> page (html/select [:.clj--flash-message-container])) => empty?))
 
        (fact "email sent flash message is displayed on page if it is in the flash of request"
-             (let [page (-> (th/create-request) (assoc :flash :confirm-email-sent) profile-created)]
-               (-> page (html/select [:.clj--flash-message-container])) =not=> empty?)))
+             (let [page (-> (th/create-request) (assoc :flash {:flash-type :confirm-email-sent
+                                                               :email-address "foo@bar.com"}) profile-created)]
+               (-> page (html/select [:.clj--flash-message-container]) first html/text) => (contains "foo@bar.com"))))
