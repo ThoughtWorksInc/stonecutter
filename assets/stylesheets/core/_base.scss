@@ -19,6 +19,10 @@
   margin: 0 auto;
   padding-left: 1rem;
   padding-right: 1rem;
+  padding-bottom: 1rem;
+  @include width-from($medium_device) {
+    padding-bottom: 2rem;
+  }
 }
 .max-medium {
   max-width: $medium_device;

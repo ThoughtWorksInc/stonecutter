@@ -5,7 +5,7 @@
 (def env-vars #{:port :host :base-url :mongo-port-27017-tcp-addr
                 :mongo-uri :client-credentials-file-path
                 :theme :secure :email-script-path :app-name
-                :header-bg-color :inactive-tab-font-color
+                :header-bg-color
                 :static-resources-dir-path :logo-file-name
                 :favicon-file-name :admin-login :admin-password
                 :password-reset-expiry
@@ -67,9 +67,6 @@
 
 (defn header-bg-color [config-m]
   (get-env config-m :header-bg-color))
-
-(defn inactive-tab-font-color [config-m]
-  (get-env config-m :inactive-tab-font-color))
 
 (defn static-resources-dir-path [config-m]
   (get-env config-m :static-resources-dir-path))

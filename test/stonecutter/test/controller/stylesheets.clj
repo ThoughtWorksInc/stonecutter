@@ -1,7 +1,7 @@
 (ns stonecutter.test.controller.stylesheets
   (:require [midje.sweet :refer :all]
             [stonecutter.controller.stylesheets :refer [generate-theme-css header-bg-color-css
-                                                        header-logo-css inactive-tab-font-color-css]]))
+                                                        header-logo-css]]))
 
 (defn gen-header-logo [path]
   (format ".header__logo{background-image:url(%s)}" path))
@@ -9,11 +9,10 @@
 (def default-header-logo (gen-header-logo "../images/logo.svg"))
 
 (fact "generate-theme-css returns the correct css string when config includes correct environment variables"
-      (generate-theme-css {:header-bg-color           "#ABCDEF" :inactive-tab-font-color "#FEDCBA"
+      (generate-theme-css {:header-bg-color           "#ABCDEF"
                            :static-resources-dir-path "/some/path" :logo-file-name "logo.png"}) ; TODO fix me
       => (every-checker (contains ".header{background-color:#abcdef}")
-                        (contains (gen-header-logo "/logo.png"))
-                        (contains ".tabs__item:not(.tabs__item--active){color:#fedcba}")))
+                        (contains (gen-header-logo "/logo.png"))))
 
 (fact "generate-theme-css returns the correct css string when defaults are used as environment variables are missing"
       (generate-theme-css {}) =>  ".header__logo{background-image:url(../images/logo.svg)}")
@@ -35,11 +34,3 @@
   ?config-m                         ?css
   {:header-bg-color "#ABCDEF"}      ".header{background-color:#abcdef}"
   {}                                nil)
-
-(tabular
-  (fact "inactive-tab-font-color-css returns correct css if corresponding env variable is set or nil otherwise"
-        (inactive-tab-font-color-css ?config-m) => ?css)
-
-  ?config-m                                 ?css
-  {:inactive-tab-font-color "#FEDCBA"}      ".tabs__item:not(.tabs__item--active){color:#fedcba}"
-  {}                                        nil)

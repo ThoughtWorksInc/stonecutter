@@ -8,11 +8,6 @@
     (garden/css {:pretty-print? false}
                 [:.header {:background-color header-bg-color}])))
 
-(defn inactive-tab-font-color-css [config-m]
-  (when-let [inactive-tab-font-color (config/inactive-tab-font-color config-m)]
-    (garden/css {:pretty-print? false}
-                [".tabs__item:not(.tabs__item--active)" {:color inactive-tab-font-color}])))
-
 (defn logo-file-name [config-m]
   (if (config/static-resources-dir-path config-m)
     (str "/" (config/logo-file-name config-m))
@@ -26,8 +21,7 @@
 (defn generate-theme-css [config-m]
   (str
     (header-bg-color-css config-m)
-    (header-logo-css config-m)
-    (inactive-tab-font-color-css config-m)))
+    (header-logo-css config-m)))
 
 (defn theme-css [request]
   (let [config-m (get-in request [:context :config-m])]
