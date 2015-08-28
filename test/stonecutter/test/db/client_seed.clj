@@ -1,7 +1,6 @@
 (ns stonecutter.test.db.client-seed
   (:require [midje.sweet :refer :all]
             [clauth.client :as cl-client]
-            [stonecutter.db.storage :as storage]
             [stonecutter.db.client-seed :as cs]
             [stonecutter.db.mongo :as m]
             [clauth.store :as cl-store]))
@@ -25,14 +24,14 @@
 
 (fact "can load client-credentials from a file"
       (cs/load-client-credentials-from-file
-        "test-var/var/test-client-credentials-file.yml") => (just [{:client-id           "7I6DTMPXGESEJ2AEEWVGZF2B5AOFGK6D"
-                                                                          :name          "Yellow File Party"
-                                                                          :client-secret "ABH7ZKGVMKQQA3OITBOXPBVSZMMD5NGS"
-                                                                          :url           "http://yellowfile.org"}
-                                                                         {:client-id     "F7ZFMTRJLS5FF6DTWMBCGWA7CXEQTH24"
-                                                                          :name          "Blue File Party"
-                                                                          :client-secret "ISLS5HVYP65QE6OROI43FLHFFOBGISOG"
-                                                                          :url           "http://bluefile.org"}]
+        "test-var/var/test-client-credentials-file.yml") => (just [{:client-id     "7I6DTMPXGESEJ2AEEWVGZF2B5AOFGK6D"
+                                                                    :name          "Yellow File Party"
+                                                                    :client-secret "ABH7ZKGVMKQQA3OITBOXPBVSZMMD5NGS"
+                                                                    :url           "http://yellowfile.org"}
+                                                                   {:client-id     "F7ZFMTRJLS5FF6DTWMBCGWA7CXEQTH24"
+                                                                    :name          "Blue File Party"
+                                                                    :client-secret "ISLS5HVYP65QE6OROI43FLHFFOBGISOG"
+                                                                    :url           "http://bluefile.org"}]
                                                                   :in-any-order))
 
 (fact "will load client credentials and store clients from a resource if provided a resource name"
