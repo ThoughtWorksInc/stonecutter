@@ -55,10 +55,10 @@
                                         :secure                "false"
                                         :rsa-keypair-file-path "test-resources/test-key.json"}
                        :cljsbuild      {:builds        [{:source-paths ["src-cljs"]
-                                                         :compiler     {:output-to  "resources/public/js/change_password.js"
-                                                                        :output-dir "resources/public/js/out"
-                                                                        :main       "stonecutter.change-password"
-                                                                        :asset-path "js/out"
+                                                         :compiler     {:output-to     "resources/public/js/change_password.js"
+                                                                        :output-dir    "resources/public/js/out"
+                                                                        :main          "stonecutter.change-password"
+                                                                        :asset-path    "js/out"
                                                                         :optimizations :whitespace
                                                                         :pretty-print  true}}
                                                         {:source-paths ["src-cljs" "test-cljs"]
@@ -75,7 +75,10 @@
                        :omit-source true
                        :cljsbuild   {:jar    true
                                      :builds [{:source-paths ["src-cljs"]
-                                               :compiler     {:output-to    "resources/public/js/change_password.js"
+                                               :compiler     {:output-to     "resources/public/js/change_password.js"
+                                                              :output-dir    "resources/public/js/out"
+                                                              :main          "stonecutter.change-password"
+                                                              :asset-path    "js/out"
                                                               :optimizations :advanced
                                                               :pretty-print  false}}]}}}
   :clean-targets ^{:protect false} [:target-path
