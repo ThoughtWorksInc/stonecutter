@@ -76,8 +76,8 @@
                        :omit-source true
                        :cljsbuild   {:jar    true
                                      :builds [{:source-paths ["src-cljs"]
-                                               :output-to    "resources/public/js/change_password.js"
-                                               :compiler     {:optimizations :advanced
+                                               :compiler     {:output-to    "resources/public/js/change_password.js"
+                                                              :optimizations :advanced
                                                               :pretty-print  false}}]}}}
   :clean-targets ^{:protect false} [:target-path
                                     [:cljsbuild :builds :app :compiler :output-dir]
