@@ -28,6 +28,10 @@
 (defn remove-work-in-progress [enlive-m]
   (remove-element enlive-m [:.clj-wip]))
 
+(defn add-script [enlive-m script-path]
+  (let [script-tag (html/as-nodes {:tag :script :attrs {:src script-path}})]
+    (html/at enlive-m [:body] (html/append script-tag))))
+
 ;;; templates
 
 (def template-caching? (atom true))
@@ -56,9 +60,6 @@
         (swap! template-cache #(assoc % path html))
         html))
     (html-resource-with-log path)))
-
-(defn apply-fns [x fns]
-  (reduce #(%2 %1) x fns))
 
 (defn enlive-to-str [nodes]
   (->> nodes

@@ -48,3 +48,8 @@
       (let [page-html "<html a=\"b\"><body a=\"b\"></body></html>"]
         (-> page-html html/html-snippet (vh/remove-attribute [:body] :a) vh/enlive-to-str) => "<html a=\"b\"><body></body></html>"
         (-> page-html html/html-snippet (vh/remove-attribute-globally :a) vh/enlive-to-str) => "<html><body></body></html>"))
+
+(fact "can append script to page"
+      (let [page-html "<html><body><h1>Hello</h1></body></html>"]
+        (-> page-html html/html-snippet (vh/add-script "js/blah.js") vh/enlive-to-str)
+        => "<html><body><h1>Hello</h1><script src=\"js/blah.js\"></script></body></html>"))
