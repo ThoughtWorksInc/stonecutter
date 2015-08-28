@@ -2,9 +2,7 @@
   (:require [midje.sweet :refer :all]
             [net.cgrand.enlive-html :as html]
             [stonecutter.test.view.test-helpers :as th]
-            [stonecutter.translation :as t]
             [stonecutter.routes :as r]
-            [stonecutter.helper :as helper]
             [stonecutter.view.change-password :refer [change-password-form
                                                       current-password-error-translation-key]]))
 
@@ -33,6 +31,10 @@
                (html/select page [:.form-row--validation-error]) => empty?)
          (fact "validation summary element is removed"
                (html/select page [:.clj--validation-summary]) => empty?)))
+
+(fact "page has script link to javascript file"
+      (let [page (-> (th/create-request) change-password-form)]
+        (html/select page [[:script (html/attr-has :src "js/change_password.js")]]) =not=> empty?))
 
 (facts "about displaying errors"
        (tabular

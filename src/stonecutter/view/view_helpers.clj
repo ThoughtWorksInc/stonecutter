@@ -28,7 +28,7 @@
 (defn remove-work-in-progress [enlive-m]
   (remove-element enlive-m [:.clj-wip]))
 
-(defn add-script [enlive-m script-path]
+(defn add-script [script-path enlive-m]
   (let [script-tag (html/as-nodes {:tag :script :attrs {:src script-path}})]
     (html/at enlive-m [:body] (html/append script-tag))))
 

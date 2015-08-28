@@ -36,43 +36,50 @@
                                         [lein-midje "3.1.3"]
                                         [lein-kibit "0.1.2"]
                                         [lein-ancient "0.6.7"]
-                                        [lein-cljsbuild "1.0.6"]]
+                                        [lein-cljsbuild "1.0.6"]
+                                        [com.cemerick/clojurescript.test "0.3.3"]]
                        :ring           {:reload-paths          ["src"]
                                         :handler               stonecutter.lein/lein-app
                                         :init                  stonecutter.lein/lein-ring-init
                                         :stacktrace-middleware prone.middleware/wrap-exceptions}
                        :resource-paths ["resources" "test-resources"]
-                       :aliases        {"test"        ["do" "clean," "midje"]
+                       :aliases        {"test"        ["do" "clean," "midje," "test-cljs"]
+                                        "test-cljs"   ["cljsbuild" "test"]
                                         "unit"        ["midje" "stonecutter.test.*"]
                                         "integration" ["midje" "stonecutter.integration.*"]
                                         "auto-unit"   ["midje" ":autotest" "test/stonecutter/test/" "src/"]
                                         "gencred"     ["run" "-m" "stonecutter.util.gencred"]
                                         "gen-keypair" ["run" "-m" "stonecutter.util.gen-key-pair"]
                                         "lint"        ["eastwood" "{:namespaces [:source-paths]}"]}
-                       :env            {:secure                "false"
-                                        :rsa-keypair-file-path "test-resources/test-key.json"}}
+                       :env            {:dev                   true
+                                        :secure                "false"
+                                        :rsa-keypair-file-path "test-resources/test-key.json"}
+                       :cljsbuild      {:builds        [{:source-paths ["src-cljs"]
+                                                         :compiler     {:output-to  "resources/public/js/change_password.js"
+                                                                        :output-dir "resources/public/js/out"
+                                                                        :main       "stonecutter.change-password"
+                                                                        :asset-path "js/out"
+                                                                        :optimizations :whitespace
+                                                                        :pretty-print  true
+                                                                        :source-map    true}}
+                                                        {:source-paths ["src-cljs" "test-cljs"]
+                                                         :compiler     {:output-to     "target/cljs/testable.js"
+                                                                        :optimizations :whitespace}}]
+                                        :test-commands {"unit-tests" ["phantomjs" :runner
+                                                                      "window.literal_js_was_evaluated=true"
+                                                                      "target/cljs/testable.js"]}}}
+
 
              :uberjar {:hooks       [leiningen.cljsbuild]
                        :env         {:production true}
                        :aot         :all
                        :omit-source true
-                       ;:cljsbuild {:jar true
-                       ;            :builds {:app
-                       ;            {:source-paths ["env/prod/cljs"]
-                       ;            :compiler
-                       ;             {:optimizations :advanced
-                       ;              :pretty-print false}}
-                       ;           }}
-                       }}
+                       :cljsbuild   {:jar    true
+                                     :builds [{:source-paths ["src-cljs"]
+                                               :output-to    "resources/public/js/change_password.js"
+                                               :compiler     {:optimizations :advanced
+                                                              :pretty-print  false}}]}}}
   :clean-targets ^{:protect false} [:target-path
                                     [:cljsbuild :builds :app :compiler :output-dir]
                                     [:cljsbuild :builds :app :compiler :output-to]]
-
-  :cljsbuild {:builds [{:source-paths ["src-cljs/stonecutter"]
-                        :compiler     {:output-to     "resources/public/js/change_password.js"
-                                       :output-dir    "resources/public/js/out"
-                                       :asset-path    "js/out"
-                                       :optimizations :none
-                                       :pretty-print  true}}]}
-
   )

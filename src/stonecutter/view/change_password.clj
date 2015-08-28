@@ -1,6 +1,5 @@
 (ns stonecutter.view.change-password
-  (:require [traduki.core :as t]
-            [net.cgrand.enlive-html :as html]
+  (:require [net.cgrand.enlive-html :as html]
             [stonecutter.routes :as r]
             [stonecutter.view.view-helpers :as vh]))
 
@@ -74,4 +73,6 @@
          set-cancel-link
          (add-change-password-errors err)
          vh/add-anti-forgery
-         vh/remove-work-in-progress)))
+         vh/remove-work-in-progress
+         (vh/add-script "js/change_password.js")
+         )))

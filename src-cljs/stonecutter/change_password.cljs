@@ -1,3 +1,3 @@
-(ns stonecutter.change_password)
+(ns stonecutter.change-password)
 
-(js/alert "HELLO WORLD!")
+(.log js/console "HELLO WORLD!")
