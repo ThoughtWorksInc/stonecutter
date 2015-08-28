@@ -114,27 +114,6 @@ app.get('/sign-out', function (req, res) {
 });
 
 
-
-// temp stuff for demo
-
-app.get('/greenparty/register', function (req, res) {
-  customRender(res, 'greenparty/register', pageData);
-});
-var demoSignInRoutes = ['/greenparty/sign-in','/greenparty/login'];
-app.get(demoSignInRoutes, function (req, res) {
-  customRender(res, 'greenparty/sign-in', pageData);
-});
-app.all('/greenparty/authorise', function (req, res) {
-  customRender(res, 'greenparty/authorise', pageData);
-});
-app.all('/greenparty/profile', function (req, res) {
-  customRender(res, 'greenparty/profile', pageData);
-});
-app.all('/greenparty/profile-created', function (req, res) {
-  customRender(res, 'greenparty/profile-created', pageData);
-});
-
-
 app.listen(app.get('port'), function () {
   console.log('Node app is running on port', app.get('port'));
 });
