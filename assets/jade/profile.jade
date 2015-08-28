@@ -12,7 +12,7 @@ block headerContent
   li.tabs__item: a.tabs__link.clj--sign-out__link.func--sign-out__link(href="./sign-out", data-l8n="content:profile/sign-out-link") !Sign out
 
 block content
-  .middle-container
+  .single-column
     h1.page-title
       | Profile
 
@@ -65,5 +65,5 @@ block content
     .settings
       h2(data-l8n="content:profile/settings-title") !Settings
       ul.settings__list
-        li.settings__item: a.button.button--full-width.button--link.button--list-border.settings__link.clj--change-password__link.func--change-password__link(href="./change-password", data-l8n="content:profile/change-password-button") !Change password
-        li.settings__item: a.button.button--full-width.button--link.button--list-border.settings__link.clj--delete-account__link.func--delete-account__link(href="./delete-account", data-l8n="content:profile/delete-button") !Delete account
+        li.settings__item: a.button.button--full-width.button--link.settings__link.clj--change-password__link.func--change-password__link(href="./change-password", data-l8n="content:profile/change-password-button") !Change password
+        li.settings__item: a.button.button--full-width.button--link.settings__link.clj--delete-account__link.func--delete-account__link(href="./delete-account", data-l8n="content:profile/delete-button") !Delete account

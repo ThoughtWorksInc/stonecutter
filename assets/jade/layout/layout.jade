@@ -34,7 +34,9 @@ html
         nav.tabs(role="navigation")
           block headerContent
     .main-content#main(role="main")
-      block content
+      block columns
+      .columns
+        block content
     script.
       document.addEventListener("touchstart", function(){}, true);
     block footerScripts

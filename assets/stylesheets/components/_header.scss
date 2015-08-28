@@ -19,14 +19,12 @@ $header--height: 110px;
 
   &__logo {
     height: 50px;
-    margin-bottom: 15px;
-    background: image-url($header_logo_image_path) no-repeat 50% 0;
+    margin-bottom: 0;
+    background: image-url($header_logo_image_path) no-repeat 0 0;
     background-size: contain;
     @include width-from($medium_device) {
       width: 50%;
       float: left;
-      margin-bottom: 0;
-      background-position: 0 0;
     }
   }
 }

@@ -14,7 +14,7 @@ block headerContent
     | !Register
 
 block content
-  .middle-container
+  .single-column
     h1.page-title.visuallyhidden(data-l8n="content:sign-in-form/page-header")
       | !Sign in
     form.login-form(action="authorise", method="post", role="form")
@@ -43,7 +43,7 @@ block content
             | !Sign in to Profile
         .button-actions__secondary
           a.button.button--link.button--full-width.clj--forgot-password.func--forgot-password__button(href="#", data-l8n="content:sign-in-form/forgot-password") !Forgot password?
-
+    br
     .register-now
       h2.register-now__title
         span(data-l8n="content:register-now/title-before-app-name")

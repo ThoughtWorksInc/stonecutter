@@ -57,6 +57,10 @@ app.all('/change-password', function (req, res) {
   customRender(res, 'change-password', pageData);
 });
 
+app.all('/confirmation-sign-in', function (req, res) {
+  customRender(res, 'confirmation-sign-in', pageData);
+});
+
 app.all('/profile-created', function (req, res) {
   customRender(res, 'profile-created', pageData);
 });
@@ -95,6 +99,14 @@ app.all('/unshare-profile-card', function (req, res) {
 
 app.get('/delete-account', function (req, res) {
   customRender(res, 'delete-account', pageData);
+});
+
+app.get('/error-404', function (req, res) {
+  customRender(res, 'error-404', pageData);
+});
+
+app.get('/error-500', function (req, res) {
+  customRender(res, 'error-500', pageData);
 });
 
 app.get('/sign-out', function (req, res) {

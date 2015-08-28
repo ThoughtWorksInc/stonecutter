@@ -1,14 +1,20 @@
 .button-actions {
   @include columns;
   &__primary {
-    @include column-one-half($medium_device);
+    @include column;
     margin-bottom: 10px;
+    &--half {
+      @include column-one-half($medium_device);
+    }
     @include width-from($medium_device) {
       margin-bottom: 0;
     }
   }
   &__secondary {
-    @include column-one-half($medium_device);
+    @include column;
+    &--half {
+      @include column-one-half($medium_device);
+    }
   }
 }
 
@@ -19,7 +25,7 @@
   height: 70px;
   line-height: 1.2;
   border: none;
-  padding: 24px;
+  padding: 24px 20px;
   @include font-size(20px);
   text-align: left;
   background-color: $dark_cyan;
@@ -63,6 +69,17 @@
     }
   }
 
+  // secondary action
+  &--special {
+    background-color: $dark_coral;
+    &:hover {
+      background-color: lighten($dark_coral, 2%);
+    }
+    &:focus {
+      background-color: darken($dark_coral, 5%);
+    }
+  }
+
   // Less prominent
   &--link {
     background: transparent;
@@ -92,6 +109,19 @@
     &:hover {
       border-left-color: $medium_cyan;
     }
+  }
+}
+
+.link-button {
+  display: inline-block;
+  text-decoration: none;
+  color: $dark_cyan;
+  &:hover {
+    text-decoration: underline;
+  }
+  &--tall {
+   height: 70px;
+   line-height: 70px;
   }
 }
 

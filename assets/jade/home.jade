@@ -8,79 +8,93 @@ block vars
 block headerScripts
 
 block headerContent
-  li.tabs__item.tabs__item--active: a.tabs__link(href="./sign-in", data-l8n="content:sign-in-register/sign-in-tab")
-    | !Sign in
-  li.tabs__item: a.tabs__link.func--register__link.clj--register__link(href="./register", data-l8n="content:sign-in-register/register-tab")
-    | !Register
 
 block content
-  .middle-container
-    h1.page-title.visuallyhidden(data-l8n="content:sign-in-form/page-header")
-      | !Sign in
-    form.login-form(action="authorise", method="post", role="form")
-      .validation-summary.clj--validation-summary
-        .validation-summary__title
-        ul.validation-summary__list
-          li.validation-summary__item.clj--validation-summary__item(data-l8n="content:sign-in-form/invalid-credentials-validation-message")
-            | !Invalid email address or password
-      p.form-row.clj--sign-in-email
-        label.form-row__label(for="email")
-          span.form-row__title(data-l8n="content:sign-in-form/email-address")
-            | !Email address
-          span.form-row__validation.clj--sign-in-email__validation(data-l8n="content:sign-in-form/email-address-invalid-validation-message")
-            | !Enter a valid email address
-        input.form-row__input.clj--email__input.func--email__input(type="email", id="email", name="email")
-      p.form-row.clj--sign-in-password
-        label.form-row__label(for="password")
-          span.form-row__title(data-l8n="content:sign-in-form/password")
-            | !Password
-          span.form-row__validation.clj--sign-in-password__validation(data-l8n="content:sign-in-form/password-invalid-validation-message")
-            | !Cannot be blank
-        input.form-row__input.func--password__input(type="password", id="password", name="password")
-      .button-actions
-        .button-actions__primary
-          button.button.button--full-width.func--sign-in__button(type="submit", data-l8n="content:sign-in-form/sign-in")
-            | !Sign in to Profile
-        .button-actions__secondary
-          a.button.button--link.button--full-width.clj--forgot-password.func--forgot-password__button(href="#", data-l8n="content:sign-in-form/forgot-password") !Forgot password?
+  .middle-container.middle-container--max-large
+    .columns
+      .column.one-half
+        h1
+          span Welcome to
+          = " "
+          span.clj--app-name #{applicationName}
+          = "."
+        p.quote-intro
+          span(data-l8n="content:home/welcome-intro-1") !Connect with your all your organisations d-cent tools. Sign in securely to applications and using your
+          = " "
+          span.clj--app-name #{applicationName}
+          = " "
+          span(data-l8n="content:home/welcome-intro-1") !Profile Card. You have full control with the information you'd like to share.
 
-    .register-now
-      h2.register-now__title(data-l8n="content:registration-form/page-header")
-        | !Register for a Profile Card
-      .profile-card-description
-        p
-          strong A Profile Card
-          =" "
-          | allows you to sign in to supported applications without creating more accounts.
-      form.register-form(action="./profile-created", method="post", role="form")
-        .validation-summary.clj--validation-summary
-          .validation-summary__title
-          ul.validation-summary__list
-            li.validation-summary__item.clj--validation-summary__item(data-l8n="content:registration-form/confirm-password-invalid-validation-message")
-              | !Ensure your passwords match
-        p.form-row.clj--registration-email
-          label.form-row__label(for="email")
-            span.form-row__title(data-l8n="content:registration-form/email-address")
-              | !Email address
-            span.form-row__validation.clj--registration-email__validation(data-l8n="content:registration-form/email-address-invalid-validation-message")
-              | !Enter a valid email address
-          input.form-row__input.registration-email-input.func--email__input(type="email", id="email", name="email")
-        p.form-row.clj--registration-password
-          label.form-row__label(for="password")
-            span.form-row__title(data-l8n="content:registration-form/password")
-              | !Password
-            span.form-row__validation.clj--registration-password__validation(data-l8n="content:registration-form/password-invalid-validation-message")
-              | !Password must be between 8 and 50 characters long
-          input.form-row__input.func--password__input(type="password", id="password", name="password")
-        p.form-row.clj--registration-confirm-password
-          label.form-row__label(for="confirm-password")
-            span.form-row__title(data-l8n="content:registration-form/confirm-password")
-              | !Confirm Password
-          input.form-row__input.func--confirm-password__input(type="password", id="confirm-password", name="confirm-password")
-        .button-actions
-          .button-actions__primary
-            button.button.button--full-width.func--create-profile__button(type="submit" data-l8n="content:registration-form/create-account")
-              | !Create Profile Card
+      .column.one-half
+        .sign-in
+          h2.page-title.visuallyhidden(data-l8n="content:sign-in-form/page-header")
+            | !Sign in
+          form.login-form.form-box(action="authorise", method="post", role="form")
+            .validation-summary.clj--validation-summary
+              .validation-summary__title
+              ul.validation-summary__list
+                li.validation-summary__item.clj--validation-summary__item(data-l8n="content:sign-in-form/invalid-credentials-validation-message")
+                  | !Invalid email address or password
+            p.form-row.clj--sign-in-email
+              label.form-row__label(for="email")
+                span.form-row__title(data-l8n="content:sign-in-form/email-address")
+                  | !Email address
+                span.form-row__validation.clj--sign-in-email__validation(data-l8n="content:sign-in-form/email-address-invalid-validation-message")
+                  | !Enter a valid email address
+              input.form-row__input.clj--email__input.func--email__input(type="email", id="email", name="email")
+            p.form-row.clj--sign-in-password
+              label.form-row__label(for="password")
+                span.form-row__title(data-l8n="content:sign-in-form/password")
+                  | !Password
+                span.form-row__validation.clj--sign-in-password__validation(data-l8n="content:sign-in-form/password-invalid-validation-message")
+                  | !Cannot be blank
+              input.form-row__input.func--password__input(type="password", id="password", name="password")
+            .button-actions
+              .button-actions__primary
+                button.button.func--sign-in__button(type="submit", data-l8n="content:sign-in-form/sign-in")
+                  | !Sign in
+              .button-actions__secondary
+                a.link-button.link-button--tall.clj--forgot-password.func--forgot-password__button(href="#", data-l8n="content:sign-in-form/forgot-password") !Forgot password?
+
+        .register-now
+          h2.page-title !Create a Profile
+          .profile-card-description
+            p
+              span(data-l8n="content:home/register-intro-1") !Register and sign in to supported applications using your
+              = " "
+              span.clj--app-name #{applicationName}
+              = " "
+              span(data-l8n="content:home/register-intro-2") !Profile Card.
+          form.register-form.form-box(action="./profile-created", method="post", role="form")
+            .validation-summary.clj--validation-summary
+              .validation-summary__title
+              ul.validation-summary__list
+                li.validation-summary__item.clj--validation-summary__item(data-l8n="content:registration-form/confirm-password-invalid-validation-message")
+                  | !Ensure your passwords match
+            p.form-row.clj--registration-email
+              label.form-row__label(for="reg-email")
+                span.form-row__title(data-l8n="content:registration-form/email-address")
+                  | !Email address
+                span.form-row__validation.clj--registration-email__validation(data-l8n="content:registration-form/email-address-invalid-validation-message")
+                  | !Enter a valid email address
+              input.form-row__input.registration-email-input.func--email__input(type="email", id="reg-email", name="email")
+            p.form-row.clj--registration-password
+              label.form-row__label(for="reg-password")
+                span.form-row__title(data-l8n="content:registration-form/password")
+                  | !Password
+                span.form-row__validation.clj--registration-password__validation(data-l8n="content:registration-form/password-invalid-validation-message")
+                  | !Password must be between 8 and 50 characters long
+              input.form-row__input.func--password__input(type="password", id="reg-password", name="password")
+            //-p.form-row.clj--registration-confirm-password
+              label.form-row__label(for="reg-confirm-password")
+                span.form-row__title(data-l8n="content:registration-form/confirm-password")
+                  | !Confirm Password
+              input.form-row__input.func--confirm-password__input(type="password", id="reg-confirm-password", name="confirm-password")
+            button.button.button--full-width.button--special.func--create-profile__button(type="submit" data-l8n="content:registration-form/create-account")
+              | !Create a Profile
+
+
+
 
 
 block footerScripts

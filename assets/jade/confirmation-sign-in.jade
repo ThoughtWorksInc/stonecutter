@@ -10,7 +10,7 @@ block headerScripts
 block headerContent
 
 block content
-  .middle-container
+  .single-column
     h1.page-title.visuallyhidden(data-l8n="content:confirmation-sign-in-form/page-header")
       | !Sign in
     form.login-form(action="authorise", method="post", role="form")
@@ -32,7 +32,7 @@ block content
           button.button.button--full-width.func--sign-in__button(type="submit", data-l8n="content:confirmation-sign-in-form/sign-in")
             | !Sign in to Confirm Email
         .button-actions__secondary
-          a.button.button--link.button--full-width.clj--forgot-password(href="#", data-l8n="content:confirmation-sign-in-form/forgot-password") !Forgot password?
+          a.button.button--link.clj--forgot-password(href="#", data-l8n="content:confirmation-sign-in-form/forgot-password") !Forgot password?
 
 block footerScripts
   if staticMode

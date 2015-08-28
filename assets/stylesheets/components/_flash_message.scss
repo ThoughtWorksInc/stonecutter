@@ -10,6 +10,7 @@
   .flash-message__title {
     margin-top: 0;
     margin-bottom: 0.25rem;
+    white-space: pre-line;
     &:last-child {
       margin-bottom: 0;
     }

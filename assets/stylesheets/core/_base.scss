@@ -14,8 +14,20 @@
     outline: auto 5px -webkit-focus-ring-color;
   }
 }
-.middle-container {
+.main-content {
+  max-width: $large_device;
+  margin: 0 auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.max-medium {
   max-width: $medium_device;
+}
+.middle-container {
   padding: 0 1rem;
   margin: 0 auto 3rem auto;
+  max-width: $large_device;
+  &--max-medium {
+    max-width: $medium_device;
+  }
 }

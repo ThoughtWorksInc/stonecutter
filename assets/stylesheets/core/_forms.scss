@@ -91,6 +91,11 @@ input {
   }
 }
 
-.login-form, .register-form {
-  margin-bottom: 3rem;
+.form-box {
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  border: 1px solid $light_grey;
+}
+.login-form {
+  margin-top: 1.5rem;
 }

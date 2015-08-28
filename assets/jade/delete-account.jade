@@ -6,7 +6,7 @@ block vars
   - pageTitleDataL8n = "content:delete-account/title"
 
 block content
-  .middle-container
+  .single-column
     .modal__content.clj-modal-contents.js-modal
       .modal__header
         h2.modal__title(data-l8n="content:delete-account/modal-delete-title")
@@ -19,7 +19,7 @@ block content
           form.delete-account.clj--delete-account__form(action="./profile-deleted",method="post")
             button.button.button--full-width.func--delete-account__button(type="submit", data-l8n="content:delete-account/modal-delete-ok-button") !Delete account
         .modal-buttons__secondary
-          a.button.button--full-width.button--secondary.clj--delete-account-cancel__link(href="./profile", data-l8n="content:delete-account/modal-delete-cancel-button") !Cancel
+          a.button.button--full-width.button--link.clj--delete-account-cancel__link(href="./profile", data-l8n="content:delete-account/modal-delete-cancel-button") !Cancel
 
 block footerScripts
   if staticMode

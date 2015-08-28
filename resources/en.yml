@@ -1,3 +1,9 @@
+home:
+  welcome-intro-1: Connect with your all your organisations d-cent tools. Sign in securely to applications and using your
+  welcome-intro-2: Profile Card. You have full control with the information you'd like to share.
+  register-intro-1: Register and sign in to supported applications using your
+  register-intro-2: Profile Card.
+
 sign-in-register:
   sign-in-tab: Sign in
   register-tab: Register
@@ -74,7 +80,7 @@ sign-in-form:
   password-blank-validation-message: Password cannot be blank
   password-too-long-validation-message: Password is too long
   password-too-short-validation-message: Password should be at least 8 characters long
-  sign-in: Sign in to Profile
+  sign-in: Sign in
   forgot-password: Forgot password?
 
 confirmation-sign-in-form:
