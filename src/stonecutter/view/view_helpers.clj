@@ -64,10 +64,3 @@
   (->> nodes
        html/emit*
        (apply str)))
-
-(defn transform-template [context path & transformations]
-  (->
-    (load-template path)
-    (apply-fns transformations)
-    (t/context-translate context)
-    enlive-to-str))

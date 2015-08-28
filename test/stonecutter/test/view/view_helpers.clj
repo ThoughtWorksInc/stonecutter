@@ -43,20 +43,6 @@
            vh/remove-work-in-progress 
            (html/select [:p])) => empty?))
 
-(fact "helper function for transforming templates"
-      (let [page-html "<html><body><p class=\"a\"></p></body></html>"
-            file-name "myfile"
-            default-context {:translator identity}]
-        (facts "can transform a page-enlive"
-              (against-background (vh/load-template file-name) => (html/html-snippet page-html))
-              (fact "if there are no transformations then template is untouched"
-                    (vh/transform-template default-context file-name) => page-html)
-              (fact "applies each supplied transformation in turn"
-                    (vh/transform-template default-context file-name
-                                        (fn [m] (html/at m [:.a] (html/content "Hello")))
-                                        (fn [m] (html/at m [:p] (html/set-attr :class "b"))))
-                    => "<html><body><p class=\"b\">Hello</p></body></html>"))))
-
 
 (fact "helper function for removing attributes"
       (let [page-html "<html a=\"b\"><body a=\"b\"></body></html>"]
