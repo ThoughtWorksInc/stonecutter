@@ -60,8 +60,7 @@
                                                                         :main       "stonecutter.change-password"
                                                                         :asset-path "js/out"
                                                                         :optimizations :whitespace
-                                                                        :pretty-print  true
-                                                                        :source-map    true}}
+                                                                        :pretty-print  true}}
                                                         {:source-paths ["src-cljs" "test-cljs"]
                                                          :compiler     {:output-to     "target/cljs/testable.js"
                                                                         :optimizations :whitespace}}]
