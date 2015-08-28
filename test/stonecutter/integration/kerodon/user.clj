@@ -225,7 +225,7 @@
           (kh/response-status-is 200)
           (kh/response-body-contains "#012345")
           (kh/response-body-contains "#fedcba")
-          (kh/response-body-contains "\"/beautiful_logo.png\"")))
+          (kh/response-body-contains "/beautiful_logo.png")))
 
 ;; 2015-08-24 DM+JC TODO: This test doesn't seem to do anything?
 (fact "Correct css file is used when config includes a :theme"

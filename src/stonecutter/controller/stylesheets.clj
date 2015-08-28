@@ -13,11 +13,15 @@
     (garden/css {:pretty-print? false}
                 [".tabs__item:not(.tabs__item--active)" {:color inactive-tab-font-color}])))
 
+(defn logo-file-name [config-m]
+  (if (config/static-resources-dir-path config-m)
+    (str "/" (config/logo-file-name config-m))
+    "../images/logo.svg"))
+
 (defn header-logo-css [config-m]
-  (when (config/static-resources-dir-path config-m)
-    (when-let [logo-file-name (config/logo-file-name config-m)]
-      (garden/css {:pretty-print? false}
-                  [:.header__logo {:background (str "url(\"/"  logo-file-name "\") 50% 0 no-repeat")}]))))
+  (let [logo-file-name (logo-file-name config-m)]
+    (garden/css {:pretty-print? false}
+                [:.header__logo {:background-image      (str "url(" logo-file-name ")")}])))
 
 (defn generate-theme-css [config-m]
   (str

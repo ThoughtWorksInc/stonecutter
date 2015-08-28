@@ -1,18 +1,22 @@
 (ns stonecutter.test.controller.stylesheets
   (:require [midje.sweet :refer :all]
-            [ring.mock.request :as mock]
             [stonecutter.controller.stylesheets :refer [generate-theme-css header-bg-color-css
                                                         header-logo-css inactive-tab-font-color-css]]))
 
+(defn gen-header-logo [path]
+  (format ".header__logo{background-image:url(%s)}" path))
+
+(def default-header-logo (gen-header-logo "../images/logo.svg"))
+
 (fact "generate-theme-css returns the correct css string when config includes correct environment variables"
       (generate-theme-css {:header-bg-color           "#ABCDEF" :inactive-tab-font-color "#FEDCBA"
-                           :static-resources-dir-path "/some/path" :logo-file-name "logo.png"})
-      => (str ".header{background-color:#abcdef}"
-              ".header__logo{background:url(\"/logo.png\") 50% 0 no-repeat}"
-              ".tabs__item:not(.tabs__item--active){color:#fedcba}"))
+                           :static-resources-dir-path "/some/path" :logo-file-name "logo.png"}) ; TODO fix me
+      => (every-checker (contains ".header{background-color:#abcdef}")
+                        (contains (gen-header-logo "/logo.png"))
+                        (contains ".tabs__item:not(.tabs__item--active){color:#fedcba}")))
 
 (fact "generate-theme-css returns the correct css string when defaults are used as environment variables are missing"
-      (generate-theme-css {}) => "")
+      (generate-theme-css {}) =>  ".header__logo{background-image:url(../images/logo.svg)}")
 
 (tabular
   (fact "header-logo-css returns the correct css if a static resources directory has been set along with a logo filename"
@@ -20,9 +24,9 @@
 
   ?config-m                                         ?css
   {:static-resources-dir-path "/some/path"
-   :logo-file-name            "some_filename.jpg"}  ".header__logo{background:url(\"/some_filename.jpg\") 50% 0 no-repeat}"
-  {:logo-file-name            "some_filename.jpg"}  nil
-  {}                                                nil)
+   :logo-file-name            "some_filename.jpg"}  (gen-header-logo "/some_filename.jpg")
+  {:logo-file-name            "some_filename.jpg"}  default-header-logo
+  {}                                                default-header-logo)
 
 (tabular
   (fact "header-bg-color-css returns correct css if corresponding env variable is set or nil otherwise"
