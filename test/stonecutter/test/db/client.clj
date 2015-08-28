@@ -1,7 +1,6 @@
 (ns stonecutter.test.db.client
   (:require [midje.sweet :refer :all]
             [clauth.client :as cl-client]
-            [stonecutter.db.storage :as storage]
             [stonecutter.db.client :as c]
             [stonecutter.db.mongo :as m]
             [clauth.store :as cl-store]))
@@ -17,14 +16,16 @@
 
 (fact "can store clients using credentials from the map"
       (c/store-clients-from-map client-store client-credentials)
-      (cl-client/clients client-store) => '({:client-id "NOPQRSTUVWXYZ" :client-secret "ABCDEFGHIJKLM" :name "Red Party"   :url "http://redparty.org"}
-                               {:client-id "ABCDEFGHIJKLM" :client-secret "NOPQRSTUVWXYZ" :name "Green Party" :url "http://greenparty.org"}))
+      (cl-client/clients client-store) => (just [{:client-id "NOPQRSTUVWXYZ" :client-secret "ABCDEFGHIJKLM" :name "Red Party" :url "http://redparty.org"}
+                                                 {:client-id "ABCDEFGHIJKLM" :client-secret "NOPQRSTUVWXYZ" :name "Green Party" :url "http://greenparty.org"}]
+                                                :in-any-order))
 
 (fact "will not store clients with duplicate client-ids"
       (c/store-clients-from-map client-store client-credentials)
       (c/store-clients-from-map client-store client-credentials)
-      (cl-client/clients client-store) => '({:client-id "NOPQRSTUVWXYZ" :client-secret "ABCDEFGHIJKLM" :name "Red Party"   :url "http://redparty.org"}
-                               {:client-id "ABCDEFGHIJKLM" :client-secret "NOPQRSTUVWXYZ" :name "Green Party" :url "http://greenparty.org"}))
+      (cl-client/clients client-store) => (just [{:client-id "NOPQRSTUVWXYZ" :client-secret "ABCDEFGHIJKLM" :name "Red Party" :url "http://redparty.org"}
+                                                 {:client-id "ABCDEFGHIJKLM" :client-secret "NOPQRSTUVWXYZ" :name "Green Party" :url "http://greenparty.org"}]
+                                                :in-any-order))
 
 (fact "will not store clients without url"
       (let [client-credentials-with-missing-url
