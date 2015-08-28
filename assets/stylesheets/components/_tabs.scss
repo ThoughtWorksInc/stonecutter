@@ -61,7 +61,6 @@ $tab_link_colour_hover: $medium_cyan !default;
     &:hover {
       cursor: pointer;
       color: $tab_link_colour_hover;
-      background-color: $tab_link_bg_colour_hover;
     }
   }
 }
