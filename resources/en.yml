@@ -199,3 +199,9 @@ flash:
   confirm-email-sent-post-email-address: "Please follow the instructions to confirm your email address."
   expired-password-reset: "This reset password link has already been used, or has expired -  please enter your e-mail below to receive a new email."
 
+admin-user-list:
+  title: User list
+  page-title: User list
+  label-search: Search
+  approve-button: Approve
+  unapprove-button: Unapprove

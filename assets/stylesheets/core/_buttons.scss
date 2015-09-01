@@ -69,6 +69,18 @@
     }
   }
 
+  // transparent
+  &--transparent {
+    background-color: transparent;
+    color: $default_text_color;
+    &:hover {
+      background-color: transparent;
+    }
+    &:focus {
+      background-color: transparent;
+    }
+  }
+
   // secondary action
   &--special {
     background-color: $dark_coral;

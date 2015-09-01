@@ -55,6 +55,9 @@ input {
     margin-bottom: 0.5rem;
     @include font-size(18px);
     color: #5d5d5d;
+    &--inline {
+      display: inline-block;
+    }
   }
   &__validation {
     font-size: 80%;

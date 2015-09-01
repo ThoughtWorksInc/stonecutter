@@ -1,0 +1,44 @@
+extends layout/layout
+
+mixin userItem(fullName, emailAddress, userIsApproved)
+  li.user-item
+    .user-item__text
+      .user-item__name !#{fullName}
+      .user-item__email-address !#{emailAddress}
+    form.user-item__form(action="#", method="post")
+      if userIsApproved
+        button.button.button--transparent.user-item__button(action="submit", value="Approve", class="user-item__button--approved")
+          i.fa.fa-check
+          span.visuallyhidden(data-l8n="content:admin-user-list/approve-button") !Approve
+          = " "
+          span.visuallyhidden.clj--user-item-fullname #{fullName}
+      else
+        button.button.button--transparent.user-item__button(action="submit", value="Unapprove", class="user-item__button--unapproved")
+          i.fa.fa-check
+          span.visuallyhidden(data-l8n="content:admin-user-list/unapprove-button") !Unapprove
+          = " "
+          span.visuallyhidden.clj--user-item-fullname #{fullName}
+
+
+
+block vars
+  - bodyClass = "func--admin-user-list-page"
+  - pageTitle = "!User list"
+  - pageTitleDataL8n = "content:admin-user-list/title"
+
+block headerScripts
+
+block content
+  .single-column
+    h1(data-l8n="content:admin-user-list/page-title") !User list
+    form(action="#", method="post")
+      p.form-row.search-row.clj-wip
+        label.form-row__label(for="search")
+          i.fa.fa-search.search-row__icon
+          span.form-row__title.visuallyhidden(data-l8n="content:admin-user-list/label-search")
+            | !Search
+        input.form-row__input.search-row__input(type="text", id="search", name="search")
+
+    ul.user-list
+      +userItem("Chris Cheshire", "email@email-address.com", true)
+      +userItem("Chris Cheshire", "email@email-address.com", false)

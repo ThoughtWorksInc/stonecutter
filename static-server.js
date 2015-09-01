@@ -121,6 +121,10 @@ app.get('/sign-out', function (req, res) {
   res.redirect('/sign-in');
 });
 
+app.get('/admin/user-list', function (req, res) {
+  customRender(res, 'user-list', pageData);
+});
+
 
 app.listen(app.get('port'), function () {
   console.log('Node app is running on port', app.get('port'));
