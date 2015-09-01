@@ -99,7 +99,7 @@ Optional environment variables can be set up to customise app name, colour schem
 App name is used anywhere where the application refers to itself, e.g. "Register with {App name}".
 To set the app name:
 
-* Set the environment variable **APP_NAME**
+* Set the environment variable `APP_NAME`
 
 The content of any HTML elements with the class `.clj--app-name` will be replaced with the app name.
 
@@ -108,27 +108,28 @@ The content of any HTML elements with the class `.clj--app-name` will be replace
 Logo is used in the header. Maximum dimensions (W x H) 110px x 50px.
 To set the logo:
 
-* Set the environment variable **STATIC_RESOURCES_DIR_PATH** to a directory containing the logo.
+* Set the environment variable `STATIC_RESOURCES_DIR_PATH` to a directory containing the logo.
 * **NOTE: Anything inside this directory will be served as a static resource, including subdirectories.**
-* Set the environment variable **LOGO_FILE_NAME** to the logo file name including the extension, e.g. logo.png
+* Set the environment variable `LOGO_FILE_NAME` to the logo file name including the extension, e.g. logo.png
 
 ### Favicon
 
 Favicon should be an .ico file.
 To set the favicon:
 
-* Set the environment variable **STATIC_RESOURCES_DIR_PATH** to a directory containing the favicon
+* Set the environment variable `STATIC_RESOURCES_DIR_PATH` to a directory containing the favicon
 if you haven't already done so for the logo.
 * **NOTE: Anything inside this directory will be served as a static resource, including subdirectories.**
-* Set the environment variable **FAVICON_FILE_NAME** to the favicon file name, e.g. my-favicon.ico
+* Set the environment variable `FAVICON_FILE_NAME` to the favicon file name, e.g. my-favicon.ico
 
 ### Colours
 
-The header colour can be customised:
+The header colours can be customised:
 
-* Set the environment variable **HEADER_BG_COLOR** to a CSS colour value, e.g. `#1F1F1F` or `"rgb(192,192,192)"`
-* Set the environment variable **INACTIVE_TAB_FONT_COLOR** to a CSS colour value.
-* The two colours should be contrasting in order for the inactive tab text to be visible.
+* Set the environment variable `HEADER_BG_COLOR` to a CSS background-color value, e.g. `#1F1F1F` or `"rgb(192,192,192)"`
+* Set the environment variable `HEADER_FONT_COLOR` to a CSS color value.
+* Set the environment variable `HEADER_FONT_COLOR_HOVER` to a CSS color value.
+* The font colours should contrast with the background colour for better visibility.
 
 ## Adding an email provider
 
