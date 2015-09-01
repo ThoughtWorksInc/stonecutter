@@ -11,6 +11,10 @@ sign-in-register:
 registration-form:
   title: Register
   page-header: Register for a Profile Card
+  first-name: First name
+  first-name-invalid-validation-message: Enter a first name
+  last-name: Last name
+  last-name-invalid-validation-message: Enter a last name
   email-address: Email address
   email-address-invalid-validation-message: Enter a valid email address
   email-address-duplicate-validation-message: User already exists

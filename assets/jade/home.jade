@@ -71,6 +71,20 @@ block content
               ul.validation-summary__list
                 li.validation-summary__item.clj--validation-summary__item(data-l8n="content:registration-form/confirm-password-invalid-validation-message")
                   | !Ensure your passwords match
+            p.form-row.clj--registration-first-name.clj-wip
+              label.form-row__label(for="reg-first-name")
+                span.form-row__title(data-l8n="content:registration-form/first-name")
+                  | !First name
+                span.form-row__validation.clj--registration-first-name__validation(data-l8n="content:registration-form/first-name-invalid-validation-message")
+                  | !Enter a first name
+              input.form-row__input.registration-first-name-input.func--first-name__input(type="text", id="reg-first-name", name="first-name")
+            p.form-row.clj--registration-last-name.clj-wip
+              label.form-row__label(for="reg-last-name")
+                span.form-row__title(data-l8n="content:registration-form/last-name")
+                  | !Last name
+                span.form-row__validation.clj--registration-last-name__validation(data-l8n="content:registration-form/last-name-invalid-validation-message")
+                  | !Enter a last name
+              input.form-row__input.registration-last-name-input.func--last-name__input(type="text", id="reg-last-name", name="last-name")
             p.form-row.clj--registration-email
               label.form-row__label(for="reg-email")
                 span.form-row__title(data-l8n="content:registration-form/email-address")
