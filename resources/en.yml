@@ -63,6 +63,10 @@ forgot-password-confirmation:
   helper-text: You should shortly receive an email with a link to reset your password.
   home-link: Return home
 
+confirm-email-resent:
+  title: Confirmation email resent
+  page-header: Confirmation email resent
+
 confirm-email-expired:
   title: Confirmation link expired
   page-header: Your confirmation email link has expired

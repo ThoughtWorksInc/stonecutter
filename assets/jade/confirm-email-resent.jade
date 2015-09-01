@@ -1,0 +1,19 @@
+extends layout/layout
+
+block vars
+  - bodyClass = "func--confirm-email-resent-page"
+  - pageTitle = "!Confirmation email resent"
+  - pageTitleDataL8n = "content:confirm-email-resent/title"
+
+block headerScripts
+
+block content
+  .single-column
+    h1.page-title(data-l8n="content:confirm-email-resent/page-header") !Confirmation email resent
+
+    .flash-message.flash-message--success
+      p.flash-message__title
+        span(data-l8n="content:flash/confirm-email-sent-pre-email-address") !A confirmation email has been sent to:
+        = " "
+        span.clj--email-address !email@example.com
+      p.flash-message__title(data-l8n="content:flash/confirm-email-sent-post-email-address") !Please follow the instructions to confirm your email address.

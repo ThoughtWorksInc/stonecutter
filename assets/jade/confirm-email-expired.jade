@@ -12,5 +12,5 @@ block content
     h1.page-title(data-l8n="content:confirm-email-expired/page-header") !Your confirmation email link has expired
     p(data-l8n="content:confirm-email-expired/helper-text-1") !It's been a while since you created your account.
     p(data-l8n="content:confirm-email-expired/helper-text-1") !You need to resend the confirmation email to verify your address:
-    form.resend-confirmation-form(action="", method="post")
+    form.resend-confirmation-form(action="/confirm-email-resent", method="post")
       button.button(type="submit", data-l8n="content:confirm-email-expired/resend-action") !Resend confirmation

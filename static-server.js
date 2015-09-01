@@ -101,6 +101,10 @@ app.all('/confirm-email-expired', function (req, res) {
   customRender(res, 'confirm-email-expired', pageData);
 });
 
+app.all('/confirm-email-resent', function (req, res) {
+  customRender(res, 'confirm-email-resent', pageData);
+});
+
 app.get('/delete-account', function (req, res) {
   customRender(res, 'delete-account', pageData);
 });
