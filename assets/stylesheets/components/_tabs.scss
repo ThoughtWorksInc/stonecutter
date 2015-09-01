@@ -1,7 +1,8 @@
-$tab_bg_color: $card_background !default;
-$tab_bg_color_active: $white !default;
+$tab_bg_color: transparent !default;
+$tab_bg_color_active: transparent !default;
 $tab_color_active: $dark_cyan !default;
 $tab_link_bg_colour_hover: rgba($white, 0.5) !default;
+$tab_link_colour: $darker_grey;
 $tab_link_colour_hover: $medium_cyan !default;
 
 
@@ -30,9 +31,9 @@ $tab_link_colour_hover: $medium_cyan !default;
     border-top: 1px solid transparent;
     border-right: 1px solid transparent;
     border-left: 1px solid transparent;
-    color: $tab_bg_color;
+    color: $tab_link_colour;
     &--active {
-      color: $tab_color_active;
+      color: $tab_link_colour_hover;
       background-color: $tab_bg_color_active;
       &:after {
         content: '';
