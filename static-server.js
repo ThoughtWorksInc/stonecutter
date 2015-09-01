@@ -97,6 +97,10 @@ app.all('/unshare-profile-card', function (req, res) {
   customRender(res, 'unshare-profile-card', pageData);
 });
 
+app.all('/confirm-email-expired', function (req, res) {
+  customRender(res, 'confirm-email-expired', pageData);
+});
+
 app.get('/delete-account', function (req, res) {
   customRender(res, 'delete-account', pageData);
 });

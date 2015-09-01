@@ -63,6 +63,13 @@ forgot-password-confirmation:
   helper-text: You should shortly receive an email with a link to reset your password.
   home-link: Return home
 
+confirm-email-expired:
+  title: Confirmation link expired
+  page-header: Your confirmation email link has expired
+  helper-text-1: It's been a while since you created your account.
+  helper-text-2: "You need to resend the confirmation email to verify your address:"
+  resend-action: Resend confirmation
+
 register-now:
   title-before-app-name: "New to "
   title-after-app-name: "?"

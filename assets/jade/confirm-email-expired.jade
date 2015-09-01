@@ -1,0 +1,16 @@
+extends layout/layout
+
+block vars
+  - bodyClass = "func--confirm-email-expired-page"
+  - pageTitle = "!Confirmation link expired"
+  - pageTitleDataL8n = "content:confirm-email-expired/title"
+
+block headerScripts
+
+block content
+  .single-column
+    h1.page-title(data-l8n="content:confirm-email-expired/page-header") !Your confirmation email link has expired
+    p(data-l8n="content:confirm-email-expired/helper-text-1") !It's been a while since you created your account.
+    p(data-l8n="content:confirm-email-expired/helper-text-1") !You need to resend the confirmation email to verify your address:
+    form.resend-confirmation-form(action="", method="post")
+      button.button(type="submit", data-l8n="content:confirm-email-expired/resend-action") !Resend confirmation
