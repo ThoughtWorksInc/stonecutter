@@ -218,11 +218,15 @@
 (fact "theme.css file is generated using environment variables"
       (-> (k/session (ih/build-app {:config-m {:secure "false"
                                                :header-bg-color "#012345"
+                                               :header-font-color "#ABCDEF"
+                                               :header-font-color-hover "#FEDCBA"
                                                :static-resources-dir-path "./test-resources"
                                                :logo-file-name "beautiful_logo.png"}}))
           (k/visit "/stylesheets/theme.css")
           (kh/response-status-is 200)
           (kh/response-body-contains "#012345")
+          (kh/response-body-contains "#abcdef")
+          (kh/response-body-contains "#fedcba")
           (kh/response-body-contains "/beautiful_logo.png")))
 
 ;; 2015-08-24 DM+JC TODO: This test doesn't seem to do anything?

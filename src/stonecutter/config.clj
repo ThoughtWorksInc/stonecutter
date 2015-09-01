@@ -5,7 +5,7 @@
 (def env-vars #{:port :host :base-url :mongo-port-27017-tcp-addr
                 :mongo-uri :client-credentials-file-path
                 :theme :secure :email-script-path :app-name
-                :header-bg-color
+                :header-bg-color :header-font-color :header-font-color-hover
                 :static-resources-dir-path :logo-file-name
                 :favicon-file-name :admin-login :admin-password
                 :password-reset-expiry
@@ -66,7 +66,13 @@
     (log/warn "No email script path provided - Stonecutter will be unable to send emails")))
 
 (defn header-bg-color [config-m]
-  (get-env config-m :header-bg-color))
+  (get-env config-m :header-bg-color "#eee"))
+
+(defn header-font-color [config-m]
+  (get-env config-m :header-font-color "#222"))
+
+(defn header-font-color-hover [config-m]
+  (get-env config-m :header-font-color-hover "#00d3ca"))
 
 (defn static-resources-dir-path [config-m]
   (get-env config-m :static-resources-dir-path))
