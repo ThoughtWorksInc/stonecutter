@@ -27,9 +27,9 @@
 (fact
  (th/test-translations "index page" index))
 
-(future-facts "error classes are not present when there are no errors"
+(facts "sign-in error classes are not present when there are no errors"
        (let [page (-> (th/create-request)
-                      sign-in-form)]
+                      index)]
          (fact "no elements have class for styling errors"
                page => (th/element-absent? [:.form-row--validation-error]))
          (fact "email validation element is removed"
