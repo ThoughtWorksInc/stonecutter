@@ -1,8 +1,38 @@
-home:
-  welcome-intro-1: Connect with your all your organisations d-cent tools. Sign in securely to applications and using your
+index:
+  title: Welcome
+  welcome-header-1: Welcome to
+  welcome-intro-1: Connect with your all your organisations D-Cent tools. Sign in securely to applications and using your
   welcome-intro-2: Profile Card. You have full control with the information you'd like to share.
   register-intro-1: Register and sign in to supported applications using your
   register-intro-2: Profile Card.
+  sign-in-header: Sign in
+  sign-in-email-address: Email address
+  sign-in-invalid-credentials-validation-message: Invalid email address or password
+  sign-in-email-address-invalid-validation-message: Enter a valid email address
+  sign-in-email-address-too-long-validation-message: Email address is too long
+  sign-in-password: Password
+  sign-in-password-blank-validation-message: Password cannot be blank
+  sign-in-password-too-long-validation-message: Password is too long
+  sign-in-password-too-short-validation-message: Password should be at least 8 characters long
+  sign-in-submit: Sign in
+  sign-in-forgot-password: Forgot password?
+  register-header: Create a Profile
+  register-first-name: First name
+  register-first-name-invalid-validation-message: Enter a first name
+  register-last-name: Last name
+  register-last-name-invalid-validation-message: Enter a last name
+  register-email-address: Email address
+  register-email-address-invalid-validation-message: Enter a valid email address
+  register-email-address-duplicate-validation-message: User already exists
+  register-email-address-too-long-validation-message: Email address is too long
+  register-password: Password (8 or more characters)
+  register-password-blank-validation-message: Password cannot be blank
+  register-password-too-long-validation-message: Password is too long
+  register-password-too-short-validation-message: Password should be at least 8 characters long
+  register-confirm-password: Confirm password
+  register-confirm-password-invalid-validation-message: Ensure your passwords match
+  register-unknown-error: Whoops! Unknown error
+  register-create-account: Create Profile Card
 
 sign-in-register:
   sign-in-tab: Sign in

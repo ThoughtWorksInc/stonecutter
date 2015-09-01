@@ -11,6 +11,15 @@
   (html/at enlive-m
            [:form] (html/prepend (anti-forgery-snippet))))
 
+(defn set-attribute [selector attr-key attr-value enlive-m]
+  (html/at enlive-m selector (html/set-attr attr-key attr-value)))
+
+(defn set-form-action
+  ([path enlive-m]
+   (set-form-action [:form] path enlive-m))
+  ([form-selector path enlive-m]
+   (set-attribute form-selector :action path enlive-m)))
+
 (defn remove-element [enlive-m selector]
   (html/at enlive-m selector nil))
 
