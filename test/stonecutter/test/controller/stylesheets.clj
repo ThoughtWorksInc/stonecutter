@@ -31,6 +31,7 @@
   ?config-m                                         ?css
   {:static-resources-dir-path "/some/path"
    :logo-file-name            "some_filename.jpg"}  (gen-header-logo "/some_filename.jpg")
+  {:static-resources-dir-path "/some/path"}         default-header-logo
   {:logo-file-name            "some_filename.jpg"}  default-header-logo
   {}                                                default-header-logo)
 

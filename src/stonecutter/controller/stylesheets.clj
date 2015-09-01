@@ -9,7 +9,8 @@
                 [:.header {:background-color header-bg-color}])))
 
 (defn logo-file-name [config-m]
-  (if (config/static-resources-dir-path config-m)
+  (if (and (config/static-resources-dir-path config-m)
+           (config/logo-file-name config-m))
     (str "/" (config/logo-file-name config-m))
     "../images/logo.svg"))
 
