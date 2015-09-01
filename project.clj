@@ -23,10 +23,12 @@
                  [clj-time "0.10.0"]
                  [org.bitbucket.b_c/jose4j "0.4.4"]
                  [org.slf4j/slf4j-simple "1.7.12"]
-                 [org.clojure/clojurescript "0.0-3308" :scope "provided"]]
+                 [org.clojure/clojurescript "0.0-3308" :scope "provided"]
+                 [jayq "2.5.4"]]
   :main stonecutter.handler
   :jvm-opts ["-Dlog4j.configuration=log4j.dev"]
   :aot :all
+  :source-paths ["src" "src-cljc"]
   :profiles {:dev     {:dependencies   [[ring-mock "0.1.5"]
                                         [midje "1.7.0"]
                                         [prone "0.8.2"]
@@ -38,7 +40,7 @@
                                         [lein-ancient "0.6.7"]
                                         [lein-cljsbuild "1.0.6"]
                                         [com.cemerick/clojurescript.test "0.3.3"]]
-                       :ring           {:reload-paths          ["src"]
+                       :ring           {:reload-paths          ["src" "src-cljc"]
                                         :handler               stonecutter.lein/lein-app
                                         :init                  stonecutter.lein/lein-ring-init
                                         :stacktrace-middleware prone.middleware/wrap-exceptions}
@@ -54,7 +56,7 @@
                        :env            {:dev                   true
                                         :secure                "false"
                                         :rsa-keypair-file-path "test-resources/test-key.json"}
-                       :cljsbuild      {:builds        [{:source-paths ["src-cljs"]
+                       :cljsbuild      {:builds        [{:source-paths ["src-cljs" "src-cljc"]
                                                          :compiler     {:output-to     "resources/public/js/change_password.js"
                                                                         :output-dir    "resources/public/js/out"
                                                                         :main          "stonecutter.change-password"
