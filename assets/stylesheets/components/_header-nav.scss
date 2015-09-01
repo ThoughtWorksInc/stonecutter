@@ -6,7 +6,7 @@ $tab_link_colour: $darker_grey;
 $tab_link_colour_hover: $medium_cyan !default;
 
 
-.tabs {
+.header-nav {
   @include clearfix;
   position: relative;
   z-index: 1;
