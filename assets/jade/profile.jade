@@ -24,6 +24,13 @@ block content
       .flash-message.flash-message--fail
         p.flash-message__title(data-l8n="content:profile/email-not-confirmed") !Your email address is not yet confirmed.
 
+
+    .verify-email-address.clj-wip
+      h2.verify__title(data-l8n="content:profile/verify-email-title") !Your email address has not yet been confirmed
+      p(data-l8n="content:profile/verify-email-intro") !If you have not received an email to email@email.com you should resend the confirmation email.
+      form.resend-confirmation-form(action="/confirm-email-resent", method="post")
+        button.button(type="submit", data-l8n="content:profile/verify-button") !Resend email confirmation
+
     .card-preview
       h2 Your Profile Card
         = " "

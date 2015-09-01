@@ -70,6 +70,7 @@ forgot-password-confirmation:
 confirm-email-resent:
   title: Confirmation email resent
   page-header: Confirmation email resent
+  action-link: View profile
 
 confirm-email-expired:
   title: Confirmation link expired
@@ -118,6 +119,9 @@ profile:
   delete-button: Delete account
   email-not-confirmed: Your email address is not yet confirmed.
   admin-span: ", Mighty Admin!"
+  verify-email-title: Your email address has not yet been confirmed
+  verify-email-intro: If you have not received an email to email@email.com you should resend the confirmation email.
+  verify-button: Resend email confirmation
 
 applications:
   title: Applications

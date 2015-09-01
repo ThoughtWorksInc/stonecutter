@@ -1,0 +1,13 @@
+.verify-email-address {
+  margin-bottom: 2rem;
+  border: 2px solid $light_pink;
+  padding: 1.5rem;
+}
+
+.verify__title {
+  margin-top: 0;
+  @include font-size(20px);
+  font-weight: bold;
+  line-height: 1.2;
+  color: $default_text_color;
+}
