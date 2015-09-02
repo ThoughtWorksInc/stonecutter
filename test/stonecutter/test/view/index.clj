@@ -39,18 +39,18 @@
          (fact "validation summary element is removed"
                page => (th/element-absent? [:.clj--validation-summary]))))
 
-(future-facts "about displaying errors"
+(facts "about displaying sign-in errors"
        (facts "when email is invalid"
               (let [errors {:email :invalid}
                     params {:email "invalid"}
-                    page (-> (th/create-request {} errors params) sign-in-form)]
+                    page (-> (th/create-request {} errors params) index)]
                 (fact "the class for styling errors is added"
                       page => (th/element-exists? [[:.clj--sign-in-email :.form-row--validation-error]]))
                 (fact "email validation element is present"
                       page => (th/element-exists? [:.clj--sign-in-email__validation]))
                 (fact "correct error message is displayed"
                       page => (th/has-attr? [:.clj--sign-in-email__validation]
-                                            :data-l8n "content:sign-in-form/email-address-invalid-validation-message"))
+                                            :data-l8n "content:index/sign-in-email-address-invalid-validation-message"))
                 (fact "invalid value is preserved in input field"
                       page => (th/has-attr? [:.clj--email__input] :value "invalid"))))
 
@@ -58,7 +58,7 @@
               (let [long-email-address (apply str (repeat 255 "x"))
                     errors {:email :too-long}
                     params {:email long-email-address}
-                    page (-> (th/create-request {} errors params) sign-in-form)]
+                    page (-> (th/create-request {} errors params) index)]
                 
                 (fact "the class for styling errors is added"
                       page => (th/element-exists? [[:.clj--sign-in-email :.form-row--validation-error]]))
@@ -67,12 +67,12 @@
                 
                 (fact "correct error message is displayed"
                       page => (th/has-attr? [:.clj--sign-in-email__validation]
-                                            :data-l8n "content:sign-in-form/email-address-too-long-validation-message"))))
+                                            :data-l8n "content:index/sign-in-email-address-too-long-validation-message"))))
 
        (fact "when password is blank"
              (let [errors {:password :blank}
                    params {:password ""}
-                   page (-> (th/create-request {} errors params) sign-in-form)]
+                   page (-> (th/create-request {} errors params) index)]
                (fact "the class for styling errors is added"
                      page => (th/element-exists? [[:.clj--sign-in-password :.form-row--validation-error]]))
                (fact "password validation element is present"
@@ -80,12 +80,12 @@
                
                (fact "correct error message is displayed"
                      page => (th/has-attr? [:.clj--sign-in-password__validation]
-                                           :data-l8n "content:sign-in-form/password-blank-validation-message"))))
+                                           :data-l8n "content:index/sign-in-password-blank-validation-message"))))
 
        (fact "when password is too short"
              (let [errors {:password :too-short}
                    params {:password "short"}
-                   page (-> (th/create-request {} errors params) sign-in-form)]
+                   page (-> (th/create-request {} errors params) index)]
                (fact "the class for styling errors is added"
                      page => (th/element-exists? [[:.clj--sign-in-password :.form-row--validation-error]]))
                (fact "password validation element is present"
@@ -93,21 +93,21 @@
                
                (fact "correct error message is displayed"
                      page => (th/has-attr? [:.clj--sign-in-password__validation]
-                                           :data-l8n "content:sign-in-form/password-too-short-validation-message"))))
+                                           :data-l8n "content:index/sign-in-password-too-short-validation-message"))))
 
        (fact "when password is too long"
              (let [long-password (apply str (repeat 255 "x"))
                    errors {:password :too-long}
                    params {:password long-password}
-                   page (-> (th/create-request {} errors params) sign-in-form)]
+                   page (-> (th/create-request {} errors params) index)]
                (fact "the class for styling errors is added"
                      page => (th/element-exists? [[:.clj--sign-in-password :.form-row--validation-error]]))
                (fact "password validation element is present"
                      page => (th/element-exists? [:.clj--sign-in-password__validation]))
-               
+
                (fact "correct error message is displayed"
                      page => (th/has-attr? [:.clj--sign-in-password__validation]
-                                           :data-l8n "content:sign-in-form/password-too-long-validation-message")))))
+                                           :data-l8n "content:index/sign-in-password-too-long-validation-message")))))
 
 (future-facts "about confirmation sign in form"
        (let [page (-> (th/create-request) confirmation-sign-in-form)]
