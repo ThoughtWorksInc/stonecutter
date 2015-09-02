@@ -93,7 +93,7 @@
 
 (defn index [request]
   (let [error-m (get-in request [:context :errors])]
-    (->> (vh/load-template "public/home.html")
+    (->> (vh/load-template "public/index.html")
          (vh/set-form-action [:.clj--register__form] (r/path :register-user))
          (vh/set-form-action [:.clj--sign-in__form] (r/path :sign-in))
          (vh/set-attribute [:.clj--forgot-password] :href (r/path :show-forgotten-password-form))
