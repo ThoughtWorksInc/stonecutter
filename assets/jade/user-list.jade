@@ -32,12 +32,12 @@ block content
   .single-column
     h1(data-l8n="content:admin-user-list/page-title") !User list
     form(action="#", method="post")
-      p.form-row.search-row.clj-wip
-        label.form-row__label(for="search")
+      p.search-row.clj-wip
+        label.search-row__label(for="search")
           i.fa.fa-search.search-row__icon
-          span.form-row__title.visuallyhidden(data-l8n="content:admin-user-list/label-search")
+          span.visuallyhidden(data-l8n="content:admin-user-list/label-search")
             | !Search
-        input.form-row__input.search-row__input(type="text", id="search", name="search")
+        input.search-row__input(type="text", id="search", name="search")
 
     ul.user-list
       +userItem("Chris Cheshire", "email@email-address.com", true)
