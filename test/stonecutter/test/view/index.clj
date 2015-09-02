@@ -41,8 +41,8 @@
 
 (facts "about displaying sign-in errors"
        (facts "when email is invalid"
-              (let [errors {:email :invalid}
-                    params {:email "invalid"}
+              (let [errors {:sign-in-email :invalid}
+                    params {:sign-in-email "invalid"}
                     page (-> (th/create-request {} errors params) index)]
                 (fact "the class for styling errors is added"
                       page => (th/element-exists? [[:.clj--sign-in-email :.form-row--validation-error]]))
@@ -56,8 +56,8 @@
 
        (facts "when email is too long"
               (let [long-email-address (apply str (repeat 255 "x"))
-                    errors {:email :too-long}
-                    params {:email long-email-address}
+                    errors {:sign-in-email :too-long}
+                    params {:sign-in-email long-email-address}
                     page (-> (th/create-request {} errors params) index)]
                 
                 (fact "the class for styling errors is added"
@@ -70,8 +70,8 @@
                                             :data-l8n "content:index/sign-in-email-address-too-long-validation-message"))))
 
        (fact "when password is blank"
-             (let [errors {:password :blank}
-                   params {:password ""}
+             (let [errors {:sign-in-password :blank}
+                   params {:sign-in-password ""}
                    page (-> (th/create-request {} errors params) index)]
                (fact "the class for styling errors is added"
                      page => (th/element-exists? [[:.clj--sign-in-password :.form-row--validation-error]]))
@@ -83,8 +83,8 @@
                                            :data-l8n "content:index/sign-in-password-blank-validation-message"))))
 
        (fact "when password is too short"
-             (let [errors {:password :too-short}
-                   params {:password "short"}
+             (let [errors {:sign-in-password :too-short}
+                   params {:sign-in-password "short"}
                    page (-> (th/create-request {} errors params) index)]
                (fact "the class for styling errors is added"
                      page => (th/element-exists? [[:.clj--sign-in-password :.form-row--validation-error]]))
@@ -97,8 +97,8 @@
 
        (fact "when password is too long"
              (let [long-password (apply str (repeat 255 "x"))
-                   errors {:password :too-long}
-                   params {:password long-password}
+                   errors {:sign-in-password :too-long}
+                   params {:sign-in-password long-password}
                    page (-> (th/create-request {} errors params) index)]
                (fact "the class for styling errors is added"
                      page => (th/element-exists? [[:.clj--sign-in-password :.form-row--validation-error]]))
@@ -109,40 +109,14 @@
                      page => (th/has-attr? [:.clj--sign-in-password__validation]
                                            :data-l8n "content:index/sign-in-password-too-long-validation-message")))))
 
-(future-facts "about confirmation sign in form"
-       (let [page (-> (th/create-request) confirmation-sign-in-form)]
-         (fact "confirmation sign-in-form should return some html"
-               page => (th/element-exists? [:form]))
-
-         (fact "there are no missing translations"
-               (th/test-translations "confirmation sign in form" confirmation-sign-in-form))
-
-         (fact "work in progress should be removed from page"
-               page => th/work-in-progress-removed)
-
-         (fact "form should post to correct endpoint"
-               page => (th/has-form-action? (r/path :confirmation-sign-in)))
-
-         (fact "confirmation id should be set in form"
-               (let [confirmation-id "confirmation-123"
-                     page (-> (th/create-request {} nil {:confirmation-id confirmation-id}) confirmation-sign-in-form)]
-                 page => (th/has-attr? [:.clj--confirmation-id__input] :value confirmation-id)))
-
-         (fact "forgotten-password button should link to correct page"
-               page => (th/has-attr? [:.clj--forgot-password]
-                                     :href (r/path :show-forgotten-password-form)))))
-
-(future-facts "about displaying errors"
-       (facts "when password is invalid"
-              (let [errors {:credentials :confirmation-invalid}
-                    page (-> (th/create-request {} errors {}) confirmation-sign-in-form)]
-                
-                (fact "credentials validation element is present"
-                      page => (th/element-exists? [:.validation-summary--show]))
-                
-                (fact "correct error message is displayed"
-                      page => (th/has-attr? [:.clj--validation-summary__item]
-                                            :data-l8n "content:confirmation-sign-in-form/invalid-credentials-validation-message"))
-                
-                (fact "invalid value is not preserved in input field"
-                      (-> page (html/select [:.func--password__input]) first :attrs :value) => empty?))))
+(facts "about removing elements when there are no registration errors"
+       (let [page (-> (th/create-request)
+                      index)]
+         (fact "no elements have class for styling errors"
+               (html/select page [:.form-row--validation-error]) => empty?)
+         (fact "email validation element is removed"
+               (html/select page [:.clj--registration-email__validation]) => empty?)
+         (fact "password validation element is removed"
+               (html/select page [:.clj--registration-password__validation]) => empty?)
+         (fact "validation summary element is removed"
+               (html/select page [:.clj--validation-summary]) => empty?)))
