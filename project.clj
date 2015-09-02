@@ -24,7 +24,7 @@
                  [org.bitbucket.b_c/jose4j "0.4.4"]
                  [org.slf4j/slf4j-simple "1.7.12"]
                  [org.clojure/clojurescript "0.0-3308" :scope "provided"]
-                 [jayq "2.5.4"]]
+                 [prismatic/dommy "1.1.0"]]
   :main stonecutter.handler
   :jvm-opts ["-Dlog4j.configuration=log4j.dev"]
   :aot :all
@@ -63,11 +63,10 @@
                                                                         :asset-path    "js/out"
                                                                         :optimizations :whitespace
                                                                         :pretty-print  true}}
-                                                        {:source-paths ["src-cljs" "test-cljs"]
+                                                        {:source-paths ["src-cljs" "src-cljc" "test-cljs"]
                                                          :compiler     {:output-to     "target/cljs/testable.js"
                                                                         :optimizations :whitespace}}]
                                         :test-commands {"unit-tests" ["phantomjs" :runner
-                                                                      "window.literal_js_was_evaluated=true"
                                                                       "target/cljs/testable.js"]}}}
 
 
