@@ -121,7 +121,10 @@ app.get('/sign-out', function (req, res) {
   res.redirect('/sign-in');
 });
 
-app.get('/admin/user-list', function (req, res) {
+app.get('/admin/sign-in', function (req, res) {
+  customRender(res, 'admin-sign-in', pageData);
+});
+app.all('/admin/user-list', function (req, res) {
   customRender(res, 'user-list', pageData);
 });
 

@@ -28,6 +28,11 @@ block vars
 
 block headerScripts
 
+block headerContent
+  li.header-nav__item: a.header-nav__link(href="#invite", data-l8n="content:admin/invite-user") !Invite
+  li.header-nav__item: a.header-nav__link.clj--sign-out__link.func--sign-out__link(href="./sign-out", data-l8n="content:profile/sign-out-link") !Sign out
+
+
 block content
   .single-column
     h1(data-l8n="content:admin-user-list/page-title") !User list

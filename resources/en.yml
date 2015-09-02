@@ -229,6 +229,23 @@ flash:
   confirm-email-sent-post-email-address: "Please follow the instructions to confirm your email address."
   expired-password-reset: "This reset password link has already been used, or has expired -  please enter your e-mail below to receive a new email."
 
+admin:
+  invite-user: Invite
+
+admin-sign-in-form:
+  title: Sign in
+  page-header: Sign in
+  invalid-credentials-validation-message: Invalid email address or password
+  email-address: Email address
+  email-address-invalid-validation-message: Enter a valid email address
+  email-address-too-long-validation-message: Email address is too long
+  password: Password
+  password-blank-validation-message: Password cannot be blank
+  password-too-long-validation-message: Password is too long
+  password-too-short-validation-message: Password should be at least 8 characters long
+  sign-in: Sign in
+  forgot-password: Forgot password?
+
 admin-user-list:
   title: User list
   page-title: User list
