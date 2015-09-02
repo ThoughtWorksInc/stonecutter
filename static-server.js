@@ -45,8 +45,8 @@ app.get(signInRoutes, function (req, res) {
   customRender(res, 'sign-in', pageData);
 });
 
-app.all('/home', function (req, res) {
-  customRender(res, 'home', pageData);
+app.all('/routes', function (req, res) {
+  customRender(res, 'routes', pageData);
 });
 
 app.all('/register', function (req, res) {

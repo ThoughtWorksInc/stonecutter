@@ -1,0 +1,58 @@
+extends layout/layout
+
+block vars
+  - bodyClass = "func--index-page"
+  - pageTitle = "!Index"
+  //- pageTitleDataL8n = ""
+
+block headerScripts
+  style.
+    .demo {
+      padding-top: 40px;
+    }
+    .demo-nav {
+      margin-bottom: 40px;
+      list-style: none;
+    }
+    .demo-item {
+      margin: 0 0 15px 0;
+    }
+    .demo-item:last-child {
+      margin-bottom: 0;
+    }
+    .demo-item a {
+      color: #007E84;
+      font-size: 20px;
+      text-decoration: none;
+    }
+    .demo-item a:hover {
+      text-decoration: underline;
+    }
+
+block content
+
+  .demo
+    .middle-container
+
+      h2 Main
+      nav.demo-nav
+        li.demo-item: a(href="./library") Library
+        li.demo-item: a(href="./") Home
+        li.demo-item: a(href="./change-password") Change password
+        li.demo-item: a(href="./profile-created") Profile created
+        li.demo-item: a(href="./profile-deleted") Profile deleted
+        li.demo-item: a(href="./forgot-password") Forgot password
+        li.demo-item: a(href="./forgot-password-confirmation") Forgot password confirmation
+        li.demo-item: a(href="./reset-password") Reset password
+        li.demo-item: a(href="./authorise") Authorise
+        li.demo-item: a(href="./authorise-failure") Authorise failure
+        li.demo-item: a(href="./profile") Profile
+        li.demo-item: a(href="./unshare-profile-card") Unshare Profile Card No JS
+        li.demo-item: a(href="./delete-account") Delete account No JS
+        li.demo-item: a(href="./confirm-email-expired") Email confirmation expired
+        li.demo-item: a(href="./confirm-email-resent") Confirm email resent
+
+      h2 Admin
+      nav.demo-nav
+        li.demo-item: a(href="./admin/sign-in") Admin sign in
+        li.demo-item: a(href="./admin/user-list") Admin user list
