@@ -1,7 +1,7 @@
 .authorise-text {
   margin-bottom: 30px;
   &__description {
-    @include font-size(18px);
+    @include font-size($paragraph_font_size);
     &:last-child {
       margin-bottom: 0;
     }
@@ -19,7 +19,7 @@
   }
   &__item {
     margin-bottom: 15px;
-    @include font-size(18px);
+    @include font-size($paragraph_font_size);
     &:last-child {
       margin-bottom: 0;
     }

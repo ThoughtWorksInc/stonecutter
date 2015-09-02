@@ -73,7 +73,7 @@ input {
   }
   &__input {
     width: 100%;
-    @include font-size(20px);
+    @include font-size($input_font_size);
     padding: 0 0 0.75rem 0;
     background: transparent;
     color: $dark_cyan;

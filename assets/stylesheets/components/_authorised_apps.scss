@@ -22,7 +22,7 @@
 .app__title {
   width: 65%;
   padding: 18px;
-  @include font-size(18px);
+  @include font-size($paragraph_font_size);
   color: #444;
   line-height: 1.2;
   display: table-cell;

@@ -7,7 +7,7 @@
 }
 
 .settings__item {
-  @include font-size(18px);
+  @include font-size($paragraph_font_size);
   margin-top: 0;
   margin-bottom: 10px;
   line-height: 1.3;

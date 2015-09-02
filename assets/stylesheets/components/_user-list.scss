@@ -1,7 +1,5 @@
 .user-list {
   @include reset-list;
-  //margin-left: -1rem;
-  //margin-right: -1rem;
 }
 
 .user-item {
@@ -23,11 +21,9 @@
     }
     &--approved {
       color: $medium_grey;
-      //opacity: 0.25;
     }
     &--unapproved {
       color: $dark_cyan;
-      //opacity: 1;
     }
   }
 }
