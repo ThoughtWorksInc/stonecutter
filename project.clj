@@ -75,11 +75,9 @@
                        :aot         :all
                        :omit-source true
                        :cljsbuild   {:jar    true
-                                     :builds [{:source-paths ["src-cljs"]
+                                     :builds [{:source-paths ["src-cljs" "src-cljc"]
                                                :compiler     {:output-to     "resources/public/js/change_password.js"
-                                                              :output-dir    "resources/public/js/out"
                                                               :main          "stonecutter.change-password"
-                                                              :asset-path    "js/out"
                                                               :optimizations :advanced
                                                               :pretty-print  false}}]}}}
   :clean-targets ^{:protect false} [:target-path
