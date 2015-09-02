@@ -31,10 +31,10 @@ block content
           h2.page-title.visuallyhidden(data-l8n="content:index/sign-in-header")
             | !Sign in
           form.login-form.form-box.clj--sign-in__form(action="authorise", method="post", role="form")
-            .validation-summary.clj--validation-summary
+            .validation-summary.clj--sign-in-validation-summary
               .validation-summary__title
               ul.validation-summary__list
-                li.validation-summary__item.clj--validation-summary__item(data-l8n="content:index/sign-in-invalid-credentials-validation-message")
+                li.validation-summary__item.clj--sign-in-validation-summary__item(data-l8n="content:index/sign-in-invalid-credentials-validation-message")
                   | !Invalid email address or password
             p.form-row.clj--sign-in-email
               label.form-row__label(for="email")
@@ -42,7 +42,7 @@ block content
                   | !Email address
                 span.form-row__validation.clj--sign-in-email__validation(data-l8n="content:index/sign-in-email-address-invalid-validation-message")
                   | !Enter a valid email address
-              input.form-row__input.clj--email__input.func--email__input(type="email", id="email", name="email")
+              input.form-row__input.clj--sign-in-email__input.func--sign-in-email__input(type="email", id="email", name="email")
             p.form-row.clj--sign-in-password
               label.form-row__label(for="password")
                 span.form-row__title(data-l8n="content:index/sign-in-password")
@@ -68,10 +68,10 @@ block content
               = " "
               span(data-l8n="content:index/register-intro-2") !Profile Card.
           form.register-form.form-box.clj--register__form(action="./profile-created", method="post", role="form")
-            .validation-summary.clj--validation-summary
+            .validation-summary.clj--registration-validation-summary
               .validation-summary__title
               ul.validation-summary__list
-                li.validation-summary__item.clj--validation-summary__item(data-l8n="content:index/register-confirm-password-invalid-validation-message")
+                li.validation-summary__item.clj--registration-validation-summary__item(data-l8n="content:index/register-confirm-password-invalid-validation-message")
                   | !Ensure your passwords match
             p.form-row.clj--registration-first-name.clj-wip
               label.form-row__label(for="reg-first-name")
@@ -93,7 +93,7 @@ block content
                   | !Email address
                 span.form-row__validation.clj--registration-email__validation(data-l8n="content:index/register-email-address-invalid-validation-message")
                   | !Enter a valid email address
-              input.form-row__input.registration-email-input.func--email__input(type="email", id="reg-email", name="email")
+              input.form-row__input.clj--registration-email__input.func--registration-email__input(type="email", id="reg-email", name="email")
             p.form-row.clj--registration-password
               label.form-row__label(for="reg-password")
                 span.form-row__title(data-l8n="content:index/register-password")
