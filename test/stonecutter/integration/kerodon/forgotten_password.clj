@@ -40,8 +40,7 @@
            (steps/sign-out)
 
            ; User has forgotten password so follows forgotten password link
-           (k/visit (r/path :home))
-           (k/follow-redirect)
+           (k/visit (r/path :index))
            (k/follow [ks/forgotten-password-button])
            (kc/page-route-is :show-forgotten-password-form)
 
@@ -73,7 +72,7 @@
            (steps/sign-out)
            (steps/sign-in user-email "new-password")
            (k/follow-redirect)
-           (kc/page-route-is :home)
+           (kc/page-route-is :index)
            (k/follow-redirect)
            (kc/page-route-is :show-profile)
 

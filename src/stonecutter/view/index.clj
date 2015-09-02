@@ -101,5 +101,6 @@
          (add-registration-errors error-m)
          (set-sign-in-email-input (:params request))
          (set-registration-email-input (:params request))
-         vh/remove-work-in-progress)))
+         vh/remove-work-in-progress
+         vh/add-anti-forgery)))
 

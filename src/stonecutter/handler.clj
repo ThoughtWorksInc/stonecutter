@@ -64,7 +64,7 @@
         auth-code-store (storage/get-auth-code-store stores-m)
         forgotten-password-store (storage/get-forgotten-password-store stores-m)]
     (->
-      {:home                                 user/home
+      {:index                                user/index
        :ping                                 ping
        :theme-css                            stylesheets/theme-css
        :show-registration-form               user/show-registration-form
@@ -95,7 +95,8 @@
        :show-authorise-failure               (partial oauth/show-authorise-failure client-store)}
       (m/wrap-handlers #(m/wrap-handle-403 % forbidden-err-handler) #{})
       (m/wrap-handlers m/wrap-disable-caching #{:theme-css})
-      (m/wrap-handlers m/wrap-signed-in #{:show-registration-form :register-user
+      (m/wrap-handlers m/wrap-signed-in #{:index
+                                          :show-registration-form :register-user
                                           :show-sign-in-form :sign-in
                                           :sign-out
                                           :show-profile-deleted
@@ -115,7 +116,7 @@
         client-store (storage/get-client-store stores-m)
         token-store (storage/get-token-store stores-m)]
     {:validate-token (partial oauth/validate-token config-m auth-code-store client-store user-store token-store id-token-generator)
-     :jwk-set (partial oauth/jwk-set json-web-key-set)}))
+     :jwk-set        (partial oauth/jwk-set json-web-key-set)}))
 
 (defn splitter [site api]
   (fn [request]

@@ -1,5 +1,6 @@
 (ns stonecutter.test.test-helpers
   (:require [midje.sweet :as midje]
+            [net.cgrand.enlive-html :as html]
             [ring.mock.request :as mock]))
 
 (defn create-request
@@ -24,6 +25,12 @@
   (midje/checker [response] (and
                         (= (:status response) 302)
                         (= (get-in response [:headers "Location"]) path))))
+
+(defn check-renders-page [body-class-enlive-selector]
+  (midje/checker [response] (and
+                              (= (:status response) 200)
+                              (not-empty (-> (html/html-snippet (:body response))
+                                             (html/select [body-class-enlive-selector]))))))
 
 (defn check-signed-in [request user]
   (let [is-signed-in? #(and (= (:login user) (get-in % [:session :user-login]))

@@ -17,7 +17,7 @@
   ([token-store user]
    (sign-in-to-home token-store user {}))
   ([token-store user existing-session]
-   (-> (response/redirect (r/path :home))
+   (-> (response/redirect (r/path :index))
        (sign-in-user token-store user existing-session))))
 
 (defn signed-in? [request]

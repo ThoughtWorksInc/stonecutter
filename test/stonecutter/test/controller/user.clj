@@ -24,7 +24,7 @@
 (def sign-in-user-params {:email default-email :password default-password})
 
 (defn register-user-params [email password confirm-password]
-  {:email email :password password :confirm-password confirm-password})
+  {:registration-email email :registration-password password :registration-confirm-password confirm-password})
 
 (def default-register-user-params (register-user-params default-email default-password default-password))
 
@@ -35,9 +35,12 @@
 (background
   (email/get-confirmation-renderer) => test-email-renderer)
 
-(fact "home controller redirects to show-profile and passes on the flash message"
-      (u/home {:flash :foo}) => (every-checker (th/check-redirects-to (routes/path :show-profile))
-                                               (contains {:flash :foo})))
+(facts "about index"
+       (fact "when user is not logged in renders the index page"
+             (u/index (th/create-request :get (routes/path :index) {})) => (th/check-renders-page [:.func--index-page]))
+       (fact "when user is logged in redirects to show profile page"
+             (u/index {:session {:user-login ...user-login... :access_token ...access-token...}})
+             => (th/check-redirects-to (routes/path :show-profile))))
 
 (facts "about registration"
        (fact "user can register with valid credentials and is redirected to profile-created page, with user-login and access_token added to session"
@@ -94,7 +97,7 @@
                    test-email-sender (test-email/create-test-email-sender)
                    response (->> (th/create-request :post (routes/path :register-user) default-register-user-params)
                                  (u/register-user user-store token-store confirmation-store test-email-sender))]
-               (:flash response) => {:flash-type :confirm-email-sent
+               (:flash response) => {:flash-type    :confirm-email-sent
                                      :email-address default-email})))
 
 
@@ -119,31 +122,31 @@
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
                    test-email-sender (test-email/create-test-email-sender)]
-               (->> (th/create-request :post "/register" {:email "invalid"}) (u/register-user user-store token-store confirmation-store test-email-sender))) => anything
+               (->> (th/create-request :post "/register" {:registration-email "invalid"}) (u/register-user user-store token-store confirmation-store test-email-sender))) => anything
              (provided
                (cl-user/new-user anything anything) => anything :times 0
                (cl-user/store-user anything anything) => anything :times 0))
 
-       (facts "registration page is rendered with errors"
+       (facts "index page is rendered with errors"
               (let [user-store (m/create-memory-store)
                     token-store (m/create-memory-store)
                     confirmation-store (m/create-memory-store)
                     test-email-sender (test-email/create-test-email-sender)
-                    html-response (->> (th/create-request :post "/register" {:email "invalid"})
+                    html-response (->> (th/create-request :post "/register" {:registration-email "invalid"})
                                        (u/register-user user-store token-store confirmation-store test-email-sender)
                                        :body
                                        html/html-snippet)]
                 (fact "email field should have validation error class"
                       (html/select html-response [:.form-row--validation-error]) =not=> empty?)
                 (fact "invalid email value should be preserved"
-                      (-> (html/select html-response [:.registration-email-input])
+                      (-> (html/select html-response [:.clj--registration-email__input])
                           first
                           :attrs
                           :value) => "invalid"))))
 
 (fact "user can sign in with valid credentials and is redirected to home, with user-login and access_token added to session"
       (->> (th/create-request :post "/sign-in" sign-in-user-params)
-           (u/sign-in ...user-store... ...token-store...)) => (contains {:status  302 :headers {"Location" (routes/path :home)}
+           (u/sign-in ...user-store... ...token-store...)) => (contains {:status  302 :headers {"Location" (routes/path :index)}
                                                                          :session {:user-login   ...user-login...
                                                                                    :access_token ...token...}})
       (provided
@@ -336,9 +339,9 @@
                  (html/select enlive-snippet [:.clj--unconfirmed-email-message-container]) => ?check))
 
          ?confirmed ?check
-         false      (one-of anything)
-         true       empty?
-         nil        empty?)
+         false (one-of anything)
+         true empty?
+         nil empty?)
 
 
        (tabular

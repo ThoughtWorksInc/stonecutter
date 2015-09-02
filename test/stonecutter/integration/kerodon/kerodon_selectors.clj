@@ -1,9 +1,11 @@
 (ns stonecutter.integration.kerodon.kerodon-selectors
   (:require [net.cgrand.enlive-html :as html]))
 
-(def registration-email-input :.func--email__input)
-(def registration-password-input :.func--password__input)
-(def registration-confirm-input :.func--confirm-password__input)
+(def index-page-body :.func--index-page)
+
+(def registration-email-input :.func--registration-email__input)
+(def registration-password-input :.func--registration-password__input)
+(def registration-confirm-input :.func--registration-confirm-password__input)
 (def registration-submit :.func--create-profile__button)
 (def registration-page-body :.func--register-page)
 (def registration-email-validation-element :.clj--registration-email__validation)

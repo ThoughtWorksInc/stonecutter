@@ -10,6 +10,7 @@
             [stonecutter.db.token :as token]
             [stonecutter.email :as email]
             [stonecutter.view.register :as register]
+            [stonecutter.view.index :as index]
             [stonecutter.view.profile-created :as profile-created]
             [stonecutter.view.profile :as profile]
             [stonecutter.view.delete-account :as delete-account]
@@ -21,6 +22,11 @@
             [stonecutter.util.ring :as ring-util]
             [stonecutter.controller.common :as common]
             [ring.util.response :as response]))
+
+(defn index [request]
+  (if (common/signed-in? request)
+    (r/redirect (routes/path :show-profile))
+    (sh/enlive-response (index/index request) (:context request))))
 
 (defn show-registration-form [request]
   (sh/enlive-response (register/registration-form request) (:context request)))
@@ -35,8 +41,8 @@
 
 (defn register-user [user-store token-store confirmation-store email-sender request]
   (let [params (:params request)
-        email (:email params)
-        password (:password params)
+        email (:registration-email params)
+        password (:registration-password params)
         confirmation-id (uuid/uuid)
         config-m (get-in request [:context :config-m])
         err (v/validate-registration params (partial user/user-exists? user-store))
@@ -50,7 +56,7 @@
                 (assoc :flash {:flash-type :confirm-email-sent
                                :email-address (:login user)}))))
 
-      (show-registration-form request-with-validation-errors))))
+      (index request-with-validation-errors))))
 
 (defn show-change-password-form [request]
   (sh/enlive-response (change-password/change-password-form request) (:context request)))
@@ -74,7 +80,7 @@
 
 (defn show-sign-in-form [request]
   (if (common/signed-in? request)
-    (-> (r/redirect (routes/path :home)) (ring-util/preserve-session request))
+    (-> (r/redirect (routes/path :index)) (ring-util/preserve-session request))
     (sh/enlive-response (sign-in/sign-in-form request) (:context request))))
 
 (defn sign-in [user-store token-store request]
@@ -86,7 +92,7 @@
     (if (empty? err)
       (if-let [user (user/authenticate-and-retrieve-user user-store email password)]
         (-> request
-            (cl-ep/return-to-handler (routes/path :home))
+            (cl-ep/return-to-handler (routes/path :index))
             (common/sign-in-user token-store user))
         (-> request-with-validation-errors
             (assoc-in [:context :errors :credentials] :invalid)
@@ -111,6 +117,7 @@
 
 
 (defn show-profile [client-store user-store request]
+  (prn "INSIDE SHOW PROFILE")
   (let [email (get-in request [:session :user-login])
         user (user/retrieve-user user-store email)
         confirmed? (:confirmed? user)
@@ -155,8 +162,5 @@
     (user/remove-authorised-client-for-user! user-store email client-id)
     (r/redirect (routes/path :show-profile))))
 
-(defn home [request]
-  (let [response (r/redirect (routes/path :show-profile))]
-    (if-let [flash (:flash request)]
-      (assoc response :flash flash)
-      response)))
+
+

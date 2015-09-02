@@ -50,11 +50,11 @@
     nil))
 
 (defn validate-registration [params user-exists?-fn]
-  (let [{:keys [email password confirm-password]} params]
+  (let [{:keys [registration-email registration-password registration-confirm-password]} params]
     (->
-      {:email            (validate-registration-email email user-exists?-fn)
-       :password         (validate-password password)
-       :confirm-password (validate-passwords-match password confirm-password)}
+      {:registration-email            (validate-registration-email registration-email user-exists?-fn)
+       :registration-password         (validate-password registration-password)
+       :registration-confirm-password (validate-passwords-match registration-password registration-confirm-password)}
       remove-nil-values)))
 
 (defn validate-user-exists [email user-exists?-fn]

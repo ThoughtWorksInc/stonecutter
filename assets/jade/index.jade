@@ -42,14 +42,14 @@ block content
                   | !Email address
                 span.form-row__validation.clj--sign-in-email__validation(data-l8n="content:index/sign-in-email-address-invalid-validation-message")
                   | !Enter a valid email address
-              input.form-row__input.clj--sign-in-email__input.func--sign-in-email__input(type="email", id="email", name="email")
+              input.form-row__input.clj--sign-in-email__input.func--sign-in-email__input(type="email", id="email", name="sign-in-email")
             p.form-row.clj--sign-in-password
               label.form-row__label(for="password")
                 span.form-row__title(data-l8n="content:index/sign-in-password")
                   | !Password
                 span.form-row__validation.clj--sign-in-password__validation(data-l8n="content:index/sign-in-password-blank-validation-message")
                   | !Cannot be blank
-              input.form-row__input.func--password__input(type="password", id="password", name="password")
+              input.form-row__input.func--password__input(type="password", id="password", name="sign-in-password")
             .button-actions
               .button-actions__primary
                 button.button.func--sign-in__button(type="submit", data-l8n="content:index/sign-in-submit")
@@ -79,33 +79,33 @@ block content
                   | !First name
                 span.form-row__validation.clj--registration-first-name__validation(data-l8n="content:index/register-first-name-invalid-validation-message")
                   | !Enter a first name
-              input.form-row__input.registration-first-name-input.func--first-name__input(type="text", id="reg-first-name", name="first-name")
+              input.form-row__input.registration-first-name-input.func--first-name__input(type="text", id="reg-first-name", name="registration-first-name")
             p.form-row.clj--registration-last-name.clj-wip
               label.form-row__label(for="reg-last-name")
                 span.form-row__title(data-l8n="content:index/register-last-name")
                   | !Last name
                 span.form-row__validation.clj--registration-last-name__validation(data-l8n="content:index/register-last-name-invalid-validation-message")
                   | !Enter a last name
-              input.form-row__input.registration-last-name-input.func--last-name__input(type="text", id="reg-last-name", name="last-name")
+              input.form-row__input.registration-last-name-input.func--last-name__input(type="text", id="reg-last-name", name="registration-last-name")
             p.form-row.clj--registration-email
               label.form-row__label(for="reg-email")
                 span.form-row__title(data-l8n="content:index/register-email-address")
                   | !Email address
                 span.form-row__validation.clj--registration-email__validation(data-l8n="content:index/register-email-address-invalid-validation-message")
                   | !Enter a valid email address
-              input.form-row__input.clj--registration-email__input.func--registration-email__input(type="email", id="reg-email", name="email")
+              input.form-row__input.clj--registration-email__input.func--registration-email__input(type="email", id="reg-email", name="registration-email")
             p.form-row.clj--registration-password
               label.form-row__label(for="reg-password")
                 span.form-row__title(data-l8n="content:index/register-password")
                   | !Password
                 span.form-row__validation.clj--registration-password__validation(data-l8n="content:index/register-password-too-short-validation-message")
                   | !Password must be between 8 and 50 characters long
-              input.form-row__input.func--password__input(type="password", id="reg-password", name="password")
+              input.form-row__input.func--registration-password__input(type="password", id="reg-password", name="registration-password")
             p.form-row.clj--registration-confirm-password
               label.form-row__label(for="reg-confirm-password")
                 span.form-row__title(data-l8n="content:index/register-confirm-password")
                   | !Confirm Password
-              input.form-row__input.func--confirm-password__input(type="password", id="reg-confirm-password", name="confirm-password")
+              input.form-row__input.func--registration-confirm-password__input(type="password", id="reg-confirm-password", name="registration-confirm-password")
             button.button.button--full-width.button--special.func--create-profile__button(type="submit" data-l8n="content:index/register-create-account")
               | !Create a Profile
 

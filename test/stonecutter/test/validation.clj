@@ -59,20 +59,20 @@
 (tabular
   (fact "validating registration"
         (v/validate-registration
-          {:email ?email
-           :password ?password
-           :confirm-password ?confirm-password}
+          {:registration-email ?email
+           :registration-password ?password
+           :registration-confirm-password ?confirm-password}
           ?duplicate-user-fn) => ?validations)
 
   ?email                   ?password           ?confirm-password        ?duplicate-user-fn        ?validations
   "valid@email.com"        "valid-password"    "valid-password"         not-duplicate-user        {}
-  "invalid-email"          "valid-password"    "valid-password"         not-duplicate-user        {:email :invalid}
-  "valid@email.com"        "password"          "password"               is-duplicate-user         {:email :duplicate}
-  "valid@email.com"        ""                  ""                       not-duplicate-user        {:password :blank}
-  "valid@email.com"        "password"          "non-matching-password"  not-duplicate-user        {:confirm-password :invalid}
-  "invalid-email"          ""                  "password"               not-duplicate-user        {:email :invalid
-                                                                                                   :password :blank
-                                                                                                   :confirm-password :invalid})
+  "invalid-email"          "valid-password"    "valid-password"         not-duplicate-user        {:registration-email :invalid}
+  "valid@email.com"        "password"          "password"               is-duplicate-user         {:registration-email :duplicate}
+  "valid@email.com"        ""                  ""                       not-duplicate-user        {:registration-password :blank}
+  "valid@email.com"        "password"          "non-matching-password"  not-duplicate-user        {:registration-confirm-password :invalid}
+  "invalid-email"          ""                  "password"               not-duplicate-user        {:registration-email :invalid
+                                                                                                   :registration-password :blank
+                                                                                                   :registration-confirm-password :invalid})
 
 (tabular
   (fact "validating sign-in"

@@ -1,4 +1,4 @@
-GET     /                                        home
+GET     /                                        index
 GET     /ping                                    ping
 GET     /register                                show-registration-form
 POST    /register                                register-user

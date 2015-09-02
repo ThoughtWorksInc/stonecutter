@@ -48,10 +48,25 @@
   ([state]
    (check-and-follow-redirect state "")))
 
+(defn check-and-fill-in [state kerodon-selector value]
+  (fact {:midje/name (format "Attempting to fill in input with selector: %s" kerodon-selector)}
+        (let [enlive-selector [kerodon-selector]]
+          (-> state :enlive (html/select enlive-selector) first :tag) => :input))
+  (try (k/fill-in state kerodon-selector value)
+       (catch Exception state)))
+
+(defn check-and-press [state kerodon-selector]
+  (fact {:midje/name (format "Attempting to press submit button with selector: %s" kerodon-selector)}
+        (let [enlive-selector [kerodon-selector]]
+          (-> state :enlive (html/select enlive-selector) first :attrs :type) => "submit"))
+  (try (k/press state kerodon-selector)
+       (catch Exception state)))
 
 (defn selector-exists [state selector]
+  (prn "IN SELECTOR EXISTS")
   (fact {:midje/name (str "Check element exists with " selector)}
         (-> state :enlive (html/select selector)) =not=> empty?)
+  (prn "AFTER FACT")
   state)
 
 (defn selector-not-present [state selector]
