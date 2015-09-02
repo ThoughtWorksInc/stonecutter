@@ -27,7 +27,7 @@
 
 (defn enter-text [sel text]
       (dommy/set-value! (dommy/sel1 sel) text)
-      (fire! (sel1 sel) :onchange))
+      (fire! (sel1 sel) :input))
 
 (deftest password-validation
          (setup-page! change-password-template)

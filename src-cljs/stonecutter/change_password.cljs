@@ -10,7 +10,8 @@
                    (d/remove-class! (dm/sel1 :#current-password) "invalid"))))
 
 (defn start []
-      (d/listen! (dm/sel1 :#current-password) :onchange update-current-password!))
+      (when-let [e (dm/sel1 :#current-password)]
+              (d/listen! e :input update-current-password!)))
 
-; (set! (.-onload js/window) start)
+(set! (.-onload js/window) start)
 
