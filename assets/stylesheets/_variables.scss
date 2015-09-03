@@ -9,6 +9,7 @@ $super_light_cyan: #e9fffe;
 $medium_grey: #AAAAAA;
 $medium_cyan: #00D3CA;
 $medium_pink: #FF69E8;
+$medium_pink_dull: #af59a2;
 
 $dark_grey: #666666;
 $dark_cyan: #007E84;
@@ -22,15 +23,12 @@ $darker_pink: #690055;
 
 $card_background: #404040;
 
-
-$orange: $dark_pink;
-
 $text_grey: #333;
 
 $default_text_color: rgba(black,0.8);
 $background_color: $white;
 
-$error_color: $orange;
+$error_color: $medium_pink_dull;
 
 $link_colour: $default_text_color !default;
 $link_hover_colour: $link_colour !default;
