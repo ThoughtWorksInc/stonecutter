@@ -6,6 +6,11 @@
                    [dommy.core :refer [sel1]]
                    [stonecutter.test.macros :refer [load-template]]))
 
+(def valid-class "form-row__help--valid")
+
+(def invalid-password "blah")
+(def valid-password "12345678")
+
 (defn fire!
       "Creates an event of type `event-type`, optionally having
        `update-event!` mutate and return an updated event object,
@@ -22,20 +27,27 @@
 
 (defn setup-page! [html]
     (dommy/set-html! (sel1 :html) html))
-;
+
 (def change-password-template (load-template "public/change-password.html"))
 
 (defn enter-text [sel text]
-      (dommy/set-value! (dommy/sel1 sel) text)
+      (dommy/set-value! (sel1 sel) text)
       (fire! (sel1 sel) :input))
+
+(defn test-field-has-valid-class [selector valid?]
+  (is (= valid? (dommy/has-class? (sel1 selector) valid-class))
+      (str "field" selector " does not contain correct class: " valid-class)))
+
+(defn test-field-validates-client-side [selector target-element]
+  (test-field-has-valid-class target-element false)
+  (enter-text selector valid-password)
+  (test-field-has-valid-class target-element true)
+  (enter-text selector invalid-password)
+  (test-field-has-valid-class target-element false))
 
 (deftest password-validation
          (setup-page! change-password-template)
          (cp/start)
-         (is (= false (dommy/has-class? (sel1 :#current-password) "invalid")))
-         (enter-text :#current-password "blah")
-         (is (= true (dommy/has-class? (sel1 :#current-password) "invalid")))
-         (enter-text :#current-password "12345678")
-         (is (= false (dommy/has-class? (sel1 :#current-password) "invalid"))))
+         (test-field-validates-client-side :#new-password :.form-row__help))
 
 (defn run-all []  (run-tests))
