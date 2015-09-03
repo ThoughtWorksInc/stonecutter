@@ -40,12 +40,11 @@ input {
 }
 
 .form-row {
-  margin-bottom: 2rem;
+  position: relative;
+  margin-bottom: 1.25rem;
+  transition: background-color 250ms ease;
   &--validation-error {
-    background-color: lighten($light_pink,2%);
-    padding: 1rem;
-    margin-left: -1rem;
-    margin-right: -1rem;
+
   }
   &__label {
   }
@@ -73,10 +72,10 @@ input {
     }
   }
   &__validation {
-    font-size: 80%;
+    margin-top: -0.5rem;
+    padding-bottom: 0.5rem;
+    @include font-size(14px);
     color: $error_color;
-    padding: 0.5rem 0;
-    margin-bottom: 0.25rem;
     &:empty, & {
       display: none;
     }
