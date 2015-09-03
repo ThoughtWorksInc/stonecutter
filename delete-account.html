@@ -7,33 +7,36 @@
     <title data-l8n="content:delete-account/title">Delete your account</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link href="stylesheets/application.css" data-clojure-id="theme-link" media="screen" rel="stylesheet" type="text/css"/>
+    <link rel="shortcut icon" href="/stonecutter-favicon.ico">
+    <link href="/stylesheets/application.css" media="screen" rel="stylesheet" type="text/css"/>
+    <link href="/stylesheets/theme.css" media="screen" rel="stylesheet" type="text/css"/>
   </head>
   <body class="func--delete-account-page"><a href="#main" class="skip-link">Skip navigation</a>
     <div role="banner" class="header">
       <div class="header__inner middle-container">
-        <div class="header__logo"><span class="visuallyhidden">Stonecutter</span></div>
-        <nav role="navigation" class="tabs">
+        <div class="header__logo"><span class="visuallyhidden clj--app-name">Stonecutter</span></div>
+        <nav role="navigation" class="header-nav clj--header-nav">
         </nav>
       </div>
     </div>
     <div id="main" role="main" class="main-content">
-      <div class="middle-container">
-        <div class="modal__content clj-modal-contents js-modal">
-          <div class="modal__header">
-            <h2 data-l8n="content:delete-account/modal-delete-title" class="modal__title">Are you sure you want to delete your account?</h2>
-          </div>
-          <div class="modal__body">
-            <p data-l8n="content:delete-account/modal-delete-lede">If you delete your account all your data will be removed.</p>
-          </div>
-          <div class="modal-buttons">
-            <div class="modal-buttons__primary">
-              <form action="./profile-deleted" method="post" class="delete-account clj--delete-account__form">
-                <button type="submit" data-l8n="content:delete-account/modal-delete-ok-button" class="button button--full-width func--delete-account__button">Delete account</button>
-              </form>
+      <div class="columns">
+        <div class="single-column">
+          <div class="modal__content clj-modal-contents js-modal">
+            <div class="modal__header">
+              <h2 data-l8n="content:delete-account/modal-delete-title" class="modal__title">Are you sure you want to delete your account?</h2>
             </div>
-            <div class="modal-buttons__secondary"><a href="./profile" data-l8n="content:delete-account/modal-delete-cancel-button" class="button button--full-width button--secondary clj--delete-account-cancel__link">Cancel</a></div>
+            <div class="modal__body">
+              <p data-l8n="content:delete-account/modal-delete-lede">If you delete your account all your data will be removed.</p>
+            </div>
+            <div class="modal-buttons">
+              <div class="modal-buttons__primary">
+                <form action="./profile-deleted" method="post" class="delete-account clj--delete-account__form">
+                  <button type="submit" data-l8n="content:delete-account/modal-delete-ok-button" class="button button--full-width func--delete-account__button">Delete account</button>
+                </form>
+              </div>
+              <div class="modal-buttons__secondary"><a href="./profile" data-l8n="content:delete-account/modal-delete-cancel-button" class="button button--full-width button--link clj--delete-account-cancel__link">Cancel</a></div>
+            </div>
           </div>
         </div>
       </div>

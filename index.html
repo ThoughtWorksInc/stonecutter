@@ -4,72 +4,110 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title data-l8n="content:default/title">Index</title>
+    <title data-l8n="content:index/title">Welcome</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link href="stylesheets/application.css" data-clojure-id="theme-link" media="screen" rel="stylesheet" type="text/css"/>
-    <style>
-      .demo {
-        padding-top: 40px;
-      }
-      .demo-nav {
-        margin-bottom: 40px;
-        list-style: none;
-      }
-      .demo-item {
-        margin: 0 0 15px 0;
-      }
-      .demo-item:last-child {
-        margin-bottom: 0;
-      }
-      .demo-item a {
-        color: #007E84;
-        font-size: 20px;
-        text-decoration: none;
-      }
-      .demo-item a:hover {
-        text-decoration: underline;
-      }
-      
-    </style>
+    <link rel="shortcut icon" href="/stonecutter-favicon.ico">
+    <link href="/stylesheets/application.css" media="screen" rel="stylesheet" type="text/css"/>
+    <link href="/stylesheets/theme.css" media="screen" rel="stylesheet" type="text/css"/>
   </head>
   <body class="func--index-page"><a href="#main" class="skip-link">Skip navigation</a>
     <div role="banner" class="header">
       <div class="header__inner middle-container">
-        <div class="header__logo"><span class="visuallyhidden">Stonecutter</span></div>
-        <nav role="navigation" class="tabs">
+        <div class="header__logo"><span class="visuallyhidden clj--app-name">Stonecutter</span></div>
+        <nav role="navigation" class="header-nav clj--header-nav">
         </nav>
       </div>
     </div>
     <div id="main" role="main" class="main-content">
-      <div class="demo">
-        <div class="middle-container">
-          <h2>Main App</h2>
-          <nav class="demo-nav">
-            <li class="demo-item"><a href="./library">Library</a></li>
-            <li class="demo-item"><a href="./sign-in">Sign in</a></li>
-            <li class="demo-item"><a href="./register">Register</a></li>
-            <li class="demo-item"><a href="./change-password">Change password</a></li>
-            <li class="demo-item"><a href="./profile-created">Profile created</a></li>
-            <li class="demo-item"><a href="./profile-deleted">Profile deleted</a></li>
-            <li class="demo-item"><a href="./forgot-password">Forgot password</a></li>
-            <li class="demo-item"><a href="./authorise">Authorise</a></li>
-            <li class="demo-item"><a href="./authorise-failure">Authorise failure</a></li>
-            <li class="demo-item"><a href="./profile">Profile</a></li>
-            <li class="demo-item"><a href="./unshare-profile-card">Unshare Profile Card No JS</a></li>
-            <li class="demo-item"><a href="./delete-account">Delete account No JS</a></li>
-          </nav>
-          <h2>Demo App</h2>
-          <nav class="demo-nav">
-            <li class="demo-item"><a href="./greenparty/sign-in">Sign in</a></li>
-            <li class="demo-item"><a href="./greenparty/register">Register</a></li>
-            <li class="demo-item"><a href="./greenparty/profile-created">Profile created</a></li>
-            <li class="demo-item"><a href="./greenparty/authorise">Authorise</a></li>
-          </nav>
+      <div class="columns">
+        <div class="middle-container middle-container--max-large">
+          <div class="columns">
+            <div class="column one-half">
+              <h1><span data-l8n="content:index/welcome-header-1">Welcome to</span> <span class="clj--app-name">Stonecutter</span> <span data-l8n="content:index/welcome-header-2"></span>
+              </h1>
+              <p class="quote-intro"><span data-l8n="content:index/welcome-intro-1">Connect with your all your organisations d-cent tools. Sign in securely to applications and using your</span> <span class="clj--app-name">Stonecutter</span> <span data-l8n="content:index/welcome-intro-2">Profile Card. You have full control with the information you'd like to share.</span>
+              </p>
+            </div>
+            <div class="column one-half">
+              <div class="sign-in">
+                <h2 data-l8n="content:index/sign-in-header" class="page-title visuallyhidden">Sign in</h2>
+                <form action="authorise" method="post" role="form" class="login-form form-box clj--sign-in__form">
+                  <div class="validation-summary clj--sign-in-validation-summary">
+                    <div class="validation-summary__title"></div>
+                    <ul class="validation-summary__list">
+                      <li data-l8n="content:index/sign-in-invalid-credentials-validation-message" class="validation-summary__item clj--sign-in-validation-summary__item">Invalid email address or password</li>
+                    </ul>
+                  </div>
+                  <p class="form-row clj--sign-in-email">
+                    <label for="email" class="form-row__label"><span data-l8n="content:index/sign-in-email-address" class="form-row__title">Email address</span><span data-l8n="content:index/sign-in-email-address-invalid-validation-message" class="form-row__validation clj--sign-in-email__validation">Enter a valid email address</span></label>
+                    <input type="email" id="email" name="email" class="form-row__input clj--sign-in-email__input func--sign-in-email__input">
+                  </p>
+                  <p class="form-row clj--sign-in-password">
+                    <label for="password" class="form-row__label"><span data-l8n="content:index/sign-in-password" class="form-row__title">Password</span><span data-l8n="content:index/sign-in-password-blank-validation-message" class="form-row__validation clj--sign-in-password__validation">Cannot be blank</span></label>
+                    <input type="password" id="password" name="password" class="form-row__input func--password__input">
+                  </p>
+                  <div class="button-actions">
+                    <div class="button-actions__primary">
+                      <button type="submit" data-l8n="content:index/sign-in-submit" class="button func--sign-in__button">Sign in</button>
+                    </div>
+                    <div class="button-actions__secondary"><a href="./forgot-password" data-l8n="content:index/sign-in-forgot-password" class="link-button link-button--tall clj--forgot-password func--forgot-password__button">Forgot password?</a></div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+          <div class="columns">
+            <div class="single-column">
+              <div class="register-now">
+                <h2 data-l8n="content:index/register-header" class="page-title">Create a Profile</h2>
+                <div class="profile-card-description">
+                  <p><span data-l8n="content:index/register-intro-1">Register and sign in to supported applications using your</span> <span class="clj--app-name">Stonecutter</span> <span data-l8n="content:index/register-intro-2">Profile Card.</span>
+                  </p>
+                </div>
+                <form action="./profile-created" method="post" role="form" class="register-form form-box clj--register__form">
+                  <div class="validation-summary clj--registration-validation-summary">
+                    <div class="validation-summary__title"></div>
+                    <ul class="validation-summary__list">
+                      <li data-l8n="content:index/register-confirm-password-invalid-validation-message" class="validation-summary__item clj--registration-validation-summary__item">Ensure your passwords match</li>
+                    </ul>
+                  </div>
+                  <p class="form-row clj--registration-first-name clj-wip">
+                    <label for="reg-first-name" class="form-row__label"><span data-l8n="content:index/register-first-name" class="form-row__title">First name</span><span data-l8n="content:index/register-first-name-invalid-validation-message" class="form-row__validation clj--registration-first-name__validation">Enter a first name</span></label>
+                    <input type="text" id="reg-first-name" name="first-name" class="form-row__input registration-first-name-input func--first-name__input">
+                  </p>
+                  <p class="form-row clj--registration-last-name clj-wip">
+                    <label for="reg-last-name" class="form-row__label"><span data-l8n="content:index/register-last-name" class="form-row__title">Last name</span><span data-l8n="content:index/register-last-name-invalid-validation-message" class="form-row__validation clj--registration-last-name__validation">Enter a last name</span></label>
+                    <input type="text" id="reg-last-name" name="last-name" class="form-row__input registration-last-name-input func--last-name__input">
+                  </p>
+                  <p class="form-row clj--registration-email">
+                    <label for="reg-email" class="form-row__label"><span data-l8n="content:index/register-email-address" class="form-row__title">Email address</span><span data-l8n="content:index/register-email-address-invalid-validation-message" class="form-row__validation clj--registration-email__validation">Enter a valid email address</span></label>
+                    <input type="email" id="reg-email" name="email" class="form-row__input clj--registration-email__input func--registration-email__input">
+                  </p>
+                  <p class="form-row clj--registration-password">
+                    <label for="reg-password" class="form-row__label"><span data-l8n="content:index/register-password" class="form-row__title">Password</span><span data-l8n="content:index/register-password-too-short-validation-message" class="form-row__validation clj--registration-password__validation">Password must be between 8 and 50 characters long</span></label>
+                    <input type="password" id="reg-password" name="password" class="form-row__input func--password__input">
+                  </p>
+                  <p class="form-row clj--registration-confirm-password">
+                    <label for="reg-confirm-password" class="form-row__label"><span data-l8n="content:index/register-confirm-password" class="form-row__title">Confirm Password</span></label>
+                    <input type="password" id="reg-confirm-password" name="confirm-password" class="form-row__input func--confirm-password__input">
+                  </p>
+                  <button type="submit" data-l8n="content:index/register-create-account" class="button button--full-width button--special func--create-profile__button">Create a Profile</button>
+                </form>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
     <script>document.addEventListener("touchstart", function(){}, true);</script>
+    <script>
+      var form = document.getElementsByClassName('login-form')[0];
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var formAction = form.getAttribute('action') + "?";
+        window.location = formAction;
+      });
+    </script>
   </body>
 </html>

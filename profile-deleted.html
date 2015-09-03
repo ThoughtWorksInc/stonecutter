@@ -7,24 +7,27 @@
     <title data-l8n="content:profile-deleted/title">Profile deleted</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link href="stylesheets/application.css" data-clojure-id="theme-link" media="screen" rel="stylesheet" type="text/css"/>
+    <link rel="shortcut icon" href="/stonecutter-favicon.ico">
+    <link href="/stylesheets/application.css" media="screen" rel="stylesheet" type="text/css"/>
+    <link href="/stylesheets/theme.css" media="screen" rel="stylesheet" type="text/css"/>
   </head>
   <body class="func--profile-deleted-page"><a href="#main" class="skip-link">Skip navigation</a>
     <div role="banner" class="header">
       <div class="header__inner middle-container">
-        <div class="header__logo"><span class="visuallyhidden">Stonecutter</span></div>
-        <nav role="navigation" class="tabs">
+        <div class="header__logo"><span class="visuallyhidden clj--app-name">Stonecutter</span></div>
+        <nav role="navigation" class="header-nav clj--header-nav">
         </nav>
       </div>
     </div>
     <div id="main" role="main" class="main-content">
-      <div class="middle-container">
-        <h1 data-l8n="content:profile-deleted/page-header" class="page-title">Your Profile has been deleted</h1>
-        <div class="card-demo">
-          <div class="card-demo__deleted"></div>
+      <div class="columns">
+        <div class="three-fourths">
+          <h1 data-l8n="content:profile-deleted/page-header" class="page-title">Your Profile has been deleted</h1>
+          <div class="card-demo">
+            <div class="card-demo__deleted"></div>
+          </div>
+          <p><span data-l8n="content:profile-deleted/intro">All your Profile Cards and data have been completely removed.</span></p><a href="./register" data-l8n="content:profile-deleted/action-button" class="button button--primary func--profile-deleted-next__button clj--profile-deleted-next__button">Register</a>
         </div>
-        <p><span data-l8n="content:profile-deleted/intro">All your Profile Cards and data have been completely removed.</span></p><a href="./register" data-l8n="content:profile-deleted/action-button" class="button button--primary func--profile-deleted-next__button clj--profile-deleted-next__button">Register</a>
       </div>
     </div>
     <script>document.addEventListener("touchstart", function(){}, true);</script>

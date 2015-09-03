@@ -7,87 +7,108 @@
     <title data-l8n="content:profile/title">Profile</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link href="stylesheets/application.css" data-clojure-id="theme-link" media="screen" rel="stylesheet" type="text/css"/>
+    <link rel="shortcut icon" href="/stonecutter-favicon.ico">
+    <link href="/stylesheets/application.css" media="screen" rel="stylesheet" type="text/css"/>
+    <link href="/stylesheets/theme.css" media="screen" rel="stylesheet" type="text/css"/>
   </head>
   <body class="func--profile-page"><a href="#main" class="skip-link">Skip navigation</a>
     <div role="banner" class="header">
       <div class="header__inner middle-container">
-        <div class="header__logo"><span class="visuallyhidden">Stonecutter</span></div>
-        <nav role="navigation" class="tabs">
-          <li class="tabs__item tabs__item--active"><a href="./profile" data-l8n="content:profile/profile-link" class="tabs__link">Profile</a></li>
-          <li class="tabs__item"><a href="./sign-out" data-l8n="content:profile/sign-out-link" class="tabs__link clj--sign-out__link func--sign-out__link">Sign out</a></li>
+        <div class="header__logo"><span class="visuallyhidden clj--app-name">Stonecutter</span></div>
+        <nav role="navigation" class="header-nav clj--header-nav">
+          <li class="header-nav__item"><a href="./profile" data-l8n="content:profile/profile-link" class="header-nav__link">Profile</a></li>
+          <li class="header-nav__item"><a href="./sign-out" data-l8n="content:profile/sign-out-link" class="header-nav__link clj--sign-out__link func--sign-out__link">Sign out</a></li>
         </nav>
       </div>
     </div>
     <div id="main" role="main" class="main-content">
-      <div class="middle-container">
-        <h1 class="page-title">Profile</h1>
-        <div class="clj--flash-message-container clj--wip">
-        </div>
-        <div class="card-preview">
-          <h2>Your Profile Card</h2>
-          <p>Manage your shared details with allowed applications.</p>
-          <div class="wrapper__card">
-            <div class="card">
-              <div class="card__row card__row--bottom-border">
-                <div class="card__photo clj-wip">
-                  <!--a.button.button--full-width.card__photo-button(href="#") Update-->
-                  <div class="card__image"><img src="images/temp-avatar-300x300.jpg" alt="Your profile picture"/>
-                    <!--img(src="http://placekitten.com/g/302/302")-->
+      <div class="columns">
+        <div class="single-column">
+          <h1 class="page-title">Profile</h1>
+          <div class="clj--flash-message-container func--flash-message-container">
+            <div class="flash-message flash-message--success">
+              <p class="flash-message__title clj--flash-message-text">Success Flash Message.</p>
+            </div>
+          </div>
+          <div class="clj--unconfirmed-email-message-container func--unconfirmed-email-message-container">
+            <div class="flash-message flash-message--fail">
+              <p data-l8n="content:profile/email-not-confirmed" class="flash-message__title">Your email address is not yet confirmed.</p>
+            </div>
+          </div>
+          <div class="verify-email-address clj-wip">
+            <h2 data-l8n="content:profile/verify-email-title" class="verify__title">Your email address has not yet been confirmed</h2>
+            <p data-l8n="content:profile/verify-email-intro">If you have not received an email to email@email.com you should resend the confirmation email.</p>
+            <form action="/confirm-email-resent" method="post" class="resend-confirmation-form">
+              <button type="submit" data-l8n="content:profile/verify-button" class="button">Resend email confirmation</button>
+            </form>
+          </div>
+          <div class="card-preview">
+            <h2>Your Profile Card <span data-l8n="content:profile/admin-span" class="clj--admin__span">Mighty Admin</span>
+            </h2>
+            <p>Manage your shared details with allowed applications.</p>
+            <div class="wrapper__card">
+              <div class="card">
+                <div class="card__row card__row--bottom-border">
+                  <div class="card__photo clj-wip">
+                    <!--a.button.button--full-width.card__photo-button(href="#") Update-->
+                    <div class="card__image"><img src="/images/temp-avatar-300x300.jpg" alt="Your profile picture"/>
+                      <!--img(src="http://placekitten.com/g/302/302")-->
+                    </div>
+                  </div>
+                  <div class="card__details">
+                    <div class="card__heading clj-wip">
+                      <div class="card__name clj--card--name clj-wip">Peter Thomas Cheshire</div>
+                      <div class="card__display-name clj-wip">PTC</div>
+                    </div>
+                    <div class="card__description clj-wip">
+                      <p>Hoodie bespoke Tumblr, Pitchfork Etsy dreamcatcher cronut sartorial flexitarian vinyl synth PBR&B Neutra single-origin coffee.</p>
+                    </div>
                   </div>
                 </div>
-                <div class="card__details">
-                  <div class="card__heading">
-                    <div class="card__name clj--card--name">Peter Thomas Cheshire</div>
-                    <div class="card__display-name clj-wip">PTC</div>
-                  </div>
-                  <div class="card__description clj-wip">
-                    <p>Hoodie bespoke Tumblr, Pitchfork Etsy dreamcatcher cronut sartorial flexitarian vinyl synth PBR&B Neutra single-origin coffee.</p>
-                  </div>
+                <div class="card__row">
+                  <dl class="card__items">
+                    <dt class="card__items-key">Email</dt>
+                    <dd class="card__items-value clj--card-email func--card-email">name@domain.com</dd>
+                    <dt class="card__items-key clj-wip">PGP KeyID</dt>
+                    <dd class="card__items-value clj-wip">E97A7A5D</dd>
+                    <dt class="card__items-key clj-wip">Fingerprint</dt>
+                    <dd class="card__items-value clj-wip">1D42 0588 F6E7 4029 F312  9FAE 8378 C285 E97A 7A5F</dd>
+                  </dl>
                 </div>
-              </div>
-              <div class="card__row clj-wip">
-                <dl class="card__items">
-                  <dt class="card__items-key">PGP KeyID</dt>
-                  <dd class="card__items-value">E97A7A5D</dd>
-                  <dt class="card__items-key">Fingerprint</dt>
-                  <dd class="card__items-value">1D42 0588 F6E7 4029 F312  9FAE 8378 C285 E97A 7A5F</dd>
-                </dl>
               </div>
             </div>
           </div>
-        </div>
-        <div class="authorised-apps">
-          <h2 aria-describedby="authorised-apps-lede" data-l8n="content:applications/title" class="authorised-apps__title">Applications</h2>
-          <p id="authorised-apps-lede" data-l8n="content:applications/intro" class="lede">Manage the applications that you've shared your Profile Card with.</p>
-          <ul class="app__list clj--app__list func--app__list">
-            <li class="app__item clj--authorised-app__list-item">
-              <div class="app__title clj--app-name">Green Party</div>
-              <div class="app__remove"><a href="./unshare-profile-card" class="clj--app-item__unshare-link func--app-item__unshare-link">
-                  <button type="submit" class="button button--remove clj--authorised-app__remove-button"><i class="fa button__icon fa-remove"></i><span data-l8n="content:applications/unshare-button" class="button__text">Unshare Card</span>
-                  </button></a></div>
-            </li>
-            <li class="app__item clj--authorised-app__list-item">
-              <div class="app__title clj--app-name">A really long name that will break this</div>
-              <div class="app__remove"><a href="./unshare-profile-card" class="clj--app-item__unshare-link func--app-item__unshare-link">
-                  <button type="submit" class="button button--remove clj--authorised-app__remove-button"><i class="fa button__icon fa-remove"></i><span data-l8n="content:applications/unshare-button" class="button__text">Unshare Card</span>
-                  </button></a></div>
-            </li>
-            <li class="app__item clj--authorised-app__list-item">
-              <div class="app__title clj--app-name">Anotherapp</div>
-              <div class="app__remove"><a href="./unshare-profile-card" class="clj--app-item__unshare-link func--app-item__unshare-link">
-                  <button type="submit" class="button button--remove clj--authorised-app__remove-button"><i class="fa button__icon fa-remove"></i><span data-l8n="content:applications/unshare-button" class="button__text">Unshare Card</span>
-                  </button></a></div>
-            </li>
-          </ul>
-        </div>
-        <div class="settings">
-          <h2 data-l8n="content:profile/settings-title">Settings</h2>
-          <ul class="settings__list">
-            <li class="settings__item clj--wip"><a href="./change-password" data-l8n="content:profile/change-password-button" class="button button--full-width button--link button--list-border settings__link">Change password</a></li>
-            <li class="settings__item"><a href="./delete-account" data-l8n="content:profile/delete-button" class="button button--full-width button--link button--list-border settings__link func--delete-account__link">Delete account</a></li>
-          </ul>
+          <div class="authorised-apps">
+            <h2 aria-describedby="authorised-apps-lede" data-l8n="content:applications/title" class="authorised-apps__title">Applications</h2>
+            <p id="authorised-apps-lede" data-l8n="content:applications/intro" class="lede">Manage the applications that you've shared your Profile Card with.</p>
+            <ul class="app__list clj--app__list func--app__list">
+              <li class="app__item clj--authorised-app__list-item">
+                <div class="app__title clj--client-name">Green Party</div>
+                <div class="app__remove"><a href="./unshare-profile-card" class="clj--app-item__unshare-link func--app-item__unshare-link">
+                    <button type="submit" class="button button--remove clj--authorised-app__remove-button"><i class="fa button__icon fa-remove"></i><span data-l8n="content:applications/unshare-button" class="button__text">Unshare Card</span>
+                    </button></a></div>
+              </li>
+              <li class="app__item clj--authorised-app__list-item">
+                <div class="app__title clj--client-name">A really long name that will break this</div>
+                <div class="app__remove"><a href="./unshare-profile-card" class="clj--app-item__unshare-link func--app-item__unshare-link">
+                    <button type="submit" class="button button--remove clj--authorised-app__remove-button"><i class="fa button__icon fa-remove"></i><span data-l8n="content:applications/unshare-button" class="button__text">Unshare Card</span>
+                    </button></a></div>
+              </li>
+              <li class="app__item clj--authorised-app__list-item">
+                <div class="app__title clj--client-name">Anotherapp</div>
+                <div class="app__remove"><a href="./unshare-profile-card" class="clj--app-item__unshare-link func--app-item__unshare-link">
+                    <button type="submit" class="button button--remove clj--authorised-app__remove-button"><i class="fa button__icon fa-remove"></i><span data-l8n="content:applications/unshare-button" class="button__text">Unshare Card</span>
+                    </button></a></div>
+              </li>
+            </ul>
+          </div>
+          <div class="settings">
+            <h2 data-l8n="content:profile/settings-title">Settings</h2>
+            <ul class="settings__list">
+              <li class="settings__item"><a href="./change-password" data-l8n="content:profile/change-password-button" class="button button--full-width button--link settings__link clj--change-password__link func--change-password__link">Change password</a></li>
+              <li class="settings__item"><a href="./delete-account" data-l8n="content:profile/delete-button" class="button button--full-width button--link settings__link clj--delete-account__link func--delete-account__link">Delete account</a></li>
+            </ul>
+          </div>
         </div>
       </div>
     </div>

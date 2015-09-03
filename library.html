@@ -7,8 +7,9 @@
     <title data-l8n="content:default/title">Library</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link href="stylesheets/application.css" data-clojure-id="theme-link" media="screen" rel="stylesheet" type="text/css"/>
+    <link rel="shortcut icon" href="/stonecutter-favicon.ico">
+    <link href="/stylesheets/application.css" media="screen" rel="stylesheet" type="text/css"/>
+    <link href="/stylesheets/theme.css" media="screen" rel="stylesheet" type="text/css"/>
     <style>
       .section {
         margin-bottom: 4rem;
@@ -29,55 +30,57 @@
   <body class="func--library-page"><a href="#main" class="skip-link">Skip navigation</a>
     <div role="banner" class="header">
       <div class="header__inner middle-container">
-        <div class="header__logo"><span class="visuallyhidden">Stonecutter</span></div>
-        <nav role="navigation" class="tabs">
+        <div class="header__logo"><span class="visuallyhidden clj--app-name">Stonecutter</span></div>
+        <nav role="navigation" class="header-nav clj--header-nav">
         </nav>
       </div>
     </div>
     <div id="main" role="main" class="main-content">
-      <div class="middle-container">
-        <div class="section">
-          <h2 class="section-title">Applications</h2>
-          <div class="library-item">
-            <h3 class="library-title">Empty</h3>
-            <div class="library__demo">
-              <ul class="app__list">
-                <li class="app__item clj--authorised-app__list-item--empty">
-                  <div data-l8n="content:applications/list-empty" class="app__title">No applications use your Profile Card</div>
-                </li>
-              </ul>
+      <div class="columns">
+        <div class="middle-container">
+          <div class="section">
+            <h2 class="section-title">Applications</h2>
+            <div class="library-item">
+              <h3 class="library-title">Empty</h3>
+              <div class="library__demo">
+                <ul class="app__list">
+                  <li class="app__item clj--authorised-app__list-item--empty">
+                    <div data-l8n="content:applications/list-empty" class="app__title">No applications use your Profile Card</div>
+                  </li>
+                </ul>
+              </div>
             </div>
-          </div>
-          <div class="library-item">
-            <h3 class="library-title">Populated</h3>
-            <div class="library__demo">
-              <ul class="app__list">
-                <li class="app__item clj--authorised-app__list-item">
-                  <div class="app__title clj--app-name">Green Party</div>
-                  <div class="app__remove"><a href="./unshare-profile-card" class="clj--app-item__unshare-link func--app-item__unshare-link">
-                      <button type="submit" class="button button--remove clj--authorised-app__remove-button"><i class="fa button__icon fa-remove"></i><span data-l8n="content:applications/unshare-button" class="button__text">Unshare Card</span>
-                      </button></a></div>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="section">
-          <h2 class="section-title">Flash message</h2>
-          <div class="library-item">
-            <h3 class="library-title">Success</h3>
-            <div class="library__demo">
-              <div class="flash-message flash-message--success clj--flash-message--success">
-                <p class="flash-message__title clj--flash-message--success-title">Your password was saved successfully.</p>
+            <div class="library-item">
+              <h3 class="library-title">Populated</h3>
+              <div class="library__demo">
+                <ul class="app__list">
+                  <li class="app__item clj--authorised-app__list-item">
+                    <div class="app__title clj--client-name">Green Party</div>
+                    <div class="app__remove"><a href="./unshare-profile-card" class="clj--app-item__unshare-link func--app-item__unshare-link">
+                        <button type="submit" class="button button--remove clj--authorised-app__remove-button"><i class="fa button__icon fa-remove"></i><span data-l8n="content:applications/unshare-button" class="button__text">Unshare Card</span>
+                        </button></a></div>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
-          <div class="library-item">
-            <h3 class="library-title">Fail</h3>
-            <div class="library__demo">
-              <div class="flash-message flash-message--fail clj--flash-message--fail">
-                <p class="flash-message__title clj--flash-message--fail-title">There was a problem saving your password.
-                </p>
+          <div class="section">
+            <h2 class="section-title">Flash message</h2>
+            <div class="library-item">
+              <h3 class="library-title">Success</h3>
+              <div class="library__demo">
+                <div class="flash-message flash-message--success clj--flash-message--success">
+                  <p class="flash-message__title clj--flash-message--success-title">Your password was saved successfully.</p>
+                </div>
+              </div>
+            </div>
+            <div class="library-item">
+              <h3 class="library-title">Fail</h3>
+              <div class="library__demo">
+                <div class="flash-message flash-message--fail clj--flash-message--fail">
+                  <p class="flash-message__title clj--flash-message--fail-title">There was a problem saving your password.
+                  </p>
+                </div>
               </div>
             </div>
           </div>

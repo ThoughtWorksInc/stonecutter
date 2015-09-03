@@ -7,27 +7,30 @@
     <title data-l8n="content:error-500/title">Error-500</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
-    <link rel="icon" type="image/png" href="favicon.png">
-    <link href="stylesheets/application.css" data-clojure-id="theme-link" media="screen" rel="stylesheet" type="text/css"/>
+    <link rel="shortcut icon" href="/stonecutter-favicon.ico">
+    <link href="/stylesheets/application.css" media="screen" rel="stylesheet" type="text/css"/>
+    <link href="/stylesheets/theme.css" media="screen" rel="stylesheet" type="text/css"/>
   </head>
   <body class="func--error-500-page"><a href="#main" class="skip-link">Skip navigation</a>
     <div role="banner" class="header">
       <div class="header__inner middle-container">
-        <div class="header__logo"><span class="visuallyhidden">Stonecutter</span></div>
-        <nav role="navigation" class="tabs">
+        <div class="header__logo"><span class="visuallyhidden clj--app-name">Stonecutter</span></div>
+        <nav role="navigation" class="header-nav clj--header-nav">
         </nav>
       </div>
     </div>
     <div id="main" role="main" class="main-content">
-      <div class="middle-container">
-        <h1 data-l8n="content:error-500/page-header" class="page-title">Sorry something went wrong</h1>
-        <p data-l8n="content:error-500/page-intro" class="clj--error-info">An unexpected error has occured, please try again. We apologise for any inconvenience.</p>
-        <div data-l8n="html:error-500/page-content">
-          <h2>What do I do now?
-            <ul>
-              <li>Return home </li>
-            </ul>
-          </h2>
+      <div class="columns">
+        <div class="single-column">
+          <h1 data-l8n="content:error-500/page-header" class="page-title clj--error-page-header">Sorry something went wrong</h1>
+          <p data-l8n="content:error-500/page-intro" class="clj--error-page-intro">An unexpected error has occured, please try again. We apologise for any inconvenience.</p>
+          <div data-l8n="html:error-500/page-content" class="clj--error-page-content">
+            <h2>What do I do now?
+              <ul>
+                <li>Return home</li>
+              </ul>
+            </h2>
+          </div>
         </div>
       </div>
     </div>

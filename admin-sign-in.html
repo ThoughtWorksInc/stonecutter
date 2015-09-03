@@ -1,0 +1,53 @@
+
+<!-- initialization--><!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title data-l8n="content:admin-sign-in-form/title">Sign in</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="shortcut icon" href="/stonecutter-favicon.ico">
+    <link href="/stylesheets/application.css" media="screen" rel="stylesheet" type="text/css"/>
+    <link href="/stylesheets/theme.css" media="screen" rel="stylesheet" type="text/css"/>
+  </head>
+  <body class="func--admin-sign-in-page"><a href="#main" class="skip-link">Skip navigation</a>
+    <div role="banner" class="header">
+      <div class="header__inner middle-container">
+        <div class="header__logo"><span class="visuallyhidden clj--app-name">Stonecutter</span></div>
+        <nav role="navigation" class="header-nav clj--header-nav">
+        </nav>
+      </div>
+    </div>
+    <div id="main" role="main" class="main-content">
+      <div class="columns">
+        <div class="single-column">
+          <h1 data-l8n="content:admin-sign-in-form/page-header" class="page-title visuallyhidden">Sign in</h1>
+          <form action="./user-list" method="post" role="form" class="login-form">
+            <div class="validation-summary clj--validation-summary">
+              <div class="validation-summary__title"></div>
+              <ul class="validation-summary__list">
+                <li data-l8n="content:admin-sign-in-form/invalid-credentials-validation-message" class="validation-summary__item clj--validation-summary__item">Invalid email address or password</li>
+              </ul>
+            </div>
+            <p class="form-row clj--sign-in-email">
+              <label for="email" class="form-row__label"><span data-l8n="content:admin-sign-in-form/email-address" class="form-row__title">Email address</span><span data-l8n="content:admin-sign-in-form/email-address-invalid-validation-message" class="form-row__validation clj--sign-in-email__validation">Enter a valid email address</span></label>
+              <input type="email" id="email" name="email" class="form-row__input clj--email__input func--email__input">
+            </p>
+            <p class="form-row clj--sign-in-password">
+              <label for="password" class="form-row__label"><span data-l8n="content:admin-sign-in-form/password" class="form-row__title">Password</span><span data-l8n="content:admin-sign-in-form/password-invalid-validation-message" class="form-row__validation clj--sign-in-password__validation">Cannot be blank</span></label>
+              <input type="password" id="password" name="password" class="form-row__input func--password__input">
+            </p>
+            <div class="button-actions">
+              <div class="button-actions__primary">
+                <button type="submit" data-l8n="content:admin-sign-in-form/sign-in" class="button button--full-width func--sign-in__button">Sign in</button>
+              </div>
+              <div class="button-actions__secondary"><a href="#" data-l8n="content:admin-sign-in-form/forgot-password" class="button button--link button--full-width clj--forgot-password func--forgot-password__button">Forgot password?</a></div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script>document.addEventListener("touchstart", function(){}, true);</script>
+  </body>
+</html>
