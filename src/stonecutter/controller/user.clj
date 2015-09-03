@@ -2,7 +2,7 @@
   (:require [clauth.endpoints :as cl-ep]
             [ring.util.response :as r]
             [stonecutter.routes :as routes]
-            [stonecutter.view.sign-in :as sign-in]
+            [stonecutter.view.confirmation-sign-in :as sign-in]
             [stonecutter.validation :as v]
             [stonecutter.db.user :as user]
             [stonecutter.db.client :as c]
@@ -77,11 +77,6 @@
             (assoc-in [:context :errors :current-password] :invalid)
             (show-change-password-form)))
       (show-change-password-form request-with-validation-errors))))
-
-(defn show-sign-in-form [request]
-  (if (common/signed-in? request)
-    (-> (r/redirect (routes/path :index)) (ring-util/preserve-session request))
-    (sh/enlive-response (sign-in/sign-in-form request) (:context request))))
 
 (defn sign-in [user-store token-store request]
   (let [params (:params request)

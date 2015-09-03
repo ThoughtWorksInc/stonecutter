@@ -2,12 +2,12 @@
   (:require [net.cgrand.enlive-html :as html]))
 
 (def index-page-body :.func--index-page)
+(def index-app-name :.func--welcome-app-name)
 
 (def registration-email-input :.func--registration-email__input)
 (def registration-password-input :.func--registration-password__input)
 (def registration-confirm-input :.func--registration-confirm-password__input)
 (def registration-submit :.func--create-profile__button)
-(def registration-page-body :.func--register-page)
 (def registration-email-validation-element :.clj--registration-email__validation)
 
 (def profile-created-page-body :.func--profile-created-page)
@@ -26,8 +26,6 @@
 (def sign-in-email-input :.func--sign-in-email__input)
 (def sign-in-password-input :.func--sign-in-password__input)
 (def sign-in-submit :.func--sign-in__button)
-(def sign-in-page-body :.func--sign-in-page)
-(def sign-in-app-name :.func--register-now-app-name)
 
 (def confirmation-sign-in-password-input :.func--password__input)
 

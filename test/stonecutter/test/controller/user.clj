@@ -166,20 +166,6 @@
         (user/authenticate-and-retrieve-user ...user-store... default-email default-password) => {:login ...user-login...}
         (cl-token/create-token ...token-store... nil {:login ...user-login...}) => {:token ...token...}))
 
-(facts "accessing sign-in form"
-       (fact "without user-login and access_token in session shows the sign-in form"
-             (-> (th/create-request :get "/sign-in" nil)
-                 u/show-sign-in-form) => (contains {:status 200}))
-
-       (fact "with user-login and access_token in session redirects to /")
-       (-> (th/create-request :get "/sign-in" nil)
-           (assoc-in [:session :user-login] ...user-login...)
-           (assoc-in [:session :access_token] ...token...)
-           u/show-sign-in-form) => (every-checker
-                                     (th/check-redirects-to "/")
-                                     (contains {:session {:user-login   ...user-login...
-                                                          :access_token ...token...}})))
-
 (fact "when user signs in, if the session contains return-to, then redirect to that address"
       (->> (th/create-request :post (routes/path :sign-in-or-register) sign-in-user-params {:return-to ...return-to-url...})
            (u/sign-in-or-register ...user-store... ...token-store... ...confirmation-store... ...email-sender...))

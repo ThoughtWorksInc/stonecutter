@@ -52,7 +52,7 @@
   (fn [request]
     (if (common/signed-in? request)
       (handler request)
-      (r/redirect (routes/path :sign-in)))))
+      (r/redirect (routes/path :index)))))
 
 (defn wrap-custom-static-resources [handler config-m]
   (if-let [static-resources-dir-path (config/static-resources-dir-path config-m)]

@@ -4,12 +4,10 @@
             [clauth.client :as cl-client]
             [clojure.java.io :as io]
             [stonecutter.email :as email]
-            [stonecutter.routes :as routes]
-            [stonecutter.handler :as h]
             [stonecutter.db.storage :as s]
             [stonecutter.logging :as l]
             [stonecutter.db.user :as user]
-            [stonecutter.view.register :as register-view]
+            [stonecutter.view.index :as index]
             [stonecutter.integration.integration-helpers :as ih]
             [stonecutter.integration.kerodon.kerodon-selectors :as ks]
             [stonecutter.integration.kerodon.kerodon-checkers :as kc]
@@ -105,13 +103,13 @@
            (kc/selector-exists [ks/profile-page-body])
            (kc/selector-includes-content [:.func--card-email] "email@server.com")))
 
-(facts "User is redirected to sign-in page when accessing profile page not signed in"
+(facts "User is redirected to index page when accessing profile page not signed in"
        (-> (k/session test-app)
            (k/visit "/profile")
            (kc/check-and-follow-redirect)
-           (kc/page-uri-is "/sign-in")
+           (kc/page-uri-is "/")
            (kc/response-status-is 200)
-           (kc/selector-exists [ks/sign-in-page-body])))
+           (kc/selector-exists [ks/index-page-body])))
 
 (facts "User can sign in"
        (-> (k/session test-app)
@@ -206,14 +204,14 @@
 
 (fact "Error page is shown if an exception is thrown"
       (against-background
-        (register-view/registration-form anything) =throws=> (Exception.))
+        (index/index anything) =throws=> (Exception.))
       (-> (k/session (ih/build-app {:prone-stack-tracing? false}))
-          (k/visit "/register")
+          (k/visit "/")
           (kc/response-status-is 500)
           (kc/selector-exists [ks/error-500-page-body]))
       (fact "if prone stack-tracing is enabled then error middleware isn't invoked (exception not caught)"
             (-> (k/session (ih/build-app {:prone-stack-tracing? true}))
-                (k/visit "/register")) => (throws Exception)))
+                (k/visit "/")) => (throws Exception)))
 
 (fact "theme.css file is generated using environment variables"
       (-> (k/session (ih/build-app {:config-m {:secure "false"
@@ -237,8 +235,8 @@
 
 (fact "Correct app-name is used when config includes an :app-name"
       (-> (k/session (ih/build-app {:config-m {:secure "false" :app-name "My App Name"}}))
-          (k/visit "/sign-in")
-          (kc/selector-includes-content [ks/sign-in-app-name] "My App Name")))
+          (k/visit "/")
+          (kc/selector-includes-content [ks/index-app-name] "My App Name")))
 
 ;; 06 Jul 2015
 (future-fact "Replaying the same post will generate a 403 from the csrf handling"

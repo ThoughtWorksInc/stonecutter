@@ -40,18 +40,10 @@ app.get('/library', function (req, res) {
   customRender(res, 'library', pageData);
 });
 
-var signInRoutes = ['/sign-in','/login'];
-app.get(signInRoutes, function (req, res) {
-  customRender(res, 'sign-in', pageData);
-});
-
 app.all('/routes', function (req, res) {
   customRender(res, 'routes', pageData);
 });
 
-app.all('/register', function (req, res) {
-  customRender(res, 'register', pageData);
-});
 
 app.all('/change-password', function (req, res) {
   customRender(res, 'change-password', pageData);
@@ -118,7 +110,7 @@ app.get('/error-500', function (req, res) {
 });
 
 app.get('/sign-out', function (req, res) {
-  res.redirect('/sign-in');
+  res.redirect('/');
 });
 
 app.get('/admin/sign-in', function (req, res) {

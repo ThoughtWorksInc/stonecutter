@@ -5,7 +5,7 @@
             [stonecutter.db.user :as user]
             [stonecutter.helper :as sh]
             [stonecutter.routes :as routes]
-            [stonecutter.view.sign-in :as sign-in]
+            [stonecutter.view.confirmation-sign-in :as sign-in]
             [stonecutter.util.ring :as ring-util]
             [stonecutter.controller.common :as common]
             [ring.util.response :as response]))

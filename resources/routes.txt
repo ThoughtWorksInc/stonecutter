@@ -1,10 +1,6 @@
 GET     /                                        index
 POST    /                                        sign-in-or-register
 GET     /ping                                    ping
-GET     /register                                show-registration-form
-POST    /register                                register-user
-GET     /sign-in                                 show-sign-in-form
-POST    /sign-in                                 sign-in
 GET     /sign-out                                sign-out
 GET     /confirm-email/:confirmation-id          confirm-email-with-id
 GET     /confirm-email/:confirmation-id/sign-in  confirmation-sign-in-form

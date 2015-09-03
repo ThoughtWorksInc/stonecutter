@@ -68,10 +68,6 @@
        :sign-in-or-register                  (partial user/sign-in-or-register user-store token-store confirmation-store email-sender)
        :ping                                 ping
        :theme-css                            stylesheets/theme-css
-       :show-registration-form               user/show-registration-form
-       :register-user                        (partial user/register-user user-store token-store confirmation-store email-sender)
-       :show-sign-in-form                    user/show-sign-in-form
-       :sign-in                              (partial user/sign-in user-store token-store)
        :sign-out                             user/sign-out
        :confirm-email-with-id                (partial ec/confirm-email-with-id user-store confirmation-store)
        :confirmation-sign-in-form            ec/show-confirm-sign-in-form
@@ -97,8 +93,6 @@
       (m/wrap-handlers #(m/wrap-handle-403 % forbidden-err-handler) #{})
       (m/wrap-handlers m/wrap-disable-caching #{:theme-css})
       (m/wrap-handlers m/wrap-signed-in #{:index :sign-in-or-register
-                                          :show-registration-form :register-user
-                                          :show-sign-in-form :sign-in
                                           :sign-out
                                           :show-profile-deleted
                                           :authorise
