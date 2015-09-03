@@ -2,14 +2,11 @@
   (:require [clauth.endpoints :as cl-ep]
             [ring.util.response :as r]
             [stonecutter.routes :as routes]
-            [stonecutter.view.confirmation-sign-in :as sign-in]
             [stonecutter.validation :as v]
             [stonecutter.db.user :as user]
             [stonecutter.db.client :as c]
             [stonecutter.db.confirmation :as conf]
-            [stonecutter.db.token :as token]
             [stonecutter.email :as email]
-            [stonecutter.view.register :as register]
             [stonecutter.view.index :as index]
             [stonecutter.view.profile-created :as profile-created]
             [stonecutter.view.profile :as profile]
@@ -27,9 +24,6 @@
   (if (common/signed-in? request)
     (r/redirect (routes/path :show-profile))
     (sh/enlive-response (index/index request) (:context request))))
-
-(defn show-registration-form [request]
-  (sh/enlive-response (register/registration-form request) (:context request)))
 
 (defn send-confirmation-email! [email-sender user email confirmation-id config-m]
   (let [app-name (config/app-name config-m)
