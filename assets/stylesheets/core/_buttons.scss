@@ -2,7 +2,6 @@
   @include columns;
   &__primary {
     @include column;
-    margin-bottom: 10px;
     &--half {
       @include column-one-half($medium_device);
     }
@@ -11,9 +10,15 @@
     }
   }
   &__secondary {
-    @include column;
+    @include column($medium_device);
+    @include width-to($medium_device) {
+      margin-bottom: 0;
+    }
     &--half {
       @include column-one-half($medium_device);
+      @include width-to($medium_device) {
+        margin-bottom: 0;
+      }
     }
   }
 }
