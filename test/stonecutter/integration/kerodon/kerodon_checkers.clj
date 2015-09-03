@@ -63,10 +63,8 @@
        (catch Exception state)))
 
 (defn selector-exists [state selector]
-  (prn "IN SELECTOR EXISTS")
   (fact {:midje/name (str "Check element exists with " selector)}
         (-> state :enlive (html/select selector)) =not=> empty?)
-  (prn "AFTER FACT")
   state)
 
 (defn selector-not-present [state selector]

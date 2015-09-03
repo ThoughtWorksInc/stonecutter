@@ -21,10 +21,16 @@
 (def default-email "valid@email.com")
 (def default-password "password")
 (def confirmation-id "1234-ABCD")
-(def sign-in-user-params {:email default-email :password default-password})
+(def sign-in-user-params
+  {:sign-in-email    default-email
+   :sign-in-password default-password
+   :action           "sign-in"})
 
 (defn register-user-params [email password confirm-password]
-  {:registration-email email :registration-password password :registration-confirm-password confirm-password})
+  {:registration-email            email
+   :registration-password         password
+   :registration-confirm-password confirm-password
+   :action                        "register"})
 
 (def default-register-user-params (register-user-params default-email default-password default-password))
 
@@ -42,14 +48,18 @@
              (u/index {:session {:user-login ...user-login... :access_token ...access-token...}})
              => (th/check-redirects-to (routes/path :show-profile))))
 
+(fact "posting to sign-in-or-register route with no valid action parameter"
+      (u/sign-in-or-register ...user-store... ...token-store... ...confirmation-store... ...email-sender...
+                             {:action ...invalid...}) => nil)
+
 (facts "about registration"
        (fact "user can register with valid credentials and is redirected to profile-created page, with user-login and access_token added to session"
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
                    test-email-sender (test-email/create-test-email-sender)
-                   response (->> (th/create-request :post (routes/path :register-user) default-register-user-params {:some "session-data"})
-                                 (u/register-user user-store token-store confirmation-store test-email-sender))
+                   response (->> (th/create-request :post (routes/path :sign-in-or-register) default-register-user-params {:some "session-data"})
+                                 (u/sign-in-or-register user-store token-store confirmation-store test-email-sender))
                    registered-user (user/retrieve-user user-store default-email)]
                response => (th/check-redirects-to (routes/path :show-profile-created))
                response => (contains {:session (contains {:user-login   (:login registered-user)
@@ -60,8 +70,8 @@
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
                    test-email-sender (test-email/create-test-email-sender)
-                   response (->> (th/create-request :post (routes/path :register-user) default-register-user-params {:some "session-data"})
-                                 (u/register-user user-store token-store confirmation-store test-email-sender))]
+                   response (->> (th/create-request :post (routes/path :sign-in-or-register) default-register-user-params {:some "session-data"})
+                                 (u/sign-in-or-register user-store token-store confirmation-store test-email-sender))]
                response => (th/check-redirects-to (routes/path :show-profile-created))
                response => (contains {:session (contains {:some "session-data"})})))
 
@@ -70,8 +80,8 @@
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
                    test-email-sender (test-email/create-test-email-sender)]
-               (->> (th/create-request :post (routes/path :register-user) default-register-user-params)
-                    (u/register-user user-store token-store confirmation-store test-email-sender))) => anything
+               (->> (th/create-request :post (routes/path :sign-in-or-register) default-register-user-params)
+                    (u/sign-in-or-register user-store token-store confirmation-store test-email-sender))) => anything
              (provided
                (user/store-user! anything "valid@email.com" "password") => ...user...))
 
@@ -82,8 +92,8 @@
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
                    test-email-sender (test-email/create-test-email-sender)
-                   response (->> (th/create-request :post (routes/path :register-user) default-register-user-params)
-                                 (u/register-user user-store token-store confirmation-store test-email-sender))
+                   response (->> (th/create-request :post (routes/path :sign-in-or-register) default-register-user-params)
+                                 (u/sign-in-or-register user-store token-store confirmation-store test-email-sender))
                    registered-user (user/retrieve-user user-store default-email)]
                (:email (test-email/last-sent-email test-email-sender)) => default-email
                (:body (test-email/last-sent-email test-email-sender)) => (contains {:confirmation-id confirmation-id})))
@@ -95,8 +105,8 @@
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
                    test-email-sender (test-email/create-test-email-sender)
-                   response (->> (th/create-request :post (routes/path :register-user) default-register-user-params)
-                                 (u/register-user user-store token-store confirmation-store test-email-sender))]
+                   response (->> (th/create-request :post (routes/path :sign-in-or-register) default-register-user-params)
+                                 (u/sign-in-or-register user-store token-store confirmation-store test-email-sender))]
                (:flash response) => {:flash-type    :confirm-email-sent
                                      :email-address default-email})))
 
@@ -108,8 +118,8 @@
                    confirmation-store (m/create-memory-store)
                    test-email-sender (test-email/create-test-email-sender)
                    original-user (user/store-user! user-store default-email default-password)
-                   html-response (->> (th/create-request :post "/register" (register-user-params default-email default-password default-password))
-                                      (u/register-user user-store token-store confirmation-store test-email-sender)
+                   html-response (->> (th/create-request :post (routes/path :sign-in-or-register) (register-user-params default-email default-password default-password))
+                                      (u/sign-in-or-register user-store token-store confirmation-store test-email-sender)
                                       :body
                                       html/html-snippet)]
                (-> (html/select html-response [:.form-row--validation-error])
@@ -122,7 +132,8 @@
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
                    test-email-sender (test-email/create-test-email-sender)]
-               (->> (th/create-request :post "/register" {:registration-email "invalid"}) (u/register-user user-store token-store confirmation-store test-email-sender))) => anything
+               (->> (th/create-request :post (routes/path :sign-in-or-register) {:registration-email "invalid" :action "register"})
+                    (u/sign-in-or-register user-store token-store confirmation-store test-email-sender))) => anything
              (provided
                (cl-user/new-user anything anything) => anything :times 0
                (cl-user/store-user anything anything) => anything :times 0))
@@ -132,8 +143,9 @@
                     token-store (m/create-memory-store)
                     confirmation-store (m/create-memory-store)
                     test-email-sender (test-email/create-test-email-sender)
-                    html-response (->> (th/create-request :post "/register" {:registration-email "invalid"})
-                                       (u/register-user user-store token-store confirmation-store test-email-sender)
+                    html-response (->> (th/create-request :post (routes/path :sign-in-or-register) {:registration-email "invalid"
+                                                                                                    :action             "register"})
+                                       (u/sign-in-or-register user-store token-store confirmation-store test-email-sender)
                                        :body
                                        html/html-snippet)]
                 (fact "email field should have validation error class"
@@ -144,11 +156,12 @@
                           :attrs
                           :value) => "invalid"))))
 
-(fact "user can sign in with valid credentials and is redirected to home, with user-login and access_token added to session"
-      (->> (th/create-request :post "/sign-in" sign-in-user-params)
-           (u/sign-in ...user-store... ...token-store...)) => (contains {:status  302 :headers {"Location" (routes/path :index)}
-                                                                         :session {:user-login   ...user-login...
-                                                                                   :access_token ...token...}})
+(fact "user can sign in with valid credentials and is redirected to profile, with user-login and access_token added to session"
+      (->> (th/create-request :post (routes/path :sign-in-or-register) sign-in-user-params)
+           (u/sign-in-or-register ...user-store... ...token-store... ...confirmation-store... ...email-sender...))
+      => (contains {:status  302 :headers {"Location" (routes/path :show-profile)}
+                    :session {:user-login   ...user-login...
+                              :access_token ...token...}})
       (provided
         (user/authenticate-and-retrieve-user ...user-store... default-email default-password) => {:login ...user-login...}
         (cl-token/create-token ...token-store... nil {:login ...user-login...}) => {:token ...token...}))
@@ -168,9 +181,10 @@
                                                           :access_token ...token...}})))
 
 (fact "when user signs in, if the session contains return-to, then redirect to that address"
-      (->> (th/create-request :post "/sign-in" sign-in-user-params {:return-to ...return-to-url...})
-           (u/sign-in ...user-store... ...token-store...)) => (contains {:status  302 :headers {"Location" ...return-to-url...}
-                                                                         :session {:access_token ...token... :user-login ...user-login...}})
+      (->> (th/create-request :post (routes/path :sign-in-or-register) sign-in-user-params {:return-to ...return-to-url...})
+           (u/sign-in-or-register ...user-store... ...token-store... ...confirmation-store... ...email-sender...))
+      => (contains {:status  302 :headers {"Location" ...return-to-url...}
+                    :session {:access_token ...token... :user-login ...user-login...}})
       (provided
         (user/authenticate-and-retrieve-user ...user-store... default-email default-password) => {:login ...user-login...}
         (cl-token/create-token ...token-store... nil {:login ...user-login...}) => {:token ...token...}))
@@ -179,30 +193,37 @@
        (let [user-store (m/create-memory-store)
              token-store (m/create-memory-store)]
          (fact "user cannot sign in with blank password"
-               (->> (th/create-request :post "/sign-in" {:email "email@credentials.com" :password ""})
-                    (u/sign-in user-store token-store)) => (contains {:status 200})))
+               (->> (th/create-request :post (routes/path :sign-in-or-register) {:sign-in-email    "email@credentials.com"
+                                                                                 :sign-in-password ""
+                                                                                 :action           "sign-in"})
+                    (u/sign-in-or-register user-store token-store ...confirmation-store... ...email-sender...))
+               => (contains {:status 200})))
 
        (fact "user cannot sign in with invalid credentials"
-             (->> (th/create-request :post "/sign-in" {:email "invalid@credentials.com" :password "password"})
-                  (u/sign-in ...user-store... ...token-store...)) => (contains {:status 200})
+             (->> (th/create-request :post (routes/path :sign-in-or-register) {:sign-in-email    "invalid@credentials.com"
+                                                                               :sign-in-password "password"
+                                                                               :action           "sign-in"})
+                  (u/sign-in-or-register ...user-store... ...token-store... ...confirmation-store... ...email-sender...))
+             => (contains {:status 200})
              (provided
                (user/authenticate-and-retrieve-user ...user-store... "invalid@credentials.com" "password") => nil))
 
-       (facts "sign-in page is rendered with errors when invalid credentials are used"
+       (facts "index page is rendered with errors when invalid credentials are used"
               (let [user-store (m/create-memory-store)
                     token-store (m/create-memory-store)
-                    html-response (->> (th/create-request :post "/sign-in" {:email    "invalid@credentials.com"
-                                                                            :password "password"})
-                                       (u/sign-in user-store token-store)
+                    html-response (->> (th/create-request :post (routes/path :sign-in-or-register) {:sign-in-email    "not-a-registered-user@credentials.com"
+                                                                                                    :sign-in-password "password"
+                                                                                                    :action           "sign-in"})
+                                       (u/sign-in-or-register user-store token-store ...confirmation-store... ...email-sender...)
                                        :body
                                        html/html-snippet)]
                 (fact "form should include validation error class"
-                      (html/select html-response [:.clj--validation-summary__item]) =not=> empty?)
+                      (html/select html-response [:.clj--sign-in-validation-summary__item]) =not=> empty?)
                 (fact "email value should be preserved"
-                      (-> (html/select html-response [:.clj--email__input])
+                      (-> (html/select html-response [:.clj--sign-in-email__input])
                           first
                           :attrs
-                          :value) => "invalid@credentials.com"))))
+                          :value) => "not-a-registered-user@credentials.com"))))
 
 (fact "when user signs out, access token and user login are removed from session"
       (let [request-with-session {:session {:access_token   ...access-token...

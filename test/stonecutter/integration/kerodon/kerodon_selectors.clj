@@ -23,11 +23,13 @@
 
 (def unshare-profile-card-confirm-button :.func--unshare-profile-card__button)
 
-(def sign-in-email-input :.func--email__input)
-(def sign-in-password-input :.func--password__input)
+(def sign-in-email-input :.func--sign-in-email__input)
+(def sign-in-password-input :.func--sign-in-password__input)
 (def sign-in-submit :.func--sign-in__button)
 (def sign-in-page-body :.func--sign-in-page)
 (def sign-in-app-name :.func--register-now-app-name)
+
+(def confirmation-sign-in-password-input :.func--password__input)
 
 (def sign-out-link :.func--sign-out__link)
 

@@ -62,9 +62,9 @@
     :non-existent))
 
 (defn validate-sign-in [params]
-  (let [{:keys [email password]} params]
-    (-> {:email    (validate-sign-in-email email)
-         :password (validate-password password)}
+  (let [{:keys [sign-in-email sign-in-password]} params]
+    (-> {:sign-in-email    (validate-sign-in-email sign-in-email)
+         :sign-in-password (validate-password sign-in-password)}
         remove-nil-values)))
 
 (defn validate-change-password [params]

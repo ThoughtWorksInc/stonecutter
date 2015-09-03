@@ -62,7 +62,7 @@
            (k/press ks/reset-password-submit)
 
            ; user is signed in to profile
-           (k/follow-redirect)
+           (kc/check-and-follow-redirect)
            (kc/page-route-is :show-profile)
 
            ; User should be shown flash message informing them that there password has changed
@@ -71,14 +71,12 @@
            ; When user signs out, then can sign back in with their new password
            (steps/sign-out)
            (steps/sign-in user-email "new-password")
-           (k/follow-redirect)
-           (kc/page-route-is :index)
-           (k/follow-redirect)
+           (kc/check-and-follow-redirect)
            (kc/page-route-is :show-profile)
 
            ; If user tries to reuse reset link, they will be redirected to the forgotten password form
            (visit-email-link email-sender base-url)
-           (k/follow-redirect)
+           (kc/check-and-follow-redirect)
            (kc/page-route-is :show-forgotten-password-form)))
 
 (ih/teardown-db)

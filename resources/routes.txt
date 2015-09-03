@@ -1,4 +1,5 @@
 GET     /                                        index
+POST    /                                        sign-in-or-register
 GET     /ping                                    ping
 GET     /register                                show-registration-form
 POST    /register                                register-user

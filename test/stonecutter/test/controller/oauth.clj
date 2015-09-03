@@ -21,7 +21,7 @@
 (def client-url "https://client-app.com")
 
 (facts "about authorisation end-point"
-       (fact "request with client-id, response_type and redirect_uri returns redirect to login page if there is no user session"
+       (fact "request with client-id, response_type and redirect_uri returns redirect to index page if there is no user session"
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
                    auth-code-store (m/create-memory-store)
@@ -34,7 +34,7 @@
                                (r/header "accept" "text/html"))
                    response (oauth/authorise auth-code-store client-store user-store token-store request)]
                (:status response) => 302
-               (-> response (get-in [:headers "Location"])) => "/sign-in"
+               (-> response (get-in [:headers "Location"])) => "/"
                (-> response (get-in [:session :return-to])) => (format "/authorisation?client_id=%s&response_type=code&redirect_uri=%s" (:client-id client-details) (hiccup/url-encode client-url))))
 
        (fact "valid request goes to authorisation page with auth_code and email when there is an existing user session"

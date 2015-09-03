@@ -79,20 +79,21 @@
 (facts "User is returned to same page when existing email is used"
        (-> (k/session test-app)
            (steps/register "existing@user.com" "password")
-           (k/visit "/register")
+           (steps/sign-out)
+           (k/visit "/")
            (kc/check-and-fill-in ks/registration-email-input "existing@user.com")
            (kc/check-and-fill-in ks/registration-password-input "password")
            (kc/check-and-fill-in ks/registration-confirm-input "password")
            (kc/check-and-press ks/registration-submit)
-           (kc/page-uri-is "/register")
+           (kc/page-uri-is "/")
            (kc/response-status-is 200)
-           (kc/selector-exists [ks/registration-page-body])))
+           (kc/selector-exists [ks/index-page-body])))
 
 (facts "Register page redirects to profile-created page when registered and
        user-login is in the session so that email address is displayed on profile card"
        (-> (k/session test-app)
            (steps/register "email@server.com" "valid-password")
-           (k/follow-redirect)
+           (kc/check-and-follow-redirect)
            (kc/page-uri-is "/profile-created")
            (kc/response-status-is 200)
            (kc/selector-exists [ks/profile-created-page-body])
@@ -107,7 +108,7 @@
 (facts "User is redirected to sign-in page when accessing profile page not signed in"
        (-> (k/session test-app)
            (k/visit "/profile")
-           (k/follow-redirect)
+           (kc/check-and-follow-redirect)
            (kc/page-uri-is "/sign-in")
            (kc/response-status-is 200)
            (kc/selector-exists [ks/sign-in-page-body])))
@@ -115,9 +116,7 @@
 (facts "User can sign in"
        (-> (k/session test-app)
            (steps/sign-in "email@server.com" "valid-password")
-           (k/follow-redirect)
-           (kc/page-uri-is "/")
-           (k/follow-redirect)
+           (kc/check-and-follow-redirect)
            (kc/page-uri-is "/profile")
            (kc/response-status-is 200)
            (kc/selector-exists [ks/profile-page-body])
@@ -128,7 +127,7 @@
            (steps/sign-in "email@server.com" "valid-password")
            (k/visit "/profile")
            (k/follow ks/sign-out-link)
-           (k/follow-redirect)
+           (kc/check-and-follow-redirect)
            (kc/page-uri-is "/")
            (kc/selector-exists [ks/index-page-body])))
 
@@ -136,14 +135,14 @@
        (-> (k/session test-app)
            (steps/sign-in "email@server.com" "valid-password")
            (k/visit "/")
-           (k/follow-redirect)
+           (kc/check-and-follow-redirect)
            (kc/page-uri-is "/profile")))
 
 (facts "Home url redirects to profile page if user is registered"
        (-> (k/session test-app)
            (steps/register "email2@server.com" "valid-password")
            (k/visit "/")
-           (k/follow-redirect)
+           (kc/check-and-follow-redirect)
            (kc/page-uri-is "/profile")))
 
 (facts "Clients appear on user profile page"
@@ -163,7 +162,7 @@
            (k/follow ks/profile-authorised-client-unshare-link)
            (kc/page-uri-contains "/unshare-profile-card")
            (kc/check-and-press ks/unshare-profile-card-confirm-button)
-           (k/follow-redirect)
+           (kc/check-and-follow-redirect)
            (kc/page-uri-is "/profile")
            (kc/selector-does-not-include-content [ks/profile-authorised-client-list] "myapp")))
 
@@ -179,7 +178,7 @@
            (kc/check-and-fill-in ks/change-password-new-password-input "new-valid-password")
            (kc/check-and-fill-in ks/change-password-confirm-new-password-input "new-valid-password")
            (kc/check-and-press ks/change-password-submit)
-           (k/follow-redirect)
+           (kc/check-and-follow-redirect)
            (kc/page-uri-is "/profile")
            (kc/response-status-is 200)
            (kc/selector-exists [ks/profile-page-body])
@@ -194,7 +193,7 @@
            (kc/response-status-is 200)
            (kc/selector-exists [ks/delete-account-page-body])
            (kc/check-and-press ks/delete-account-button)
-           (k/follow-redirect)
+           (kc/check-and-follow-redirect)
            (kc/page-uri-is "/profile-deleted")
            (kc/response-status-is 200)
            (kc/selector-exists [ks/profile-deleted-page-body])))

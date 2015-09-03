@@ -6,7 +6,7 @@
             [clauth.client :as cl-client]
             [stonecutter.handler :as h]
             [stonecutter.db.storage :as s]
-            [stonecutter.integration.kerodon.kerodon-checkers :as kh]
+            [stonecutter.integration.kerodon.kerodon-checkers :as kc]
             [stonecutter.integration.kerodon.kerodon-selectors :as ks]
             [stonecutter.integration.integration-helpers :as ih]
             [stonecutter.db.user :as user]
@@ -63,13 +63,14 @@
                           :code          auth-code
                           :client_id     client-id
                           :client_secret client-secret}))
-    (throw (Exception. "Unable to get auth-code"))))
+    (do (prn "============ Error: Unable to get auth-code")
+        state)))
 
 (def email "email@server.com")
 (def password "valid-password")
 
 (defn setup [stores]
-  (let [client (cl-client/register-client (s/get-client-store stores)  "myclient" "http://myclient.com")
+  (let [client (cl-client/register-client (s/get-client-store stores) "myclient" "http://myclient.com")
         client-id (:client-id client)
         client-secret (:client-secret client)
         invalid-client-secret (string/reverse client-secret)
@@ -93,19 +94,19 @@
                     {:keys [client-id client-secret]} (setup stores)]
                 (-> (k/session (ih/build-app {:stores-m stores}))
                     (browser-sends-authorisation-request-from-client-redirect client-id)
-                    (k/follow-redirect)
+                    (kc/check-and-follow-redirect "to index")
                     ;; login
-                    (kh/page-uri-is "/sign-in")
+                    (kc/page-uri-is "/")
                     sign-in
                     ;; check redirect - should have auth_code
-                    (k/follow-redirect)
-                    (kh/page-uri-is "/authorisation")
-                    (k/press ks/authorise-share-profile-button)
-                    (kh/location-contains "callback?code=")
+                    (kc/check-and-follow-redirect "to authorisation")
+                    (kc/page-uri-is "/authorisation")
+                    (kc/check-and-press ks/authorise-share-profile-button)
+                    (kc/location-contains "callback?code=")
                     (client-sends-access-token-request client-id client-secret)
                     ; return 200 with new access_token
-                    (kh/response-has-access-token)
-                    (kh/response-has-user-info))))
+                    (kc/response-has-access-token)
+                    (kc/response-has-user-info))))
 
        (facts "user who has already authorised client does not need to authorise client again"
               (let [stores (s/create-in-memory-stores)
@@ -120,11 +121,11 @@
 
                     ;; send authorisation request for the second time
                     (browser-sends-authorisation-request-from-client-redirect client-id)
-                    (kh/location-contains "callback?code=")
+                    (kc/location-contains "callback?code=")
                     (client-sends-access-token-request client-id client-secret)
                     ;; return 200 with new access_token
-                    (kh/response-has-access-token)
-                    (kh/response-has-user-info))))
+                    (kc/response-has-access-token)
+                    (kc/response-has-user-info))))
 
        (facts "user is redirected to authorisation-failure page when cancelling authorisation"
               (let [stores (s/create-in-memory-stores)
@@ -133,13 +134,13 @@
                     (browser-sends-authorisation-request-from-client-redirect client-id)
                     (k/follow-redirect)
                     ;; login
-                    (kh/page-uri-is "/sign-in")
+                    (kc/page-uri-is "/")
                     sign-in
                     ;; check redirect - should have auth_code
                     (k/follow-redirect)
-                    (kh/page-uri-is "/authorisation")
+                    (kc/page-uri-is "/authorisation")
                     (k/follow ks/authorise-cancel-link)
-                    (kh/page-uri-is "/authorise-failure")
+                    (kc/page-uri-is "/authorise-failure")
                     :response
                     :status)) => 200))
 
@@ -147,17 +148,17 @@
        (facts "user cannot sign in with invalid client secret"
               (let [stores (s/create-in-memory-stores)
                     {:keys [client-id invalid-client-secret]} (setup stores)]
-                (-> (k/session  (ih/build-app {:stores-m stores}))
+                (-> (k/session (ih/build-app {:stores-m stores}))
                     (browser-sends-authorisation-request-from-client-redirect client-id)
                     (k/follow-redirect)
                     ;; login
-                    (kh/page-uri-is "/sign-in")
+                    (kc/page-uri-is "/")
                     sign-in
                     ;; check redirect - should have auth_code
                     (k/follow-redirect)
-                    (kh/page-uri-is "/authorisation")
+                    (kc/page-uri-is "/authorisation")
                     (k/press ks/authorise-share-profile-button)
-                    (kh/location-contains "callback?code=")
+                    (kc/location-contains "callback?code=")
                     (client-sends-access-token-request client-id invalid-client-secret)
                     :response
                     :status)) => 400)
@@ -169,7 +170,7 @@
                     (browser-sends-authorisation-request-from-client-redirect client-id)
                     (k/follow-redirect)
                     ;; login
-                    (kh/page-uri-is "/sign-in")
+                    (kc/page-uri-is "/")
                     (k/fill-in ks/sign-in-email-input email)
                     (k/fill-in ks/sign-in-password-input "invalid-password")
                     (k/press ks/sign-in-submit)

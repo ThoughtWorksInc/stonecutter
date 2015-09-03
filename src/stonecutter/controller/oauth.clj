@@ -42,7 +42,7 @@
 
 (defn auth-handler [auth-code-store client-store user-store token-store request]
   (let [configuration {:auto-approver                  (partial auto-approver user-store)
-                       :user-session-required-redirect (routes/path :show-sign-in-form)
+                       :user-session-required-redirect (routes/path :index)
                        :authorization-form             (partial show-authorise-form client-store)}
         configured-authorization-handler (cl-ep/authorization-handler client-store token-store
                                                                       auth-code-store configuration)]

@@ -53,7 +53,7 @@
             (send-confirmation-email! email-sender user email confirmation-id config-m)
             (-> (response/redirect (routes/path :show-profile-created))
                 (common/sign-in-user token-store user (:session request))
-                (assoc :flash {:flash-type :confirm-email-sent
+                (assoc :flash {:flash-type    :confirm-email-sent
                                :email-address (:login user)}))))
 
       (index request-with-validation-errors))))
@@ -85,19 +85,26 @@
 
 (defn sign-in [user-store token-store request]
   (let [params (:params request)
-        email (:email params)
-        password (:password params)
+        email (:sign-in-email params)
+        password (:sign-in-password params)
         err (v/validate-sign-in params)
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
       (if-let [user (user/authenticate-and-retrieve-user user-store email password)]
         (-> request
-            (cl-ep/return-to-handler (routes/path :index))
+            (cl-ep/return-to-handler (routes/path :show-profile))
             (common/sign-in-user token-store user))
         (-> request-with-validation-errors
-            (assoc-in [:context :errors :credentials] :invalid)
-            show-sign-in-form))
-      (show-sign-in-form request-with-validation-errors))))
+            (assoc-in [:context :errors :sign-in-credentials] :invalid)
+            index))
+      (index request-with-validation-errors))))
+
+(defn sign-in-or-register [user-store token-store confirmation-store email-sender request]
+  (let [form-action-type (get-in request [:params :action])]
+    (case form-action-type
+      "register" (register-user user-store token-store confirmation-store email-sender request)
+      "sign-in" (sign-in user-store token-store request)
+      nil)))
 
 (defn sign-out [request]
   (-> request
@@ -117,7 +124,6 @@
 
 
 (defn show-profile [client-store user-store request]
-  (prn "INSIDE SHOW PROFILE")
   (let [email (get-in request [:session :user-login])
         user (user/retrieve-user user-store email)
         confirmed? (:confirmed? user)

@@ -77,15 +77,15 @@
 (tabular
   (fact "validating sign-in"
         (v/validate-sign-in
-          {:email ?email
-           :password ?password}) => ?validations)
+          {:sign-in-email ?email
+           :sign-in-password ?password}) => ?validations)
 
   ?email                   ?password            ?validations
   "valid@email.com"        "valid-password"     {}
-  "invalid-email"          "valid-password"     {:email :invalid}
-  "valid@email.com"        ""                   {:password :blank}
-  "invalid-email"          ""                   {:email :invalid
-                                                 :password :blank})
+  "invalid-email"          "valid-password"     {:sign-in-email :invalid}
+  "valid@email.com"        ""                   {:sign-in-password :blank}
+  "invalid-email"          ""                   {:sign-in-email :invalid
+                                                 :sign-in-password :blank})
 
 (tabular
  (fact "validating change-password"

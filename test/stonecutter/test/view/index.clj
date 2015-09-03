@@ -17,9 +17,9 @@
                page => th/work-in-progress-removed)
 
          (fact "registration form posts to correct endpoint"
-               page => (th/has-form-action? [:.clj--register__form] (r/path :register-user)))
+               page => (th/has-form-action? [:.clj--register__form] (r/path :sign-in-or-register)))
          (fact "sign in form posts to correct endpoint"
-               page => (th/has-form-action? [:.clj--sign-in__form] (r/path :sign-in)))
+               page => (th/has-form-action? [:.clj--sign-in__form] (r/path :sign-in-or-register)))
          (fact "forgotten-password button should link to correct page"
                page => (th/has-attr? [:.clj--forgot-password]
                                      :href (r/path :show-forgotten-password-form)))))

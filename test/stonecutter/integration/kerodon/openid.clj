@@ -82,7 +82,7 @@
                     (browser-sends-authorisation-request-from-client-redirect client-id)
                     (k/follow-redirect)
                     ;; login
-                    (kh/page-uri-is "/sign-in")
+                    (kh/page-uri-is "/")
                     sign-in
                     ;; check redirect - should have auth_code
                     (k/follow-redirect)

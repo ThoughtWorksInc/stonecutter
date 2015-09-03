@@ -15,7 +15,7 @@
 
 (defn sign-in [state email password]
   (-> state
-      (k/visit (r/path :show-sign-in-form))
+      (k/visit (r/path :index))
       (kc/check-and-fill-in ks/sign-in-email-input email)
       (kc/check-and-fill-in ks/sign-in-password-input password)
       (kc/check-and-press ks/sign-in-submit)))

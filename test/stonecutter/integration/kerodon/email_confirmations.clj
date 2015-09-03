@@ -67,19 +67,15 @@
            (k/visit (routes/path :show-profile))
            (kc/selector-exists [ks/profile-unconfirmed-email-message])
 
-           (debug 4)
            (k/visit (routes/path :confirm-email-with-id
                                  :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
            (kc/check-and-follow-redirect)
-           (debug 5)
            (kc/page-uri-is (routes/path :show-profile))
-           (debug 6)
            (kc/selector-exists [ks/profile-flash-message])
 
-           (debug 7)
            (teardown-test-directory)))
 
-(future-facts "The account confirmation flow can be followed by a user who is not signed in when first accessing the confirmation endpoint"
+(facts "The account confirmation flow can be followed by a user who is not signed in when first accessing the confirmation endpoint"
        (-> (k/session test-app)
 
            (setup-test-directory)
@@ -97,14 +93,14 @@
            (kc/check-and-follow-redirect "redirecting to sign in")
            (kc/page-uri-is (routes/path :confirmation-sign-in-form
                                         :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
-           (k/check-and-fill-in ks/sign-in-password-input "valid-password")
-           (k/press ks/sign-in-submit)
+           (kc/check-and-fill-in ks/confirmation-sign-in-password-input "valid-password")
+           (kc/check-and-press ks/sign-in-submit)
 
-           (k/follow-redirect)
+           (kc/check-and-follow-redirect "redirecting to email confirmation")
            (kc/page-uri-is (routes/path :confirm-email-with-id
                                         :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
 
-           (k/follow-redirect)
+           (kc/check-and-follow-redirect "redirecting to profile page")
            (kc/page-uri-is (routes/path :show-profile))
            (kc/selector-exists [ks/profile-flash-message])
 

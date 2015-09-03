@@ -65,6 +65,7 @@
         forgotten-password-store (storage/get-forgotten-password-store stores-m)]
     (->
       {:index                                user/index
+       :sign-in-or-register                  (partial user/sign-in-or-register user-store token-store confirmation-store email-sender)
        :ping                                 ping
        :theme-css                            stylesheets/theme-css
        :show-registration-form               user/show-registration-form
@@ -95,7 +96,7 @@
        :show-authorise-failure               (partial oauth/show-authorise-failure client-store)}
       (m/wrap-handlers #(m/wrap-handle-403 % forbidden-err-handler) #{})
       (m/wrap-handlers m/wrap-disable-caching #{:theme-css})
-      (m/wrap-handlers m/wrap-signed-in #{:index
+      (m/wrap-handlers m/wrap-signed-in #{:index :sign-in-or-register
                                           :show-registration-form :register-user
                                           :show-sign-in-form :sign-in
                                           :sign-out
