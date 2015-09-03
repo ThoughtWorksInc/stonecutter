@@ -68,6 +68,7 @@ change-password-form:
   new-password-unchanged-validation-message: New password must be different to current password
   current-password: Current password
   new-password: New password
+  new-password-help: 8 or more characters
   confirm-new-password: Confirm new password
   confirm-new-password-invalid-validation-message: Confirm new password must match new password
   unknown-error: Whoops! Unknown error
