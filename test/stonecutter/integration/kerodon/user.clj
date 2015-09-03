@@ -87,7 +87,7 @@
            (kc/response-status-is 200)
            (kc/selector-exists [ks/index-page-body])))
 
-(facts "Register page redirects to profile-created page when registered and
+(facts "Index page redirects to profile-created page when registered and
        user-login is in the session so that email address is displayed on profile card"
        (-> (k/session test-app)
            (steps/register "email@server.com" "valid-password")
@@ -129,14 +129,14 @@
            (kc/page-uri-is "/")
            (kc/selector-exists [ks/index-page-body])))
 
-(facts "Home url redirects to profile page if user is signed in"
+(facts "Index url redirects to profile page if user is signed in"
        (-> (k/session test-app)
            (steps/sign-in "email@server.com" "valid-password")
            (k/visit "/")
            (kc/check-and-follow-redirect)
            (kc/page-uri-is "/profile")))
 
-(facts "Home url redirects to profile page if user is registered"
+(facts "Index url redirects to profile page if user is registered"
        (-> (k/session test-app)
            (steps/register "email2@server.com" "valid-password")
            (k/visit "/")
@@ -226,12 +226,6 @@
           (kc/response-body-contains "#abcdef")
           (kc/response-body-contains "#fedcba")
           (kc/response-body-contains "/beautiful_logo.png")))
-
-;; 2015-08-24 DM+JC TODO: This test doesn't seem to do anything?
-(fact "Correct css file is used when config includes a :theme"
-      (-> (k/session (ih/build-app {:config-m {:secure "false" :theme "MY_STYLING"}}))
-          (k/visit "/sign-in")
-          (kc/selector-has-attribute-with-content [ks/css-link] :href "/stylesheets/application.css")))
 
 (fact "Correct app-name is used when config includes an :app-name"
       (-> (k/session (ih/build-app {:config-m {:secure "false" :app-name "My App Name"}}))

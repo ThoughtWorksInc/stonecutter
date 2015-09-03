@@ -60,7 +60,7 @@
                response =not=> (th/check-signed-in request signed-in-user)
                response => (th/check-redirects-to confirm-email-path)))
 
-       (fact "when user is not signed in, redirects to sign-in form with the confirmation endpoint (including confirmation UUID URL) as the successful sign-in redirect target"
+       (fact "when user is not signed in, redirects to index page with the confirmation endpoint (including confirmation UUID URL) as the successful sign-in redirect target"
              (let [user-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
                    confirming-user (user/store-user! user-store email "password")

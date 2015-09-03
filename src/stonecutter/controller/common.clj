@@ -13,9 +13,9 @@
        (assoc-in [:session :user-login] (:login user))
        (assoc-in [:session :access_token] (token/generate-login-access-token token-store user)))))
 
-(defn sign-in-to-home
+(defn sign-in-to-index
   ([token-store user]
-   (sign-in-to-home token-store user {}))
+   (sign-in-to-index token-store user {}))
   ([token-store user existing-session]
    (-> (response/redirect (r/path :index))
        (sign-in-user token-store user existing-session))))

@@ -21,7 +21,7 @@
        (fact "if response is not supplied then defaults to home redirect"
              (let [token-store (m/create-memory-store)
                    user {:login "user@user.com"}]
-                (common/sign-in-to-home token-store user) => (th/check-redirects-to (r/path :index)))))
+                (common/sign-in-to-index token-store user) => (th/check-redirects-to (r/path :index)))))
 
 (fact "signed-in? returns true only when user-login and access_token are in the session"
       (tabular
