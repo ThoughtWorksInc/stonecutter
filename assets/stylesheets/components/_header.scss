@@ -1,6 +1,6 @@
 $header_background_color: $light_grey !default;
 $header_logo_image_path: 'logo.svg' !default;
-$header--height: 110px;
+$header--height: 80px;
 
 .header {
   @include clearfix;
@@ -11,20 +11,24 @@ $header--height: 110px;
   &__inner {
     position: relative;
     min-height: $header--height;
-    padding-top: 30px;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding: 1rem;
     margin-bottom: 0;
+    @include width-from($medium_device) {
+      height: 100px;
+    }
   }
 
   &__logo {
-    height: 50px;
+    width: 100%;
+    height: 30px;
     margin-bottom: 0;
-    background: image-url($header_logo_image_path) no-repeat 0 0;
+    background: image-url($header_logo_image_path) no-repeat 50% 50%;
     background-size: contain;
     @include width-from($medium_device) {
+      @include vertical-middle-me;
+      background-position: 0 50%;
       width: 50%;
-      float: left;
+      height: 45px;
     }
   }
 }

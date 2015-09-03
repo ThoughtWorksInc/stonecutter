@@ -16,9 +16,8 @@ $tab_link_colour_hover: $medium_cyan !default;
   text-align: center;
 
   @include  width-from($medium_device) {
-    position: absolute;
+    @include vertical-middle-me;
     right: 0;
-    bottom: 0;
     text-align: right;
   }
 
@@ -53,9 +52,8 @@ $tab_link_colour_hover: $medium_cyan !default;
   }
   &__link {
     display: block;
-    height: 60px;
     text-align: center;
-    padding: 20px 30px;
+    padding: 10px 30px;
     text-decoration: none;
     color: inherit;
     transition: background 250ms ease, color 250ms ease;
