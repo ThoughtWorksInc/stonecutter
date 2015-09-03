@@ -59,6 +59,14 @@ input {
       display: inline-block;
     }
   }
+  &__help {
+    display: block;
+    margin-top: -0.5rem;
+    margin-bottom: 0.5rem;
+    @include font-size(14px);
+    font-weight: 100;
+    color: $dark_cyan;
+  }
   &__validation {
     font-size: 80%;
     color: $error_color;
