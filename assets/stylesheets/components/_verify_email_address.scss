@@ -1,7 +1,10 @@
 .verify-email-address {
   margin-bottom: 2rem;
-  border: 2px solid $light_pink;
-  padding: 1.5rem;
+  &__content {
+    margin-top: -2rem;
+    padding: 1.5rem;
+    border: 2px solid $light_pink;
+  }
 }
 
 .verify__title {

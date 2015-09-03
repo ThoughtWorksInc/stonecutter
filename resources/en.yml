@@ -147,9 +147,8 @@ profile:
   settings-title: Settings
   change-password-button: Change password
   delete-button: Delete account
-  email-not-confirmed: Your email address is not yet confirmed.
+  email-not-confirmed: Your email address has not been confirmed.
   admin-span: ", Mighty Admin!"
-  verify-email-title: Your email address has not yet been confirmed
   verify-email-intro: If you have not received an email to email@email.com you should resend the confirmation email.
   verify-button: Resend email confirmation
 
