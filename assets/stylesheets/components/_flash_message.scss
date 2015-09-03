@@ -5,7 +5,8 @@
     background-color: #ceedea;
   }
   &--fail {
-    background-color: $light_pink;
+    background-color: $error_color;
+    color: $white;
   }
   .flash-message__title {
     margin-top: 0;
