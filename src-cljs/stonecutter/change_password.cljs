@@ -1,19 +1,14 @@
 (ns stonecutter.change-password
-      (:require [dommy.core :as d]
-                [stonecutter.validation :as v])
-      (:require-macros [dommy.core :as dm]))
-
-#_(defn update-current-password! [e]
-      (let [password (d/value (dm/sel1 :#current-password))]
-           (if-let [err (v/validate-password password)]
-                   (d/add-class! (dm/sel1 :#current-password) "invalid")
-                   (d/remove-class! (dm/sel1 :#current-password) "invalid"))))
+  (:require [dommy.core :as d]
+            [stonecutter.validation :as v])
+  (:require-macros [dommy.core :as dm]))
 
 (def current-password-input :#current-password)
 (def current-password-field :.clj--current-password)
 (def new-password-field :.clj--new-password)
 (def new-password-input :#new-password)
 (def verify-password-field :.clj--confirm-new-password)
+(def verify-password-input :#verify-password)
 
 (def field-error-class "form-row--validation-error")
 
@@ -23,16 +18,45 @@
       (d/remove-class! (dm/sel1 :.form-row__help) "form-row__help--valid")
       (d/add-class! (dm/sel1 :.form-row__help) "form-row__help--valid"))))
 
-(defn check-change-password! [e]
+(defn input-value [sel]
+  (d/value (dm/sel1 sel)))
+
+(def error-to-field
+  {:current-password     current-password-input
+   :new-password         new-password-input
+   :confirm-new-password verify-password-input})
+
+(def error-field-order [:current-password :new-password :confirm-new-password])
+
+(defn field-values []
+  (->> error-to-field
+       (map (fn [[error-key input-id]] [error-key (input-value input-id)]))
+       (into {})))
+
+(defn first-input-with-errors [err]
+  (->> error-field-order
+       (filter #(get err %))
+       first
+       (get error-to-field)))
+
+(defn focus-on-element [sel]
+  (when-let [e (dm/sel1 sel)]
+    (.focus e)))
+
+(defn toggle-error-class [field-sel err?]
+  (if err?
+    (d/add-class! (dm/sel1 field-sel) field-error-class)
+    (d/remove-class! (dm/sel1 field-sel) field-error-class)))
+
+(defn check-change-password! [submitEvent]
   ;(.log js/console "here")
-  (let [password (d/value (dm/sel1 new-password-input))]
-    (if-let [err (v/validate-password password)]
-      (do (.preventDefault e)
-          (d/add-class! (dm/sel1 current-password-field) field-error-class)
-          (d/add-class! (dm/sel1 new-password-field) field-error-class)
-          (d/add-class! (dm/sel1 verify-password-field) field-error-class)
-          (.focus (dm/sel1 current-password-input)))
-      (d/remove-class! (dm/sel1 new-password-field) field-error-class))))
+  (let [err (v/validate-change-password (field-values))] ;; err => {:current-password ... :new-password ... :confirm-new-password ...
+    (toggle-error-class current-password-field (:current-password err))
+    (toggle-error-class new-password-field (:new-password err))
+    (toggle-error-class verify-password-field (:confirm-new-password err))
+    (when-not (empty? err)
+      (.preventDefault submitEvent)
+      (focus-on-element (first-input-with-errors err)))))
 
 (defn start []
   (when-let [e (dm/sel1 new-password-input)]

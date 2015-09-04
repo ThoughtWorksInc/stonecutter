@@ -64,7 +64,7 @@
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
       (if (user/authenticate-and-retrieve-user user-store email current-password)
-        (do (user/change-password! user-store email new-password)
+        (do (user/change-password! user-store email new-password) ;; FIXME CW & JC | 2015/9/4 pass user authentication function into validation?
             (-> (r/redirect (routes/path :show-profile))
                 (assoc :flash :password-changed)))
         (-> request-with-validation-errors

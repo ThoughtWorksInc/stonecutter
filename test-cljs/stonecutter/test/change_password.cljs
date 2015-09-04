@@ -12,12 +12,14 @@
 
 (def invalid-password "blah")
 (def valid-password "12345678")
+(def valid-new-password "23456789")
 
 (def current-password-input :#current-password)
 (def current-password-field :.clj--current-password)
 (def new-password-field :.clj--new-password)
 (def new-password-input :#new-password)
 (def verify-password-field :.clj--confirm-new-password)
+(def verify-password-input :#verify-password)
 
 (def field-error-class "form-row--validation-error")
 
@@ -30,6 +32,9 @@
       (dommy/set-value! (sel1 sel) text)
       (test-utils/fire! (sel1 sel) :input))
 
+(defn press-submit [form-sel]
+  (test-utils/fire! (sel1 form-sel) :submit))
+
 (defn test-field-class-existance [has-class? selector valid-class]
   (is (= has-class? (dommy/has-class? (sel1 selector) valid-class))
       (if has-class?
@@ -41,7 +46,11 @@
 
 (defn has-focus? [sel]
   (is (= (sel1 sel) (.-activeElement js/document))
-      (str "Element " sel "does not have focus")))
+      (str "Element " sel " does not have focus")))
+
+(defn default-prevented? [event required]
+  (is (= (.-defaultPrevented event) required)
+      (str "Element " event " should have default prevented of " required)))
 
 (defn test-field-validates-client-side [selector target-element]
   (test-field-doesnt-have-class target-element form-row-valid-class)
@@ -58,10 +67,56 @@
 (deftest submitting-invalid-forms
          (setup-page! change-password-template)
          (cp/start)
-         (test-utils/fire! (sel1 :.clj--change-password__form) :submit)
-         (test-field-has-class current-password-field field-error-class)
-         (test-field-has-class new-password-field field-error-class)
-         (test-field-has-class verify-password-field field-error-class)
-         (has-focus? current-password-input))
+
+         (testing "submitting empty form"
+                  (press-submit :.clj--change-password__form)
+                  (test-field-has-class current-password-field field-error-class)
+                  (test-field-has-class new-password-field field-error-class)
+                  (test-field-doesnt-have-class verify-password-field field-error-class)
+                  (has-focus? current-password-input))
+
+         (testing "submitting form with only valid current-password"
+                  (enter-text current-password-input valid-password)
+                  (press-submit :.clj--change-password__form)
+                  (test-field-doesnt-have-class current-password-field field-error-class)
+                  (test-field-has-class new-password-field field-error-class)
+                  (test-field-doesnt-have-class verify-password-field field-error-class)
+                  (has-focus? new-password-input))
+
+         (testing "submitting form with valid current-password and new-password"
+                  (enter-text new-password-input valid-new-password)
+                  (press-submit :.clj--change-password__form)
+                  (test-field-doesnt-have-class current-password-field field-error-class)
+                  (test-field-doesnt-have-class new-password-field field-error-class)
+                  (test-field-has-class verify-password-field field-error-class)
+                  (has-focus? verify-password-input))
+
+         (testing "submitting form with all valid inputs"
+                  (let [submit-event (atom nil)]
+                    (dommy/listen! (sel1 :.clj--change-password__form) :submit #(reset! submit-event %))
+                    (enter-text verify-password-input valid-new-password)
+                    (press-submit :.clj--change-password__form)
+                    (test-field-doesnt-have-class current-password-field field-error-class)
+                    (test-field-doesnt-have-class new-password-field field-error-class)
+                    (test-field-doesnt-have-class verify-password-field field-error-class))))
+
+
+(deftest prevent-default-submit
+         (setup-page! change-password-template)
+         (testing "prevents default when page has errors"
+                  (let [submit-event (test-utils/create-event :submit)]
+                    (cp/check-change-password! submit-event)
+                    (default-prevented? submit-event true)))
+         (testing "doesn't prevent default when inputs are valid"
+                  (let [submit-event (test-utils/create-event :submit)]
+                    (enter-text current-password-input valid-password)
+                    (enter-text new-password-input valid-new-password)
+                    (enter-text verify-password-input valid-new-password)
+                    (cp/check-change-password! submit-event)
+                    (testing "all error classes are removed"
+                             (test-field-doesnt-have-class current-password-field field-error-class)
+                             (test-field-doesnt-have-class new-password-field field-error-class)
+                             (test-field-doesnt-have-class verify-password-field field-error-class))
+                    (default-prevented? submit-event false))))
 
 (defn run-all []  (run-tests))
