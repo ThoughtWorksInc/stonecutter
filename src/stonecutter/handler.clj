@@ -91,19 +91,19 @@
        :authorise-client                     (partial oauth/authorise-client auth-code-store client-store user-store token-store)
        :show-authorise-failure               (partial oauth/show-authorise-failure client-store)}
       (m/wrap-handlers-except #(m/wrap-handle-403 % forbidden-err-handler) #{})
-      (m/wrap-handlers-except m/wrap-disable-caching #{:theme-css :index})
+      (m/wrap-handlers-except m/wrap-disable-caching #{:theme-css :index :sign-in-or-register})
       (m/wrap-handlers-except m/wrap-signed-in #{:index :sign-in-or-register
-                                          :sign-out
-                                          :show-profile-deleted
-                                          :authorise
-                                          :ping
-                                          :theme-css
-                                          :confirm-email-with-id
-                                          :confirmation-sign-in-form :confirmation-sign-in
-                                          :show-forgotten-password-form :send-forgotten-password-email
-                                          :show-forgotten-password-confirmation
-                                          :show-reset-password-form
-                                          :reset-password}))))
+                                                 :sign-out
+                                                 :show-profile-deleted
+                                                 :authorise
+                                                 :ping
+                                                 :theme-css
+                                                 :confirm-email-with-id
+                                                 :confirmation-sign-in-form :confirmation-sign-in
+                                                 :show-forgotten-password-form :send-forgotten-password-email
+                                                 :show-forgotten-password-confirmation
+                                                 :show-reset-password-form
+                                                 :reset-password}))))
 
 (defn api-handlers [config-m stores-m id-token-generator json-web-key-set]
   (let [auth-code-store (storage/get-auth-code-store stores-m)
