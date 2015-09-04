@@ -49,8 +49,7 @@
     (d/remove-class! (dm/sel1 field-sel) field-error-class)))
 
 (defn check-change-password! [submitEvent]
-  ;(.log js/console "here")
-  (let [err (v/validate-change-password (field-values))] ;; err => {:current-password ... :new-password ... :confirm-new-password ...
+  (let [err (v/validate-change-password (field-values) (constantly true))]
     (toggle-error-class current-password-field (:current-password err))
     (toggle-error-class new-password-field (:new-password err))
     (toggle-error-class verify-password-field (:confirm-new-password err))

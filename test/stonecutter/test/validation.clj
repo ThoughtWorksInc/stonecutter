@@ -91,17 +91,20 @@
  (fact "validating change-password"
        (v/validate-change-password {:current-password ?current-password
                                     :new-password ?new-password
-                                    :confirm-new-password ?confirm-new-password}) => ?validations)
+                                    :confirm-new-password ?confirm-new-password} (constantly ?correct-password)) => ?validations)
 
-  ?current-password         ?new-password       ?confirm-new-password       ?validations
-  "currentPassword"         "newPassword"       "newPassword"               {}
-  ""                        "newPassword"       "newPassword"               {:current-password :blank}
-  "currentPassword"         ""                  ""                          {:new-password :blank}
-  "currentPassword"         "currentPassword"   "currentPassword"           {:new-password :unchanged}
-  "currentPassword"         "newPassword"       "nonMatchingNewPassword"    {:confirm-new-password :invalid}
-  ""                        ""                  "newPassword"               {:current-password :blank
-                                                                             :new-password :blank
-                                                                             :confirm-new-password :invalid})
+  ?current-password         ?new-password       ?confirm-new-password       ?correct-password   ?validations
+  "currentPassword"         "newPassword"       "newPassword"               true                {}
+  ""                        "newPassword"       "newPassword"               true                {:current-password :blank}
+  "currentPassword"         ""                  ""                          true                {:new-password :blank}
+  "currentPassword"         "currentPassword"   "currentPassword"           true                {:new-password :unchanged}
+  "currentPassword"         "newPassword"       "nonMatchingNewPassword"    true                {:confirm-new-password :invalid}
+  ""                        ""                  "newPassword"               true                {:current-password :blank
+                                                                                                 :new-password :blank
+                                                                                                 :confirm-new-password :invalid}
+ "invalidPassword"          "newPassword"       "newPassword"               false               {:current-password :invalid}
+ ""                         "newPassword"       "newPassword"               false               {:current-password :blank}
+ )
 
 (tabular
  (fact "validating forgotten-password"

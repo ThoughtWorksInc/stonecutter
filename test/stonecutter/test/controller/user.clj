@@ -249,17 +249,19 @@
                   (u/change-password ...user-store...)) => (every-checker (contains {:status 200})
                                                                           check-body-not-blank)
              (provided
-               (v/validate-change-password ...invalid-params...) => {:some-validation-key "some-value"}
+               (v/validate-change-password ...invalid-params... anything) => {:some-validation-key "some-value"}
                (user/change-password! ...user-store... anything anything) => anything :times 0))
 
        (fact "user cannot change password if current-password is invalid"
-             (->> (th/create-request :post "/change-password" {:current-password "wrong-password"} {:user-login "user_who_is@changing_password.com"})
-                  (u/change-password ...user-store...)) => (every-checker (contains {:status 200})
-                                                                          check-body-not-blank)
-             (provided
-               (v/validate-change-password anything) => {}
-               (user/authenticate-and-retrieve-user ...user-store... "user_who_is@changing_password.com" "wrong-password") => nil
-               (user/change-password! ...user-store... anything anything) => anything :times 0))
+             (let [user-store (m/create-memory-store)
+                   email "user_who_is@changing_password.com"]
+               (user/store-user! user-store email "new-password")
+               (let [original-encrypted-password (:password (user/retrieve-user user-store email))]
+                 (->> (th/create-request :post "/change-password" {:current-password "wrong-password"} {:user-login email})
+                      (u/change-password user-store)) => (every-checker (contains {:status 200})
+                                                                        check-body-not-blank)
+                 (fact "password has not been changed"
+                       original-encrypted-password => (:password (user/retrieve-user user-store email))))))
 
        (facts "about rendering change-password page with errors"
               (fact "there are no validation messages by default"
@@ -275,17 +277,16 @@
                         html/html-snippet
                         (html/select [:.clj--validation-summary__item])) =not=> empty?
                     (provided
-                      (v/validate-change-password ...invalid-params...) => {:new-password :too-short}))
+                      (v/validate-change-password ...invalid-params... anything) => {:new-password :too-short}))
 
               (fact "when authorisation fails"
-                    (-> (u/change-password ...user-store... (th/create-request :post "/change-password" ...params-with-wrong-current-password...))
-                        :body
-                        html/html-snippet
-                        (html/select [:.clj--validation-summary__item])) =not=> empty?
-                    (provided
-                      (v/validate-change-password ...params-with-wrong-current-password...) => {}
-                      (user/authenticate-and-retrieve-user anything anything anything) => nil))))
-
+                    (let [user-store (m/create-memory-store)
+                          email "user_who_is@changing_password.com"]
+                      (user/store-user! user-store email "new-password")
+                      (-> (u/change-password user-store (th/create-request :post "/change-password" {:current-password "wrong-password"} {:user-login email}))
+                          :body
+                          html/html-snippet
+                          (html/select [:.clj--validation-summary__item])) =not=> empty?))))
 
 (facts "about profile created"
        (fact "view defaults with link to view profile"
