@@ -14,6 +14,7 @@
 (def valid-password "12345678")
 (def valid-new-password "23456789")
 
+(def change-password-form :.clj--change-password__form)
 (def current-password-input :#current-password)
 (def current-password-field :.clj--current-password)
 (def new-password-field :.clj--new-password)
@@ -67,21 +68,21 @@
          (cp/start)
 
          (testing "submitting empty form"
-                  (press-submit :.clj--change-password__form)
+                  (press-submit change-password-form)
                   (test-field-has-class current-password-field field-error-class)
                   (test-field-has-class new-password-field field-error-class)
                   (has-focus? current-password-input))
 
          (testing "submitting form with only valid current-password"
                   (enter-text current-password-input valid-password)
-                  (press-submit :.clj--change-password__form)
+                  (press-submit change-password-form)
                   (test-field-doesnt-have-class current-password-field field-error-class)
                   (test-field-has-class new-password-field field-error-class)
                   (has-focus? new-password-input))
 
          (testing "submitting form with all valid inputs"
                   (enter-text new-password-input valid-new-password)
-                  (press-submit :.clj--change-password__form)
+                  (press-submit change-password-form)
                   (test-field-doesnt-have-class current-password-field field-error-class)
                   (test-field-doesnt-have-class new-password-field field-error-class)))
 
