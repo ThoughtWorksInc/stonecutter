@@ -174,7 +174,6 @@
            (kc/selector-exists [ks/change-password-page-body])
            (kc/check-and-fill-in ks/change-password-current-password-input "valid-password")
            (kc/check-and-fill-in ks/change-password-new-password-input "new-valid-password")
-           (kc/check-and-fill-in ks/change-password-confirm-new-password-input "new-valid-password")
            (kc/check-and-press ks/change-password-submit)
            (kc/check-and-follow-redirect)
            (kc/page-uri-is "/profile")

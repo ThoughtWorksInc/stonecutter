@@ -60,11 +60,7 @@
          {:new-password :too-short}       ["content:change-password-form/new-password-too-short-validation-message"]        [#"clj--new-password"]
          {:new-password :too-long}        ["content:change-password-form/new-password-too-long-validation-message"]         [#"clj--new-password"]
          {:new-password :unchanged}       ["content:change-password-form/new-password-unchanged-validation-message"]        [#"clj--new-password"]
-         {:confirm-new-password :invalid} ["content:change-password-form/confirm-new-password-invalid-validation-message"]  [#"clj--confirm-new-password"]
          {:current-password :blank
-          :new-password :too-short
-          :confirm-new-password :invalid} [current-password-error-translation-key
-                                           "content:change-password-form/new-password-too-short-validation-message"
-                                           "content:change-password-form/confirm-new-password-invalid-validation-message"]  [#"clj--current-password"
-                                                                                                                             #"clj--new-password"
-                                                                                                                             #"clj--confirm-new-password"]))
+          :new-password :too-short}       [current-password-error-translation-key
+                                           "content:change-password-form/new-password-too-short-validation-message"]        [#"clj--current-password"
+                                                                                                                             #"clj--new-password"]))

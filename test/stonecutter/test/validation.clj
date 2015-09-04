@@ -90,20 +90,18 @@
 (tabular
  (fact "validating change-password"
        (v/validate-change-password {:current-password ?current-password
-                                    :new-password ?new-password
-                                    :confirm-new-password ?confirm-new-password} (constantly ?correct-password)) => ?validations)
+                                    :new-password ?new-password} (constantly ?correct-password)) => ?validations)
 
-  ?current-password         ?new-password       ?confirm-new-password       ?correct-password   ?validations
-  "currentPassword"         "newPassword"       "newPassword"               true                {}
-  ""                        "newPassword"       "newPassword"               true                {:current-password :blank}
-  "currentPassword"         ""                  ""                          true                {:new-password :blank}
-  "currentPassword"         "currentPassword"   "currentPassword"           true                {:new-password :unchanged}
-  "currentPassword"         "newPassword"       "nonMatchingNewPassword"    true                {:confirm-new-password :invalid}
-  ""                        ""                  "newPassword"               true                {:current-password :blank
-                                                                                                 :new-password :blank
-                                                                                                 :confirm-new-password :invalid}
- "invalidPassword"          "newPassword"       "newPassword"               false               {:current-password :invalid}
- ""                         "newPassword"       "newPassword"               false               {:current-password :blank}
+  ?current-password         ?new-password          ?correct-password   ?validations
+  "currentPassword"         "newPassword"          true                {}
+  ""                        "newPassword"          true                {:current-password :blank}
+  "currentPassword"         ""                     true                {:new-password :blank}
+  "currentPassword"         "currentPassword"      true                {:new-password :unchanged}
+  "currentPassword"         "newPassword"          true                {}
+  ""                        ""                     true                {:current-password :blank
+                                                                        :new-password :blank}
+ "invalidPassword"          "newPassword"          false               {:current-password :invalid}
+ ""                         "newPassword"          false               {:current-password :blank}
  )
 
 (tabular

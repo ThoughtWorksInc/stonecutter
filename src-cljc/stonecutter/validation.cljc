@@ -72,12 +72,11 @@
     :invalid))
 
 (defn validate-change-password [params check-password-fn]
-  (let [{:keys [current-password new-password confirm-new-password]} params]
+  (let [{:keys [current-password new-password]} params]
     (-> {:current-password     (or (validate-password current-password)
                                    (validate-correct-password check-password-fn current-password))
          :new-password         (or (validate-password new-password)
-                                   (validate-passwords-are-different current-password new-password))
-         :confirm-new-password (validate-passwords-match new-password confirm-new-password)}
+                                   (validate-passwords-are-different current-password new-password))}
         remove-nil-values)))
 
 (defn validate-forgotten-password [params user-exists?-fn]

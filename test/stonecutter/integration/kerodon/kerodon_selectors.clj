@@ -39,7 +39,6 @@
 
 (def change-password-current-password-input :.func--current-password__input)
 (def change-password-new-password-input :.func--new-password__input)
-(def change-password-confirm-new-password-input :.func--confirm-new-password__input)
 (def change-password-submit :.func--change-password__button)
 (def change-password-page-body :.func--change-password-page)
 

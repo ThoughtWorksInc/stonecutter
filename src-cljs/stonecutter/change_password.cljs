@@ -7,8 +7,6 @@
 (def current-password-field :.clj--current-password)
 (def new-password-field :.clj--new-password)
 (def new-password-input :#new-password)
-(def verify-password-field :.clj--confirm-new-password)
-(def verify-password-input :#verify-password)
 
 (def field-error-class "form-row--validation-error")
 
@@ -23,10 +21,9 @@
 
 (def error-to-field
   {:current-password     current-password-input
-   :new-password         new-password-input
-   :confirm-new-password verify-password-input})
+   :new-password         new-password-input})
 
-(def error-field-order [:current-password :new-password :confirm-new-password])
+(def error-field-order [:current-password :new-password])
 
 (defn field-values []
   (->> error-to-field
@@ -52,7 +49,6 @@
   (let [err (v/validate-change-password (field-values) (constantly true))]
     (toggle-error-class current-password-field (:current-password err))
     (toggle-error-class new-password-field (:new-password err))
-    (toggle-error-class verify-password-field (:confirm-new-password err))
     (when-not (empty? err)
       (.preventDefault submitEvent)
       (focus-on-element (first-input-with-errors err)))))

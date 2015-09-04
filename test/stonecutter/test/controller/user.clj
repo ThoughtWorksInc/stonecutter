@@ -233,10 +233,9 @@
           u/show-profile-deleted) => (contains {:status 200}))
 
 (facts "about changing password"
-       (fact "the user's password is updated if current password is correct and new password is confirmed"
+       (fact "the user's password is updated if current password is correct and new password is valid"
              (let [request (th/create-request :post "/change-password" {:current-password     "currentPassword"
-                                                                        :new-password         "newPassword"
-                                                                        :confirm-new-password "newPassword"}
+                                                                        :new-password         "newPassword"}
                                               {:user-login "user_who_is@changing_password.com"})]
                (u/change-password ...user-store... request) => (every-checker (th/check-redirects-to "/profile")
                                                                               (contains {:flash :password-changed}))
