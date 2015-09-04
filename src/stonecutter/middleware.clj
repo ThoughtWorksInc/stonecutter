@@ -38,7 +38,7 @@
         (assoc-in [:context :config-m] config-m)
         handler)))
 
-(defn wrap-handlers [handlers wrap-function exclusions]
+(defn wrap-handlers-except [handlers wrap-function exclusions]
   (into {} (for [[k v] handlers]
              [k (if (k exclusions) v (wrap-function v))])))
 

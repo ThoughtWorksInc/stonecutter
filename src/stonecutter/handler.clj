@@ -90,9 +90,9 @@
        :authorise                            (partial oauth/authorise auth-code-store client-store user-store token-store)
        :authorise-client                     (partial oauth/authorise-client auth-code-store client-store user-store token-store)
        :show-authorise-failure               (partial oauth/show-authorise-failure client-store)}
-      (m/wrap-handlers #(m/wrap-handle-403 % forbidden-err-handler) #{})
-      (m/wrap-handlers m/wrap-disable-caching #{:theme-css})
-      (m/wrap-handlers m/wrap-signed-in #{:index :sign-in-or-register
+      (m/wrap-handlers-except #(m/wrap-handle-403 % forbidden-err-handler) #{})
+      (m/wrap-handlers-except m/wrap-disable-caching #{:theme-css :index})
+      (m/wrap-handlers-except m/wrap-signed-in #{:index :sign-in-or-register
                                           :sign-out
                                           :show-profile-deleted
                                           :authorise
