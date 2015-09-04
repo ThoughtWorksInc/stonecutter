@@ -1,14 +1,19 @@
 .flash-message {
   padding: 16px;
   margin-bottom: 32px;
+  border-radius: $box--border-radius;
+  &--no-round-bottom {
+    border-radius: $box--border-radius $box--border-radius 0 0;
+  }
   &--success {
-    background-color: #ceedea;
+    background-color: $success_color;
   }
   &--fail {
     background-color: $error_color;
     color: $white;
   }
   .flash-message__title {
+    line-height: 1.2;
     margin-top: 0;
     margin-bottom: 0.25rem;
     white-space: pre-line;

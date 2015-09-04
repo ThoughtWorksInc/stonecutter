@@ -29,6 +29,8 @@ $default_text_color: rgba(black,0.8);
 $background_color: $white;
 
 $error_color: $medium_pink_dull;
+$success_color: #93e4dc;
+
 
 $link_colour: $default_text_color !default;
 $link_hover_colour: $link_colour !default;
@@ -47,6 +49,9 @@ $monster_large_device: 1220px;
 //
 
 $grid_gutter: 15px;
+
+$box--border-radius: 3px;
+
 
 //
 

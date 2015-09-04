@@ -4,6 +4,9 @@
     margin-top: -2rem;
     padding: 1.5rem;
     border: 2px solid $error_color;
+    &--no-round-top {
+      border-radius: 0 0 $box--border-radius $box--border-radius;
+    }
   }
 }
 

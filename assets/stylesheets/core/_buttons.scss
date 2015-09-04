@@ -40,6 +40,7 @@
   transition: background 250ms ease, color 250ms ease, box-shadow 250ms ease, transform 250ms ease, border 250ms ease;
   outline: 0;
   white-space: nowrap;
+  border-radius: $box--border-radius;
   @include no-select;
   transform-style: preserve-3d; // Fix safari text flicker (children need backface-visibility: hidden;)
   @include width-from($smallish_device) {
