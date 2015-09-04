@@ -39,6 +39,7 @@
                                         [lein-kibit "0.1.2"]
                                         [lein-ancient "0.6.7"]
                                         [lein-cljsbuild "1.0.6"]
+                                        [lein-shell "0.4.1"]
                                         [com.cemerick/clojurescript.test "0.3.3"]]
                        :ring           {:reload-paths          ["src" "src-cljc"]
                                         :handler               stonecutter.lein/lein-app
@@ -46,13 +47,18 @@
                                         :stacktrace-middleware prone.middleware/wrap-exceptions}
                        :resource-paths ["resources" "test-resources"]
                        :aliases        {"test"        ["do" "clean," "midje," "test-cljs"]
+                                        "midje"       ["do" "gulp," "midje"]
                                         "test-cljs"   ["cljsbuild" "test"]
                                         "unit"        ["midje" "stonecutter.test.*"]
                                         "integration" ["midje" "stonecutter.integration.*"]
                                         "auto-unit"   ["midje" ":autotest" "test/stonecutter/test/" "src/"]
                                         "gencred"     ["run" "-m" "stonecutter.util.gencred"]
                                         "gen-keypair" ["run" "-m" "stonecutter.util.gen-key-pair"]
-                                        "lint"        ["eastwood" "{:namespaces [:source-paths]}"]}
+                                        "lint"        ["eastwood" "{:namespaces [:source-paths]}"]
+                                        "gulp"        ["shell" "gulp" "build"]
+                                        "cljs-build"  ["cljsbuild" "once"]
+                                        "start"       ["do" "gulp," "cljs-build," "run"]
+                                        }
                        :env            {:dev                   true
                                         :secure                "false"
                                         :rsa-keypair-file-path "test-resources/test-key.json"}
