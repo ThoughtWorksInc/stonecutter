@@ -14,7 +14,7 @@
       load-translations-from-string))
 
 (def translation-map
-  (load-translations-from-file "en.yml"))
+  (load-translations-from-file "lang/en.yml"))
 
 (defn translations-fn [translation-map]
   (fn [translation-key]
