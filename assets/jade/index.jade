@@ -31,6 +31,7 @@ block content
           h2.visuallyhidden(data-l8n="content:index/sign-in-header")
             | !Sign in
           form.login-form.form-box.clj--sign-in__form(action="authorise", method="post", role="form")
+            input(type="hidden", name="action", value="sign-in")
             .validation-summary.clj--sign-in-validation-summary
               .validation-summary__title
               ul.validation-summary__list
@@ -52,7 +53,7 @@ block content
               input.form-row__input.func--sign-in-password__input(type="password", id="password", name="sign-in-password")
             .button-actions
               .button-actions__primary
-                button.button.func--sign-in__button(type="submit", data-l8n="content:index/sign-in-submit", name="action", value="sign-in")
+                button.button.func--sign-in__button(type="submit", data-l8n="content:index/sign-in-submit")
                   | !Sign in
               .button-actions__secondary
                 a.link-button.link-button--tall.clj--forgot-password.func--forgot-password__button(href="./forgot-password", data-l8n="content:index/sign-in-forgot-password") !Forgot password?
@@ -68,6 +69,7 @@ block content
               = " "
               span(data-l8n="content:index/register-intro-2") !Profile Card.
           form.register-form.form-box.clj--register__form(action="./profile-created", method="post", role="form")
+            input(type="hidden", name="action", value="register")
             .validation-summary.clj--registration-validation-summary
               .validation-summary__title
               ul.validation-summary__list
@@ -106,7 +108,7 @@ block content
                 span.form-row__title(data-l8n="content:index/register-confirm-password")
                   | !Confirm Password
               input.form-row__input.func--registration-confirm-password__input(type="password", id="reg-confirm-password", name="registration-confirm-password")
-            button.button.button--full-width.button--special.func--create-profile__button(type="submit" data-l8n="content:index/register-create-account", name="action", value="register")
+            button.button.button--full-width.button--special.func--create-profile__button(type="submit" data-l8n="content:index/register-create-account")
               | !Create a Profile
 
 
