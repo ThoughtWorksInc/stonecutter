@@ -2,7 +2,8 @@
   (:require [clj-yaml.core :as yaml]
             [clojure.java.io :as io]
             [clojure.tools.logging :as log]
-            [traduki.core :as t]))
+            [traduki.core :as t]
+            [stonecutter.util.map :as map]))
 
 (defn load-translations-from-string [s]
   (yaml/parse-string s))
@@ -14,7 +15,9 @@
       load-translations-from-string))
 
 (def translation-map
-  (load-translations-from-file "lang/en.yml"))
+  (map/deep-merge
+    (load-translations-from-file "lang/en.yml")
+    (load-translations-from-file "lang/en-client.yml")))
 
 (defn translations-fn [translation-map]
   (fn [translation-key]

@@ -38,16 +38,9 @@ index:
 change-password-form:
   title: Change your password
   page-header: Change your password
-  current-password-invalid-validation-message: Current password is incorrect
-  new-password-blank-validation-message: New password cannot be blank
-  new-password-too-long-validation-message: New password is too long
-  new-password-too-short-validation-message: New password should be at least 8 characters long
-  new-password-unchanged-validation-message: New password must be different to current password
   current-password: Current password
   new-password: New password
   new-password-help: 8 or more characters
-  confirm-new-password: Confirm new password
-  confirm-new-password-invalid-validation-message: Confirm new password must match new password
   unknown-error: Whoops! Unknown error
   form-button: Save changes
   cancel-button: Cancel
