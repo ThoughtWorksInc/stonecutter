@@ -6,6 +6,6 @@ mixin authorisedAppItem(appName)
   li.app__item.clj--authorised-app__list-item
     .app__title.clj--client-name #{appName}
     .app__remove
-      a.button.button--transparent.clj--app-item__unshare-link.func--app-item__unshare-link(href="./unshare-profile-card")
+      a.button.button--remove.clj--app-item__unshare-link.func--app-item__unshare-link(href="./unshare-profile-card")
         i.fa.fa-remove.button__icon
         span.button__text(data-l8n="content:applications/unshare-button") !Unshare Card

@@ -114,13 +114,14 @@
 
   // used for delete buttons
   &--remove {
-    background-color: $dark_pink;
+    $button--color: $medium_pink_dull;
+    background-color: $button--color;
     color: $white;
     &:hover {
-      background-color: lighten($dark_pink, 2%);
+      background-color: lighten($button--color, 2%);
     }
     &:focus {
-      background-color: darken($dark_pink, 5%);
+      background-color: darken($button--color, 5%);
     }
   }
 
