@@ -14,7 +14,7 @@ input {
   }
   &__list {
     @include reset-list;
-    background-color: lighten($light_pink,2%);
+    background-color: lighten($light_pink, 2%);
     margin-left: -1rem;
     margin-right: -1rem;
     margin-bottom: 0;
@@ -64,8 +64,23 @@ input {
     @include font-size(14px);
     font-weight: 100;
     color: $dark_cyan;
+    &:after {
+      content: '\f00c';
+      position: absolute;
+      bottom: 13px;
+      right: 0;
+      z-index: 1;
+      display: block;
+      font-family: 'FontAwesome';
+      @include font-size($input_font_size);
+      background: white;
+      opacity: 0;
+      transition: opacity 250ms ease;
+    }
     &--valid {
-      color: #01955b;
+      &:after {
+        opacity: 1;
+      }
     }
     &--invalid {
       color: $error_color;
@@ -112,6 +127,7 @@ input {
   border: 1px solid $light_grey;
   border-radius: $box--border-radius;
 }
+
 .login-form {
   margin-top: 1.5rem;
 }
