@@ -13,8 +13,6 @@ block headerContent
 
 block content
   .single-column
-    h1.page-title
-      | Profile
 
     .clj--flash-message-container.func--flash-message-container
       .flash-message.flash-message--success
@@ -27,6 +25,9 @@ block content
         p(data-l8n="content:profile/verify-email-intro") !If you have not received an email to email@email.com you should resend the confirmation email.
         form.resend-confirmation-form(action="/confirm-email-resent", method="post")
           button.button(type="submit", data-l8n="content:profile/verify-button") !Resend email confirmation
+
+    h1.page-title
+      | Profile
 
     .card-preview
       h2 Your Profile Card
