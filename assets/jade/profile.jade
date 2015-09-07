@@ -18,13 +18,6 @@ block content
       .flash-message.flash-message--success
         p.flash-message__title.clj--flash-message-text !Success Flash Message.
 
-    .flash-message.flash-message--success.clj-wip
-      p.flash-message__title
-        span(data-l8n="content:flash/confirm-email-sent-pre-email-address") !A confirmation email has been sent to:
-        = " "
-        span.clj--email-address !email@example.com
-      p.flash-message__title(data-l8n="content:flash/confirm-email-sent-post-email-address") !Please follow the instructions to confirm your email address.
-
     .verify-email-address.clj--unconfirmed-email-message-container.func--unconfirmed-email-message-container
       .flash-message.flash-message--fail.flash-message--no-round-bottom
         p.flash-message__title(data-l8n="content:profile/email-not-confirmed") !Your email address is not been confirmed.
