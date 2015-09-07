@@ -41,6 +41,7 @@ input {
 
 .form-row {
   position: relative;
+  max-width: $smallish_device;
   margin-bottom: 1.25rem;
   transition: background-color 250ms ease;
   &--validation-error {
