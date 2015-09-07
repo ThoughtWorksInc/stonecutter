@@ -56,9 +56,7 @@
                 <ul class="app__list">
                   <li class="app__item clj--authorised-app__list-item">
                     <div class="app__title clj--client-name">Green Party</div>
-                    <div class="app__remove"><a href="./unshare-profile-card" class="clj--app-item__unshare-link func--app-item__unshare-link">
-                        <button type="submit" class="button button--remove clj--authorised-app__remove-button"><i class="fa button__icon fa-remove"></i><span data-l8n="content:applications/unshare-button" class="button__text">Unshare Card</span>
-                        </button></a></div>
+                    <div class="app__remove"><a href="./unshare-profile-card" class="button button--remove clj--app-item__unshare-link func--app-item__unshare-link"><i class="fa fa-remove button__icon"></i><span data-l8n="content:applications/unshare-button" class="button__text">Unshare Card</span></a></div>
                   </li>
                 </ul>
               </div>
@@ -80,6 +78,16 @@
                 <div class="flash-message flash-message--fail clj--flash-message--fail">
                   <p class="flash-message__title clj--flash-message--fail-title">There was a problem saving your password.
                   </p>
+                </div>
+              </div>
+            </div>
+            <div class="library-item">
+              <h3 class="library-title">Confirmation email sent flash</h3>
+              <div class="library__demo">
+                <div class="flash-message flash-message--success">
+                  <p class="flash-message__title"><span data-l8n="content:flash/confirm-email-sent-pre-email-address">A confirmation email has been sent to:</span> <span class="clj--email-address">email@example.com</span>
+                  </p>
+                  <p data-l8n="content:flash/confirm-email-sent-post-email-address" class="flash-message__title flash-message__title--not-bold">Please follow the instructions to confirm your email address.</p>
                 </div>
               </div>
             </div>

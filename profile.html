@@ -24,24 +24,23 @@
     <div id="main" role="main" class="main-content">
       <div class="columns">
         <div class="single-column">
-          <h1 class="page-title">Profile</h1>
           <div class="clj--flash-message-container func--flash-message-container">
             <div class="flash-message flash-message--success">
               <p class="flash-message__title clj--flash-message-text">Success Flash Message.</p>
             </div>
           </div>
-          <div class="clj--unconfirmed-email-message-container func--unconfirmed-email-message-container">
-            <div class="flash-message flash-message--fail">
-              <p data-l8n="content:profile/email-not-confirmed" class="flash-message__title">Your email address is not yet confirmed.</p>
+          <div class="verify-email-address clj--unconfirmed-email-message-container func--unconfirmed-email-message-container">
+            <div class="flash-message flash-message--fail flash-message--no-round-bottom">
+              <p data-l8n="content:profile/email-not-confirmed" class="flash-message__title">Your email address is not been confirmed.</p>
+            </div>
+            <div class="verify-email-address__content verify-email-address__content--no-round-top clj-wip">
+              <p data-l8n="content:profile/verify-email-intro">If you have not received an email to email@email.com you should resend the confirmation email.</p>
+              <form action="/confirm-email-resent" method="post" class="resend-confirmation-form">
+                <button type="submit" data-l8n="content:profile/verify-button" class="button">Resend email confirmation</button>
+              </form>
             </div>
           </div>
-          <div class="verify-email-address clj-wip">
-            <h2 data-l8n="content:profile/verify-email-title" class="verify__title">Your email address has not yet been confirmed</h2>
-            <p data-l8n="content:profile/verify-email-intro">If you have not received an email to email@email.com you should resend the confirmation email.</p>
-            <form action="/confirm-email-resent" method="post" class="resend-confirmation-form">
-              <button type="submit" data-l8n="content:profile/verify-button" class="button">Resend email confirmation</button>
-            </form>
-          </div>
+          <h1 class="page-title">Profile</h1>
           <div class="card-preview">
             <h2>Your Profile Card <span data-l8n="content:profile/admin-span" class="clj--admin__span">Mighty Admin</span>
             </h2>
@@ -84,21 +83,15 @@
             <ul class="app__list clj--app__list func--app__list">
               <li class="app__item clj--authorised-app__list-item">
                 <div class="app__title clj--client-name">Green Party</div>
-                <div class="app__remove"><a href="./unshare-profile-card" class="clj--app-item__unshare-link func--app-item__unshare-link">
-                    <button type="submit" class="button button--remove clj--authorised-app__remove-button"><i class="fa button__icon fa-remove"></i><span data-l8n="content:applications/unshare-button" class="button__text">Unshare Card</span>
-                    </button></a></div>
+                <div class="app__remove"><a href="./unshare-profile-card" class="button button--remove clj--app-item__unshare-link func--app-item__unshare-link"><i class="fa fa-remove button__icon"></i><span data-l8n="content:applications/unshare-button" class="button__text">Unshare Card</span></a></div>
               </li>
               <li class="app__item clj--authorised-app__list-item">
                 <div class="app__title clj--client-name">A really long name that will break this</div>
-                <div class="app__remove"><a href="./unshare-profile-card" class="clj--app-item__unshare-link func--app-item__unshare-link">
-                    <button type="submit" class="button button--remove clj--authorised-app__remove-button"><i class="fa button__icon fa-remove"></i><span data-l8n="content:applications/unshare-button" class="button__text">Unshare Card</span>
-                    </button></a></div>
+                <div class="app__remove"><a href="./unshare-profile-card" class="button button--remove clj--app-item__unshare-link func--app-item__unshare-link"><i class="fa fa-remove button__icon"></i><span data-l8n="content:applications/unshare-button" class="button__text">Unshare Card</span></a></div>
               </li>
               <li class="app__item clj--authorised-app__list-item">
                 <div class="app__title clj--client-name">Anotherapp</div>
-                <div class="app__remove"><a href="./unshare-profile-card" class="clj--app-item__unshare-link func--app-item__unshare-link">
-                    <button type="submit" class="button button--remove clj--authorised-app__remove-button"><i class="fa button__icon fa-remove"></i><span data-l8n="content:applications/unshare-button" class="button__text">Unshare Card</span>
-                    </button></a></div>
+                <div class="app__remove"><a href="./unshare-profile-card" class="button button--remove clj--app-item__unshare-link func--app-item__unshare-link"><i class="fa fa-remove button__icon"></i><span data-l8n="content:applications/unshare-button" class="button__text">Unshare Card</span></a></div>
               </li>
             </ul>
           </div>
