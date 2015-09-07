@@ -68,6 +68,20 @@ $button--height: 64px;
     width: 100%;
   }
 
+  // make it so
+  &--full-width-small-devices {
+    @include width-to($small_device) {
+      width: 100%;
+    }
+  }
+
+  // make it so
+  &--full-width-smallish-devices {
+    @include width-to($smallish_device) {
+      width: 100%;
+    }
+  }
+
   // secondary action
   &--secondary {
     background-color: $light_grey;
