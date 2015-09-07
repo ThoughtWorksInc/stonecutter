@@ -1,7 +1,11 @@
 .flash-message {
   padding: 16px;
-  margin-bottom: 32px;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
   border-radius: $box--border-radius;
+  &--small-bottom-margin {
+    margin-bottom: 1rem;
+  }
   &--no-round-bottom {
     border-radius: $box--border-radius $box--border-radius 0 0;
   }
@@ -13,11 +17,12 @@
     color: $white;
   }
   .flash-message__title {
-    line-height: 1.2;
     margin-top: 0;
     margin-bottom: 0.25rem;
+    line-height: 1.2;
     white-space: pre-line;
     font-weight: bold;
+    @include font-size(17px);
     &:last-child {
       margin-bottom: 0;
     }

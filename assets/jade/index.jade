@@ -13,14 +13,14 @@ block content
   .middle-container.middle-container--max-large
     .columns
       .column.one-half
-        h1
+        h1.page-title
           span(data-l8n="content:index/welcome-header-1") !Welcome to
           = " "
           span.clj--app-name.func--welcome-app-name #{applicationName}
           = " "
           span(data-l8n="content:index/welcome-header-2")
         p.quote-intro
-          span(data-l8n="content:index/welcome-intro-1") !Connect with all your organisations d-cent tools. Sign in securely to applications using your
+          span(data-l8n="content:index/welcome-intro-1") !Connect with all your D-cent tools. Sign in securely to applications using your
           = " "
           span.clj--app-name #{applicationName}
           = " "
@@ -37,14 +37,14 @@ block content
               ul.validation-summary__list
                 li.validation-summary__item.clj--sign-in-validation-summary__item(data-l8n="content:index/sign-in-invalid-credentials-validation-message")
                   | !Invalid email address or password
-            p.form-row.clj--sign-in-email
+            p.form-row.form-row--no-side-margin.clj--sign-in-email
               label.form-row__label(for="email")
                 span.form-row__title(data-l8n="content:index/sign-in-email-address")
                   | !Email address
                 span.form-row__validation.clj--sign-in-email__validation(data-l8n="content:index/sign-in-email-address-invalid-validation-message")
                   | !Enter a valid email address
               input.form-row__input.clj--sign-in-email__input.func--sign-in-email__input(type="email", id="email", name="sign-in-email")
-            p.form-row.clj--sign-in-password
+            p.form-row.form-row--no-side-margin.clj--sign-in-password
               label.form-row__label(for="password")
                 span.form-row__title(data-l8n="content:index/sign-in-password")
                   | !Password
