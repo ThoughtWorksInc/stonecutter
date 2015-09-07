@@ -5,7 +5,7 @@
             [stonecutter.change-password :as cp]
             [stonecutter.test.test-utils :as test-utils])
   (:require-macros [cemerick.cljs.test :refer [deftest is testing run-tests]]
-                   [dommy.core :refer [sel1]]
+                   [dommy.core :refer [sel1 sel]]
                    [stonecutter.test.macros :refer [load-template]]))
 
 (def form-row-valid-class "form-row__help--valid")
@@ -63,6 +63,17 @@
          (cp/start)
          (test-field-validates-client-side new-password-input :.form-row__help))
 
+(defn has-summary-message [message]
+  (let [validation-classes (sel :.validation-summary__item)
+        err-messages (mapv (partial dommy/text) validation-classes)]
+    (is (some #{message} err-messages))))
+
+(defn has-no-duplicating-messages []
+  (let [validation-classes (sel :.validation-summary__item)
+        err-messages (mapv (partial dommy/text) validation-classes)]
+    (is (= (count err-messages) (count (set err-messages)))
+        "The same message appeared multiple times in list")))
+
 (deftest submitting-invalid-forms
          (setup-page! change-password-template)
          (cp/start)
@@ -71,16 +82,23 @@
                   (press-submit change-password-form)
                   (test-field-has-class current-password-field field-error-class)
                   (test-field-has-class new-password-field field-error-class)
-                  (has-focus? current-password-input))
+                  (has-focus? current-password-input)
+                  (has-summary-message cp/current-password-incorrect-message)
+                  (press-submit change-password-form)
+                  (has-no-duplicating-messages))
 
          (testing "submitting form with only valid current-password"
                   (enter-text current-password-input valid-password)
                   (press-submit change-password-form)
                   (test-field-doesnt-have-class current-password-field field-error-class)
                   (test-field-has-class new-password-field field-error-class)
-                  (has-focus? new-password-input))
+                  (has-focus? new-password-input)
+                  (has-summary-message cp/new-password-blank-validation-message))
 
          (testing "submitting form with all valid inputs"
+                  (enter-text new-password-input invalid-password)
+                  (press-submit change-password-form)
+                  (has-summary-message cp/new-password-too-short-validation-message)
                   (enter-text new-password-input valid-new-password)
                   (press-submit change-password-form)
                   (test-field-doesnt-have-class current-password-field field-error-class)
