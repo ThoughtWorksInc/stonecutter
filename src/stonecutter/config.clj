@@ -2,9 +2,31 @@
   (:require [environ.core :as env]
             [clojure.tools.logging :as log]))
 
-(def env-vars #{:port :host :base-url :mongo-port-27017-tcp-addr
+(def vars [:port "The port that app listens"
+           :host "The host IP that app listens on"
+           :base-url "Base url that app is deployed at"
+           :mongo-port-27017-tcp-addr "IP address of mongo container linked on port 27017 (should be supplied by container linking)"
+           :mongo-uri "URI of mongo database"
+           :client-credentials-file-path "Location of file containing client registrations"
+           :secure "If set to true will only allow traffic proxied through HTTPS"
+           :email-script-path "Location of script used to send e-mails"
+           :app-name "Then name of the application"
+           :header-bg-color "Background colour of top bar"
+           :header-font-color "Colour of font in top bar"
+           :header-font-color-hover "Hover colour of font in top bar"
+           :static-resources-dir-path "Optional location of additional static resources (i.e. logo and favicon)"
+           :logo-file-name "Name of logo file in static resources directory"
+           :favicon-file-name "Name of favicon file in static resources directory"
+           :admin-login "Username of admin user"
+           :admin-password "Password of admin user"
+           :password-reset-expiry "Time (in hours) before password-reset email expires"
+           :open-id-connect-id-token-lifetime-minutes "Time (in minutes) before Open ID Connect token expires"
+           :rsa-keypair-file-path "Location of json file containing RSA keypair (for Open ID Connect)"
+           ])
+
+(def env-var-set #{:port :host :base-url :mongo-port-27017-tcp-addr
                 :mongo-uri :client-credentials-file-path
-                :theme :secure :email-script-path :app-name
+                :secure :email-script-path :app-name
                 :header-bg-color :header-font-color :header-font-color-hover
                 :static-resources-dir-path :logo-file-name
                 :favicon-file-name :admin-login :admin-password
@@ -13,19 +35,19 @@
                 :rsa-keypair-file-path})
 
 (def roles {:default "default"
-            :admin "admin"})
+            :admin   "admin"})
 
 (defn create-config []
-  (select-keys env/env env-vars))
+  (select-keys env/env env-var-set))
 
 (defn get-env
   "Like a normal 'get' except it also ensures the key is in the env-vars set"
   ([config-m key]
    (get-env config-m key nil))
   ([config-m key default]
-   (when-not (env-vars key)
+   (when-not (env-var-set key)
      (throw (Exception. (format "Trying to get-env with key '%s' which is not in the env-vars set" key))))
-   (get config-m (env-vars key) default)))
+   (get config-m (env-var-set key) default)))
 
 (defn port [config-m]
   (Integer. (get-env config-m :port "3000")))
@@ -48,9 +70,6 @@
 
 (defn client-credentials-file-path [config-m]
   (get-env config-m :client-credentials-file-path "client-credentials.yml"))
-
-(defn theme [config-m]
-  (get-env config-m :theme))
 
 (defn app-name [config-m]
   (get-env config-m :app-name "Stonecutter"))
