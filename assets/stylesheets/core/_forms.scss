@@ -44,14 +44,13 @@ input {
   margin-bottom: 1.25rem;
   transition: background-color 250ms ease;
   &--validation-error {
-
   }
   &__label {
   }
   &__title {
     display: block;
     padding-bottom: 0.5rem;
-    @include font-size(18px);
+    @include font-size($paragraph_font_size);
     color: #5d5d5d;
     &--inline {
       display: inline-block;
