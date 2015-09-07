@@ -44,7 +44,8 @@
 
 (defn add-errors [enlive-m err]
   (if (empty? err)
-    (vh/remove-element enlive-m [:.clj--validation-summary])
+    (-> enlive-m (html/at [:.clj--validation-summary]
+                          (html/remove-class "validation-summary--show")))
     (let [ordered-error-key-pairs (kv-pairs-from-map-ordered-by err error-display-order)]
       (-> enlive-m
           (html/at [:.clj--validation-summary]

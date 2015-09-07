@@ -29,8 +29,12 @@
        (let [page (-> (th/create-request) change-password-form)]
          (fact "no elements have class for styling errors"
                (html/select page [:.form-row--validation-error]) => empty?)
-         (fact "validation summary element is removed"
-               (html/select page [:.clj--validation-summary]) => empty?)))
+         (fact "validation summary element is not shown by styling class"
+               (-> page
+                   (html/select [:.clj--validation-summary])
+                   first
+                   :attrs
+                   :class) =not=> (contains "validation-summary--show"))))
 
 (fact "page has script link to javascript file"
       (let [page (-> (th/create-request) change-password-form)]

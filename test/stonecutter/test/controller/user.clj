@@ -268,7 +268,10 @@
                         u/show-change-password-form
                         :body
                         html/html-snippet
-                        (html/select [:.clj--validation-summary__item])) => empty?)
+                        (html/select [:.clj--validation-summary])
+                        first
+                        :attrs
+                        :class) =not=> (contains "validation-summary--show"))
 
               (fact "when validation fails"
                     (-> (u/change-password ...user-store... (th/create-request :post "/change-password" ...invalid-params... {:user-login "user_who_is@changing_password.com"}))

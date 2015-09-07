@@ -61,6 +61,7 @@
                       :too-short (get-translated-message :new-password-too-short-validation-message)}})
 
 (defn append-password-error-message [field message-m err]
+  (d/add-class! (dm/sel1 :.validation-summary) "validation-summary--show")
   (doseq [[input-field error] err]
     (let [message (get-in message-m [input-field error])]
       (append-error-message field message))))

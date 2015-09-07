@@ -16,11 +16,13 @@
 (def valid-new-password "23456789")
 
 (def change-password-form :.clj--change-password__form)
+(def validation-summary :.clj--validation-summary)
 (def current-password-input :#current-password)
 (def current-password-field :.clj--current-password)
 (def new-password-field :.clj--new-password)
 (def new-password-input :#new-password)
 
+(def show-validation-form "validation-summary--show")
 (def field-error-class "form-row--validation-error")
 
 (defn setup-page! [html]
@@ -90,6 +92,7 @@
 
          (testing "submitting empty form"
                   (press-submit change-password-form)
+                  (test-field-has-class validation-summary show-validation-form)
                   (test-field-has-class current-password-field field-error-class)
                   (test-field-has-class new-password-field field-error-class)
                   (has-focus? current-password-input)
