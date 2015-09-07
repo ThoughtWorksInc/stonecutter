@@ -2,6 +2,7 @@
   (:require [cemerick.cljs.test :as t]
             [dommy.core :as dommy]
             [dommy.utils :as du]
+            [clojure.string :as string]
             [stonecutter.change-password :as cp]
             [stonecutter.test.test-utils :as test-utils])
   (:require-macros [cemerick.cljs.test :refer [deftest is testing run-tests]]
@@ -61,12 +62,21 @@
 (deftest password-validation
          (setup-page! change-password-template)
          (cp/start)
-         (test-field-validates-client-side new-password-input :.form-row__help))
+
+         (testing "typing in valid password causes valid class to appear"
+                  (test-field-validates-client-side new-password-input :.form-row__help))
+
+         (testing "valid class disappears if new password is the same as current password"
+                  (enter-text current-password-input valid-password)
+                  (enter-text new-password-input valid-password)
+                  (test-field-doesnt-have-class :.form-row__help form-row-valid-class)))
 
 (defn has-summary-message [message]
   (let [validation-classes (sel :.validation-summary__item)
         err-messages (mapv (partial dommy/text) validation-classes)]
-    (is (some #{message} err-messages))))
+    (is (not (string/blank? message)) "Error message key returns blank string")
+    (is (some #{message} err-messages)
+        (str "Missing error message " message " when error occurs"))))
 
 (defn has-no-duplicating-messages []
   (let [validation-classes (sel :.validation-summary__item)
@@ -83,22 +93,32 @@
                   (test-field-has-class current-password-field field-error-class)
                   (test-field-has-class new-password-field field-error-class)
                   (has-focus? current-password-input)
-                  (has-summary-message cp/current-password-incorrect-message)
+                  (has-summary-message (get-in cp/error-to-message [:current-password :blank]))
                   (press-submit change-password-form)
                   (has-no-duplicating-messages))
 
          (testing "submitting form with only valid current-password"
+                  (enter-text current-password-input invalid-password)
+                  (press-submit change-password-form)
+                  (test-field-has-class current-password-field field-error-class)
+                  (has-summary-message (get-in cp/error-to-message [:current-password :too-short]))
                   (enter-text current-password-input valid-password)
                   (press-submit change-password-form)
                   (test-field-doesnt-have-class current-password-field field-error-class)
                   (test-field-has-class new-password-field field-error-class)
                   (has-focus? new-password-input)
-                  (has-summary-message cp/new-password-blank-validation-message))
+                  (has-summary-message (get-in cp/error-to-message [:new-password :blank])))
+
+         (testing "submitting form with unchanged new-password"
+                  (enter-text current-password-input valid-password)
+                  (enter-text new-password-input valid-password)
+                  (press-submit change-password-form)
+                  (has-summary-message (get-in cp/error-to-message [:new-password :unchanged])))
 
          (testing "submitting form with all valid inputs"
                   (enter-text new-password-input invalid-password)
                   (press-submit change-password-form)
-                  (has-summary-message cp/new-password-too-short-validation-message)
+                  (has-summary-message (get-in cp/error-to-message [:new-password :too-short]))
                   (enter-text new-password-input valid-new-password)
                   (press-submit change-password-form)
                   (test-field-doesnt-have-class current-password-field field-error-class)
