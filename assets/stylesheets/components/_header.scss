@@ -13,7 +13,7 @@ $header--height: 80px;
   &__inner {
     position: relative;
     min-height: $header--height;
-    padding: 1rem;
+    padding: 1rem 1rem 0.5rem 1rem;
     margin-bottom: 0;
     @include width-from($medium_device) {
       height: 100px;
