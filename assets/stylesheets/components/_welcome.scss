@@ -1,0 +1,16 @@
+.welcome {
+  @include width-from($smallish_device) {
+    padding-top: 0.65rem;
+  }
+  &__title {
+    @include h1;
+  }
+  &__intro {
+    @include font-size(17px);
+    margin-top: 0;
+    line-height: 1.3;
+    @include width-from($medium_device) {
+      @include font-size(21px);
+    }
+  }
+}
