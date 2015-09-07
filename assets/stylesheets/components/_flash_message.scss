@@ -1,20 +1,37 @@
 .flash-message {
-  padding: 16px;
+  position: relative;
+  padding: 16px 16px 16px 38px;
   margin-top: 1rem;
   margin-bottom: 2rem;
-  border-radius: $box--border-radius;
+  border-radius: 3px;
+  &:before {
+    display: block;
+    position: absolute;
+    top: 18px;
+    left: 14px;
+    font-family: 'FontAwesome';
+  }
   &--small-bottom-margin {
     margin-bottom: 1rem;
   }
-  &--no-round-bottom {
-    border-radius: $box--border-radius $box--border-radius 0 0;
-  }
   &--success {
     background-color: $success_color;
+    border: 1px solid darken($success_color,20%);
+    &:before {
+      content: '\f058';
+    }
   }
   &--fail {
     background-color: $error_color;
+    border: 1px solid darken($error_color,20%);
     color: $white;
+    &:before {
+      content: '\f06a';
+    }
+  }
+  &--no-round-bottom {
+    border: 0;
+    border-radius: $box--border-radius $box--border-radius 0 0;
   }
   .flash-message__title {
     margin-top: 0;
