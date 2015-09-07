@@ -8,6 +8,7 @@
             [stonecutter.view.confirmation-sign-in :as sign-in]
             [stonecutter.util.ring :as ring-util]
             [stonecutter.controller.common :as common]
+            [stonecutter.controller.user :as uc]
             [ring.util.response :as response]))
 
 (defn show-confirm-sign-in-form [request]
@@ -59,3 +60,11 @@
       (-> request
           (assoc-in [:context :errors :credentials] :confirmation-invalid)
           show-confirm-sign-in-form))))
+
+(defn confirmation-delete [user-store confirmation-store request]
+  (let [confirmation-id (get-in request [:params :confirmation-id])]
+    (when-let [confirmation (conf/fetch confirmation-store confirmation-id)]
+      (conf/revoke! confirmation-store confirmation-id)
+      (when (user/user-exists? user-store (:login confirmation))
+        (user/delete-user! user-store (:login confirmation))
+        (uc/redirect-to-profile-deleted)))))

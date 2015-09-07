@@ -67,7 +67,7 @@
                    confirmation (conf/store! confirmation-store email confirmation-id)
                    response (ec/confirm-email-with-id user-store confirmation-store confirm-email-request)]
                response => (th/check-redirects-to (routes/path :confirmation-sign-in-form
-                                                            :confirmation-id confirmation-id))))
+                                                               :confirmation-id confirmation-id))))
 
        (fact "when email confirmation is complete confirmation-id is revoked"
              (let [user-store (m/create-memory-store)
@@ -90,21 +90,22 @@
                (ec/confirm-email-with-id user-store confirmation-store request) => nil)))
 
 (facts "about confirmation sign in"
-       (fact "when password matches login of confirmation id, user is logged in")
-       (->> (th/create-request :post (routes/path :confirmation-sign-in) {:confirmation-id confirmation-id :password password})
-            (ec/confirmation-sign-in ...user-store... ...token-store... ...confirmation-store...)) => (contains {:status  302
-                                                                         :headers {"Location" confirm-email-path}
-                                                                         :session {:user-login   ...user-login...
-                                                                                   :access_token ...token...}})
-       (provided
-        (user/authenticate-and-retrieve-user ...user-store... email password) => {:login ...user-login...}
-        (conf/fetch ...confirmation-store... confirmation-id) => {:login email :confirmation-id confirmation-id}
-        (cl-token/create-token ...token-store... nil {:login ...user-login...}) => {:token ...token...})
+       (fact "when password matches login of confirmation id, user is logged in"
+             (->> (th/create-request :post (routes/path :confirmation-sign-in) {:confirmation-id confirmation-id :password password})
+                  (ec/confirmation-sign-in ...user-store... ...token-store... ...confirmation-store...))
+             => (contains {:status  302
+                           :headers {"Location" confirm-email-path}
+                           :session {:user-login   ...user-login...
+                                     :access_token ...token...}})
+             (provided
+               (user/authenticate-and-retrieve-user ...user-store... email password) => {:login ...user-login...}
+               (conf/fetch ...confirmation-store... confirmation-id) => {:login email :confirmation-id confirmation-id}
+               (cl-token/create-token ...token-store... nil {:login ...user-login...}) => {:token ...token...}))
 
        (fact "when credentials are invalid, redirect back to form with invalid error"
              (against-background
-              (user/authenticate-and-retrieve-user ...user-store... email "Invalid password") => nil
-              (conf/fetch ...confirmation-store... confirmation-id) => {:login email :confirmation-id confirmation-id})
+               (user/authenticate-and-retrieve-user ...user-store... email "Invalid password") => nil
+               (conf/fetch ...confirmation-store... confirmation-id) => {:login email :confirmation-id confirmation-id})
              (let [response (->> (th/create-request :post (routes/path :confirmation-sign-in)
                                                     {:confirmation-id confirmation-id :password "Invalid password"})
                                  (ec/confirmation-sign-in ...user-store... ...token-store... ...confirmation-store...))]
@@ -114,4 +115,36 @@
                (-> (html/select (html/html-snippet (:body response)) [:.clj--validation-summary__item]) first :attrs :data-l8n)
                => "content:confirmation-sign-in-form/invalid-credentials-validation-message")))
 
+(def confirmation-delete-path
+  (routes/path :confirmation-delete
+               :confirmation-id confirmation-id))
 
+(def confirmation-delete-request
+  (th/create-request :post confirmation-delete-path {:confirmation-id confirmation-id}))
+
+(facts "about confirmation delete"
+       (fact "if the confirmation id exists, the account is deleted, the confirmation id is revoked and profile-deleted page is rendered"
+             (let [user-store (m/create-memory-store)
+                   confirmation-store (m/create-memory-store)
+                   user (user/store-user! user-store email "password")
+                   confirmation (conf/store! confirmation-store email confirmation-id)
+                   response (ec/confirmation-delete user-store confirmation-store confirmation-delete-request)]
+               (user/retrieve-user user-store (:login user)) => nil
+               (conf/fetch confirmation-store confirmation-id) => nil
+               response => (every-checker
+                             (th/check-redirects-to "/profile-deleted")
+                             (contains {:session nil}))))
+
+       (fact "if the confirmation id does not exist in the db it returns nil (404)"
+             (let [user-store (m/create-memory-store)
+                   confirmation-store (m/create-memory-store)
+                   response (ec/confirmation-delete user-store confirmation-store confirmation-delete-request)]
+               response => nil))
+
+       (fact "if the confirmation id exists but the user does not then the confirmation id should be revoked"
+             (let [user-store (m/create-memory-store)
+                   confirmation-store (m/create-memory-store)
+                   confirmation (conf/store! confirmation-store email confirmation-id)
+                   response (ec/confirmation-delete user-store confirmation-store confirmation-delete-request)]
+               (conf/fetch confirmation-store confirmation-id) => nil
+               response => nil)))
