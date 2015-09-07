@@ -3,10 +3,10 @@
   &__content {
     margin-top: -2rem;
     padding: 1.5rem;
-    border: 2px solid $error_color;
-    &--no-round-top {
-      border-radius: 0 0 $box--border-radius $box--border-radius;
-    }
+    border: 1px solid darken($error_color,8%);
+    border-top: 0;
+    border-radius: 0 0 3px 3px;
+    background-color: lighten($error_color,10%);
   }
 }
 

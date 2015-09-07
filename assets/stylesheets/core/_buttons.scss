@@ -131,7 +131,7 @@ $button--height: 64px;
 
   // used for delete buttons
   &--remove {
-    $button--color: $medium_pink_dull;
+    $button--color: $medium_pink;
     background-color: $button--color;
     color: $white;
     &:hover {
