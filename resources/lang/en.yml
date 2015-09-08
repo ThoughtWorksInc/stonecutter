@@ -179,9 +179,6 @@ flash:
 
 admin:
   invite-user: Invite
-  user-confirmed-email: Confirmed
-  user-not-confirmed-email: Not confirmed
-  trust-label: Toggle trust
 
 admin-sign-in-form:
   title: Sign in
@@ -201,5 +198,6 @@ admin-user-list:
   title: User list
   page-title: User list
   label-search: Search
-  approve-button: Approve
-  unapprove-button: Unapprove
+  user-confirmed-email: Confirmed
+  user-not-confirmed-email: Not confirmed
+  trust-label: Toggle trust

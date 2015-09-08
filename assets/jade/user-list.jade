@@ -7,16 +7,16 @@ mixin userItem(fullName, emailAddress, emailIsConfirmed, userIsTrusted)
       .user-item__email-address
         if emailIsConfirmed
           i.fa.fa-check-circle-o.user-item__email-address__icon
-            span.visuallyhidden(data-l8n="content:admin/user-confirmed-email") !Confirmed
+            span.visuallyhidden(data-l8n="content:admin-user-list/user-confirmed-email") !Confirmed
         else
           i.fa.fa-times-circle-o.user-item__email-address__icon
-            span.visuallyhidden(data-l8n="content:admin/user-not-confirmed-email") !Not confirmed
+            span.visuallyhidden(data-l8n="content:admin-user-list/user-not-confirmed-email") !Not confirmed
         span !#{emailAddress}
     .user-item__action-list
       .user-item__toggle-trust
         label.toggle(for="toggle-#{fullName}")
           input.toggle__input(type="checkbox" id="toggle-#{fullName}" checked=userIsTrusted)
-          span.toggle__title.visuallyhidden(data-l8n="content:admin/trust-label") !Toggle trust
+          span.toggle__title.visuallyhidden(data-l8n="content:admin-user-list/trust-label") !Toggle trust
           span.toggle__switch
             span.toggle__handle
               span.toggle__handle-icon
