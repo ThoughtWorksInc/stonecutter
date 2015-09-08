@@ -4,9 +4,9 @@ GET     /ping                                    ping
 GET     /sign-out                                sign-out
 GET     /confirm-email/:confirmation-id          confirm-email-with-id
 GET     /confirm-email/:confirmation-id/sign-in  confirmation-sign-in-form
+POST    /confirm-email/sign-in                   confirmation-sign-in
 GET     /confirm-email/:confirmation-id/delete   show-confirmation-delete
 POST    /confirm-email/:confirmation-id/delete   confirmation-delete
-POST    /confirm-email/sign-in                   confirmation-sign-in
 GET     /profile                                 show-profile
 GET     /profile-created                         show-profile-created
 GET     /profile-deleted                         show-profile-deleted

@@ -72,6 +72,8 @@
        :confirm-email-with-id                (partial ec/confirm-email-with-id user-store confirmation-store)
        :confirmation-sign-in-form            ec/show-confirm-sign-in-form
        :confirmation-sign-in                 (partial ec/confirmation-sign-in user-store token-store confirmation-store)
+       :show-confirmation-delete             (partial ec/show-confirmation-delete user-store confirmation-store)
+       :confirmation-delete                  (partial ec/confirmation-delete user-store confirmation-store)
        :show-profile                         (partial user/show-profile client-store user-store)
        :show-profile-created                 user/show-profile-created
        :show-profile-deleted                 user/show-profile-deleted
@@ -100,6 +102,7 @@
                                                  :theme-css
                                                  :confirm-email-with-id
                                                  :confirmation-sign-in-form :confirmation-sign-in
+                                                 :show-confirmation-delete :confirmation-delete
                                                  :show-forgotten-password-form :send-forgotten-password-email
                                                  :show-forgotten-password-confirmation
                                                  :show-reset-password-form
