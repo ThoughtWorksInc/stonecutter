@@ -12,33 +12,33 @@ block content
     h1.page-title
       span.clj--client-name Green Party Voting
       = " "
-      | would like to use your Profile Card
+      span(data-l8n="content:authorise/page-title") !would like to use your Profile Card
 
     .authorise-text
       p.authorise-text__description
-        | By sharing your Profile Card this application
+        span(data-l8n="content:authorise/share-1") !By sharing your Profile Card this application
         = " "
-        span.authorise-text__description--allowed will be able to:
+        span.authorise-text__description--allowed(data-l8n="content:authorise/share-2") !will be able to:
       ul.authorise-text__list
         li.authorise-text__item
           i.fa.fa-check.fa-fw.authorise-text__icon.authorise-text__icon--allowed
           = " "
-          | Sign you in
+          span(data-l8n="content:authorise/item-sign-in") !Sign you in
         li.authorise-text__item
           i.fa.fa-check.fa-fw.authorise-text__icon.authorise-text__icon--allowed
           = " "
-          | View your Profile Card
+          span(data-l8n="content:authorise/item-view-profile") !View your Profile Card
 
     .authorise-text
       p.authorise-text__description
-        | This application
+        span(data-l8n="content:authorise/not-intro-1") !This application
         = " "
-        span.authorise-text__description--disallowed will not be able to:
+        span.authorise-text__description--disallowed(data-l8n="content:authorise/not-intro-2") will not be able to:
       ul.authorise-text__list
         li.authorise-text__item
           i.fa.fa-times.fa-fw.authorise-text__icon.authorise-text__icon--disallowed
           = " "
-          | Update your Profile Card
+          span(data-l8n="content:authorise/item-update-profile") !Update your Profile Card
 
     form.func--authorise__form.clj--authorise__form(action="./authorisation", method="post", role="form")
       input.clj--authorise-csrf__input(type="hidden" name="csrf-token" value="1234")
@@ -48,14 +48,11 @@ block content
       input.clj--authorise-scope__input(type="hidden" name="scope" value="!scope")
       .authorise-buttons
         .authorise-buttons__primary
-          button.button.button--full-width.button--primary.func--authorise-share-profile__button(type="submit")
-            span Share Profile Card
+          button.button.button--full-width.button--primary.func--authorise-share-profile__button(type="submit", data-l8n="content:authorise/allow-action") !Share Profile Card
         .authorise-buttons__secondary
-          a.button.button--full-width.button--link.clj--authorise-cancel__link.func--authorise-cancel__link(href="./authorise-failure") Cancel
+          a.button.button--full-width.button--link.clj--authorise-cancel__link.func--authorise-cancel__link(href="./authorise-failure")
+            span(data-l8n="content:authorise/disallow-action-1") !Cancel
+            span.visuallyhidden(data-l8n="content:authorise/disallow-action-2") !and do not share my Profile Card
 
     .authorise-terms
-      p
-        | You can unshare your Profile Card at anytime from your
-        =" "
-        span.authorise-terms__link profile
-        ="."
+      p(data-l8n="content:authorise/terms") !You can unshare your Profile Card at anytime from your profile.

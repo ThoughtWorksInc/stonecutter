@@ -137,6 +137,19 @@ profile-deleted:
 
 authorise:
   title: Authorise
+  page-title: would like to use your Profile Card
+  share-1: By sharing your Profile Card this application
+  share-2: "will be able to:"
+  item-sign-in: Sign you in
+  item-view-profile: View your Profile Card
+  not-intro-1: This application
+  not-intro-2: "will not be able to:"
+  item-update-profile: Update your Profile Card
+  allow-action: Share Profile Card
+  disallow-action-1: Cancel
+  disallow-action-2: and do not share my Profile Card
+  terms: You can unshare your Profile Card at anytime from your profile.
+
 
 authorise-fail:
   title: Authorise failure
