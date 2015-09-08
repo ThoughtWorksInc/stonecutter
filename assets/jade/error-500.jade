@@ -10,8 +10,13 @@ block headerScripts
 block content
   .single-column
     h1.page-title.clj--error-page-header(data-l8n="content:error-500/page-header") !Sorry something went wrong
-    p.clj--error-page-intro(data-l8n="content:error-500/page-intro") !An unexpected error has occured, please try again. We apologise for any inconvenience.
-    .clj--error-page-content(data-l8n="html:error-500/page-content")
-      h2 !What do I do now?
+    p.clj--error-page-intro(data-l8n="content:error-500/page-intro") !An unexpected error has occurred, please try again. We apologise for any inconvenience.
+    .clj--error-page-content
+      h2(data-l8n="content:error-default/return-to-link-header") !What do I do now?
         ul
-          li Return home
+          li
+            span(data-l8n="content:error-default/return-to-link-before") !Please return to the
+            =" "
+            a.clj--error-return-home__link(href="./", title="!Return to Home", data-l8n="content:error-default/return-to-link attr/title:error-default/return-to-link-title-attr") !Home page
+            =" "
+            span(data-l8n="content:error-default/return-to-link-after") !now.

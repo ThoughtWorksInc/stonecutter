@@ -156,29 +156,37 @@ authorise-fail:
   page-intro: You have not signed in to
   page-intro-ending: can not have access to your Profile Card and cannot sign in.
 
+error-default:
+  return-to-link-header: What can I do now?
+  return-to-link-before: Please return to the
+  return-to-link: home page
+  return-to-link-title-attr: Return to Home
+  return-to-link-after: ""
+
 error-csrf:
   title: CSRF invalid
   page-header: "CSRF invalid"
   page-intro: "CSRF invalid response."
-  page-content: '<h2>What can I do now?</h2><ul><li>Please return to the <a href="/" title="Return to Home">home page</a>.</li></ul>'
 
 error-forbidden:
   title: Forbidden
   page-header: "Request forbidden"
   page-intro: "Request forbidden response."
-  page-content: '<h2>What can I do now?</h2><ul><li>Please return to the <a href="/" title="Return to Home">home page</a>.</li></ul>'
 
 error-404:
   title: Error-404
   page-header: "Sorry the page you requested can't be found."
   page-intro: "The page you were trying to reach at this address doesn't seem to exist. This is usually the result of a bad or outdated link. We apologise for any inconvenience."
-  page-content: '<h2>What can I do now?</h2><ul><li>Please return to the <a href="/" title="Return to Home">home page</a>.</li></ul>'
 
 error-500:
   title: "D'Oh! Something went wrong"
   page-header: "Sorry something went wrong"
-  page-intro: "An unexpected error has occured, please try again. We apologise for any inconvenience."
-  page-content: '<h2>What can I do now?</h2><ul><li>Please return to the <a href="/" title="Return to Home">home page</a>.</li></ul>'
+  page-intro: "An unexpected error has occurred, please try again. We apologise for any inconvenience."
+
+error-account-nonexistent:
+  title: "Missing account"
+  page-header: "This account does not exist"
+  page-intro: "This account has been deleted or never existed."
 
 modal:
   modal-dismiss: Close
