@@ -10,6 +10,9 @@
 (defn set-cancel-link [path enlive-m]
   (html/at enlive-m [:.clj--delete-account-cancel__link] (html/set-attr :href path)))
 
+(defn set-register-link [path enlive-m]
+  (html/at enlive-m [:.clj--profile-deleted-next__button] (html/set-attr :href path)))
+
 (defn delete-account-confirmation [request]
   (->> (vh/load-template "public/delete-account.html")
        (set-form-action (r/path :delete-account))
@@ -19,6 +22,7 @@
 
 (defn profile-deleted [request]
   (->> (vh/load-template "public/profile-deleted.html")
+       (set-register-link (r/path :index))
        vh/remove-work-in-progress))
 
 (defn email-confirmation-delete-account [request]

@@ -71,4 +71,8 @@
        (fact "there are no missing translations"
              (let [translator (t/translations-fn t/translation-map)
                    page (-> (th/create-request) profile-deleted (helper/enlive-response {:translator translator}) :body)]
-               page => th/no-untranslated-strings)))
+               page => th/no-untranslated-strings))
+
+       (fact "register link should go to correct endpoint"
+             (let [page (-> (th/create-request) profile-deleted)]
+               (-> page (html/select [:.clj--profile-deleted-next__button]) first :attrs :href) => (r/path :index))))
