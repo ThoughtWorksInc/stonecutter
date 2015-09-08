@@ -15,7 +15,10 @@
 (def new-password-input :#new-password)
 
 (def error-list :.validation-summary__list)
+(def display-error-list-class "validation-summary--show")
+
 (def field-error-class "form-row--validation-error")
+(def valid-row-class "form-row__help--valid")
 
 (defn input-value [sel]
   (d/value (dm/sel1 sel)))
@@ -61,18 +64,23 @@
                       :too-short (get-translated-message :new-password-too-short-validation-message)}})
 
 (defn append-password-error-message [field message-m err]
-  (d/add-class! (dm/sel1 :.validation-summary) "validation-summary--show")
-  (doseq [[input-field error] err]
-    (let [message (get-in message-m [input-field error])]
-      (append-error-message field message))))
+  (if (empty? err)
+    (d/remove-class! (dm/sel1 :.validation-summary) display-error-list-class)
+    (do
+      (d/add-class! (dm/sel1 :.validation-summary) display-error-list-class)
+      (doseq [[input-field error] err]
+        (let [message (get-in message-m [input-field error])]
+          (append-error-message field message))))))
 
 (defn update-new-password! [e]
   (let [current-password (d/value (dm/sel1 current-password-input))
         new-password (d/value (dm/sel1 new-password-input))]
     (if (or (v/validate-password-format new-password)
             (v/validate-passwords-are-different current-password new-password))
-      (d/remove-class! (dm/sel1 :.form-row__help) "form-row__help--valid")
-      (d/add-class! (dm/sel1 :.form-row__help) "form-row__help--valid"))))
+      (d/remove-class! (dm/sel1 :.form-row__help) valid-row-class)
+      (do
+        (d/add-class! (dm/sel1 :.form-row__help) valid-row-class)
+        (d/remove-class! (dm/sel1 new-password-field) field-error-class)))))
 
 (defn check-change-password! [submitEvent]
   (let [err (v/validate-change-password (field-values) (constantly true))]

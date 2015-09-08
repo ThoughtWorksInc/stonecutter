@@ -78,7 +78,15 @@
                   (cp/start)
                   (enter-text new-password-input valid-password)
                   (enter-text current-password-input valid-password)
-                  (test-field-doesnt-have-class :.form-row__help form-row-valid-class)))
+                  (test-field-doesnt-have-class :.form-row__help form-row-valid-class))
+
+         (testing "field error class get removed if the new password is correct"
+                  (enter-text new-password-input invalid-password)
+                  (enter-text current-password-input invalid-password)
+                  (press-submit change-password-form)
+                  (enter-text current-password-input valid-password)
+                  (enter-text new-password-input valid-new-password)
+                  (test-field-doesnt-have-class new-password-field field-error-class)))
 
 (defn has-summary-message [message]
   (let [validation-classes (sel :.validation-summary__item)
@@ -107,11 +115,13 @@
                   (press-submit change-password-form)
                   (has-no-duplicating-messages))
 
-         (testing "submitting form with only valid current-password"
+         (testing "submitting form with current-password which is too short"
                   (enter-text current-password-input invalid-password)
                   (press-submit change-password-form)
                   (test-field-has-class current-password-field field-error-class)
-                  (has-summary-message (get-in cp/error-to-message [:current-password :too-short]))
+                  (has-summary-message (get-in cp/error-to-message [:current-password :too-short])))
+
+         (testing "submitting form with only valid current-password"
                   (enter-text current-password-input valid-password)
                   (press-submit change-password-form)
                   (test-field-doesnt-have-class current-password-field field-error-class)
@@ -125,12 +135,16 @@
                   (press-submit change-password-form)
                   (has-summary-message (get-in cp/error-to-message [:new-password :unchanged])))
 
-         (testing "submitting form with all valid inputs"
+         (testing "submitting form with new-password which is too short"
                   (enter-text new-password-input invalid-password)
                   (press-submit change-password-form)
-                  (has-summary-message (get-in cp/error-to-message [:new-password :too-short]))
+                  (test-field-has-class new-password-field field-error-class)
+                  (has-summary-message (get-in cp/error-to-message [:new-password :too-short])))
+
+         (testing "submitting form with all valid inputs"
                   (enter-text new-password-input valid-new-password)
                   (press-submit change-password-form)
+                  (test-field-doesnt-have-class validation-summary show-validation-form)
                   (test-field-doesnt-have-class current-password-field field-error-class)
                   (test-field-doesnt-have-class new-password-field field-error-class)))
 
