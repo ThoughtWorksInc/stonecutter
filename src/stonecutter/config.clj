@@ -24,15 +24,7 @@
            :rsa-keypair-file-path "Location of json file containing RSA keypair (for Open ID Connect)"
            ])
 
-(def env-var-set #{:port :host :base-url :mongo-port-27017-tcp-addr
-                :mongo-uri :client-credentials-file-path
-                :secure :email-script-path :app-name
-                :header-bg-color :header-font-color :header-font-color-hover
-                :static-resources-dir-path :logo-file-name
-                :favicon-file-name :admin-login :admin-password
-                :password-reset-expiry
-                :open-id-connect-id-token-lifetime-minutes
-                :rsa-keypair-file-path})
+(def env-var-set (->> vars (partition 2) (map first) set))
 
 (def roles {:default "default"
             :admin   "admin"})
