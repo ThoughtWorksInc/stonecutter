@@ -71,6 +71,13 @@
          (testing "valid class disappears if new password is the same as current password"
                   (enter-text current-password-input valid-password)
                   (enter-text new-password-input valid-password)
+                  (test-field-doesnt-have-class :.form-row__help form-row-valid-class))
+
+         (testing "form rows are checked on current-password input event as well"
+                  (setup-page! change-password-template)
+                  (cp/start)
+                  (enter-text new-password-input valid-password)
+                  (enter-text current-password-input valid-password)
                   (test-field-doesnt-have-class :.form-row__help form-row-valid-class)))
 
 (defn has-summary-message [message]

@@ -87,6 +87,8 @@
 (defn start []
   (when-let [e (dm/sel1 new-password-input)]
     (d/listen! e :input update-new-password!))
+  (when-let [e (dm/sel1 current-password-input)]
+    (d/listen! e :input update-new-password!))
   (when-let [e (dm/sel1 :.clj--change-password__form)]
     (d/listen! e :submit check-change-password!)))
 
