@@ -39,7 +39,9 @@
     "Click this link to confirm your email address:\n"
     base-url (r/path :confirm-email-with-id :confirmation-id confirmation-id)
     "\nCheers,"
-    "\nAdmin"))
+    "\nAdmin\n\n\n\n"
+    "This was not me (delete account):\n"
+    base-url (r/path :show-confirmation-delete :confirmation-id confirmation-id)))
 
 (defn confirmation-renderer [email-data]
   {:subject (format "Confirm your email for %s" (:app-name email-data))
