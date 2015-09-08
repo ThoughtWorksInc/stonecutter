@@ -1,25 +1,26 @@
 extends layout/layout
 
-mixin userItem(fullName, emailAddress, userIsApproved)
+mixin userItem(fullName, emailAddress, emailIsConfirmed, userIsTrusted)
   li.user-item
     .user-item__text
       .user-item__name !#{fullName}
-      .user-item__email-address !#{emailAddress}
-    form.user-item__form(action="#", method="post")
-      if userIsApproved
-        button.button.button--transparent.user-item__button(action="submit", value="Approve", class="user-item__button--approved")
-          i.fa.fa-check
-          span.visuallyhidden(data-l8n="content:admin-user-list/approve-button") !Approve
-          = " "
-          span.visuallyhidden.clj--user-item-fullname #{fullName}
-      else
-        button.button.button--transparent.user-item__button(action="submit", value="Unapprove", class="user-item__button--unapproved")
-          i.fa.fa-check
-          span.visuallyhidden(data-l8n="content:admin-user-list/unapprove-button") !Unapprove
-          = " "
-          span.visuallyhidden.clj--user-item-fullname #{fullName}
-
-
+      .user-item__email-address
+        if emailIsConfirmed
+          i.fa.fa-check-circle-o.user-item__email-address__icon
+            span.visuallyhidden(data-l8n="content:admin/user-confirmed-email") !Confirmed
+        else
+          i.fa.fa-times-circle-o.user-item__email-address__icon
+            span.visuallyhidden(data-l8n="content:admin/user-not-confirmed-email") !Not confirmed
+        span !#{emailAddress}
+    .user-item__action-list
+      .user-item__toggle-trust
+        label.toggle(for="toggle-#{fullName}")
+          input.toggle__input(type="checkbox" id="toggle-#{fullName}" checked=userIsTrusted)
+          span.toggle__title.visuallyhidden(data-l8n="content:admin/trust-label") !Toggle trust
+          span.toggle__switch
+            span.toggle__handle
+              span.toggle__handle-icon
+                i.fa.fa-lock
 
 block vars
   - bodyClass = "func--admin-user-list-page"
@@ -42,8 +43,19 @@ block content
           i.fa.fa-search.search-row__icon
           span.visuallyhidden(data-l8n="content:admin-user-list/label-search")
             | !Search
-        input.search-row__input(type="text", id="search", name="search")
+        input.search-row__input(type="text", id="search", name="search", placeholder="")
 
     ul.user-list
-      +userItem("Chris Cheshire", "email@email-address.com", true)
-      +userItem("Chris Cheshire", "email@email-address.com", false)
+      +userItem("Shadi Erlendr", "Shadi.Erlendr@gmail.com", false, true)
+      +userItem("Horatius Vilhelm", "Horatius.Vilhelm@live.com", false, true)
+      +userItem("Kepa Othello", "Kepa.Othello@amazon.com", true, true)
+      +userItem("Kevyn Hildred", "Kevyn.Hildred@hotmail.com", false, false)
+      +userItem("Wallis Fran", "Wallis.Fran@live.com", true, false)
+      +userItem("Ricki Robbie", "Ricki.Robbie@gmail.com", true, false)
+      +userItem("Lindsay Claude", "Lindsay.Claude@google.com", false, false)
+      +userItem("Kenzie Mackenzie", "Kenzie.Mackenzie@email-address.com", false, false)
+      +userItem("Kayden Andy", "Kayden.Andy@apple.com", true, false)
+      +userItem("Rene Phoenix", "Rene.Phoenix@mobileme.com", false, false)
+      +userItem("Odell Indigo", "Odell.Indigo@yahoo.com", true, false)
+      +userItem("Sammy Laurie", "Sammy.Laurie@gmail.com", false, false)
+      +userItem("Averill Bernie", "Averill.Bernie@gmail.com", false, false)

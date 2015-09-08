@@ -6,24 +6,49 @@
   position: relative;
   min-height: $button--height;
   margin-bottom: 0.75rem;
-  padding: 18px;
+  padding: 1rem 75px 1rem 1rem;
   background-color: $light_grey;
   &__text {
-    @include vertical-middle-me;
+    //@include vertical-middle-me;
   }
-
-  &__button {
+  &__name {
+    color: $dark_grey;
+    @include font-size($paragraph_font_size);
+    line-height: 1.3;
+  }
+  &__email-address {
+    color: $medium_grey;
+    word-break: break-all;
+    @include font-size(12px);
+    &__icon {
+      //color: red;
+      padding-right: 0.2rem;
+    }
+  }
+  &__action-list {
+    @include clearfix;
     position: absolute;
     top: 0;
     right: 0;
+  }
+  &__toggle-trust {
+    height: $button--height;
+    padding-top: 21px;
+    padding-right: 1rem;
+    float: left;
+  }
+  &__trusted-form {
+    float: left;
+  }
+  &__button {
     &:hover {
       background-color: $white;
     }
     &--approved {
-      color: $medium_grey;
+      color: $dark_cyan;
     }
     &--unapproved {
-      color: $dark_cyan;
+      color: $medium_grey;
     }
   }
 }

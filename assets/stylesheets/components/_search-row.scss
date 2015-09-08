@@ -1,24 +1,24 @@
 .search-row {
   position: relative;
-  margin-top: 2rem;
+  margin-top: 0;
   margin-bottom: 1rem;
   &__icon {
     position: absolute;
-    top: 0;
+    top: 12px;
     left: 0;
+    @include font-size(20px);
   }
   &__input {
     width: 100%;
-    @include font-size($input_font_size);
-    padding: 0 1.5rem 0.75rem 1.5rem;
+    padding: 0.75rem 1.5rem 0.75rem 1.65rem;
     background: transparent;
-    color: $dark_cyan;
+    @include font-size(20px);
+    font-weight: bold;
     border: none;
     border-bottom: 2px solid $light_grey;
     &:focus {
       outline: 0;
       border-color: $medium_cyan;
-      color: $dark_cyan;
     }
     &:-webkit-autofill {
       -webkit-box-shadow: 0 0 0 1000px white inset;

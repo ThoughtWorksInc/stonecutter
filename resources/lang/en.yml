@@ -179,6 +179,9 @@ flash:
 
 admin:
   invite-user: Invite
+  user-confirmed-email: Confirmed
+  user-not-confirmed-email: Not confirmed
+  trust-label: Toggle trust
 
 admin-sign-in-form:
   title: Sign in
