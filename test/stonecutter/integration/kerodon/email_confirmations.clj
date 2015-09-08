@@ -105,3 +105,28 @@
            (kc/selector-exists [ks/profile-flash-message])
 
            (teardown-test-directory)))
+
+(facts "A user can follow the delete-account flow from a confirmation email"
+       (-> (k/session test-app)
+
+           (setup-test-directory)
+
+           (steps/register "confirmation-test-3@email.com" "valid-password")
+           (k/visit "/profile")
+           (k/follow ks/sign-out-link)
+           (kc/check-and-follow-redirect "just signed out")
+
+           (k/visit (routes/path :show-confirmation-delete
+                                 :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
+           (kc/page-uri-is (routes/path :show-confirmation-delete
+                                        :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
+           (kc/response-status-is 200)
+           (kc/selector-exists [ks/delete-account-page-body])
+           (kc/check-and-press ks/delete-account-button)
+
+           (kc/check-and-follow-redirect)
+           (kc/page-uri-is "/profile-deleted")
+           (kc/response-status-is 200)
+           (kc/selector-exists [ks/profile-deleted-page-body])
+
+           (teardown-test-directory)))
