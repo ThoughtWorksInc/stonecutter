@@ -73,9 +73,10 @@
                   (enter-text new-password-input valid-password)
                   (test-field-doesnt-have-class :.form-row__help form-row-valid-class))
 
+         (setup-page! change-password-template)
+         (cp/start)
+
          (testing "form rows are checked on current-password input event as well"
-                  (setup-page! change-password-template)
-                  (cp/start)
                   (enter-text new-password-input valid-password)
                   (enter-text current-password-input valid-password)
                   (test-field-doesnt-have-class :.form-row__help form-row-valid-class))
