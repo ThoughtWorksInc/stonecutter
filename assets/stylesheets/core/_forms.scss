@@ -45,24 +45,50 @@ input {
   position: relative;
   max-width: $smallish_device;
   margin-bottom: 1.25rem;
+  color: #5d5d5d;
   transition: background-color 250ms ease;
-  &--validation-error {
-    background-color: lighten($light_pink,2%);
-    padding: 1rem;
-    margin-left: -1rem;
-    margin-right: -1rem;
+  &:after, &:before {
+    position: absolute;
+    bottom: 13px;
+    right: 0;
+    display: block;
+    font-family: 'FontAwesome';
+    @include font-size($input_font_size);
+    background: white;
+    opacity: 0;
+    transition: opacity 250ms ease;
+  }
+  &:before {
+    content: '\f071';
+    color: $error_color--dark;
+  }
+  &:after {
+    content: '\f00c';
+    color: $dark_cyan;
+  }
+  &--invalid {
+    z-index: 1;
+    color: $error_color--dark;
+    &:before {
+      opacity: 1;
+    }
+  }
+  &--valid {
+    z-index: 2;
+    &:after {
+      opacity: 1;
+    }
   }
   &--no-side-margin {
     margin-left: 0;
     margin-right: 0;
   }
-  &__label {
-  }
+
+
   &__title {
     display: block;
     padding-bottom: 0.5rem;
     @include font-size($paragraph_font_size);
-    color: #5d5d5d;
     &--inline {
       display: inline-block;
     }
@@ -74,38 +100,18 @@ input {
     @include font-size(14px);
     font-weight: 100;
     color: $dark_cyan;
-    &:after {
-      content: '\f00c';
-      position: absolute;
-      bottom: 13px;
-      right: 0;
-      z-index: 1;
-      display: block;
-      font-family: 'FontAwesome';
-      @include font-size($input_font_size);
-      background: white;
-      opacity: 0;
-      transition: opacity 250ms ease;
-    }
-    &--valid {
-      &:after {
-        opacity: 1;
-      }
-    }
-    &--invalid {
-      color: $error_color;
-    }
   }
   &__validation {
     margin-top: -0.5rem;
     padding-bottom: 0.5rem;
     @include font-size(14px);
-    color: $error_color--dark;
     &:empty, & {
       display: none;
     }
-    .form-row--validation-error & {
+    .form-row--invalid & {
       display: block;
+      font-weight: bold;
+      color: $error_color--dark;
     }
   }
   &__input {
@@ -116,7 +122,7 @@ input {
     color: $dark_cyan;
     border: none;
     border-bottom: 2px solid $light_grey;
-    .form-row--validation-error & {
+    .form-row--invalid & {
       border-color: $error_color;
     }
     &:focus {
