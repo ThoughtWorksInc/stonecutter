@@ -28,7 +28,7 @@ $flash-message--border-radius: 3px;
   &--fail {
     background-color: $error_color;
     border: 1px solid darken($error_color,8%);
-    color: darken($error_color,75%);
+    color: $error_color--dark;
     &:before {
       content: '\f06a';
     }

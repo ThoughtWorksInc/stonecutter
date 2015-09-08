@@ -29,6 +29,7 @@ $default_text_color: rgba(black,0.8);
 $background_color: $white;
 
 $error_color: $medium_pink_dull;
+$error_color--dark: darken($error_color,75%);
 $success_color: #BAE6E2;
 
 

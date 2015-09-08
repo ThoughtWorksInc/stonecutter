@@ -14,17 +14,19 @@ input {
   }
   &__list {
     @include reset-list;
-    background-color: lighten($light_pink, 2%);
+    background-color: $error_color;
     margin-left: -1rem;
     margin-right: -1rem;
     margin-bottom: 0;
     padding: 1rem;
-    border-bottom: 4px solid $error_color;
+    border: 1px solid darken($error_color,8%);
+    border-radius: 3px;
   }
   &__item {
     position: relative;
+    margin-bottom: 4px;
     padding-left: 30px;
-    color: $error_color;
+    color: $error_color--dark;
     &:last-child {
       margin-bottom: 0;
     }
@@ -98,7 +100,7 @@ input {
     margin-top: -0.5rem;
     padding-bottom: 0.5rem;
     @include font-size(14px);
-    color: $error_color;
+    color: $error_color--dark;
     &:empty, & {
       display: none;
     }
