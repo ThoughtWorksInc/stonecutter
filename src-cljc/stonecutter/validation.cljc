@@ -33,7 +33,7 @@
         (not (is-email-valid? email)) :invalid
         :default nil))
 
-(defn validate-password [password]
+(defn validate-password-format [password]
   (cond (s/blank? password) :blank
         (is-too-long? password password-max-length) :too-long
         (is-too-short? password password-min-length) :too-short
@@ -53,7 +53,7 @@
   (let [{:keys [registration-email registration-password registration-confirm-password]} params]
     (->
       {:registration-email            (validate-registration-email registration-email user-exists?-fn)
-       :registration-password         (validate-password registration-password)
+       :registration-password         (validate-password-format registration-password)
        :registration-confirm-password (validate-passwords-match registration-password registration-confirm-password)}
       remove-nil-values)))
 
@@ -64,7 +64,7 @@
 (defn validate-sign-in [params]
   (let [{:keys [sign-in-email sign-in-password]} params]
     (-> {:sign-in-email    (validate-sign-in-email sign-in-email)
-         :sign-in-password (validate-password sign-in-password)}
+         :sign-in-password (validate-password-format sign-in-password)}
         remove-nil-values)))
 
 (defn validate-correct-password [checker-fn password]
@@ -73,9 +73,9 @@
 
 (defn validate-change-password [params check-password-fn]
   (let [{:keys [current-password new-password]} params]
-    (-> {:current-password     (or (validate-password current-password)
+    (-> {:current-password     (or (validate-password-format current-password)
                                    (validate-correct-password check-password-fn current-password))
-         :new-password         (or (validate-password new-password)
+         :new-password         (or (validate-password-format new-password)
                                    (validate-passwords-are-different current-password new-password))}
         remove-nil-values)))
 
@@ -86,6 +86,6 @@
 
 (defn validate-reset-password [params]
   (let [{:keys [new-password confirm-new-password]} params]
-    (-> {:new-password         (validate-password new-password)
+    (-> {:new-password         (validate-password-format new-password)
          :confirm-new-password (validate-passwords-match new-password confirm-new-password)}
         remove-nil-values)))

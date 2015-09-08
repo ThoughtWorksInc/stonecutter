@@ -43,7 +43,7 @@
 
 (tabular
   (fact "testing password validation"
-        (v/validate-password ?password) => ?error)
+        (v/validate-password-format ?password) => ?error)
 
   ?password                     ?error
   "some-valid-password"         nil

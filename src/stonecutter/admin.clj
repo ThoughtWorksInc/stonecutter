@@ -9,7 +9,7 @@
         admin-password (config/admin-password config-m)
         duplication-checker (partial u/user-exists? user-store)
         errors (or (v/validate-registration-email admin-login duplication-checker)
-                   (v/validate-password admin-password))]
+                   (v/validate-password-format admin-password))]
     (when (and admin-login admin-password)
       (case errors
         :duplicate (log/info "Admin account already exists.")

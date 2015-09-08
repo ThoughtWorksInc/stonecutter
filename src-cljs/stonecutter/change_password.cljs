@@ -69,7 +69,7 @@
 (defn update-new-password! [e]
   (let [current-password (d/value (dm/sel1 current-password-input))
         new-password (d/value (dm/sel1 new-password-input))]
-    (if (or (v/validate-password new-password)
+    (if (or (v/validate-password-format new-password)
             (v/validate-passwords-are-different current-password new-password))
       (d/remove-class! (dm/sel1 :.form-row__help) "form-row__help--valid")
       (d/add-class! (dm/sel1 :.form-row__help) "form-row__help--valid"))))
