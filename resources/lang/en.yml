@@ -178,7 +178,8 @@ flash:
   expired-password-reset: "This reset password link has already been used, or has expired -  please enter your e-mail below to receive a new email."
 
 admin:
-  invite-user: Invite
+  nav-users: Users
+  nav-invite-user: Invite
 
 admin-sign-in-form:
   title: Sign in
@@ -201,3 +202,10 @@ admin-user-list:
   user-confirmed-email: Confirmed
   user-not-confirmed-email: Not confirmed
   trust-label: Toggle trust
+
+admin-invite-user:
+  title: Invite a user
+  page-title: Invite a user
+  email-address: Email address
+  email-address-invalid-validation-message: Enter a valid email address
+  invite-button: Invite

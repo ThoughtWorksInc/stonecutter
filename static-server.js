@@ -119,6 +119,9 @@ app.get('/admin/sign-in', function (req, res) {
 app.all('/admin/user-list', function (req, res) {
   customRender(res, 'user-list', pageData);
 });
+app.get('/admin/invite', function (req, res) {
+  customRender(res, 'admin-invite-user', pageData);
+});
 
 
 app.listen(app.get('port'), function () {

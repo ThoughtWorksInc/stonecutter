@@ -1,0 +1,32 @@
+extends layout/layout
+
+block vars
+  - bodyClass = "func--admin-invite-user-page"
+  - pageTitle = "!Sign in"
+  - pageTitleDataL8n = "content:admin-invite-user/title"
+
+block headerScripts
+
+block headerContent
+  li.header-nav__item: a.header-nav__link(href="./user-list", data-l8n="content:admin/nav-users") !Users
+  li.header-nav__item: a.header-nav__link(href="./invite", data-l8n="content:admin/nav-invite-user") !Invite
+  li.header-nav__item: a.header-nav__link.clj--sign-out__link.func--sign-out__link(href="./sign-in", data-l8n="content:profile/sign-out-link") !Sign out
+
+block content
+
+  .single-column
+    h1.page-title(data-l8n="content:admin-invite-user/page-header")
+      | !Invite a user
+    form.login-form(action="./invite-sent", method="post", role="form")
+      p.form-row.clj--invite-user-email
+        label.form-row__label(for="email")
+          span.form-row__title(data-l8n="content:admin-invite-user/email-address")
+            | !Email address
+          span.form-row__validation.clj--invite-user-email__validation(data-l8n="content:admin-invite-user/email-address-invalid-validation-message")
+            | !Enter a valid email address
+        input.form-row__input.clj--email__input.func--email__input(type="email", id="email", name="email")
+
+      button.button.button--full-width-smallish-devices.func--invite-user__button(type="submit", data-l8n="content:admin-invite-user/invite-button")
+        | !Invite
+        
+block footerScripts
