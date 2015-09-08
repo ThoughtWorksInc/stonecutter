@@ -21,3 +21,6 @@
 
 (defn forbidden-error []
   (-> (internal-server-error) (modify-error-translation-keys "error-forbidden")))
+
+(defn account-nonexistent []
+  (vh/load-template "public/error-account-nonexistent.html"))

@@ -87,7 +87,15 @@
                    user (user/store-user! user-store email "password")
                    request (-> confirm-email-request
                                (with-signed-in-user token-store user))]
-               (ec/confirm-email-with-id user-store confirmation-store request) => nil)))
+               (ec/confirm-email-with-id user-store confirmation-store request) => nil))
+
+       (fact "if the confirmation id exists but the user does not then the confirmation id should be revoked and the error-account-nonexistent page is rendered"
+             (let [user-store (m/create-memory-store)
+                   confirmation-store (m/create-memory-store)
+                   confirmation (conf/store! confirmation-store email confirmation-id)
+                   response (ec/confirm-email-with-id user-store confirmation-store confirm-email-request)]
+               (conf/fetch confirmation-store confirmation-id) => nil
+               response => (th/check-renders-page [:.func--error-account-nonexistent-page]))))
 
 (facts "about confirmation sign in"
        (fact "when password matches login of confirmation id, user is logged in"
@@ -141,13 +149,13 @@
                    response (ec/confirmation-delete user-store confirmation-store confirmation-delete-request)]
                response => nil))
 
-       (fact "if the confirmation id exists but the user does not then the confirmation id should be revoked and it returns nil (404)"
+       (fact "if the confirmation id exists but the user does not then the confirmation id should be revoked and the error-account-nonexistent page is rendered"
              (let [user-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
                    confirmation (conf/store! confirmation-store email confirmation-id)
                    response (ec/confirmation-delete user-store confirmation-store confirmation-delete-request)]
                (conf/fetch confirmation-store confirmation-id) => nil
-               response => nil)))
+               response => (th/check-renders-page [:.func--error-account-nonexistent-page]))))
 
 (def show-confirmation-delete-path
   (routes/path :show-confirmation-delete
@@ -171,10 +179,10 @@
                    response (ec/show-confirmation-delete user-store confirmation-store show-confirmation-delete-request)]
                response => nil))
 
-       (fact "if the confirmation id exists but the user does not then the confirmation id should be revoked and it returns nil (404)"
+       (fact "if the confirmation id exists but the user does not then the confirmation id should be revoked and the error-account-nonexistent page is rendered"
              (let [user-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
                    confirmation (conf/store! confirmation-store email confirmation-id)
                    response (ec/show-confirmation-delete user-store confirmation-store show-confirmation-delete-request)]
                (conf/fetch confirmation-store confirmation-id) => nil
-               response => nil)))
+               response => (th/check-renders-page [:.func--error-account-nonexistent-page]))))
