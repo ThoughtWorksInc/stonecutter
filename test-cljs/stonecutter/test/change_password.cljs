@@ -9,8 +9,6 @@
                    [dommy.core :refer [sel1 sel]]
                    [stonecutter.test.macros :refer [load-template]]))
 
-(def form-row-valid-class "form-row__help--valid")
-
 (def invalid-password "blah")
 (def valid-password "12345678")
 (def valid-new-password "23456789")
@@ -23,7 +21,9 @@
 (def new-password-input :#new-password)
 
 (def show-validation-form "validation-summary--show")
-(def field-error-class "form-row--validation-error")
+
+(def field-valid-class "form-row--valid")
+(def field-invalid-class "form-row--invalid")
 
 (defn setup-page! [html]
     (dommy/set-html! (sel1 :html) html))
@@ -55,23 +55,23 @@
       (str "Element " event " should have default prevented of " required)))
 
 (defn test-field-validates-client-side [selector target-element]
-  (test-field-doesnt-have-class target-element form-row-valid-class)
+  (test-field-doesnt-have-class target-element field-valid-class)
   (enter-text selector valid-password)
-  (test-field-has-class target-element form-row-valid-class)
+  (test-field-has-class target-element field-valid-class)
   (enter-text selector invalid-password)
-  (test-field-doesnt-have-class target-element form-row-valid-class))
+  (test-field-doesnt-have-class target-element field-valid-class))
 
 (deftest password-validation
          (setup-page! change-password-template)
          (cp/start)
 
          (testing "typing in valid password causes valid class to appear"
-                  (test-field-validates-client-side new-password-input :.form-row__help))
+                  (test-field-validates-client-side new-password-input new-password-field))
 
          (testing "valid class disappears if new password is the same as current password"
                   (enter-text current-password-input valid-password)
                   (enter-text new-password-input valid-password)
-                  (test-field-doesnt-have-class :.form-row__help form-row-valid-class))
+                  (test-field-doesnt-have-class new-password-field field-valid-class))
 
          (setup-page! change-password-template)
          (cp/start)
@@ -79,7 +79,7 @@
          (testing "form rows are checked on current-password input event as well"
                   (enter-text new-password-input valid-password)
                   (enter-text current-password-input valid-password)
-                  (test-field-doesnt-have-class :.form-row__help form-row-valid-class))
+                  (test-field-doesnt-have-class new-password-field field-valid-class))
 
          (testing "field error class get removed if the new password is correct"
                   (enter-text new-password-input invalid-password)
@@ -87,7 +87,7 @@
                   (press-submit change-password-form)
                   (enter-text current-password-input valid-password)
                   (enter-text new-password-input valid-new-password)
-                  (test-field-doesnt-have-class new-password-field field-error-class)))
+                  (test-field-doesnt-have-class new-password-field field-invalid-class)))
 
 (defn has-summary-message [message]
   (let [validation-classes (sel :.validation-summary__item)
@@ -109,8 +109,8 @@
          (testing "submitting empty form"
                   (press-submit change-password-form)
                   (test-field-has-class validation-summary show-validation-form)
-                  (test-field-has-class current-password-field field-error-class)
-                  (test-field-has-class new-password-field field-error-class)
+                  (test-field-has-class current-password-field field-invalid-class)
+                  (test-field-has-class new-password-field field-invalid-class)
                   (has-focus? current-password-input)
                   (has-summary-message (get-in cp/error-to-message [:current-password :blank]))
                   (press-submit change-password-form)
@@ -119,14 +119,15 @@
          (testing "submitting form with current-password which is too short"
                   (enter-text current-password-input invalid-password)
                   (press-submit change-password-form)
-                  (test-field-has-class current-password-field field-error-class)
+                  (test-field-has-class current-password-field field-invalid-class)
                   (has-summary-message (get-in cp/error-to-message [:current-password :too-short])))
 
          (testing "submitting form with only valid current-password"
                   (enter-text current-password-input valid-password)
                   (press-submit change-password-form)
-                  (test-field-doesnt-have-class current-password-field field-error-class)
-                  (test-field-has-class new-password-field field-error-class)
+                  (test-field-doesnt-have-class current-password-field field-invalid-class)
+                  (test-field-doesnt-have-class current-password-field field-valid-class)
+                  (test-field-has-class new-password-field field-invalid-class)
                   (has-focus? new-password-input)
                   (has-summary-message (get-in cp/error-to-message [:new-password :blank])))
 
@@ -139,15 +140,15 @@
          (testing "submitting form with new-password which is too short"
                   (enter-text new-password-input invalid-password)
                   (press-submit change-password-form)
-                  (test-field-has-class new-password-field field-error-class)
+                  (test-field-has-class new-password-field field-invalid-class)
                   (has-summary-message (get-in cp/error-to-message [:new-password :too-short])))
 
          (testing "submitting form with all valid inputs"
                   (enter-text new-password-input valid-new-password)
                   (press-submit change-password-form)
                   (test-field-doesnt-have-class validation-summary show-validation-form)
-                  (test-field-doesnt-have-class current-password-field field-error-class)
-                  (test-field-doesnt-have-class new-password-field field-error-class)))
+                  (test-field-doesnt-have-class current-password-field field-invalid-class)
+                  (test-field-doesnt-have-class new-password-field field-invalid-class)))
 
 (deftest prevent-default-submit
          (setup-page! change-password-template)
@@ -161,8 +162,8 @@
                     (enter-text new-password-input valid-new-password)
                     (cp/check-change-password! submit-event)
                     (testing "all error classes are removed"
-                             (test-field-doesnt-have-class current-password-field field-error-class)
-                             (test-field-doesnt-have-class new-password-field field-error-class))
+                             (test-field-doesnt-have-class current-password-field field-invalid-class)
+                             (test-field-doesnt-have-class new-password-field field-invalid-class))
                     (default-prevented? submit-event false))))
 
 (defn run-all []  (run-tests))

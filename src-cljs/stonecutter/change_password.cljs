@@ -18,6 +18,8 @@
 (def display-error-list-class "validation-summary--show")
 
 (def field-error-class "form-row--validation-error")
+(def field-valid-class "form-row--valid")
+(def field-invalid-class "form-row--invalid")
 (def valid-row-class "form-row__help--valid")
 
 (defn input-value [sel]
@@ -46,8 +48,15 @@
 
 (defn toggle-error-class [field-sel err?]
   (if err?
-    (d/add-class! (dm/sel1 field-sel) field-error-class)
-    (d/remove-class! (dm/sel1 field-sel) field-error-class)))
+    (do (d/add-class! (dm/sel1 field-sel) field-invalid-class)
+        (d/remove-class! (dm/sel1 field-sel) field-valid-class))
+    (do (d/remove-class! (dm/sel1 field-sel) field-invalid-class)
+        (d/add-class! (dm/sel1 field-sel) field-valid-class))))
+
+(defn toggle-invalid-class [field-sel err?]
+  (if err?
+    (d/add-class! (dm/sel1 field-sel) field-invalid-class)
+    (d/remove-class! (dm/sel1 field-sel) field-invalid-class)))
 
 (defn append-error-message [field message]
   (let [parent (dm/sel1 field)
@@ -77,16 +86,16 @@
         new-password (d/value (dm/sel1 new-password-input))]
     (if (or (v/validate-password-format new-password)
             (v/validate-passwords-are-different current-password new-password))
-      (d/remove-class! (dm/sel1 :.form-row__help) valid-row-class)
+      (d/remove-class! (dm/sel1 new-password-field) field-valid-class)
       (do
-        (d/add-class! (dm/sel1 :.form-row__help) valid-row-class)
-        (d/remove-class! (dm/sel1 new-password-field) field-error-class)))))
+        (d/add-class! (dm/sel1 new-password-field) field-valid-class)
+        (d/remove-class! (dm/sel1 new-password-field) field-invalid-class)))))
 
 (defn check-change-password! [submitEvent]
   (let [err (v/validate-change-password (field-values) (constantly true))]
     (d/clear! (dm/sel1 error-list))
     (append-password-error-message error-list error-to-message err)
-    (toggle-error-class current-password-field (:current-password err))
+    (toggle-invalid-class current-password-field (:current-password err))
     (toggle-error-class new-password-field (:new-password err))
     (when-not (empty? err)
       (.preventDefault submitEvent)
