@@ -141,10 +141,40 @@
                    response (ec/confirmation-delete user-store confirmation-store confirmation-delete-request)]
                response => nil))
 
-       (fact "if the confirmation id exists but the user does not then the confirmation id should be revoked"
+       (fact "if the confirmation id exists but the user does not then the confirmation id should be revoked and it returns nil (404)"
              (let [user-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
                    confirmation (conf/store! confirmation-store email confirmation-id)
                    response (ec/confirmation-delete user-store confirmation-store confirmation-delete-request)]
+               (conf/fetch confirmation-store confirmation-id) => nil
+               response => nil)))
+
+(def show-confirmation-delete-path
+  (routes/path :show-confirmation-delete
+               :confirmation-id confirmation-id))
+
+(def show-confirmation-delete-request
+  (th/create-request :get show-confirmation-delete-path {:confirmation-id confirmation-id}))
+
+(facts "about show confirmation delete"
+       (fact "if the confirmation id exists and the user exists the confirmation-delete page is rendered"
+             (let [user-store (m/create-memory-store)
+                   confirmation-store (m/create-memory-store)
+                   user (user/store-user! user-store email "password")
+                   confirmation (conf/store! confirmation-store email confirmation-id)
+                   response (ec/show-confirmation-delete user-store confirmation-store show-confirmation-delete-request)]
+               response => (th/check-renders-page [:.func--delete-account-page])))
+
+       (fact "if the confirmation id does not exist in the db it returns nil (404)"
+             (let [user-store (m/create-memory-store)
+                   confirmation-store (m/create-memory-store)
+                   response (ec/show-confirmation-delete user-store confirmation-store show-confirmation-delete-request)]
+               response => nil))
+
+       (fact "if the confirmation id exists but the user does not then the confirmation id should be revoked and it returns nil (404)"
+             (let [user-store (m/create-memory-store)
+                   confirmation-store (m/create-memory-store)
+                   confirmation (conf/store! confirmation-store email confirmation-id)
+                   response (ec/show-confirmation-delete user-store confirmation-store show-confirmation-delete-request)]
                (conf/fetch confirmation-store confirmation-id) => nil
                response => nil)))

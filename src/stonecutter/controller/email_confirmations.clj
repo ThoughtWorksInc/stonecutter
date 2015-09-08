@@ -6,6 +6,7 @@
             [stonecutter.helper :as sh]
             [stonecutter.routes :as routes]
             [stonecutter.view.confirmation-sign-in :as sign-in]
+            [stonecutter.view.delete-account :as delete-account]
             [stonecutter.util.ring :as ring-util]
             [stonecutter.controller.common :as common]
             [stonecutter.controller.user :as uc]
@@ -68,3 +69,10 @@
       (when (user/user-exists? user-store (:login confirmation))
         (user/delete-user! user-store (:login confirmation))
         (uc/redirect-to-profile-deleted)))))
+
+(defn show-confirmation-delete [user-store confirmation-store request]
+  (let [confirmation-id (get-in request [:params :confirmation-id])]
+    (when-let [confirmation (conf/fetch confirmation-store confirmation-id)]
+      (if (user/user-exists? user-store (:login confirmation))
+        (sh/enlive-response (delete-account/email-confirmation-delete-account request) (:context request))
+        (do (conf/revoke! confirmation-store confirmation-id) nil)))))
