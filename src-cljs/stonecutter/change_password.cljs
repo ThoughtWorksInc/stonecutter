@@ -101,6 +101,10 @@
   (let [err (v/validate-password-format (input-value current-password-input))]
     (toggle-invalid-class current-password-field err)))
 
+(defn check-new-password! [e]
+  (let [err (v/validate-password-format (input-value new-password-input))]
+    (toggle-error-class new-password-field err)))
+
 (defn check-change-password! [submitEvent]
   (let [err (v/validate-change-password (field-values) (constantly true))]
     (d/clear! (dm/sel1 error-list))
@@ -120,6 +124,7 @@
   (setup-listener new-password-input :input update-new-password!)
   (setup-listener current-password-input :input update-new-password!)
   (setup-listener current-password-input :blur check-current-password!)
+  (setup-listener new-password-input :blur check-new-password!)
   (setup-listener change-password-form :submit check-change-password!))
 
 (set! (.-onload js/window) start)

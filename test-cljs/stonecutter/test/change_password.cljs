@@ -120,22 +120,45 @@
          (setup-page! change-password-template)
          (cp/start)
 
-         (testing "losing focus on current password when blank adds invalid field class"
-                  (lose-focus current-password-input)
-                  (test-field-has-class current-password-field field-invalid-class))
+         (testing "current password field"
+                  (testing "losing focus when blank adds invalid field class"
+                           (lose-focus current-password-input)
+                           (test-field-has-class current-password-field field-invalid-class))
 
-         (testing "losing focus on current password when correct format does not add invalid field class"
-                  (enter-text current-password-input valid-password)
-                  (lose-focus current-password-input)
-                  (test-field-doesnt-have-class current-password-field field-invalid-class))
+                  (testing "losing focus when correct format does not add invalid field class"
+                           (enter-text current-password-input valid-password)
+                           (lose-focus current-password-input)
+                           (test-field-doesnt-have-class current-password-field field-invalid-class))
 
-         (testing "invalid input on current password does not add invalid field class before losing focus"
-                  (enter-text current-password-input invalid-password)
-                  (test-field-doesnt-have-class current-password-field field-invalid-class))
+                  (testing "invalid input does not add invalid field class before losing focus"
+                           (enter-text current-password-input invalid-password)
+                           (test-field-doesnt-have-class current-password-field field-invalid-class))
 
-         (testing "losing focus on current password when incorrect format adds invalid field class"
-                  (lose-focus current-password-input)
-                  (test-field-has-class current-password-field field-invalid-class)))
+                  (testing "losing focus when incorrect format adds invalid field class"
+                           (lose-focus current-password-input)
+                           (test-field-has-class current-password-field field-invalid-class)))
+
+         (testing "new password field"
+                  (testing "losing focus when blank adds invalid field class"
+                           (lose-focus new-password-input)
+                           (test-field-has-class new-password-field field-invalid-class))
+
+                  (testing "valid input adds valid field class"
+                           (enter-text new-password-input valid-password)
+                           (test-field-has-class new-password-field field-valid-class))
+
+                  (testing "losing focus when correct format does not add invalid field class"
+                           (lose-focus new-password-input)
+                           (test-field-has-class new-password-field field-valid-class)
+                           (test-field-doesnt-have-class new-password-field field-invalid-class))
+
+                  (testing "invalid input does not add invalid field class before losing focus"
+                           (enter-text new-password-input invalid-password)
+                           (test-field-doesnt-have-class new-password-field field-invalid-class))
+
+                  (testing "losing focus when incorrect format adds invalid field class"
+                           (lose-focus new-password-input)
+                           (test-field-has-class new-password-field field-invalid-class))))
 
 (deftest submitting-invalid-forms
          (setup-page! change-password-template)
