@@ -52,7 +52,8 @@
          ?flash-key                 ?translation-key
          :password-changed          "content:flash/password-changed"
          :email-confirmed           "content:flash/email-confirmed"
-         :confirmation-email-sent   "content:flash/confirmation-email-sent"))
+         :confirmation-email-sent   "content:flash/confirmation-email-sent"
+         :email-already-confirmed   "content:flash/email-already-confirmed"))
 
 
 (facts "about displaying email confirmation status"

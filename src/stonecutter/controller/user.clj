@@ -156,11 +156,9 @@
 (defn resend-confirmation-email [user-store confirmation-store email-sender request]
   (let [config-m (get-in request [:context :config-m])
         email (get-in request [:session :user-login])
-        user (user/retrieve-user user-store email)
-        confirmation (confirmation/retrieve-by-user-email confirmation-store email)]
-    (send-confirmation-email! email-sender user email (:confirmation-id confirmation) config-m))
-  (-> (r/redirect (routes/path :show-profile))
-      (assoc :flash :confirmation-email-sent)))
-
-
-
+        user (user/retrieve-user user-store email)]
+    (if (:confirmed? user)
+      (-> (r/redirect (routes/path :show-profile)) (assoc :flash :email-already-confirmed))
+      (let [confirmation (confirmation/retrieve-by-user-email confirmation-store email)]
+        (send-confirmation-email! email-sender user email (:confirmation-id confirmation) config-m)
+        (-> (r/redirect (routes/path :show-profile)) (assoc :flash :confirmation-email-sent))))))
