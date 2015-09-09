@@ -61,7 +61,18 @@
   (enter-text selector invalid-password)
   (test-field-doesnt-have-class target-element field-valid-class))
 
-(deftest password-validation
+(deftest current-password-validation-on-input
+         (setup-page! change-password-template)
+         (cp/start)
+
+         (testing "correcting invalid password will cause field invalid class to disappear"
+                  (enter-text current-password-input invalid-password)
+                  (press-submit change-password-form)
+
+                  (enter-text current-password-input valid-password)
+                  (test-field-doesnt-have-class current-password-field field-invalid-class)))
+
+(deftest new-password-validation-on-input
          (setup-page! change-password-template)
          (cp/start)
 

@@ -13,6 +13,7 @@
 (def current-password-field :.clj--current-password)
 (def new-password-field :.clj--new-password)
 (def new-password-input :#new-password)
+(def change-password-form :.clj--change-password__form)
 
 (def error-list :.validation-summary__list)
 (def display-error-list-class "validation-summary--show")
@@ -81,6 +82,11 @@
         (let [message (get-in message-m [input-field error])]
           (append-error-message field message))))))
 
+(defn update-current-password! [e]
+  (let [current-password (d/value (dm/sel1 current-password-input))]
+    (when-not (v/validate-password-format current-password)
+      (d/remove-class! (dm/sel1 current-password-field) field-invalid-class))))
+
 (defn update-new-password! [e]
   (let [current-password (d/value (dm/sel1 current-password-input))
         new-password (d/value (dm/sel1 new-password-input))]
@@ -101,13 +107,14 @@
       (.preventDefault submitEvent)
       (focus-on-element (first-input-with-errors err)))))
 
+(defn setup-listener [selector event function]
+  (when-let [e (dm/sel1 selector)]
+    (d/listen! e event function)))
+
 (defn start []
-  (when-let [e (dm/sel1 new-password-input)]
-    (d/listen! e :input update-new-password!))
-  (when-let [e (dm/sel1 current-password-input)]
-    (d/listen! e :input update-new-password!))
-  (when-let [e (dm/sel1 :.clj--change-password__form)]
-    (d/listen! e :submit check-change-password!)))
+  (setup-listener current-password-input :input update-current-password!)
+  (setup-listener new-password-input :input update-new-password!)
+  (setup-listener current-password-input :input update-new-password!)
+  (setup-listener change-password-form :submit check-change-password!))
 
 (set! (.-onload js/window) start)
-
