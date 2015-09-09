@@ -7,6 +7,7 @@ GET     /confirm-email/:confirmation-id/sign-in  confirmation-sign-in-form
 POST    /confirm-email/sign-in                   confirmation-sign-in
 GET     /confirm-email/:confirmation-id/delete   show-confirmation-delete
 POST    /confirm-email/:confirmation-id/delete   confirmation-delete
+POST    /resend-confirmation-email               resend-confirmation-email
 GET     /profile                                 show-profile
 GET     /profile-created                         show-profile-created
 GET     /profile-deleted                         show-profile-deleted

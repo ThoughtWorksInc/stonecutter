@@ -13,7 +13,8 @@
             [stonecutter.db.mongo :as m]
             [stonecutter.util.uuid :as uuid]
             [stonecutter.validation :as v]
-            [stonecutter.test.email :as test-email]))
+            [stonecutter.test.email :as test-email]
+            [stonecutter.db.confirmation :as confirmation]))
 
 (def check-body-not-blank
   (checker [response] (not (empty? (:body response)))))
@@ -234,8 +235,8 @@
 
 (facts "about changing password"
        (fact "the user's password is updated if current password is correct and new password is valid"
-             (let [request (th/create-request :post "/change-password" {:current-password     "currentPassword"
-                                                                        :new-password         "newPassword"}
+             (let [request (th/create-request :post "/change-password" {:current-password "currentPassword"
+                                                                        :new-password     "newPassword"}
                                               {:user-login "user_who_is@changing_password.com"})]
                (u/change-password ...user-store... request) => (every-checker (th/check-redirects-to "/profile")
                                                                               (contains {:flash :password-changed}))
@@ -371,6 +372,22 @@
          (:admin config/roles) (one-of anything)
          "nobody" empty?
          nil empty?))
+
+(facts "about resending confirmation emails"
+       (fact "redirects to profile page with flash message indicating email has been sent"
+             (let [test-email-sender (test-email/create-test-email-sender)
+                   user-store (m/create-memory-store)
+                   user (user/store-user! user-store default-email default-password)
+                   confirmation-store (m/create-memory-store)
+                   _confirmation (confirmation/store! confirmation-store (:login user) confirmation-id)
+                   request (th/create-request :post (routes/path :resend-confirmation-email)
+                                              {}
+                                              {:user-login default-email})]
+               (u/resend-confirmation-email user-store confirmation-store test-email-sender request)
+               => (every-checker (th/check-redirects-to "/profile")
+                                 #_(contains {:flash :password-changed}))
+               (:email (test-email/last-sent-email test-email-sender)) => default-email
+               (:body (test-email/last-sent-email test-email-sender)) => (contains {:confirmation-id confirmation-id}))))
 
 (facts "about unsharing profile cards"
        (facts "about get requests to /unshare-profile-card"

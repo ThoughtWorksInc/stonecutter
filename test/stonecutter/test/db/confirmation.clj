@@ -17,3 +17,8 @@
                => {:login           "user12@email.com"
                    :confirmation-id "confirmation-id12"})))
 
+(fact "can retrieve confirmation by user login"
+      (let [confirmation-store (m/create-memory-store)
+            email "test@email.com"
+            confirmation (confirmation/store! confirmation-store email "confirmation-id")]
+        (confirmation/retrieve-by-user-email confirmation-store email) => confirmation))

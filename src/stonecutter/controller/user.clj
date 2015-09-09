@@ -18,7 +18,8 @@
             [stonecutter.config :as config]
             [stonecutter.util.ring :as ring-util]
             [stonecutter.controller.common :as common]
-            [ring.util.response :as response]))
+            [ring.util.response :as response]
+            [stonecutter.db.confirmation :as confirmation]))
 
 (defn index [request]
   (if (common/signed-in? request)
@@ -151,6 +152,14 @@
         client-id (get-in request [:params :client_id])]
     (user/remove-authorised-client-for-user! user-store email client-id)
     (r/redirect (routes/path :show-profile))))
+
+(defn resend-confirmation-email [user-store confirmation-store email-sender request]
+  (let [config-m (get-in request [:context :config-m])
+        email (get-in request [:session :user-login])
+        user (user/retrieve-user user-store email)
+        confirmation (confirmation/retrieve-by-user-email confirmation-store email)]
+    (send-confirmation-email! email-sender user email (:confirmation-id confirmation) config-m))
+  (r/redirect (routes/path :show-profile)))
 
 
 
