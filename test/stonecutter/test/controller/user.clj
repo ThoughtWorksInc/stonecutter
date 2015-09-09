@@ -220,14 +220,22 @@
             u/sign-out
             :session)) => {:something-else ...something-else...})
 
-(fact "account can be deleted, user is redirected to profile-deleted and session is cleared"
-      (->> (th/create-request :post "/delete-account" nil {:user-login   "account_to_be@deleted.com"
-                                                           :access_token ...token...})
-           (u/delete-account ...user-store...)) => (every-checker
-                                                     (th/check-redirects-to "/profile-deleted")
-                                                     (contains {:session nil}))
-      (provided
-        (user/delete-user! ...user-store... "account_to_be@deleted.com") => anything))
+(facts "about deleting accounts"
+       (let [user-store (m/create-memory-store)
+             confirmation-store (m/create-memory-store)
+             _user (user/store-user! user-store default-email default-password)
+             _confirmation (confirmation/store! confirmation-store default-email confirmation-id)
+             request (th/create-request :post "/delete-account" nil {:user-login   default-email
+                                                                     :access_token ...token...})]
+
+         (fact "the user is redirected to the profile-deleted page, and session is cleared"
+               (u/delete-account user-store confirmation-store request) => (every-checker
+                                                                             (th/check-redirects-to "/profile-deleted")
+                                                                             (contains {:session nil})))
+
+         (fact "the user account and any confirmations are deleted"
+               (user/retrieve-user user-store default-email) => nil?
+               (confirmation/retrieve-by-user-email confirmation-store default-email) => nil?)))
 
 (fact "user can access profile-deleted page when not signed in"
       (-> (th/create-request :get "/profile-deleted" nil)

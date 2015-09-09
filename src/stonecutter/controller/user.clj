@@ -5,7 +5,6 @@
             [stonecutter.validation :as v]
             [stonecutter.db.user :as user]
             [stonecutter.db.client :as c]
-            [stonecutter.db.confirmation :as conf]
             [stonecutter.email :as email]
             [stonecutter.view.index :as index]
             [stonecutter.view.profile-created :as profile-created]
@@ -43,7 +42,7 @@
         err (v/validate-registration params (partial user/user-exists? user-store))
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
-      (do (conf/store! confirmation-store email confirmation-id)
+      (do (confirmation/store! confirmation-store email confirmation-id)
           (let [user (user/store-user! user-store email password)]
             (send-confirmation-email! email-sender user email confirmation-id config-m)
             (-> (response/redirect (routes/path :show-profile-created))
@@ -102,8 +101,10 @@
 (defn redirect-to-profile-deleted []
   (assoc (r/redirect (routes/path :show-profile-deleted)) :session nil))
 
-(defn delete-account [user-store request]
+(defn delete-account [user-store confirmation-store request]
   (let [email (get-in request [:session :user-login])]
+    (when-let [confirmation (confirmation/retrieve-by-user-email confirmation-store email)]
+      (confirmation/revoke! confirmation-store (:confirmation-id confirmation)))
     (user/delete-user! user-store email)
     (redirect-to-profile-deleted)))
 
