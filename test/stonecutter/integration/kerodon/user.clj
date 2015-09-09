@@ -164,6 +164,15 @@
            (kc/page-uri-is "/profile")
            (kc/selector-does-not-include-content [ks/profile-authorised-client-list] "myapp")))
 
+(facts "User can request a new confirmation email"
+       (-> (k/session test-app)
+           (steps/sign-in "user@withclient.com" "valid-password")
+           (k/visit "/profile")
+           (kc/check-and-press ks/profile-resend-confirmation-email)
+           (kc/check-and-follow-redirect)
+           (kc/page-uri-is "/profile")
+           (kc/selector-exists [ks/profile-flash-message])))
+
 (facts "User can change password"
        (-> (k/session test-app)
            (steps/sign-in "user@withclient.com" "valid-password")

@@ -74,6 +74,7 @@
        :confirmation-sign-in                 (partial ec/confirmation-sign-in user-store token-store confirmation-store)
        :show-confirmation-delete             (partial ec/show-confirmation-delete user-store confirmation-store)
        :confirmation-delete                  (partial ec/confirmation-delete user-store confirmation-store)
+       :resend-confirmation-email            (partial user/resend-confirmation-email user-store confirmation-store email-sender)
        :show-profile                         (partial user/show-profile client-store user-store)
        :show-profile-created                 user/show-profile-created
        :show-profile-deleted                 user/show-profile-deleted

@@ -20,6 +20,7 @@
 (def profile-delete-account-link :.func--delete-account__link)
 (def profile-flash-message :.func--flash-message-container)
 (def profile-unconfirmed-email-message :.func--unconfirmed-email-message-container)
+(def profile-resend-confirmation-email :.func--resend-confirmation-email__button)
 
 (def unshare-profile-card-confirm-button :.func--unshare-profile-card__button)
 

@@ -33,6 +33,10 @@
                     (assoc-in [:context :authorised-clients] [{:name "Bloc Party" :client-id "some-client-id"}]))]
     (th/test-translations "profile" profile request)))
 
+(fact "csrf token should be inserted"
+      (let [page (-> (th/create-request) (assoc-in [:context :confirmed?] false) profile)]
+        page => (th/element-exists? [:input#__anti-forgery-token])))
+
 (facts "about flash messages"
        (fact "no flash messages are displayed by default"
              (let [page (-> (th/create-request) profile)]

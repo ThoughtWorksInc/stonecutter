@@ -4,24 +4,16 @@
             [clojure.java.io :as io]
             [stonecutter.email :as email]
             [stonecutter.integration.kerodon.kerodon-checkers :as kc]
-            [stonecutter.integration.kerodon.kerodon-helpers :as kh]
             [stonecutter.integration.kerodon.kerodon-selectors :as ks]
             [stonecutter.integration.integration-helpers :as ih]
             [stonecutter.routes :as routes]
-            [stonecutter.handler :as h]
             [stonecutter.logging :as l]
-            [stonecutter.db.storage :as storage]
             [stonecutter.integration.kerodon.steps :as steps]))
 
 (l/init-logger!)
 
 (defn parse-test-email []
   (read-string (slurp "test-tmp/test-email.txt")))
-
-(defn checks-email-is-sent [state email-address]
-  (fact {:midje/name "Check send email script is called"}
-        (parse-test-email) => (contains {:email-address email-address}))
-  state)
 
 (defn delete-directory [directory-path]
   (->> (io/file directory-path)

@@ -61,13 +61,14 @@
 
 (defn profile [request]
   (let [library-m (vh/load-template "public/library.html")]
-    (->  (vh/load-template "public/profile.html")
-         (set-flash-message request)
-         (diplay-email-unconfirmed-message request)
-         (add-username request)
-         (add-application-list request library-m)
-         set-sign-out-link
-         set-change-password-link
-         set-delete-account-link
-         (hide-admin-span request)
-         vh/remove-work-in-progress)))
+    (-> (vh/load-template "public/profile.html")
+        (set-flash-message request)
+        (diplay-email-unconfirmed-message request)
+        (add-username request)
+        (add-application-list request library-m)
+        set-sign-out-link
+        set-change-password-link
+        set-delete-account-link
+        (hide-admin-span request)
+        vh/remove-work-in-progress
+        vh/add-anti-forgery)))
