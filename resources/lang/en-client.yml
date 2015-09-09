@@ -6,3 +6,4 @@ change-password-form:
   new-password-too-long-validation-message: New password is too long
   new-password-too-short-validation-message: New password should be at least 8 characters long
   new-password-unchanged-validation-message: New password must be different to current password
+  new-password-help: 8 or more characters

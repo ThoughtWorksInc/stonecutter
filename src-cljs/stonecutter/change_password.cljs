@@ -15,6 +15,8 @@
 (def new-password-input :#new-password)
 (def change-password-form :.clj--change-password__form)
 
+(def form-row-error-message :.cljs-form-row__inline-message)
+
 (def error-list :.validation-summary__list)
 (def display-error-list-class "validation-summary--show")
 
@@ -66,12 +68,30 @@
                   (d/add-class! "validation-summary__item"))]
     (d/append! parent child)))
 
+
 (def error-to-message
   {:current-password {:blank     (get-translated-message :current-password-blank-validation-message)
                       :too-short (get-translated-message :current-password-too-short-validation-message)}
    :new-password     {:blank     (get-translated-message :new-password-blank-validation-message)
                       :unchanged (get-translated-message :new-password-unchanged-validation-message)
                       :too-short (get-translated-message :new-password-too-short-validation-message)}})
+
+(defn create-error-span [message class]
+  (-> (d/create-element :span)
+      (d/set-text! message)
+      (d/add-class! "cljs-form-row__inline-message")
+      (d/add-class! class)))
+
+(defn create-error-element [message]
+  (when message
+    (create-error-span message "form-row__validation")))
+
+(defn update-inline-message [field message-map error-map]
+  (let [message (get-in message-map (first (seq error-map)))
+        parent (dm/sel1 field)
+        child (create-error-element message)]
+    (when child
+      (d/replace! parent child))))
 
 (defn append-password-error-message [field message-m err]
   (if (empty? err)
@@ -102,7 +122,11 @@
     (toggle-invalid-class current-password-field err)))
 
 (defn check-new-password! [e]
-  (let [err (v/validate-password-format (input-value new-password-input))]
+  (let [current-password (input-value current-password-input)
+        new-password (input-value new-password-input)
+        err (or (v/validate-password-format new-password)
+                (v/validate-passwords-are-different current-password new-password))]
+    (update-inline-message form-row-error-message error-to-message {:new-password err})
     (toggle-error-class new-password-field err)))
 
 (defn check-change-password! [submitEvent]

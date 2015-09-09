@@ -103,12 +103,26 @@
                   (enter-text new-password-input valid-new-password)
                   (test-field-doesnt-have-class new-password-field field-invalid-class)))
 
-(defn has-summary-message [message]
-  (let [validation-classes (sel :.validation-summary__item)
+(defn has-message-on-selector [selector message]
+  (let [validation-classes (sel selector)
         err-messages (mapv (partial dommy/text) validation-classes)]
     (is (not (string/blank? message)) "Error message key returns blank string")
     (is (some #{message} err-messages)
         (str "Missing error message " message " when error occurs"))))
+
+(defn has-no-message-on-selector [selector message]
+  (let [error-message (dommy/text (sel1 selector))]
+    (is (= message error-message)
+        (str error-message " should not equal to " message))))
+
+(defn has-summary-message [message]
+  (has-message-on-selector :.validation-summary__item message))
+
+(defn has-inline-message [message]
+  (has-message-on-selector :.form-row__validation message))
+
+(defn does-not-have-inline-message [message]
+  (has-no-message-on-selector :.form-row__validation message))
 
 (defn has-no-duplicating-messages []
   (let [validation-classes (sel :.validation-summary__item)
@@ -141,11 +155,13 @@
          (testing "new password field"
                   (testing "losing focus when blank adds invalid field class"
                            (lose-focus new-password-input)
-                           (test-field-has-class new-password-field field-invalid-class))
+                           (test-field-has-class new-password-field field-invalid-class)
+                           (has-inline-message (get-in cp/error-to-message [:new-password :blank])))
 
                   (testing "valid input adds valid field class"
                            (enter-text new-password-input valid-password)
-                           (test-field-has-class new-password-field field-valid-class))
+                           (test-field-has-class new-password-field field-valid-class)
+                           (does-not-have-inline-message (get-in cp/error-to-message [:new-password :blank])))
 
                   (testing "losing focus when correct format does not add invalid field class"
                            (lose-focus new-password-input)
@@ -158,6 +174,14 @@
 
                   (testing "losing focus when incorrect format adds invalid field class"
                            (lose-focus new-password-input)
+                           (has-inline-message (get-in cp/error-to-message [:new-password :too-short]))
+                           (test-field-has-class new-password-field field-invalid-class))
+
+                  (testing "losing focus when password is unchange adds invalid field class and message"
+                           (enter-text current-password-input valid-password)
+                           (enter-text new-password-input valid-password)
+                           (lose-focus new-password-input)
+                           (has-inline-message (get-in cp/error-to-message [:new-password :unchanged]))
                            (test-field-has-class new-password-field field-invalid-class))))
 
 (deftest submitting-invalid-forms
