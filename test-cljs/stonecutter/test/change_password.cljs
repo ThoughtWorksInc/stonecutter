@@ -37,6 +37,9 @@
 (defn press-submit [form-sel]
   (test-utils/fire! (sel1 form-sel) :submit))
 
+(defn lose-focus [sel]
+  (test-utils/fire! (sel1 sel) :blur))
+
 (defn test-field-class-existance [has-class? selector valid-class]
   (is (= has-class? (dommy/has-class? (sel1 selector) valid-class))
       (if has-class?
@@ -112,6 +115,27 @@
         err-messages (mapv (partial dommy/text) validation-classes)]
     (is (= (count err-messages) (count (set err-messages)))
         "The same message appeared multiple times in list")))
+
+(deftest losing-focus-on-input-fields
+         (setup-page! change-password-template)
+         (cp/start)
+
+         (testing "losing focus on current password when blank adds invalid field class"
+                  (lose-focus current-password-input)
+                  (test-field-has-class current-password-field field-invalid-class))
+
+         (testing "losing focus on current password when correct format does not add invalid field class"
+                  (enter-text current-password-input valid-password)
+                  (lose-focus current-password-input)
+                  (test-field-doesnt-have-class current-password-field field-invalid-class))
+
+         (testing "invalid input on current password does not add invalid field class before losing focus"
+                  (enter-text current-password-input invalid-password)
+                  (test-field-doesnt-have-class current-password-field field-invalid-class))
+
+         (testing "losing focus on current password when incorrect format adds invalid field class"
+                  (lose-focus current-password-input)
+                  (test-field-has-class current-password-field field-invalid-class)))
 
 (deftest submitting-invalid-forms
          (setup-page! change-password-template)

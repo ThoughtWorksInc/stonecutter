@@ -83,19 +83,23 @@
           (append-error-message field message))))))
 
 (defn update-current-password! [e]
-  (let [current-password (d/value (dm/sel1 current-password-input))]
+  (let [current-password (input-value current-password-input)]
     (when-not (v/validate-password-format current-password)
       (d/remove-class! (dm/sel1 current-password-field) field-invalid-class))))
 
 (defn update-new-password! [e]
-  (let [current-password (d/value (dm/sel1 current-password-input))
-        new-password (d/value (dm/sel1 new-password-input))]
+  (let [current-password (input-value current-password-input)
+        new-password (input-value new-password-input)]
     (if (or (v/validate-password-format new-password)
             (v/validate-passwords-are-different current-password new-password))
       (d/remove-class! (dm/sel1 new-password-field) field-valid-class)
       (do
         (d/add-class! (dm/sel1 new-password-field) field-valid-class)
         (d/remove-class! (dm/sel1 new-password-field) field-invalid-class)))))
+
+(defn check-current-password! [e]
+  (let [err (v/validate-password-format (input-value current-password-input))]
+    (toggle-invalid-class current-password-field err)))
 
 (defn check-change-password! [submitEvent]
   (let [err (v/validate-change-password (field-values) (constantly true))]
@@ -115,6 +119,7 @@
   (setup-listener current-password-input :input update-current-password!)
   (setup-listener new-password-input :input update-new-password!)
   (setup-listener current-password-input :input update-new-password!)
+  (setup-listener current-password-input :blur check-current-password!)
   (setup-listener change-password-form :submit check-change-password!))
 
 (set! (.-onload js/window) start)
