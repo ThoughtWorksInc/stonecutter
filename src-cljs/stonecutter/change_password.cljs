@@ -15,7 +15,10 @@
 (def new-password-input :#new-password)
 (def change-password-form :.clj--change-password__form)
 
-(def form-row-error-message :.cljs-form-row__inline-message)
+(def form-row-new-password-error-class :.cljs--new-password-form-row__inline-message)
+(def form-row-new-password-error-class-string "cljs--new-password-form-row__inline-message")
+(def form-row-current-password-error-class :.cljs--current-password-form-row__inline-message)
+(def form-row-current-password-error-class-string "cljs--current-password-form-row__inline-message")
 
 (def error-list :.validation-summary__list)
 (def display-error-list-class "validation-summary--show")
@@ -76,20 +79,20 @@
                       :unchanged (get-translated-message :new-password-unchanged-validation-message)
                       :too-short (get-translated-message :new-password-too-short-validation-message)}})
 
-(defn create-error-span [message class]
+(defn create-error-span [message class field-class]
   (-> (d/create-element :span)
       (d/set-text! message)
-      (d/add-class! "cljs-form-row__inline-message")
+      (d/add-class! field-class)
       (d/add-class! class)))
 
-(defn create-error-element [message]
+(defn create-error-element [message field-class]
   (when message
-    (create-error-span message "form-row__validation")))
+    (create-error-span message "form-row__validation" field-class)))
 
-(defn update-inline-message [field message-map error-map]
+(defn update-inline-message [field field-class message-map error-map]
   (let [message (get-in message-map (first (seq error-map)))
         parent (dm/sel1 field)
-        child (create-error-element message)]
+        child (create-error-element message field-class)]
     (when child
       (d/replace! parent child))))
 
@@ -119,6 +122,7 @@
 
 (defn check-current-password! [e]
   (let [err (v/validate-password-format (input-value current-password-input))]
+    (update-inline-message form-row-current-password-error-class form-row-current-password-error-class-string error-to-message {:current-password err})
     (toggle-invalid-class current-password-field err)))
 
 (defn check-new-password! [e]
@@ -126,7 +130,7 @@
         new-password (input-value new-password-input)
         err (or (v/validate-password-format new-password)
                 (v/validate-passwords-are-different current-password new-password))]
-    (update-inline-message form-row-error-message error-to-message {:new-password err})
+    (update-inline-message form-row-new-password-error-class form-row-new-password-error-class-string error-to-message {:new-password err})
     (toggle-error-class new-password-field err)))
 
 (defn check-change-password! [submitEvent]
