@@ -374,34 +374,42 @@
          nil empty?))
 
 (facts "about resending confirmation emails"
-       (fact "redirects to profile page with flash message indicating email has been sent"
-             (let [test-email-sender (test-email/create-test-email-sender)
-                   user-store (m/create-memory-store)
-                   user (user/store-user! user-store default-email default-password)
-                   confirmation-store (m/create-memory-store)
-                   _confirmation (confirmation/store! confirmation-store (:login user) confirmation-id)
-                   request (th/create-request :post (routes/path :resend-confirmation-email)
-                                              {}
-                                              {:user-login default-email})]
-               (u/resend-confirmation-email user-store confirmation-store test-email-sender request)
-               => (every-checker (th/check-redirects-to "/profile")
-                                 (contains {:flash :confirmation-email-sent}))
-               (:email (test-email/last-sent-email test-email-sender)) => default-email
-               (:body (test-email/last-sent-email test-email-sender)) => (contains {:confirmation-id confirmation-id})))
+       (facts "when the user's email address has not yet been confirmed"
+              (let [test-email-sender (test-email/create-test-email-sender)
+                    user-store (m/create-memory-store)
+                    confirmation-store (m/create-memory-store)
+                    user (user/store-user! user-store default-email default-password)
+                    _confirmation (confirmation/store! confirmation-store (:login user) confirmation-id)
+                    request (th/create-request :post (routes/path :resend-confirmation-email)
+                                               {}
+                                               {:user-login default-email})
+                    response (u/resend-confirmation-email user-store confirmation-store test-email-sender request)]
 
-       (fact "redirects to profile page with flash message indicating email is already confirmed"
-             (let [test-email-sender (test-email/create-test-email-sender)
-                   user-store (m/create-memory-store)
-                   _user (->> (user/store-user! user-store default-email default-password)
-                              (user/confirm-email! user-store))
-                   confirmation-store (m/create-memory-store)
-                   request (th/create-request :post (routes/path :resend-confirmation-email)
-                                              {}
-                                              {:user-login default-email})]
-               (u/resend-confirmation-email user-store confirmation-store test-email-sender request)
-               => (every-checker (th/check-redirects-to "/profile")
-                                 (contains {:flash :email-already-confirmed}))
-               (test-email/last-sent-email test-email-sender) => nil?)))
+                (fact "redirects to profile page with flash message indicating email has been sent"
+                      response => (th/check-redirects-to "/profile")
+                      response => (contains {:flash :confirmation-email-sent}))
+
+                (fact "sends another confirmation email"
+                      (:email (test-email/last-sent-email test-email-sender)) => default-email
+                      (:body (test-email/last-sent-email test-email-sender)) => (contains {:confirmation-id confirmation-id}))))
+
+       (facts "when the user's email has already been confirmed"
+              (let [test-email-sender (test-email/create-test-email-sender)
+                    user-store (m/create-memory-store)
+                    confirmation-store (m/create-memory-store)
+                    _user-with-confirmed-email (->> (user/store-user! user-store default-email default-password)
+                                                    (user/confirm-email! user-store))
+                    request (th/create-request :post (routes/path :resend-confirmation-email)
+                                               {}
+                                               {:user-login default-email})
+                    response (u/resend-confirmation-email user-store confirmation-store test-email-sender request)]
+
+                (fact "redirects to profile page with flash message indicating address is already confirmed"
+                      response => (th/check-redirects-to "/profile")
+                      response => (contains {:flash :email-already-confirmed}))
+
+                (fact "does not send another confirmation email"
+                      (test-email/last-sent-email test-email-sender)) => nil?)))
 
 (facts "about unsharing profile cards"
        (facts "about get requests to /unshare-profile-card"
