@@ -409,7 +409,7 @@
                       response => (contains {:flash :email-already-confirmed}))
 
                 (fact "does not send another confirmation email"
-                      (test-email/last-sent-email test-email-sender)) => nil?)))
+                      (test-email/last-sent-email test-email-sender) => nil?))))
 
 (facts "about unsharing profile cards"
        (facts "about get requests to /unshare-profile-card"
