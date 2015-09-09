@@ -28,27 +28,27 @@
         page => (th/has-attr? [:.clj--delete-account__link] :href (r/path :show-delete-account-confirmation))))
 
 (fact
- (let [translator (t/translations-fn t/translation-map)
-       request (-> (th/create-request translator)
-                   (assoc-in [:context :authorised-clients] [{:name "Bloc Party" :client-id "some-client-id"}]))]
-   (th/test-translations "profile" profile request)))
+  (let [translator (t/translations-fn t/translation-map)
+        request (-> (th/create-request translator)
+                    (assoc-in [:context :authorised-clients] [{:name "Bloc Party" :client-id "some-client-id"}]))]
+    (th/test-translations "profile" profile request)))
 
 (facts "about flash messages"
        (fact "no flash messages are displayed by default"
              (let [page (-> (th/create-request) profile)]
                (-> page (html/select [:.clj--flash-message-container])) => empty?))
 
-       (fact "password-changed flash message is displayed on page if it is in the flash of request"
-             (let [page (-> (th/create-request) (assoc :flash :password-changed) profile)]
-               (-> page (html/select [:.clj--flash-message-container])) =not=> empty?
-               (-> page (html/select [:.clj--flash-message-text]) first :attrs :data-l8n)
-               => "content:flash/password-changed"))
+       (tabular
+         (fact "appropriate flash message is displayed on page when a flash key is included in the request"
+               (let [page (-> (th/create-request) (assoc :flash ?flash-key) profile)]
+                 (-> page (html/select [:.clj--flash-message-container])) =not=> empty?
+                 (-> page (html/select [:.clj--flash-message-text]) first :attrs :data-l8n)
+                 => ?translation-key))
 
-       (fact "email-confirmed flash message is displayed on page if it is in the flash of request"
-             (let [page (-> (th/create-request) (assoc :flash :email-confirmed) profile)]
-               (-> page (html/select [:.clj--flash-message-container])) =not=> empty?
-               (-> page (html/select [:.clj--flash-message-text]) first :attrs :data-l8n)
-               => "content:flash/email-confirmed")))
+         ?flash-key                 ?translation-key
+         :password-changed          "content:flash/password-changed"
+         :email-confirmed           "content:flash/email-confirmed"
+         :confirmation-email-sent   "content:flash/confirmation-email-sent"))
 
 
 (facts "about displaying email confirmation status"
@@ -82,5 +82,5 @@
        (fact "empty application-list item is used when there are no authorised clients"
              (let [page (-> (th/create-request)
                             profile)]
-                (html/select page [:.clj--authorised-app__list-item--empty]) =not=> empty?
-                (html/select page [:.clj--authorised-app__list-item]) => empty?)))
+               (html/select page [:.clj--authorised-app__list-item--empty]) =not=> empty?
+               (html/select page [:.clj--authorised-app__list-item]) => empty?)))

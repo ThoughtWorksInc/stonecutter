@@ -385,7 +385,7 @@
                                               {:user-login default-email})]
                (u/resend-confirmation-email user-store confirmation-store test-email-sender request)
                => (every-checker (th/check-redirects-to "/profile")
-                                 #_(contains {:flash :password-changed}))
+                                 (contains {:flash :confirmation-email-sent}))
                (:email (test-email/last-sent-email test-email-sender)) => default-email
                (:body (test-email/last-sent-email test-email-sender)) => (contains {:confirmation-id confirmation-id}))))
 

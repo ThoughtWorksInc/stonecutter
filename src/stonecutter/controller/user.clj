@@ -159,7 +159,8 @@
         user (user/retrieve-user user-store email)
         confirmation (confirmation/retrieve-by-user-email confirmation-store email)]
     (send-confirmation-email! email-sender user email (:confirmation-id confirmation) config-m))
-  (r/redirect (routes/path :show-profile)))
+  (-> (r/redirect (routes/path :show-profile))
+      (assoc :flash :confirmation-email-sent)))
 
 
 
