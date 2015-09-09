@@ -64,14 +64,6 @@
     (d/add-class! (dm/sel1 field-sel) field-invalid-class)
     (d/remove-class! (dm/sel1 field-sel) field-invalid-class)))
 
-(defn append-error-message [field message]
-  (let [parent (dm/sel1 field)
-        child (-> (d/create-element :li)
-                  (d/set-text! message)
-                  (d/add-class! "validation-summary__item"))]
-    (d/append! parent child)))
-
-
 (def error-to-message
   {:current-password {:blank     (get-translated-message :current-password-blank-validation-message)
                       :too-short (get-translated-message :current-password-too-short-validation-message)}
@@ -95,15 +87,6 @@
         child (create-error-element message field-class)]
     (when child
       (d/replace! parent child))))
-
-(defn append-password-error-message [field message-m err]
-  (if (empty? err)
-    (d/remove-class! (dm/sel1 :.validation-summary) display-error-list-class)
-    (do
-      (d/add-class! (dm/sel1 :.validation-summary) display-error-list-class)
-      (doseq [[input-field error] err]
-        (let [message (get-in message-m [input-field error])]
-          (append-error-message field message))))))
 
 (defn update-current-password! [e]
   (let [current-password (input-value current-password-input)]
@@ -133,12 +116,8 @@
     (update-inline-message form-row-new-password-error-class form-row-new-password-error-class-string error-to-message {:new-password err})
     (toggle-error-class new-password-field err)))
 
-(defn check-change-password! [submitEvent]
+(defn block-invalid-submit [submitEvent]
   (let [err (v/validate-change-password (field-values) (constantly true))]
-    (d/clear! (dm/sel1 error-list))
-    (append-password-error-message error-list error-to-message err)
-    (toggle-invalid-class current-password-field (:current-password err))
-    (toggle-error-class new-password-field (:new-password err))
     (when-not (empty? err)
       (.preventDefault submitEvent)
       (focus-on-element (first-input-with-errors err)))))
@@ -153,6 +132,6 @@
   (setup-listener current-password-input :input update-new-password!)
   (setup-listener current-password-input :blur check-current-password!)
   (setup-listener new-password-input :blur check-new-password!)
-  (setup-listener change-password-form :submit check-change-password!))
+  (setup-listener change-password-form :submit block-invalid-submit))
 
 (set! (.-onload js/window) start)

@@ -121,12 +121,6 @@
 (defn has-summary-message [message]
   (has-message-on-selector :.validation-summary__item message))
 
-(defn has-no-duplicating-messages []
-  (let [validation-classes (sel :.validation-summary__item)
-        err-messages (mapv (partial dommy/text) validation-classes)]
-    (is (= (count err-messages) (count (set err-messages)))
-        "The same message appeared multiple times in list")))
-
 (deftest losing-focus-on-input-fields
          (setup-page! change-password-template)
          (cp/start)
@@ -188,59 +182,24 @@
 
          (testing "submitting empty form"
                   (press-submit change-password-form)
-                  (test-field-has-class validation-summary show-validation-form)
-                  (test-field-has-class current-password-field field-invalid-class)
-                  (test-field-has-class new-password-field field-invalid-class)
-                  (has-focus? current-password-input)
-                  (has-summary-message (get-in cp/error-to-message [:current-password :blank]))
-                  (press-submit change-password-form)
-                  (has-no-duplicating-messages))
-
-         (testing "submitting form with current-password which is too short"
-                  (enter-text current-password-input invalid-password)
-                  (press-submit change-password-form)
-                  (test-field-has-class current-password-field field-invalid-class)
-                  (has-summary-message (get-in cp/error-to-message [:current-password :too-short])))
+                  (has-focus? current-password-input))
 
          (testing "submitting form with only valid current-password"
                   (enter-text current-password-input valid-password)
                   (press-submit change-password-form)
-                  (test-field-doesnt-have-class current-password-field field-invalid-class)
-                  (test-field-doesnt-have-class current-password-field field-valid-class)
-                  (test-field-has-class new-password-field field-invalid-class)
-                  (has-focus? new-password-input)
-                  (has-summary-message (get-in cp/error-to-message [:new-password :blank])))
-
-         (testing "submitting form with unchanged new-password"
-                  (enter-text current-password-input valid-password)
-                  (enter-text new-password-input valid-password)
-                  (press-submit change-password-form)
-                  (has-summary-message (get-in cp/error-to-message [:new-password :unchanged])))
-
-         (testing "submitting form with new-password which is too short"
-                  (enter-text new-password-input invalid-password)
-                  (press-submit change-password-form)
-                  (test-field-has-class new-password-field field-invalid-class)
-                  (has-summary-message (get-in cp/error-to-message [:new-password :too-short])))
-
-         (testing "submitting form with all valid inputs"
-                  (enter-text new-password-input valid-new-password)
-                  (press-submit change-password-form)
-                  (test-field-doesnt-have-class validation-summary show-validation-form)
-                  (test-field-doesnt-have-class current-password-field field-invalid-class)
-                  (test-field-doesnt-have-class new-password-field field-invalid-class)))
+                  (has-focus? new-password-input)))
 
 (deftest prevent-default-submit
          (setup-page! change-password-template)
          (testing "prevents default when page has errors"
                   (let [submit-event (test-utils/create-event :submit)]
-                    (cp/check-change-password! submit-event)
+                    (cp/block-invalid-submit submit-event)
                     (default-prevented? submit-event true)))
          (testing "doesn't prevent default when inputs are valid"
                   (let [submit-event (test-utils/create-event :submit)]
                     (enter-text current-password-input valid-password)
                     (enter-text new-password-input valid-new-password)
-                    (cp/check-change-password! submit-event)
+                    (cp/block-invalid-submit submit-event)
                     (testing "all error classes are removed"
                              (test-field-doesnt-have-class current-password-field field-invalid-class)
                              (test-field-doesnt-have-class new-password-field field-invalid-class))
