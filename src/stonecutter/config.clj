@@ -1,6 +1,7 @@
 (ns stonecutter.config
   (:require [environ.core :as env]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log]
+            [clojure.string :as s]))
 
 (def vars [:port "The port that app listens"
            :host "The host IP that app listens on"
@@ -115,3 +116,28 @@
     path
     (do (log/error "No RSA-keypair json file provided.")
         (throw (Exception. "No RSA-keypair provided.  App startup aborted.")))))
+
+(defn to-env [k]
+  (-> k
+       name
+       (s/upper-case)
+       (s/replace #"\-" "_")))
+
+(defn gen-config-line [env-m [var-key description]]
+  (str "# " description "\n"
+       (if-let [val (var-key env-m)]
+         (str (to-env var-key) "=" val)
+         (str "# " (to-env var-key) "="))))
+
+(defn gen-config-text [env-m vars]
+  (->> vars
+       (partition 2)
+       (map (partial gen-config-line env-m))
+       (s/join "\n\n")))
+
+(defn gen-config! [env-m vars config-file]
+  (let [text (gen-config-text env-m vars)]
+    (spit config-file text)))
+
+(defn -main [config-file & other-args]
+  (gen-config! env/env vars config-file))

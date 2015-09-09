@@ -58,6 +58,7 @@
                                         "gulp"        ["shell" "gulp" "build"]
                                         "cljs-build"  ["cljsbuild" "once"]
                                         "start"       ["do" "gulp," "cljs-build," "run"]
+                                        "gen-config"  ["run" "-m" "stonecutter.config"]
                                         }
                        :env            {:dev                   true
                                         :secure                "false"
