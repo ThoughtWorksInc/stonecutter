@@ -9,8 +9,6 @@
     (html/at enlive-m
              [:.clj--card-email] (html/content email))))
 
-(def library-template (vh/load-template "public/library.html"))
-
 (defn application-list-item [library-m] (first (html/select library-m [:.clj--authorised-app__list-item])))
 
 (defn empty-application-list-item [library-m] (first (html/select library-m [:.clj--authorised-app__list-item--empty])))
@@ -49,7 +47,8 @@
 
 (defn diplay-email-unconfirmed-message [enlive-m request]
   (if (= false (get-in request [:context :confirmed?]))
-    enlive-m
+    (let [email (get-in request [:session :user-login])]
+      (html/at enlive-m [:.clj--unconfirmed-email] (html/content email)))
     (vh/remove-element enlive-m [:.clj--unconfirmed-email-message-container])))
 
 (defn set-flash-message [enlive-m request]

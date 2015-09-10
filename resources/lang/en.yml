@@ -98,7 +98,8 @@ profile:
   delete-button: Delete account
   email-not-confirmed: Your email address has not been confirmed.
   admin-span: ", Mighty Admin!"
-  verify-email-intro: If you have not received an email to email@email.com you should resend the confirmation email.
+  verify-email-intro-1: If you have not received an email to
+  verify-email-intro-2: you should resend the confirmation email.
   verify-button: Resend email confirmation
 
 applications:

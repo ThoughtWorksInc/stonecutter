@@ -62,8 +62,12 @@
                (-> page (html/select [:.clj--unconfirmed-email-message-container])) => empty?))
 
        (fact "accounts with unconfirmed email addresses display unconfirmed message as if it were a flash message"
-             (let [page (-> (th/create-request) (assoc-in [:context :confirmed?] false) profile)]
-               (-> page (html/select [:.clj--unconfirmed-email-message-container])) =not=> empty?)))
+             (let [page (-> (th/create-request)
+                            (assoc-in [:context :confirmed?] false)
+                            (assoc-in [:session :user-login] "valid@web.co.uk")
+                            profile)]
+               (-> page (html/select [:.clj--unconfirmed-email-message-container])) =not=> empty?
+               (-> page (html/select [:.clj--unconfirmed-email]) first html/text) => "valid@web.co.uk")))
 
 (facts "about displaying authorised clients"
        (fact "names of authorised clients are displayed"
