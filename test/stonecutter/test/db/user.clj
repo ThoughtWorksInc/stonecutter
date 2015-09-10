@@ -62,6 +62,19 @@
              (user/delete-user! user-store "email@server.com") => {}
              (user/authenticate-and-retrieve-user user-store "email@server.com" "password") => nil))
 
+(facts "about retrieving all users"
+       (fact "can retrieve all users"
+             (let [user-store (m/create-memory-store)
+                   user-1 (user/store-user! user-store "email1@server.com" "password1")
+                   user-2 (user/store-user! user-store "email2@server.com" "password2")
+                   user-3 (user/store-user! user-store "email3@server.com" "password3")]
+               (user/retrieve-users user-store) => (contains [user-1 user-2 user-3] :in-any-order)))
+
+       (fact "users are retrieved without password hashes"
+             (let [user-store (m/create-memory-store)
+                   _user (user/store-user! user-store "email@email.com" "password")]
+               (first (user/retrieve-users user-store)) =not=> (contains {:password anything}))))
+
 (facts "about is-duplicate-user?"
        (fact "unique email in not a duplicate"
              (user/user-exists? ...user-store... "unique@email.com") => false
@@ -194,8 +207,8 @@
                (user/create-admin id-gen email password) => {:login      email
                                                              :password   hashed-password
                                                              :confirmed? false
-                                                             :uid id
-                                                             :role (:admin config/roles)}
+                                                             :uid        id
+                                                             :role       (:admin config/roles)}
                (provided
                  (cl-user/new-user email password) => {:login email :password hashed-password})))
 
@@ -206,7 +219,7 @@
                (against-background
                  (user/create-admin anything admin-login password) => {:login admin-login :password hashed-password :role (:admin config/roles)})
 
-               (user/store-admin! user-store admin-login password) 
-               (user/retrieve-user user-store admin-login ) => {:login admin-login 
-                                                                :password hashed-password
-                                                                :role (:admin config/roles)})))
+               (user/store-admin! user-store admin-login password)
+               (user/retrieve-user user-store admin-login) => {:login    admin-login
+                                                               :password hashed-password
+                                                               :role     (:admin config/roles)})))

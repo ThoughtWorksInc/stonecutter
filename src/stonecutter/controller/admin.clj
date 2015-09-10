@@ -4,4 +4,8 @@
             [stonecutter.db.user :as u]))
 
 (defn show-user-list [user-store request]
-  (sh/enlive-response (user-list/user-list request) (:context request)))
+  (let [users (u/retrieve-users user-store)]
+    (sh/enlive-response (-> request
+                            (assoc-in [:context :users] users)
+                            (user-list/user-list))
+                        (:context request))))

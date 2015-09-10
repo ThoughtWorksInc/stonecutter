@@ -6,12 +6,12 @@ mixin userItem(fullName, emailAddress, emailIsConfirmed, userIsTrusted)
   li.user-item.clj--user-item
     .user-item__text
       .user-item__name.clj-wip !#{fullName}
-      .user-item__email-address
+      .user-item__email-address.clj--user-item__email-address
         if emailIsConfirmed
-          i.fa.fa-check-circle-o.user-item__email-address__icon
+          i.fa.fa-check-circle-o.user-item__email-address__icon.clj--user-item__email-confirmed
             span.visuallyhidden(data-l8n="content:admin-user-list/user-confirmed-email") !Confirmed
         else
-          i.fa.fa-times-circle-o.user-item__email-address__icon
+          i.fa.fa-times-circle-o.user-item__email-address__icon.clj--user-item__email-unconfirmed
             span.visuallyhidden(data-l8n="content:admin-user-list/user-not-confirmed-email") !Not confirmed
         span.clj--user-item__email-address__text !#{emailAddress}
     .user-item__action-list.clj-wip

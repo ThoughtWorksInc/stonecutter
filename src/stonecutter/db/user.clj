@@ -90,3 +90,7 @@
 
 (defn has-admin-role? [user-m]
   (= (:role user-m) (:admin config/roles)))
+
+(defn retrieve-users [user-store]
+  (->> (cl-store/entries user-store)
+       (map #(dissoc % :password))))

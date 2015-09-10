@@ -19,13 +19,19 @@
         page => (th/has-attr? [:.clj--sign-out__link] :href (r/path :sign-out))))
 
 (facts "about the list of users"
-       (fact "users are displayed"
+       (fact "users are displayed along with their email confirmation status"
              (let [page (-> (th/create-request)
                             (assoc-in [:context :users] [{:login "confirmed@email.com" :confirmed? true :role "default"}
                                                          {:login "unconfirmed@email.com" :confirmed? false :role "default"}])
                             user-list)]
-               (-> page
-                   (html/select [:.clj--user-item])) => (n-of anything 2)))
+               (-> page (html/select [:.clj--user-item]))
+               => (just [(th/element-exists? [:.clj--user-item__email-confirmed])
+                         (th/element-exists? [:.clj--user-item__email-unconfirmed])])
+
+               (-> page (html/select [:.clj--user-item]))
+               => (just [(th/text-is? [:.clj--user-item__email-address__text] "confirmed@email.com")
+                         (th/text-is? [:.clj--user-item__email-address__text] "unconfirmed@email.com")])))
+
        (fact "when there are no users an empty list is rendered"
              (let [page (-> (th/create-request)
                             (assoc-in [:context :users] [])

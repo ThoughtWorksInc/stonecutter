@@ -20,8 +20,8 @@
 
   ([translator err params session]
    {:context {:translator translator
-              :errors err}
-    :params params
+              :errors     err}
+    :params  params
     :session session}))
 
 (def no-untranslated-strings
@@ -35,7 +35,7 @@
   ([page-name view-fn]
    (let [translator (t/translations-fn t/translation-map)]
      (test-translations page-name view-fn (create-request translator))))
-  
+
   ([page-name view-fn request]
    (fact {:midje/name (format "there are no missing translations for page: %s" page-name)}
          (let [page (-> request
@@ -45,6 +45,9 @@
 
 (defn enlive-m->attr [enlive-m selector attr]
   (-> enlive-m (html/select selector) first :attrs attr))
+
+(defn enlive-m->text [enlive-m selector]
+  (-> enlive-m (html/select selector) first html/text))
 
 (defn has-attr? [selector attr attr-val]
   (chatty-checker [enlive-m]
@@ -64,7 +67,7 @@
 (defn has-form-action?
   ([path]
    (has-form-action? [:form] path))
-  
+
   ([form-selector path]
    (has-attr? form-selector :action path)))
 
@@ -77,3 +80,7 @@
 
 (defn links-to? [selector path]
   (has-attr? selector :href path))
+
+(defn text-is? [selector text]
+  (chatty-checker [enlive-m]
+                  (= text (enlive-m->text enlive-m selector))))
