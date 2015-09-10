@@ -76,20 +76,16 @@
                (first (user/retrieve-users user-store)) =not=> (contains {:password anything}))))
 
 (facts "about is-duplicate-user?"
-       (fact "unique email in not a duplicate"
-             (user/user-exists? ...user-store... "unique@email.com") => false
-             (provided
-               (user/retrieve-user ...user-store... "unique@email.com") => nil))
+       (let [user-store (m/create-memory-store)]
+         (user/store-user! user-store "valid@email.com" "1234")
+         (fact "non-existant email in not a duplicate"
+               (user/user-exists? user-store "unique@email.com") => false)
 
-       (fact "duplicate email is a duplicate"
-             (user/user-exists? ...user-store... "valid@email.com") => true
-             (provided
-               (user/retrieve-user ...user-store... "valid@email.com") => ...a-user...))
+         (fact "duplicate email is a duplicate"
+               (user/user-exists? user-store "valid@email.com") => true)
 
-       (fact "the email is always lower-cased"
-             (user/user-exists? ...user-store... "VALID@EMAIL.COM") => true
-             (provided
-               (user/retrieve-user ...user-store... "valid@email.com") => ...a-user...)))
+         (fact "test is case-ignorant"
+               (user/user-exists? user-store "VALID@EMAIL.COM") => true)))
 
 (fact "about creating a user record"
       (let [id-gen (constantly "id")]
@@ -100,40 +96,31 @@
               (user/create-user id-gen "EMAIL" "password") => (contains {:login "email"}))))
 
 (facts "about storing users"
-       (fact "users are stored in the user-store"
-             (user/store-user! ...user-store... "email@server.com" "password") => {...a-user-key... ...a-user-value...}
-             (provided
-               (user/create-user uuid/uuid "email@server.com" "password") => ...user...
-               (cl-user/store-user ...user-store... ...user...) => {...a-user-key... ...a-user-value...}))
+       (let [user-store (m/create-memory-store)]
+         (fact "users are stored in the user-store"
+               (user/retrieve-user user-store "email@server.com") => nil
+               (user/store-user! user-store "email@server.com" "password") => (contains {:login "email@server.com"})
+               (user/retrieve-user user-store "email@server.com") => (contains {:login "email@server.com"}))
 
-       (fact "password is removed before returning user"
-             (-> (user/store-user! ...user-store... "email@server.com" "password")
-                 :password) => nil
-             (provided
-               (user/create-user uuid/uuid "email@server.com" "password") => ...user...
-               (cl-user/store-user ...user-store... ...user...) => {:password "hashedAndSaltedPassword"})))
+         (fact "password is removed before returning user"
+               (-> (user/store-user! user-store "email@server.com" "password") :password) => nil)))
 
 (facts "about authenticating and retrieving users"
-       (fact "with valid credentials"
-             (user/authenticate-and-retrieve-user ...user-store... "email@server.com" "password") => {...a-user-key... ...a-user-value...}
-             (provided
-               (cl-user/authenticate-user ...user-store... "email@server.com" "password") => {...a-user-key... ...a-user-value...}))
+       (let [user-store (m/create-memory-store)]
+         (fact "with valid credentials"
+               (user/store-user! user-store "email@server.com" "password")
+               (let [user (user/authenticate-and-retrieve-user user-store "email@server.com" "password")]
+                 user => (contains {:login "email@server.com"})
+                 (fact "password is removed before returning user"
+                       (:password user) => nil)))
 
-       (fact "password is removed before returning user"
-             (-> (user/authenticate-and-retrieve-user ...user-store... "email@server.com" "password")
-                 :password) => nil
-             (provided
-               (cl-user/authenticate-user ...user-store... "email@server.com" "password") => {:password "hashedAndSaltedPassword"}))
-
-       (fact "with invalid credentials returns nil"
-             (user/authenticate-and-retrieve-user ...user-store... "invalid@credentials.com" "password") => nil
-             (provided
-               (cl-user/authenticate-user ...user-store... "invalid@credentials.com" "password") => nil)))
+         (fact "with invalid credentials returns nil"
+               (user/authenticate-and-retrieve-user user-store "email@server.com" "wrong-password") => nil)))
 
 (fact "can retrieve user without authentication"
-      (user/retrieve-user ...user-store... "email@server.com") => ...a-user...
-      (provided
-        (cl-user/fetch-user ...user-store... "email@server.com") => ...a-user...))
+      (let [user-store (m/create-memory-store)]
+        (user/store-user! user-store "email@server.com" "password")
+        (user/retrieve-user user-store "email@server.com") => (contains {:login "email@server.com"})))
 
 (fact "can retrieve user using auth-code"
       (let [auth-code-store (m/create-memory-store)
