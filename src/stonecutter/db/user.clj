@@ -56,11 +56,7 @@
                             (assoc :confirmed? true)))))
 
 (defn unique-conj [things thing]
-  (let [unique-things (set things)
-        unique-things-list (into [] unique-things)]
-    (if (unique-things thing)
-      unique-things-list
-      (conj unique-things-list thing))))
+  (vec (conj (set things) thing)))
 
 (defn add-client-id [client-id]
   (fn [user]
