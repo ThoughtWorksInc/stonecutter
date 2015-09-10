@@ -59,3 +59,12 @@
     (do (log/info (str "All resources in " static-resources-dir-path " are now being served as static resources"))
         (ring-mf/wrap-file handler static-resources-dir-path))
     handler))
+
+(defn wrap-just-these-handlers [handlers-m wrap-function inclusions]
+  (into {} (for [[k v] handlers-m]
+             [k (if (k inclusions) (wrap-function v) v)])))
+
+(defn wrap-authorised [handler authorisation-checker]
+  (fn [request]
+    (when (authorisation-checker request)
+      (handler request))))

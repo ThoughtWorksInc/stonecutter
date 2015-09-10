@@ -87,3 +87,6 @@
 
 (defn change-password! [user-store email new-password]
   (m/update! user-store email (update-password new-password)))
+
+(defn has-admin-role? [user-m]
+  (= (:role user-m) (:admin config/roles)))

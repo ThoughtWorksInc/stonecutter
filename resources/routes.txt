@@ -26,6 +26,7 @@ GET     /authorise-form                          show-authorise-form
 GET     /authorise-failure                       show-authorise-failure
 GET     /unshare-profile-card                    show-unshare-profile-card
 POST    /unshare-profile-card                    unshare-profile-card
+GET     /admin/users                             show-user-list
 GET     /api/jwk-set                             jwk-set
 POST    /api/token                               validate-token
 GET     /stylesheets/theme.css                   theme-css

@@ -40,3 +40,6 @@
         (assoc-in [:headers "Cache-Control"] "no-cache, no-store, must-revalidate")
         (assoc-in [:headers "Pragma"] "no-cache")
         (assoc-in [:headers "Expires"] "0"))))
+
+(defn request->user-login [request]
+  (get-in request [:session :user-login]))

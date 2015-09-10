@@ -92,9 +92,12 @@
        :show-authorise-form                  (partial oauth/show-authorise-form client-store)
        :authorise                            (partial oauth/authorise auth-code-store client-store user-store token-store)
        :authorise-client                     (partial oauth/authorise-client auth-code-store client-store user-store token-store)
-       :show-authorise-failure               (partial oauth/show-authorise-failure client-store)}
+       :show-authorise-failure               (partial oauth/show-authorise-failure client-store)
+       :show-user-list                       (constantly {:status 200})}
       (m/wrap-handlers-except #(m/wrap-handle-403 % forbidden-err-handler) #{})
       (m/wrap-handlers-except m/wrap-disable-caching #{:theme-css :index :sign-in-or-register})
+      (m/wrap-just-these-handlers #(m/wrap-authorised % (comp u/has-admin-role? (partial u/retrieve-user user-store) sh/request->user-login))
+                                  #{:show-user-list})
       (m/wrap-handlers-except m/wrap-signed-in #{:index :sign-in-or-register
                                                  :sign-out
                                                  :show-profile-deleted
