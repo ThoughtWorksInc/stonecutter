@@ -24,7 +24,7 @@
                  (->> (html/select page [:.clj--validation-summary__item])
                       (map #(get-in % [:attrs :data-l8n]))) => ?validation-translations)
            (fact "correct elements are highlighted"
-                 (->> (html/select page [:.form-row--validation-error])
+                 (->> (html/select page [:.form-row--invalid])
                       (map #(get-in % [:attrs :class]))) => (contains ?highlighted-elements)))
 
          ?errors                          ?validation-translations                                                          ?highlighted-elements

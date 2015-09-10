@@ -18,7 +18,7 @@
 (fact "error classes are not present when there are no validation errors"
       (-> (th/create-request)
           fp/forgotten-password-form
-          (html/select [:.form-row--validation-error])) => empty?)
+          (html/select [:.form-row--invalid])) => empty?)
 
 (fact "about displaying email validation errors"
       (fact "when email is invalid"
@@ -27,7 +27,7 @@
                   page (-> (th/create-request {} errors params) fp/forgotten-password-form)]
 
               (fact "the class for styling errors is added"
-                    (html/select page [[:.clj--forgotten-password-email :.form-row--validation-error]]) =not=> empty?)
+                    (html/select page [[:.clj--forgotten-password-email :.form-row--invalid]]) =not=> empty?)
               
               (fact "email validation element is present"
                     (html/select page [:.clj--forgotten-password-email__validation]) =not=> empty?)
@@ -48,7 +48,7 @@
                   params {:email long-email-address}
                   page (-> (th/create-request {} errors params) fp/forgotten-password-form)]
               (fact "the class for styling errors is added"
-                    (html/select page [[:.clj--forgotten-password-email :.form-row--validation-error]]) =not=> empty?)
+                    (html/select page [[:.clj--forgotten-password-email :.form-row--invalid]]) =not=> empty?)
               (fact "email validation element is present"
                     (html/select page [:.clj--forgotten-password-email__validation]) =not=> empty?)
               (fact "correct error message is displayed"

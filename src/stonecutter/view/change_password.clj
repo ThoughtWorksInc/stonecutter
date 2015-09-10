@@ -35,7 +35,7 @@
     (remove nil? (map #(get-kv-for-key the-map %) ordered-keys)))
 
 (defn add-error-class [enlive-m field-row-selector]
-  (html/at enlive-m field-row-selector (html/add-class "form-row--validation-error")))
+  (html/at enlive-m field-row-selector (html/add-class "form-row--invalid")))
 
 (defn highlight-errors [enlive-m err selectors]
   (let [elements-with-errors (keys err)

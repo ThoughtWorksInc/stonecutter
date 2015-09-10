@@ -14,7 +14,7 @@
                                                             (html/set-attr :method "post")))))
 
 (defn add-error-class [enlive-m field-row-selector]
-  (html/at enlive-m field-row-selector (html/add-class "form-row--validation-error")))
+  (html/at enlive-m field-row-selector (html/add-class "form-row--invalid")))
 
 (defn add-email-error [err enlive-m]
   (if (contains? err :email)

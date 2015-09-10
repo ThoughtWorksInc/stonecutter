@@ -5,7 +5,7 @@
             [stonecutter.view.view-helpers :as vh]))
 
 (defn add-error-class [enlive-m field-row-selector]
-  (html/at enlive-m field-row-selector (html/add-class "form-row--validation-error")))
+  (html/at enlive-m field-row-selector (html/add-class "form-row--invalid")))
 
 (def error-translations
   {:sign-in-email                 {:invalid  "content:index/sign-in-email-address-invalid-validation-message"

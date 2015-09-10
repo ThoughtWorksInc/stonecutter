@@ -31,7 +31,7 @@
        (let [page (-> (th/create-request)
                       index)]
          (fact "no elements have class for styling errors"
-               page => (th/element-absent? [:.form-row--validation-error]))
+               page => (th/element-absent? [:.form-row--invalid]))
          (fact "email validation element is removed"
                page => (th/element-absent? [:.clj--sign-in-email__validation]))
          (fact "password validation element is removed"
@@ -45,7 +45,7 @@
                     params {:sign-in-email "invalid"}
                     page (-> (th/create-request {} errors params) index)]
                 (fact "the class for styling errors is added"
-                      page => (th/element-exists? [[:.clj--sign-in-email :.form-row--validation-error]]))
+                      page => (th/element-exists? [[:.clj--sign-in-email :.form-row--invalid]]))
                 (fact "email validation element is present"
                       page => (th/element-exists? [:.clj--sign-in-email__validation]))
                 (fact "correct error message is displayed"
@@ -61,7 +61,7 @@
                     page (-> (th/create-request {} errors params) index)]
                 
                 (fact "the class for styling errors is added"
-                      page => (th/element-exists? [[:.clj--sign-in-email :.form-row--validation-error]]))
+                      page => (th/element-exists? [[:.clj--sign-in-email :.form-row--invalid]]))
                 (fact "email validation element is present"
                       page => (th/element-exists? [:.clj--sign-in-email__validation]))
                 
@@ -74,7 +74,7 @@
                    params {:sign-in-password ""}
                    page (-> (th/create-request {} errors params) index)]
                (fact "the class for styling errors is added"
-                     page => (th/element-exists? [[:.clj--sign-in-password :.form-row--validation-error]]))
+                     page => (th/element-exists? [[:.clj--sign-in-password :.form-row--invalid]]))
                (fact "password validation element is present"
                      page => (th/element-exists? [:.clj--sign-in-password__validation]))
                
@@ -87,7 +87,7 @@
                    params {:sign-in-password "short"}
                    page (-> (th/create-request {} errors params) index)]
                (fact "the class for styling errors is added"
-                     page => (th/element-exists? [[:.clj--sign-in-password :.form-row--validation-error]]))
+                     page => (th/element-exists? [[:.clj--sign-in-password :.form-row--invalid]]))
                (fact "password validation element is present"
                      page => (th/element-exists? [:.clj--sign-in-password__validation]))
                
@@ -101,7 +101,7 @@
                    params {:sign-in-password long-password}
                    page (-> (th/create-request {} errors params) index)]
                (fact "the class for styling errors is added"
-                     page => (th/element-exists? [[:.clj--sign-in-password :.form-row--validation-error]]))
+                     page => (th/element-exists? [[:.clj--sign-in-password :.form-row--invalid]]))
                (fact "password validation element is present"
                      page => (th/element-exists? [:.clj--sign-in-password__validation]))
 
@@ -113,7 +113,7 @@
        (let [page (-> (th/create-request)
                       index)]
          (fact "no elements have class for styling errors"
-               (html/select page [:.form-row--validation-error]) => empty?)
+               (html/select page [:.form-row--invalid]) => empty?)
          (fact "email validation element is removed"
                (html/select page [:.clj--registration-email__validation]) => empty?)
          (fact "password validation element is removed"
@@ -127,7 +127,7 @@
                     params {:registration-email "invalidEmail"}
                     page (-> (th/create-request {} errors params) index)]
                 (fact "the class for styling errors is added"
-                      (html/select page [[:.clj--registration-email :.form-row--validation-error]]) =not=> empty?)
+                      (html/select page [[:.clj--registration-email :.form-row--invalid]]) =not=> empty?)
                 (fact "email validation element is present"
                       (html/select page [:.clj--registration-email__validation]) =not=> empty?)
                 (fact "correct error message is displayed"
@@ -140,7 +140,7 @@
                     params {:registration-email "valid@email.com"}
                     page (-> (th/create-request {} errors params) index)]
                 (fact "the class for styling errors is added"
-                      (html/select page [[:.clj--registration-email :.form-row--validation-error]]) =not=> empty?)
+                      (html/select page [[:.clj--registration-email :.form-row--invalid]]) =not=> empty?)
                 (fact "email validation element is present"
                       (html/select page [:.clj--registration-email__validation]) =not=> empty?)
                 (fact "correct error message is displayed"
@@ -154,7 +154,7 @@
                     params {:registration-email long-email-address}
                     page (-> (th/create-request {} errors params) index)]
                 (fact "the class for styling errors is added"
-                      (html/select page [[:.clj--registration-email :.form-row--validation-error]]) =not=> empty?)
+                      (html/select page [[:.clj--registration-email :.form-row--invalid]]) =not=> empty?)
                 (fact "email validation element is present"
                       (html/select page [:.clj--registration-email__validation]) =not=> empty?)
                 (fact "correct error message is displayed"
@@ -165,7 +165,7 @@
                    params {:registration-password ""}
                    page (-> (th/create-request {} errors params) index)]
                (fact "the class for styling errors is added"
-                     (html/select page [[:.clj--registration-password :.form-row--validation-error]]) =not=> empty?)
+                     (html/select page [[:.clj--registration-password :.form-row--invalid]]) =not=> empty?)
                (fact "password validation element is present"
                      (html/select page [:.clj--registration-password__validation]) =not=> empty?)
                (fact "correct error message is displayed"
@@ -176,7 +176,7 @@
                    params {:registration-password "short"}
                    page (-> (th/create-request {} errors params) index)]
                (fact "the class for styling errors is added"
-                     (html/select page [[:.clj--registration-password :.form-row--validation-error]]) =not=> empty?)
+                     (html/select page [[:.clj--registration-password :.form-row--invalid]]) =not=> empty?)
                (fact "password validation element is present"
                      (html/select page [:.clj--registration-password__validation]) =not=> empty?)
                (fact "correct error message is displayed"
@@ -188,7 +188,7 @@
                    params {:registration-password long-password}
                    page (-> (th/create-request {} errors params) index)]
                (fact "the class for styling errors is added"
-                     (html/select page [[:.clj--registration-password :.form-row--validation-error]]) =not=> empty?)
+                     (html/select page [[:.clj--registration-password :.form-row--invalid]]) =not=> empty?)
                (fact "password validation element is present"
                      (html/select page [:.clj--registration-password__validation]) =not=> empty?)
                (fact "correct error message is displayed"

@@ -28,7 +28,7 @@
 (facts "about removing elements when there are no errors"
        (let [page (-> (th/create-request) change-password-form)]
          (fact "no elements have class for styling errors"
-               (html/select page [:.form-row--validation-error]) => empty?)
+               (html/select page [:.form-row--invalid]) => empty?)
          (fact "validation summary element is not shown by styling class"
                (-> page
                    (html/select [:.clj--validation-summary])
@@ -52,7 +52,7 @@
                  (->> (html/select page [:.clj--validation-summary__item])
                       (map #(get-in % [:attrs :data-l8n]))) => ?validation-translations)
            (fact "correct elements are highlighted"
-                 (->> (html/select page [:.form-row--validation-error])
+                 (->> (html/select page [:.form-row--invalid])
                       (map #(get-in % [:attrs :class]))) => (contains ?highlighted-elements)))
 
          ?errors                          ?validation-translations                                                          ?highlighted-elements

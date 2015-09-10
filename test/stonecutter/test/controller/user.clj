@@ -123,7 +123,7 @@
                                       (u/sign-in-or-register user-store token-store confirmation-store test-email-sender)
                                       :body
                                       html/html-snippet)]
-               (-> (html/select html-response [:.form-row--validation-error])
+               (-> (html/select html-response [:.form-row--invalid])
                    first
                    :attrs
                    :class)) => (contains "clj--registration-email"))
@@ -150,7 +150,7 @@
                                        :body
                                        html/html-snippet)]
                 (fact "email field should have validation error class"
-                      (html/select html-response [:.form-row--validation-error]) =not=> empty?)
+                      (html/select html-response [:.form-row--invalid]) =not=> empty?)
                 (fact "invalid email value should be preserved"
                       (-> (html/select html-response [:.clj--registration-email__input])
                           first

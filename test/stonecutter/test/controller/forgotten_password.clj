@@ -26,7 +26,7 @@
       (let [email-sender (test-email/create-test-email-sender)
             response (->> (th/create-request :post "/forgotten-password" {:email "invalid email"})
                           (fp/forgotten-password-form-post email-sender nil nil nil))]
-        (vth/response->enlive-m response) => (vth/element-exists? [:.form-row--validation-error])
+        (vth/response->enlive-m response) => (vth/element-exists? [:.form-row--invalid])
         (test-email/last-sent-email email-sender) => nil))
 
 (defn test-renderer [email-data]
@@ -151,7 +151,7 @@
                (let [test-request (create-reset-password-post forgotten-password-id "" "")
                      response (fp/reset-password-form-post forgotten-password-store user-store token-store test-clock test-request)]
                  (:status response) => 200
-                 (vth/response->enlive-m response) => (vth/element-exists? [:.form-row--validation-error])))
+                 (vth/response->enlive-m response) => (vth/element-exists? [:.form-row--invalid])))
 
          (fact "if the id doesn't exist and params are invalid then redirect to resend e-mail"
                (let [response (->> (create-reset-password-post "unknown-forgotten-password-id" "" "")
