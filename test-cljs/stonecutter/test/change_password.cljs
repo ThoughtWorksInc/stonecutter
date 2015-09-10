@@ -113,10 +113,13 @@
     (is (some #{message} err-messages)
         (str "Missing error message " message " when error occurs"))))
 
-(defn has-no-message-on-selector [selector message]
+(defn has-no-message-on-selector
+  ([selector]
+    (has-no-message-on-selector selector ""))
+  ([selector message]
   (let [error-message (dommy/text (sel1 selector))]
     (is (= message error-message)
-        (str error-message " should not equal to " message))))
+        (str error-message " should not equal to " message)))))
 
 (defn has-summary-message [message]
   (has-message-on-selector :.validation-summary__item message))

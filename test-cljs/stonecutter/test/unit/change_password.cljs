@@ -61,8 +61,7 @@
                            (let [current-state {:current-password {} :new-password {:value "1234567" :error :anything :tick true}}
                                  expected-state {:current-password {} :new-password {:value "1234567" :error :anything :tick false}}]
                              (is (= expected-state (cp/update-new-password-input current-state))
-                                 "short new password did not turn tick to false and/or changed the error")))
-                  ))
+                                 "short new password did not turn tick to false and/or changed the error")))))
 
 ;;NOTES
 ; :new-password

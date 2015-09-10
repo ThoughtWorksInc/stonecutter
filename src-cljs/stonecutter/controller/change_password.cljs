@@ -1,6 +1,5 @@
 (ns stonecutter.controller.change-password
-  (:require [stonecutter.validation :as v])
-  (:require-macros [stonecutter.translation :as t]))
+  (:require [stonecutter.validation :as v]))
 
 ;; CURRENT PASSWORD
 (defn update-current-password-blur [state]
