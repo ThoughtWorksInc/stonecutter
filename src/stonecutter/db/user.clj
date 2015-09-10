@@ -32,7 +32,7 @@
         (dissoc :password))))
 
 (defn retrieve-user [user-store email]
-  (cl-user/fetch-user user-store email))
+  (cl-user/fetch-user user-store (s/lower-case email)))
 
 (defn user-exists? [user-store email]
   (not (nil? (retrieve-user user-store (s/lower-case email)))))
@@ -41,7 +41,7 @@
   (cl-store/revoke! user-store email))
 
 (defn authenticate-and-retrieve-user [user-store email password]
-  (-> (cl-user/authenticate-user user-store email password)
+  (-> (cl-user/authenticate-user user-store (s/lower-case email) password)
       (dissoc :password)))
 
 (defn retrieve-user-with-auth-code [auth-code-store code]

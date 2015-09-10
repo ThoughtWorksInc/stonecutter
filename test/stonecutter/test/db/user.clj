@@ -113,6 +113,9 @@
                  user => (contains {:login "email@server.com"})
                  (fact "password is removed before returning user"
                        (:password user) => nil)))
+         (fact "authentication is case-insensitive"
+               (user/store-user! user-store "email2@server.com" "password")
+               (user/authenticate-and-retrieve-user user-store "EMAIL2@server.COM" "password") => (contains {:login "email2@server.com"}))
 
          (fact "with invalid credentials returns nil"
                (user/authenticate-and-retrieve-user user-store "email@server.com" "wrong-password") => nil)))
@@ -120,7 +123,9 @@
 (fact "can retrieve user without authentication"
       (let [user-store (m/create-memory-store)]
         (user/store-user! user-store "email@server.com" "password")
-        (user/retrieve-user user-store "email@server.com") => (contains {:login "email@server.com"})))
+        (user/retrieve-user user-store "email@server.com") => (contains {:login "email@server.com"})
+        (fact "retrieval is case insensitive"
+              (user/retrieve-user user-store "EMAIL@SERVER.COM") => (contains {:login "email@server.com"}))))
 
 (fact "can retrieve user using auth-code"
       (let [auth-code-store (m/create-memory-store)
