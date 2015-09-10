@@ -3,6 +3,6 @@
   (:require-macros [stonecutter.translation :as t]))
 
 (defn update-current-password-blur [state]
-  (let [current-password-value (:current-password state)]
-    (if (= current-password-value "")
-      (assoc state :error :blank))))
+  (let [password (:current-password state)
+        error (v/validate-password-format password)]
+    (assoc state :error error)))
