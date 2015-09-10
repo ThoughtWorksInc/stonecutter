@@ -4,12 +4,15 @@
 
 .user-item {
   position: relative;
+  display: table;
+  width: 100%;
   min-height: $button--height;
   margin-bottom: 0.75rem;
   padding: 1rem 75px 1rem 1rem;
   background-color: $light_grey;
   &__text {
-    //@include vertical-middle-me;
+    display: table-cell;
+    vertical-align: middle;
   }
   &__name {
     color: $dark_grey;
