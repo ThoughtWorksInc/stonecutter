@@ -14,6 +14,7 @@
             [stonecutter.controller.forgotten-password :as forgotten-password]
             [stonecutter.controller.oauth :as oauth]
             [stonecutter.controller.stylesheets :as stylesheets]
+            [stonecutter.controller.admin :as admin]
             [stonecutter.translation :as t]
             [stonecutter.middleware :as m]
             [stonecutter.email :as email]
@@ -23,7 +24,7 @@
             [stonecutter.db.migration :as migration]
             [stonecutter.db.mongo :as mongo]
             [stonecutter.config :as config]
-            [stonecutter.admin :as admin]
+            [stonecutter.admin :as ad]
             [stonecutter.db.storage :as storage]
             [stonecutter.jwt :as jwt]
             [stonecutter.util.time :as time])
@@ -93,7 +94,7 @@
        :authorise                            (partial oauth/authorise auth-code-store client-store user-store token-store)
        :authorise-client                     (partial oauth/authorise-client auth-code-store client-store user-store token-store)
        :show-authorise-failure               (partial oauth/show-authorise-failure client-store)
-       :show-user-list                       (constantly {:status 200})}
+       :show-user-list                       (partial admin/show-user-list user-store)}
       (m/wrap-handlers-except #(m/wrap-handle-403 % forbidden-err-handler) #{})
       (m/wrap-handlers-except m/wrap-disable-caching #{:theme-css :index :sign-in-or-register})
       (m/wrap-just-these-handlers #(m/wrap-authorised % (comp u/has-admin-role? (partial u/retrieve-user user-store) sh/request->user-login))
@@ -176,7 +177,7 @@
                                                    (config/base-url config-m))
           app (create-app config-m clock stores-m email-sender id-token-generator json-web-key-set)]
       (migration/run-migrations db)
-      (admin/create-admin-user config-m (storage/get-user-store stores-m))
+      (ad/create-admin-user config-m (storage/get-user-store stores-m))
       (client-seed/load-client-credentials-and-store-clients (storage/get-client-store stores-m) (config/client-credentials-file-path config-m))
       (ring-jetty/run-jetty app {:port (config/port config-m) :host (config/host config-m)}))))
 

@@ -11,9 +11,9 @@
 
 (def library-template (vh/load-template "public/library.html"))
 
-(defn application-list-item [library-m] (first (html/select library-template [:.clj--authorised-app__list-item])))
+(defn application-list-item [library-m] (first (html/select library-m [:.clj--authorised-app__list-item])))
 
-(defn empty-application-list-item [library-m] (first (html/select library-template [:.clj--authorised-app__list-item--empty])))
+(defn empty-application-list-item [library-m] (first (html/select library-m [:.clj--authorised-app__list-item--empty])))
 
 (defn application-list-items [authorised-clients library-m]
   (html/at (application-list-item library-m)

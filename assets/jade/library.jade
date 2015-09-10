@@ -41,6 +41,27 @@ block content
             +authorisedAppItem("Green Party")
 
     .section
+      h2.section-title Admin content
+
+      .library-item
+        h3.library-title Empty
+        .library__demo
+          ul.user-list
+            +userListItemEmpty()
+
+      .library-item.clj-library--user-list__user-with-confirmed-email
+        h3.library-title User with confirmed email
+        .library__demo
+          ul.user-list
+            +userItem("Shadi Erlendr", "Shadi.Erlendr@gmail.com", true, true)
+
+      .library-item.clj-library--user-list__user-with-unconfirmed-email
+        h3.library-title User with unconfirmed email
+        .library__demo
+          ul.user-list
+            +userItem("Shadi Erlendr", "Shadi.Erlendr@gmail.com", false, true)
+
+    .section
       h2.section-title Flash message
 
       .library-item

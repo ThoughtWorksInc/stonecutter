@@ -150,7 +150,6 @@ authorise:
   disallow-action-2: and do not share my Profile Card
   terms: You can unshare your Profile Card at anytime from your profile.
 
-
 authorise-fail:
   title: Authorise failure
   page-intro: You have not signed in to
@@ -225,6 +224,7 @@ admin-user-list:
   user-confirmed-email: Confirmed
   user-not-confirmed-email: Not confirmed
   trust-label: Toggle trust
+  list-empty: There are no users.
 
 admin-invite-user:
   title: Invite a user

@@ -1,27 +1,5 @@
 extends layout/layout
 
-mixin userItem(fullName, emailAddress, emailIsConfirmed, userIsTrusted)
-  li.user-item
-    .user-item__text
-      .user-item__name !#{fullName}
-      .user-item__email-address
-        if emailIsConfirmed
-          i.fa.fa-check-circle-o.user-item__email-address__icon
-            span.visuallyhidden(data-l8n="content:admin-user-list/user-confirmed-email") !Confirmed
-        else
-          i.fa.fa-times-circle-o.user-item__email-address__icon
-            span.visuallyhidden(data-l8n="content:admin-user-list/user-not-confirmed-email") !Not confirmed
-        span !#{emailAddress}
-    .user-item__action-list
-      .user-item__toggle-trust
-        label.toggle(for="toggle-#{fullName}")
-          input.toggle__input(type="checkbox" id="toggle-#{fullName}" checked=userIsTrusted)
-          span.toggle__title.visuallyhidden(data-l8n="content:admin-user-list/trust-label") !Toggle trust
-          span.toggle__switch
-            span.toggle__handle
-              span.toggle__handle-icon
-                i.fa.fa-lock
-
 block vars
   - bodyClass = "func--admin-user-list-page"
   - pageTitle = "!User list"
@@ -30,8 +8,8 @@ block vars
 block headerScripts
 
 block headerContent
-  li.header-nav__item: a.header-nav__link(href="./user-list", data-l8n="content:admin/nav-users") !Users
-  li.header-nav__item: a.header-nav__link(href="./invite", data-l8n="content:admin/nav-invite-user") !Invite
+  li.header-nav__item.clj-wip: a.header-nav__link(href="./user-list", data-l8n="content:admin/nav-users") !Users
+  li.header-nav__item.clj-wip: a.header-nav__link(href="./invite", data-l8n="content:admin/nav-invite-user") !Invite
   li.header-nav__item: a.header-nav__link.clj--sign-out__link.func--sign-out__link(href="./sign-in", data-l8n="content:profile/sign-out-link") !Sign out
 
 
@@ -46,7 +24,7 @@ block content
             | !Search
         input.search-row__input(type="text", id="search", name="search", placeholder="")
 
-    ul.user-list
+    ul.user-list.clj--user-list
       +userItem("Shadi Erlendr", "Shadi.Erlendr@gmail.com", false, true)
       +userItem("Horatius Vilhelm", "Horatius.Vilhelm@live.com", false, true)
       +userItem("Kepa Othello", "Kepa.Othello@amazon.com", true, true)

@@ -1,0 +1,26 @@
+mixin userListItemEmpty()
+  li.user-item.clj--user-list__item__empty
+    .user-item__text(data-l8n="content:admin-user-list/list-empty") !There are no users
+
+mixin userItem(fullName, emailAddress, emailIsConfirmed, userIsTrusted)
+  li.user-item.clj--user-item
+    .user-item__text
+      .user-item__name.clj-wip !#{fullName}
+      .user-item__email-address
+        if emailIsConfirmed
+          i.fa.fa-check-circle-o.user-item__email-address__icon
+            span.visuallyhidden(data-l8n="content:admin-user-list/user-confirmed-email") !Confirmed
+        else
+          i.fa.fa-times-circle-o.user-item__email-address__icon
+            span.visuallyhidden(data-l8n="content:admin-user-list/user-not-confirmed-email") !Not confirmed
+        span.clj--user-item__email-address__text !#{emailAddress}
+    .user-item__action-list.clj-wip
+      .user-item__toggle-trust
+        label.toggle(for="toggle-#{fullName}")
+          input.toggle__input(type="checkbox" id="toggle-#{fullName}" checked=userIsTrusted)
+          span.toggle__title.visuallyhidden(data-l8n="content:admin-user-list/trust-label") !Toggle trust
+          span.toggle__switch
+            span.toggle__handle
+              span.toggle__handle-icon
+                i.fa.fa-lock
+
