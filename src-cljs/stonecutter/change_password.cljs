@@ -16,17 +16,13 @@
 (def change-password-form :.clj--change-password__form)
 
 (def form-row-new-password-error-class :.cljs--new-password-form-row__inline-message)
-(def form-row-new-password-error-class-string "cljs--new-password-form-row__inline-message")
 (def form-row-current-password-error-class :.cljs--current-password-form-row__inline-message)
-(def form-row-current-password-error-class-string "cljs--current-password-form-row__inline-message")
 
-(def error-list :.validation-summary__list)
-(def display-error-list-class "validation-summary--show")
-
-(def field-error-class "form-row--validation-error")
 (def field-valid-class "form-row--valid")
 (def field-invalid-class "form-row--invalid")
-(def valid-row-class "form-row__help--valid")
+
+(def form-row-validation "form-row__validation")
+(def form-row-help "form-row__help")
 
 (defn input-value [sel]
   (d/value (dm/sel1 sel)))
@@ -71,22 +67,12 @@
                       :unchanged (get-translated-message :new-password-unchanged-validation-message)
                       :too-short (get-translated-message :new-password-too-short-validation-message)}})
 
-(defn create-error-span [message class field-class]
-  (-> (d/create-element :span)
-      (d/set-text! message)
-      (d/add-class! field-class)
-      (d/add-class! class)))
-
-(defn create-error-element [message field-class]
-  (when message
-    (create-error-span message "form-row__validation" field-class)))
-
-(defn update-inline-message [field field-class message-map error-map]
+(defn update-inline-message [field message-map error-map]
   (let [message (get-in message-map (first (seq error-map)))
-        parent (dm/sel1 field)
-        child (create-error-element message field-class)]
-    (when child
-      (d/replace! parent child))))
+        element (dm/sel1 field)]
+    (d/add-class! element form-row-validation)
+    (d/remove-class! element form-row-help)
+    (d/set-text! element message)))
 
 (defn update-current-password! [e]
   (let [current-password (input-value current-password-input)]
@@ -105,7 +91,7 @@
 
 (defn check-current-password! [e]
   (let [err (v/validate-password-format (input-value current-password-input))]
-    (update-inline-message form-row-current-password-error-class form-row-current-password-error-class-string error-to-message {:current-password err})
+    (update-inline-message form-row-current-password-error-class error-to-message {:current-password err})
     (toggle-invalid-class current-password-field err)))
 
 (defn check-new-password! [e]
@@ -113,7 +99,7 @@
         new-password (input-value new-password-input)
         err (or (v/validate-password-format new-password)
                 (v/validate-passwords-are-different current-password new-password))]
-    (update-inline-message form-row-new-password-error-class form-row-new-password-error-class-string error-to-message {:new-password err})
+    (update-inline-message form-row-new-password-error-class error-to-message {:new-password err})
     (toggle-error-class new-password-field err)))
 
 (defn block-invalid-submit [submitEvent]
