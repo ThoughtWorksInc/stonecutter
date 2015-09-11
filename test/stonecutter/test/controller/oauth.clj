@@ -14,7 +14,8 @@
             [stonecutter.db.storage :as storage]
             [stonecutter.db.client :as client]
             [stonecutter.db.user :as user]
-            [stonecutter.db.mongo :as m])
+            [stonecutter.db.mongo :as m]
+            [stonecutter.config :as config])
   (:import (org.apache.commons.codec.binary Base64)))
 
 (def user-email "email@user.com")
@@ -281,12 +282,12 @@
                     response-body (-> response :body (json/parse-string keyword))]
 
               (fact "request with authorization_code with a scope of openid uses id-token-generator to create an id_token which is returned in the response"
-                    (:id_token response-body) => {:sub (:uid user)
-                                                  :aud (:client-id client-details)
+                    (:id_token response-body) => {:sub                    (:uid user)
+                                                  :aud                    (:client-id client-details)
                                                   :token-lifetime-minutes 10
-                                                  :email user-email
-                                                  :email_verified false
-                                                  :role "default"})
+                                                  :email                  user-email
+                                                  :email_verified         false
+                                                  :role                   (:untrusted config/roles)})
 
               (fact "response body should not contain user-info record"
                     (:user-info response-body) => nil?))))

@@ -4,7 +4,8 @@
             [stonecutter.test.view.test-helpers :as th]
             [stonecutter.routes :as r]
             [stonecutter.view.user-list :refer [user-list]]
-            [stonecutter.translation :as t]))
+            [stonecutter.translation :as t]
+            [stonecutter.config :as config]))
 
 (fact "user-list should return some html"
       (let [page (-> (th/create-request) user-list)]
@@ -21,8 +22,8 @@
 (facts "about the list of users"
        (fact "users are displayed along with their email confirmation status"
              (let [page (-> (th/create-request)
-                            (assoc-in [:context :users] [{:login "confirmed@email.com" :confirmed? true :role "default"}
-                                                         {:login "unconfirmed@email.com" :confirmed? false :role "default"}])
+                            (assoc-in [:context :users] [{:login "confirmed@email.com" :confirmed? true :role (:untrusted config/roles)}
+                                                         {:login "unconfirmed@email.com" :confirmed? false :role (:untrusted config/roles)}])
                             user-list)]
                (-> page (html/select [:.clj--user-item]))
                => (just [(th/element-exists? [:.clj--user-item__email-confirmed])

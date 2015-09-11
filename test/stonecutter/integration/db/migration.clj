@@ -55,3 +55,16 @@
          (monger-c/count db "users") => 2
          (-> (monger-c/find-map-by-id db "users" "email1") :uid) => valid-uuid?
          (-> (monger-c/find-map-by-id db "users" "email2") :uid) => "a-uid"))
+
+(facts "about changing default role to untrusted role"
+       (let [db (ith/get-test-db)]
+         (monger-c/insert db "users" {:_id "email1" :login "email1" :password "q" :uid "a-uid" :role "default"})
+         (monger-c/insert db "users" {:_id "email2" :login "email2" :password "q" :uid "b-uid"})
+         (monger-c/insert db "users" {:_id "email3" :login "email3" :password "q" :uid "c-uid" :role "admin"})
+         (monger-c/insert db "users" {:_id "email4" :login "email4" :password "q" :uid "d-uid" :role "untrusted"})
+         (m/change-default-roles-to-untrusted-roles db)
+         (monger-c/count db "users") => 4
+         (-> (monger-c/find-map-by-id db "users" "email1") :role) => "untrusted"
+         (-> (monger-c/find-map-by-id db "users" "email2") :role) => "untrusted"
+         (-> (monger-c/find-map-by-id db "users" "email3") :role) => "admin"
+         (-> (monger-c/find-map-by-id db "users" "email4") :role) => "untrusted"))

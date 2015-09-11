@@ -17,7 +17,7 @@
                        :url        nil
                        :confirmed? false
                        :uid        anything
-                       :role       (:default config/roles)}))
+                       :role       (:untrusted config/roles)}))
 
        (fact "can authenticate a user"
              (user/authenticate-and-retrieve-user user-store "email@server.com" "password")
@@ -97,7 +97,7 @@
 (fact "about creating a user record"
       (let [id-gen (constantly "id")]
         (fact "a uuid is added"
-              (user/create-user id-gen "email" "password") => {:login "email" :password "encrypted_password" :uid "id" :name nil :url nil :confirmed? false :role (:default config/roles)}
+              (user/create-user id-gen "email" "password") => {:login "email" :password "encrypted_password" :uid "id" :name nil :url nil :confirmed? false :role (:untrusted config/roles)}
               (provided (cl-user/bcrypt "password") => "encrypted_password"))
         (fact "email is lower-cased"
               (user/create-user id-gen "EMAIL" "password") => (contains {:login "email"}))))

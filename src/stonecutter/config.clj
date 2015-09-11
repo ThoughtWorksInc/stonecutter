@@ -27,8 +27,8 @@
 
 (def env-var-set (->> vars (partition 2) (map first) set))
 
-(def roles {:default "default"
-            :admin   "admin"})
+(def roles {:untrusted "untrusted"
+            :admin     "admin"})
 
 (defn create-config []
   (select-keys env/env env-var-set))
@@ -119,9 +119,9 @@
 
 (defn to-env [k]
   (-> k
-       name
-       (s/upper-case)
-       (s/replace #"\-" "_")))
+      name
+      (s/upper-case)
+      (s/replace #"\-" "_")))
 
 (defn gen-config-line [env-m [var-key description]]
   (str "# " description "\n"

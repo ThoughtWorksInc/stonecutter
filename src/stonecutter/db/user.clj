@@ -10,7 +10,7 @@
 
 (defn create-user
   ([id-gen email password]
-   (create-user id-gen email password (:default config/roles)))
+   (create-user id-gen email password (:untrusted config/roles)))
   ([id-gen email password role]
    (let [lower-email (s/lower-case email)]
      (->

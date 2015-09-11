@@ -22,9 +22,19 @@
   (log/info "Finished running migration add-user-id"))
 
 (defn add-user-role [record]
- (if (:role record)
-   record
-   (assoc record :role (:default config/roles))))
+  (if (:role record)
+    record
+    (assoc record :role (:default config/roles))))
+
+(defn change-default-to-untrusted [record]
+  (if (or (= (:role record) "default") (= (:role record) nil))
+    (assoc record :role (:untrusted config/roles))
+    record))
+
+(defn change-default-roles-to-untrusted-roles [db]
+  (log/info "Running migration to change :default roles to :untrusted")
+  (do-to-coll db "users" change-default-to-untrusted)
+  (log/info "Finished running migration user-role-are-untrusted"))
 
 (defn add-user-roles [db]
   (log/info "Running migration add-user-roles")
@@ -33,12 +43,13 @@
 
 ;; IMPORTANT DO *NOT* MODIFY THE EXISTING MIGRATION IDS IN THIS LIST
 (def migrations
-  [{:id "add-user-uid"   :up add-user-uids}
-   {:id "add-user-role"  :up add-user-roles}])
+  [{:id "add-user-uid" :up add-user-uids}
+   {:id "add-user-role" :up add-user-roles}
+   {:id "replace-default-role-with-untrusted-role" :up change-default-roles-to-untrusted-roles}])
 
 (defn run-migrations
   ([db]
-    (run-migrations db migrations))
+   (run-migrations db migrations))
   ([db migrations]
    (let [index (ragtime/into-index migrations)]
      (ragtime/migrate-all db index migrations))))
