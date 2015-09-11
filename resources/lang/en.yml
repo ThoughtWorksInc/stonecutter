@@ -80,6 +80,14 @@ confirm-email-expired:
   helper-text-2: "You need to resend the confirmation email to verify your address:"
   resend-action: Resend confirmation
 
+change-email-form:
+  title: Change your email address
+  page-header: Change your email address
+  form-button: Save changes
+  email-address-label: New email address
+  cancel-button-1: Cancel
+  cancel-button-2: changing my email address
+
 confirmation-sign-in-form:
   title: Sign in for Confirmation
   page-header: Sign in for Confirmation

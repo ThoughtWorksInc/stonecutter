@@ -49,6 +49,10 @@ app.all('/change-password', function (req, res) {
   customRender(res, 'change-password', pageData);
 });
 
+app.all('/change-email', function (req, res) {
+  customRender(res, 'change-email', pageData);
+});
+
 app.all('/confirmation-sign-in', function (req, res) {
   customRender(res, 'confirmation-sign-in', pageData);
 });

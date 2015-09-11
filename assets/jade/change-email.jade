@@ -1,0 +1,36 @@
+extends layout/layout
+
+block vars
+  - bodyClass = "func--change-email-page"
+  - pageTitle = "!Change your email address"
+  - pageTitleDataL8n = "content:change-email-form/title"
+
+block headerScripts
+
+block headerContent
+  a.header-nav__link(href="./profile", data-l8n="content:profile/profile-link") !Profile
+  a.header-nav__link.clj--sign-out__link.func--sign-out__link(href="./sign-out", data-l8n="content:profile/sign-out-link") !Sign out
+
+block content
+  .single-column
+    h1.page-title(data-l8n="content:change-email-form/page-header")
+      | !Change your email address
+    form.clj--change-email__form(action="#", method="post", role="form")
+
+      p.form-row.clj--email-address
+        label.form-row__label(for="email-address")
+          span.form-row__title(data-l8n="content:change-email-form/email-address-label")
+            | !New email address
+        input.form-row__input(type="password", id="email-address", name="email-address", autofocus="autofocus")
+
+      .button-actions
+        .button-actions__primary
+          button.button.button--full-width(type="submit" data-l8n="content:change-email-form/form-button")
+            | !Save changes
+        .button-actions__secondary
+          a.button.button--full-width.button--link.clj--change-email-cancel__link(href="./profile") 
+            span(data-l8n="content:change-email-form/cancel-button-1") !Cancel
+            =" "
+            span.visuallyhidden(data-l8n="content:change-email-form/cancel-button-2") !changing my email address
+
+block footerScripts
