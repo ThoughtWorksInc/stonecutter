@@ -22,23 +22,23 @@
     <div id="main" role="main" class="main-content">
       <div class="columns">
         <div class="single-column">
-          <h1 class="page-title"><span class="clj--client-name">Green Party Voting</span> would like to use your Profile Card
+          <h1 class="page-title"><span class="clj--client-name">Green Party Voting</span> <span data-l8n="content:authorise/page-title">would like to use your Profile Card</span>
           </h1>
           <div class="authorise-text">
-            <p class="authorise-text__description">By sharing your Profile Card this application <span class="authorise-text__description--allowed">will be able to:</span>
+            <p class="authorise-text__description"><span data-l8n="content:authorise/share-1">By sharing your Profile Card this application</span> <span data-l8n="content:authorise/share-2" class="authorise-text__description--allowed">will be able to:</span>
             </p>
             <ul class="authorise-text__list">
-              <li class="authorise-text__item"><i class="fa fa-check fa-fw authorise-text__icon authorise-text__icon--allowed"></i> Sign you in
+              <li class="authorise-text__item"><i class="fa fa-check fa-fw authorise-text__icon authorise-text__icon--allowed"></i> <span data-l8n="content:authorise/item-sign-in">Sign you in</span>
               </li>
-              <li class="authorise-text__item"><i class="fa fa-check fa-fw authorise-text__icon authorise-text__icon--allowed"></i> View your Profile Card
+              <li class="authorise-text__item"><i class="fa fa-check fa-fw authorise-text__icon authorise-text__icon--allowed"></i> <span data-l8n="content:authorise/item-view-profile">View your Profile Card</span>
               </li>
             </ul>
           </div>
           <div class="authorise-text">
-            <p class="authorise-text__description">This application <span class="authorise-text__description--disallowed">will not be able to:</span>
+            <p class="authorise-text__description"><span data-l8n="content:authorise/not-intro-1">This application</span> <span data-l8n="content:authorise/not-intro-2" class="authorise-text__description--disallowed">will not be able to:</span>
             </p>
             <ul class="authorise-text__list">
-              <li class="authorise-text__item"><i class="fa fa-times fa-fw authorise-text__icon authorise-text__icon--disallowed"></i> Update your Profile Card
+              <li class="authorise-text__item"><i class="fa fa-times fa-fw authorise-text__icon authorise-text__icon--disallowed"></i> <span data-l8n="content:authorise/item-update-profile">Update your Profile Card</span>
               </li>
             </ul>
           </div>
@@ -50,14 +50,13 @@
             <input type="hidden" name="scope" value="!scope" class="clj--authorise-scope__input">
             <div class="authorise-buttons">
               <div class="authorise-buttons__primary">
-                <button type="submit" class="button button--full-width button--primary func--authorise-share-profile__button"><span>Share Profile Card</span></button>
+                <button type="submit" data-l8n="content:authorise/allow-action" class="button button--full-width button--primary func--authorise-share-profile__button">Share Profile Card</button>
               </div>
-              <div class="authorise-buttons__secondary"><a href="./authorise-failure" class="button button--full-width button--link clj--authorise-cancel__link func--authorise-cancel__link">Cancel</a></div>
+              <div class="authorise-buttons__secondary"><a href="./authorise-failure" class="button button--full-width button--link clj--authorise-cancel__link func--authorise-cancel__link"><span data-l8n="content:authorise/disallow-action-1">Cancel</span><span data-l8n="content:authorise/disallow-action-2" class="visuallyhidden">and do not share my Profile Card</span></a></div>
             </div>
           </form>
           <div class="authorise-terms">
-            <p>You can unshare your Profile Card at anytime from your <span class="authorise-terms__link">profile</span>.
-            </p>
+            <p data-l8n="content:authorise/terms">You can unshare your Profile Card at anytime from your profile.</p>
           </div>
         </div>
       </div>

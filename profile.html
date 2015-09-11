@@ -33,10 +33,10 @@
             <div class="flash-message flash-message--fail flash-message--no-round-bottom">
               <p data-l8n="content:profile/email-not-confirmed" class="flash-message__title">Your email address is not been confirmed.</p>
             </div>
-            <div class="verify-email-address__content verify-email-address__content--no-round-top clj-wip">
+            <div class="verify-email-address__content verify-email-address__content--no-round-top">
               <p data-l8n="content:profile/verify-email-intro">If you have not received an email to email@email.com you should resend the confirmation email.</p>
-              <form action="/confirm-email-resent" method="post" class="resend-confirmation-form">
-                <button type="submit" data-l8n="content:profile/verify-button" class="button">Resend email confirmation</button>
+              <form action="/resend-confirmation-email" method="post" class="resend-confirmation-form">
+                <button type="submit" data-l8n="content:profile/verify-button" class="button func--resend-confirmation-email__button">Resend email confirmation</button>
               </form>
             </div>
           </div>

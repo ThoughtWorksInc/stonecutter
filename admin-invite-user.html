@@ -1,0 +1,41 @@
+
+<!-- initialization--><!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title data-l8n="content:admin-invite-user/title">Sign in</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="shortcut icon" href="/stonecutter-favicon.ico">
+    <link href="./stylesheets/application.css" media="screen" rel="stylesheet" type="text/css"/>
+    <link href="./stylesheets/theme.css" media="screen" rel="stylesheet" type="text/css"/>
+  </head>
+  <body class="func--admin-invite-user-page"><a href="#main" class="skip-link">Skip navigation</a>
+    <div role="banner" class="header">
+      <div class="header__inner middle-container">
+        <div class="header__logo"><span class="visuallyhidden clj--app-name">Stonecutter</span></div>
+        <nav role="navigation" class="header-nav clj--header-nav">
+          <li class="header-nav__item"><a href="./user-list" data-l8n="content:admin/nav-users" class="header-nav__link">Users</a></li>
+          <li class="header-nav__item"><a href="./invite" data-l8n="content:admin/nav-invite-user" class="header-nav__link">Invite</a></li>
+          <li class="header-nav__item"><a href="./sign-in" data-l8n="content:profile/sign-out-link" class="header-nav__link clj--sign-out__link func--sign-out__link">Sign out</a></li>
+        </nav>
+      </div>
+    </div>
+    <div id="main" role="main" class="main-content">
+      <div class="columns">
+        <div class="single-column">
+          <h1 data-l8n="content:admin-invite-user/page-header" class="page-title">Invite a user</h1>
+          <form action="./invite-sent" method="post" role="form" class="login-form">
+            <p class="form-row clj--invite-user-email">
+              <label for="email" class="form-row__label"><span data-l8n="content:admin-invite-user/email-address" class="form-row__title">Email address</span><span data-l8n="content:admin-invite-user/email-address-invalid-validation-message" class="form-row__validation clj--invite-user-email__validation">Enter a valid email address</span></label>
+              <input type="email" id="email" name="email" class="form-row__input clj--email__input func--email__input">
+            </p>
+            <button type="submit" data-l8n="content:admin-invite-user/invite-button" class="button button--full-width-smallish-devices func--invite-user__button">Invite</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script>document.addEventListener("touchstart", function(){}, true);</script>
+  </body>
+</html>

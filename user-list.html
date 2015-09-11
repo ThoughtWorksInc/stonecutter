@@ -16,8 +16,9 @@
       <div class="header__inner middle-container">
         <div class="header__logo"><span class="visuallyhidden clj--app-name">Stonecutter</span></div>
         <nav role="navigation" class="header-nav clj--header-nav">
-          <li class="header-nav__item"><a href="#invite" data-l8n="content:admin/invite-user" class="header-nav__link">Invite</a></li>
-          <li class="header-nav__item"><a href="./sign-out" data-l8n="content:profile/sign-out-link" class="header-nav__link clj--sign-out__link func--sign-out__link">Sign out</a></li>
+          <li class="header-nav__item clj-wip"><a href="./user-list" data-l8n="content:admin/nav-users" class="header-nav__link">Users</a></li>
+          <li class="header-nav__item clj-wip"><a href="./invite" data-l8n="content:admin/nav-invite-user" class="header-nav__link">Invite</a></li>
+          <li class="header-nav__item"><a href="./sign-in" data-l8n="content:profile/sign-out-link" class="header-nav__link clj--sign-out__link func--sign-out__link">Sign out</a></li>
         </nav>
       </div>
     </div>
@@ -25,32 +26,194 @@
       <div class="columns">
         <div class="single-column">
           <h1 data-l8n="content:admin-user-list/page-title">User list</h1>
-          <form action="#" method="post">
+          <form action="#" method="post" role="search">
             <p class="search-row clj-wip">
               <label for="search" class="search-row__label"><i class="fa fa-search search-row__icon"></i><span data-l8n="content:admin-user-list/label-search" class="visuallyhidden">Search</span></label>
-              <input type="text" id="search" name="search" class="search-row__input">
+              <input type="text" id="search" name="search" placeholder="" class="search-row__input">
             </p>
           </form>
-          <ul class="user-list">
-            <li class="user-item">
+          <ul class="user-list clj--user-list">
+            <li class="user-item clj--user-item">
               <div class="user-item__text">
-                <div class="user-item__name">Chris Cheshire</div>
-                <div class="user-item__email-address">email@email-address.com</div>
+                <div class="user-item__name clj-wip">Shadi Erlendr</div>
+                <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-times-circle-o user-item__email-address__icon clj--user-item__email-unconfirmed"><span data-l8n="content:admin-user-list/user-not-confirmed-email" class="visuallyhidden">Not confirmed</span></i><span class="clj--user-item__email-address__text">Shadi.Erlendr@gmail.com</span>
+                </div>
               </div>
-              <form action="#" method="post" class="user-item__form">
-                <button action="submit" value="Approve" class="button button--transparent user-item__button user-item__button--approved"><i class="fa fa-check"></i><span data-l8n="content:admin-user-list/approve-button" class="visuallyhidden">Approve</span> <span class="visuallyhidden clj--user-item-fullname">Chris Cheshire</span>
-                </button>
-              </form>
+              <div class="user-item__action-list clj-wip">
+                <div class="user-item__toggle-trust">
+                  <label for="toggle-Shadi Erlendr" class="toggle">
+                    <input type="checkbox" id="toggle-Shadi Erlendr" checked="checked" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                  </label>
+                </div>
+              </div>
             </li>
-            <li class="user-item">
+            <li class="user-item clj--user-item">
               <div class="user-item__text">
-                <div class="user-item__name">Chris Cheshire</div>
-                <div class="user-item__email-address">email@email-address.com</div>
+                <div class="user-item__name clj-wip">Horatius Vilhelm</div>
+                <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-times-circle-o user-item__email-address__icon clj--user-item__email-unconfirmed"><span data-l8n="content:admin-user-list/user-not-confirmed-email" class="visuallyhidden">Not confirmed</span></i><span class="clj--user-item__email-address__text">Horatius.Vilhelm@live.com</span>
+                </div>
               </div>
-              <form action="#" method="post" class="user-item__form">
-                <button action="submit" value="Unapprove" class="button button--transparent user-item__button user-item__button--unapproved"><i class="fa fa-check"></i><span data-l8n="content:admin-user-list/unapprove-button" class="visuallyhidden">Unapprove</span> <span class="visuallyhidden clj--user-item-fullname">Chris Cheshire</span>
-                </button>
-              </form>
+              <div class="user-item__action-list clj-wip">
+                <div class="user-item__toggle-trust">
+                  <label for="toggle-Horatius Vilhelm" class="toggle">
+                    <input type="checkbox" id="toggle-Horatius Vilhelm" checked="checked" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                  </label>
+                </div>
+              </div>
+            </li>
+            <li class="user-item clj--user-item">
+              <div class="user-item__text">
+                <div class="user-item__name clj-wip">Kepa Othello</div>
+                <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-check-circle-o user-item__email-address__icon clj--user-item__email-confirmed"><span data-l8n="content:admin-user-list/user-confirmed-email" class="visuallyhidden">Confirmed</span></i><span class="clj--user-item__email-address__text">Kepa.Othello@amazon.com</span>
+                </div>
+              </div>
+              <div class="user-item__action-list clj-wip">
+                <div class="user-item__toggle-trust">
+                  <label for="toggle-Kepa Othello" class="toggle">
+                    <input type="checkbox" id="toggle-Kepa Othello" checked="checked" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                  </label>
+                </div>
+              </div>
+            </li>
+            <li class="user-item clj--user-item">
+              <div class="user-item__text">
+                <div class="user-item__name clj-wip">Kevyn Hildred</div>
+                <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-times-circle-o user-item__email-address__icon clj--user-item__email-unconfirmed"><span data-l8n="content:admin-user-list/user-not-confirmed-email" class="visuallyhidden">Not confirmed</span></i><span class="clj--user-item__email-address__text">Kevyn.Hildred@hotmail.com</span>
+                </div>
+              </div>
+              <div class="user-item__action-list clj-wip">
+                <div class="user-item__toggle-trust">
+                  <label for="toggle-Kevyn Hildred" class="toggle">
+                    <input type="checkbox" id="toggle-Kevyn Hildred" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                  </label>
+                </div>
+              </div>
+            </li>
+            <li class="user-item clj--user-item">
+              <div class="user-item__text">
+                <div class="user-item__name clj-wip">Wallis Fran</div>
+                <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-check-circle-o user-item__email-address__icon clj--user-item__email-confirmed"><span data-l8n="content:admin-user-list/user-confirmed-email" class="visuallyhidden">Confirmed</span></i><span class="clj--user-item__email-address__text">Wallis.Fran@live.com</span>
+                </div>
+              </div>
+              <div class="user-item__action-list clj-wip">
+                <div class="user-item__toggle-trust">
+                  <label for="toggle-Wallis Fran" class="toggle">
+                    <input type="checkbox" id="toggle-Wallis Fran" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                  </label>
+                </div>
+              </div>
+            </li>
+            <li class="user-item clj--user-item">
+              <div class="user-item__text">
+                <div class="user-item__name clj-wip">Ricki Robbie</div>
+                <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-check-circle-o user-item__email-address__icon clj--user-item__email-confirmed"><span data-l8n="content:admin-user-list/user-confirmed-email" class="visuallyhidden">Confirmed</span></i><span class="clj--user-item__email-address__text">Ricki.Robbie@gmail.com</span>
+                </div>
+              </div>
+              <div class="user-item__action-list clj-wip">
+                <div class="user-item__toggle-trust">
+                  <label for="toggle-Ricki Robbie" class="toggle">
+                    <input type="checkbox" id="toggle-Ricki Robbie" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                  </label>
+                </div>
+              </div>
+            </li>
+            <li class="user-item clj--user-item">
+              <div class="user-item__text">
+                <div class="user-item__name clj-wip">Lindsay Claude</div>
+                <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-times-circle-o user-item__email-address__icon clj--user-item__email-unconfirmed"><span data-l8n="content:admin-user-list/user-not-confirmed-email" class="visuallyhidden">Not confirmed</span></i><span class="clj--user-item__email-address__text">Lindsay.Claude@google.com</span>
+                </div>
+              </div>
+              <div class="user-item__action-list clj-wip">
+                <div class="user-item__toggle-trust">
+                  <label for="toggle-Lindsay Claude" class="toggle">
+                    <input type="checkbox" id="toggle-Lindsay Claude" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                  </label>
+                </div>
+              </div>
+            </li>
+            <li class="user-item clj--user-item">
+              <div class="user-item__text">
+                <div class="user-item__name clj-wip">Kenzie Mackenzie</div>
+                <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-times-circle-o user-item__email-address__icon clj--user-item__email-unconfirmed"><span data-l8n="content:admin-user-list/user-not-confirmed-email" class="visuallyhidden">Not confirmed</span></i><span class="clj--user-item__email-address__text">Kenzie.Mackenzie@email-address.com</span>
+                </div>
+              </div>
+              <div class="user-item__action-list clj-wip">
+                <div class="user-item__toggle-trust">
+                  <label for="toggle-Kenzie Mackenzie" class="toggle">
+                    <input type="checkbox" id="toggle-Kenzie Mackenzie" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                  </label>
+                </div>
+              </div>
+            </li>
+            <li class="user-item clj--user-item">
+              <div class="user-item__text">
+                <div class="user-item__name clj-wip">Kayden Andy</div>
+                <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-check-circle-o user-item__email-address__icon clj--user-item__email-confirmed"><span data-l8n="content:admin-user-list/user-confirmed-email" class="visuallyhidden">Confirmed</span></i><span class="clj--user-item__email-address__text">Kayden.Andy@apple.com</span>
+                </div>
+              </div>
+              <div class="user-item__action-list clj-wip">
+                <div class="user-item__toggle-trust">
+                  <label for="toggle-Kayden Andy" class="toggle">
+                    <input type="checkbox" id="toggle-Kayden Andy" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                  </label>
+                </div>
+              </div>
+            </li>
+            <li class="user-item clj--user-item">
+              <div class="user-item__text">
+                <div class="user-item__name clj-wip">Rene Phoenix</div>
+                <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-times-circle-o user-item__email-address__icon clj--user-item__email-unconfirmed"><span data-l8n="content:admin-user-list/user-not-confirmed-email" class="visuallyhidden">Not confirmed</span></i><span class="clj--user-item__email-address__text">Rene.Phoenix@mobileme.com</span>
+                </div>
+              </div>
+              <div class="user-item__action-list clj-wip">
+                <div class="user-item__toggle-trust">
+                  <label for="toggle-Rene Phoenix" class="toggle">
+                    <input type="checkbox" id="toggle-Rene Phoenix" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                  </label>
+                </div>
+              </div>
+            </li>
+            <li class="user-item clj--user-item">
+              <div class="user-item__text">
+                <div class="user-item__name clj-wip">Odell Indigo</div>
+                <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-check-circle-o user-item__email-address__icon clj--user-item__email-confirmed"><span data-l8n="content:admin-user-list/user-confirmed-email" class="visuallyhidden">Confirmed</span></i><span class="clj--user-item__email-address__text">Odell.Indigo@yahoo.com</span>
+                </div>
+              </div>
+              <div class="user-item__action-list clj-wip">
+                <div class="user-item__toggle-trust">
+                  <label for="toggle-Odell Indigo" class="toggle">
+                    <input type="checkbox" id="toggle-Odell Indigo" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                  </label>
+                </div>
+              </div>
+            </li>
+            <li class="user-item clj--user-item">
+              <div class="user-item__text">
+                <div class="user-item__name clj-wip">Sammy Laurie</div>
+                <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-times-circle-o user-item__email-address__icon clj--user-item__email-unconfirmed"><span data-l8n="content:admin-user-list/user-not-confirmed-email" class="visuallyhidden">Not confirmed</span></i><span class="clj--user-item__email-address__text">Sammy.Laurie@gmail.com</span>
+                </div>
+              </div>
+              <div class="user-item__action-list clj-wip">
+                <div class="user-item__toggle-trust">
+                  <label for="toggle-Sammy Laurie" class="toggle">
+                    <input type="checkbox" id="toggle-Sammy Laurie" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                  </label>
+                </div>
+              </div>
+            </li>
+            <li class="user-item clj--user-item">
+              <div class="user-item__text">
+                <div class="user-item__name clj-wip">Averill Bernie</div>
+                <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-times-circle-o user-item__email-address__icon clj--user-item__email-unconfirmed"><span data-l8n="content:admin-user-list/user-not-confirmed-email" class="visuallyhidden">Not confirmed</span></i><span class="clj--user-item__email-address__text">Averill.Bernie@gmail.com</span>
+                </div>
+              </div>
+              <div class="user-item__action-list clj-wip">
+                <div class="user-item__toggle-trust">
+                  <label for="toggle-Averill Bernie" class="toggle">
+                    <input type="checkbox" id="toggle-Averill Bernie" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                  </label>
+                </div>
+              </div>
             </li>
           </ul>
         </div>
