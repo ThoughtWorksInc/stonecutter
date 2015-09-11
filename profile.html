@@ -1,5 +1,4 @@
-
-<!-- initialization--><!DOCTYPE html>
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8">
@@ -15,10 +14,7 @@
     <div role="banner" class="header">
       <div class="header__inner middle-container">
         <div class="header__logo"><span class="visuallyhidden clj--app-name">Stonecutter</span></div>
-        <nav role="navigation" class="header-nav clj--header-nav">
-          <li class="header-nav__item"><a href="./profile" data-l8n="content:profile/profile-link" class="header-nav__link">Profile</a></li>
-          <li class="header-nav__item"><a href="./sign-out" data-l8n="content:profile/sign-out-link" class="header-nav__link clj--sign-out__link func--sign-out__link">Sign out</a></li>
-        </nav>
+        <nav role="navigation" class="header-nav clj--header-nav"><a href="./profile" data-l8n="content:profile/profile-link" class="header-nav__link">Profile</a><a href="./sign-out" data-l8n="content:profile/sign-out-link" class="header-nav__link clj--sign-out__link func--sign-out__link">Sign out</a></nav>
       </div>
     </div>
     <div id="main" role="main" class="main-content">
@@ -34,7 +30,8 @@
               <p data-l8n="content:profile/email-not-confirmed" class="flash-message__title">Your email address is not been confirmed.</p>
             </div>
             <div class="verify-email-address__content verify-email-address__content--no-round-top">
-              <p data-l8n="content:profile/verify-email-intro">If you have not received an email to email@email.com you should resend the confirmation email.</p>
+              <p><span data-l8n="content:profile/verify-email-intro-1">If you have not received an email to</span> <span class="clj--unconfirmed-email">email@email.com</span> <span data-l8n="content:profile/verify-email-intro-2">you should resend the confirmation email.</span>
+              </p>
               <form action="/resend-confirmation-email" method="post" class="resend-confirmation-form">
                 <button type="submit" data-l8n="content:profile/verify-button" class="button func--resend-confirmation-email__button">Resend email confirmation</button>
               </form>
@@ -49,9 +46,7 @@
               <div class="card">
                 <div class="card__row card__row--bottom-border">
                   <div class="card__photo clj-wip">
-                    <!--a.button.button--full-width.card__photo-button(href="#") Update-->
                     <div class="card__image"><img src="./images/temp-avatar-300x300.jpg" alt="Your profile picture"/>
-                      <!--img(src="http://placekitten.com/g/302/302")-->
                     </div>
                   </div>
                   <div class="card__details">
@@ -60,7 +55,7 @@
                       <div class="card__display-name clj-wip">PTC</div>
                     </div>
                     <div class="card__description clj-wip">
-                      <p>Hoodie bespoke Tumblr, Pitchfork Etsy dreamcatcher cronut sartorial flexitarian vinyl synth PBR&B Neutra single-origin coffee.</p>
+                      <p>Hoodie bespoke Tumblr, Pitchfork Etsy dreamcatcher cronut sartorial flexitarian vinyl synth PBRB Neutra single-origin coffee.</p>
                     </div>
                   </div>
                 </div>
