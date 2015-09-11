@@ -9,13 +9,14 @@
             [stonecutter.db.user :as user]
             [stonecutter.db.confirmation :as conf]
             [stonecutter.db.mongo :as m]
-            [stonecutter.test.email :as test-email]))
+            [stonecutter.test.email :as test-email]
+            [stonecutter.session :as session]))
 
 (defn with-signed-in-user [ring-map token-store user]
   (let [access-token (cl-token/create-token token-store nil user)]
     (-> ring-map
-        (assoc-in [:session :access_token] (:token access-token))
-        (assoc-in [:session :user-login] (:login user)))))
+        (session/set-access-token (:token access-token))
+        (session/set-user-login (:login user)))))
 
 (def email "dummy@email.com")
 (def confirmation-id "RANDOM-ID-12345")

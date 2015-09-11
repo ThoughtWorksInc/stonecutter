@@ -5,7 +5,8 @@
             [clojure.string :as s]
             [stonecutter.config :as config]
             [stonecutter.db.mongo :as m]
-            [stonecutter.util.uuid :as uuid]))
+            [stonecutter.util.uuid :as uuid]
+            [stonecutter.session :as session]))
 
 (defn create-user
   ([id-gen email password]
@@ -90,3 +91,6 @@
 (defn retrieve-users [user-store]
   (->> (cl-store/entries user-store)
        (map #(dissoc % :password))))
+
+(defn authorisation-checker [user-store]
+  (comp has-admin-role? (partial retrieve-user user-store) session/request->user-login))

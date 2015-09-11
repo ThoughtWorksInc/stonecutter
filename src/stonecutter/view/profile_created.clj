@@ -2,7 +2,8 @@
   (:require [traduki.core :as t]
             [net.cgrand.enlive-html :as html]
             [stonecutter.view.view-helpers :as vh]
-            [stonecutter.routes :as r]))
+            [stonecutter.routes :as r]
+            [stonecutter.session :as session]))
 
 (def from-app-translation-tag "content:profile-created/action-button-from-app")
 (def default-translation-tag "content:profile-created/action-button-default")
@@ -22,7 +23,7 @@
                                                   from-app-translation-tag
                                                   default-translation-tag))))
 (defn get-next-url [from-app request]
-  (if from-app (get-in request [:session :return-to]) (r/path :show-profile)))
+  (if from-app (session/request->return-to request) (r/path :show-profile)))
 
 (defn set-flash-message [request enlive-m]
   (let [{:keys [flash-type email-address]} (:flash request)]

@@ -1,7 +1,8 @@
 (ns stonecutter.test.test-helpers
   (:require [midje.sweet :as midje]
             [net.cgrand.enlive-html :as html]
-            [ring.mock.request :as mock]))
+            [ring.mock.request :as mock]
+            [stonecutter.session :as session]))
 
 (defn create-request
   ([method url params]
@@ -33,7 +34,7 @@
                                              (html/select [body-class-enlive-selector]))))))
 
 (defn check-signed-in [request user]
-  (let [is-signed-in? #(and (= (:login user) (get-in % [:session :user-login]))
+  (let [is-signed-in? #(and (= (:login user) (session/request->user-login %))
                             (contains? (:session %) :access_token))]
     (midje/checker [response]
              (let [session-not-changed (not (contains? response :session))]

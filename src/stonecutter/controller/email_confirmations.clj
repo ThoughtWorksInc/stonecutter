@@ -11,7 +11,8 @@
             [stonecutter.util.ring :as ring-util]
             [stonecutter.controller.common :as common]
             [stonecutter.controller.user :as uc]
-            [ring.util.response :as response]))
+            [ring.util.response :as response]
+            [stonecutter.session :as session]))
 
 (defn show-confirm-sign-in-form [request]
   (sh/enlive-response (sign-in/confirmation-sign-in-form request) (:context request)))
@@ -63,7 +64,7 @@
   (wrap-validate-confirmation
     user-store confirmation-store request
     #(if (common/signed-in? request)
-      (let [user-email (get-in request [:session :user-login])
+      (let [user-email (session/request->user-login request)
             user (user/retrieve-user user-store user-email)
             confirmation (conf/fetch confirmation-store (get-in request [:params :confirmation-id]))]
         (log/debug (format "confirm-email-with-id Confirm-email user '%s' signed in." user-email))

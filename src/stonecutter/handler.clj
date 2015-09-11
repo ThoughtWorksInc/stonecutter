@@ -5,6 +5,7 @@
             [ring.adapter.jetty :as ring-jetty]
             [scenic.routes :as scenic]
             [clojure.tools.logging :as log]
+            [stonecutter.session :as session]
             [stonecutter.view.error :as error]
             [stonecutter.view.view-helpers :as vh]
             [stonecutter.helper :as sh]
@@ -97,7 +98,7 @@
        :show-user-list                       (partial admin/show-user-list user-store)}
       (m/wrap-handlers-except #(m/wrap-handle-403 % forbidden-err-handler) #{})
       (m/wrap-handlers-except m/wrap-disable-caching #{:theme-css :index :sign-in-or-register})
-      (m/wrap-just-these-handlers #(m/wrap-authorised % (comp u/has-admin-role? (partial u/retrieve-user user-store) sh/request->user-login))
+      (m/wrap-just-these-handlers #(m/wrap-authorised % (u/authorisation-checker user-store))
                                   #{:show-user-list})
       (m/wrap-handlers-except m/wrap-signed-in #{:index :sign-in-or-register
                                                  :sign-out

@@ -18,7 +18,8 @@
             [stonecutter.util.ring :as ring-util]
             [stonecutter.controller.common :as common]
             [ring.util.response :as response]
-            [stonecutter.db.confirmation :as confirmation]))
+            [stonecutter.db.confirmation :as confirmation]
+            [stonecutter.session :as session]))
 
 (defn index [request]
   (if (common/signed-in? request)
@@ -56,7 +57,7 @@
   (sh/enlive-response (change-password/change-password-form request) (:context request)))
 
 (defn change-password [user-store request]
-  (let [email (get-in request [:session :user-login])
+  (let [email (session/request->user-login request)
         params (:params request)
         new-password (:new-password params)
         err (v/validate-change-password params (partial user/authenticate-and-retrieve-user user-store email))
@@ -99,10 +100,12 @@
   (sh/enlive-response (delete-account/delete-account-confirmation request) (:context request)))
 
 (defn redirect-to-profile-deleted []
-  (assoc (r/redirect (routes/path :show-profile-deleted)) :session nil))
+  (-> (routes/path :show-profile-deleted)
+      r/redirect
+      (session/replace-session-with nil)))
 
 (defn delete-account [user-store confirmation-store request]
-  (let [email (get-in request [:session :user-login])]
+  (let [email (session/request->user-login request)]
     (when-let [confirmation (confirmation/retrieve-by-user-email confirmation-store email)]
       (confirmation/revoke! confirmation-store (:confirmation-id confirmation)))
     (user/delete-user! user-store email)
@@ -110,7 +113,7 @@
 
 
 (defn show-profile [client-store user-store request]
-  (let [email (get-in request [:session :user-login])
+  (let [email (session/request->user-login request)
         user (user/retrieve-user user-store email)
         confirmed? (:confirmed? user)
         role (:role user)
@@ -124,11 +127,8 @@
         profile/profile
         (sh/enlive-response (:context request)))))
 
-(defn get-in-session [request key]
-  (get-in request [:session key]))
-
 (defn from-app? [request]
-  (get-in-session request :return-to))
+  (session/request->return-to request))
 
 (defn show-profile-created [request]
   (let [request (assoc request :params {:from-app (from-app? request)})]
@@ -141,7 +141,7 @@
 
 (defn show-unshare-profile-card [client-store user-store request]
   (when-let [client-id (get-in request [:params :client_id])]
-    (if (user/is-authorised-client-for-user? user-store (get-in request [:session :user-login]) client-id)
+    (if (user/is-authorised-client-for-user? user-store (session/request->user-login request) client-id)
       (let [client (c/retrieve-client client-store client-id)]
         (-> (assoc-in request [:context :client] client)
             unshare-profile-card/unshare-profile-card
@@ -149,14 +149,14 @@
       (r/redirect (routes/path :show-profile)))))
 
 (defn unshare-profile-card [user-store request]
-  (let [email (get-in request [:session :user-login])
+  (let [email (session/request->user-login request)
         client-id (get-in request [:params :client_id])]
     (user/remove-authorised-client-for-user! user-store email client-id)
     (r/redirect (routes/path :show-profile))))
 
 (defn resend-confirmation-email [user-store confirmation-store email-sender request]
   (let [config-m (get-in request [:context :config-m])
-        email (get-in request [:session :user-login])
+        email (session/request->user-login request)
         user (user/retrieve-user user-store email)]
     (if (:confirmed? user)
       (-> (r/redirect (routes/path :show-profile)) (assoc :flash :email-already-confirmed))

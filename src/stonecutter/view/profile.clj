@@ -2,10 +2,11 @@
   (:require [net.cgrand.enlive-html :as html]
             [stonecutter.config :as config]
             [stonecutter.routes :as r]
-            [stonecutter.view.view-helpers :as vh]))
+            [stonecutter.view.view-helpers :as vh]
+            [stonecutter.session :as session]))
 
 (defn add-username [enlive-m request]
-  (let [email (get-in request [:session :user-login])]
+  (let [email (session/request->user-login request)]
     (html/at enlive-m
              [:.clj--card-email] (html/content email))))
 
@@ -47,7 +48,7 @@
 
 (defn diplay-email-unconfirmed-message [enlive-m request]
   (if (= false (get-in request [:context :confirmed?]))
-    (let [email (get-in request [:session :user-login])]
+    (let [email (session/request->user-login request)]
       (html/at enlive-m [:.clj--unconfirmed-email] (html/content email)))
     (vh/remove-element enlive-m [:.clj--unconfirmed-email-message-container])))
 

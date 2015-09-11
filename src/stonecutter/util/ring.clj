@@ -1,4 +1,5 @@
-(ns stonecutter.util.ring)
+(ns stonecutter.util.ring
+  (:require [stonecutter.session :as session]))
 
 (defn complete-uri-of [request]
     (str (:uri request)
@@ -7,4 +8,4 @@
 
 (defn preserve-session [response request]
   (-> response
-      (assoc :session (:session request))))
+      (session/replace-session-with (:session request))))

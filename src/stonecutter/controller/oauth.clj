@@ -10,7 +10,8 @@
             [stonecutter.db.client :as client]
             [stonecutter.view.authorise :as authorise]
             [stonecutter.view.authorise-failure :as authorise-failure]
-            [stonecutter.helper :as sh]))
+            [stonecutter.helper :as sh]
+            [stonecutter.session :as session]))
 
 (defn show-authorise-form [client-store request]
   (let [client-id (get-in request [:params :client_id])]
@@ -37,7 +38,7 @@
 
 (defn auto-approver [user-store request]
   (let [client-id (get-in request [:params :client_id])
-        user-email (get-in request [:session :user-login])]
+        user-email (session/request->user-login request)]
     (user/is-authorised-client-for-user? user-store user-email client-id)))
 
 (defn auth-handler [auth-code-store client-store user-store token-store request]
@@ -50,7 +51,7 @@
 
 (defn authorise-client [auth-code-store client-store user-store token-store request]
   (let [client-id (get-in request [:params :client_id])
-        user-email (get-in request [:session :user-login])
+        user-email (session/request->user-login request)
         response (auth-handler auth-code-store client-store user-store token-store request)]
     (user/add-authorised-client-for-user! user-store user-email client-id)
     response))
@@ -69,13 +70,13 @@
 (defn authorise [auth-code-store client-store user-store token-store request]
   (let [client-id (get-in request [:params :client_id])
         redirect-uri (get-in request [:params :redirect_uri])
-        user-login (get-in request [:session :user-login])
+        user-login (session/request->user-login request)
         clauth-request (-> request remove-csrf-token add-html-accept)
-        access-token (get-in request [:session :access_token])]
+        access-token (session/request->access-token request)]
     (if (is-redirect-uri-valid? client-store client-id redirect-uri)
       (-> (auth-handler auth-code-store client-store user-store token-store clauth-request)
-          (assoc-in [:session :user-login] user-login)
-          (assoc-in [:session :access_token] access-token))
+          (session/set-user-login user-login)
+          (session/set-access-token access-token))
       (do
         (log/warn "Invalid query params for authorisation request")
         {:status 403}))))
