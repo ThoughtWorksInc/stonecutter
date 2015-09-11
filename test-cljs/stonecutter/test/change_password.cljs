@@ -4,6 +4,7 @@
             [dommy.utils :as du]
             [clojure.string :as string]
             [stonecutter.change-password :as cp]
+            [stonecutter.renderer.change-password :as r]
             [stonecutter.test.test-utils :as test-utils])
   (:require-macros [cemerick.cljs.test :refer [deftest is testing run-tests]]
                    [dommy.core :refer [sel1 sel]]
@@ -132,7 +133,7 @@
                   (testing "losing focus when blank adds invalid field class"
                            (lose-focus current-password-input)
                            (test-field-has-class current-password-field field-invalid-class)
-                           (has-message-on-selector form-row-current-password-error-class (get-in cp/error-to-message [:current-password :blank])))
+                           (has-message-on-selector form-row-current-password-error-class (get-in r/error-to-message [:current-password :blank])))
 
                   (testing "losing focus when correct format does not add invalid field class"
                            (enter-text current-password-input valid-password)
@@ -151,12 +152,12 @@
                   (testing "losing focus when blank adds invalid field class"
                            (lose-focus new-password-input)
                            (test-field-has-class new-password-field field-invalid-class)
-                           (has-no-message-on-selector form-row-new-password-error-class (get-in cp/error-to-message [:new-password :blank])))
+                           (has-no-message-on-selector form-row-new-password-error-class (get-in r/error-to-message [:new-password :blank])))
 
                   (testing "valid input adds valid field class"
                            (enter-text new-password-input valid-password)
                            (test-field-has-class new-password-field field-valid-class)
-                           (has-no-message-on-selector form-row-new-password-error-class (get-in cp/error-to-message [:new-password :blank])))
+                           (has-no-message-on-selector form-row-new-password-error-class (get-in r/error-to-message [:new-password :blank])))
 
                   (testing "losing focus when correct format does not add invalid field class"
                            (lose-focus new-password-input)
@@ -169,14 +170,14 @@
 
                   (testing "losing focus when incorrect format adds invalid field class"
                            (lose-focus new-password-input)
-                           (has-message-on-selector form-row-new-password-error-class (get-in cp/error-to-message [:new-password :too-short]))
+                           (has-message-on-selector form-row-new-password-error-class (get-in r/error-to-message [:new-password :too-short]))
                            (test-field-has-class new-password-field field-invalid-class))
 
                   (testing "losing focus when password is unchange adds invalid field class and message"
                            (enter-text current-password-input valid-password)
                            (enter-text new-password-input valid-password)
                            (lose-focus new-password-input)
-                           (has-message-on-selector form-row-new-password-error-class (get-in cp/error-to-message [:new-password :unchanged]))
+                           (has-message-on-selector form-row-new-password-error-class (get-in r/error-to-message [:new-password :unchanged]))
                            (test-field-has-class new-password-field field-invalid-class))))
 
 (deftest submitting-invalid-forms

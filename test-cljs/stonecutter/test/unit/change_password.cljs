@@ -62,11 +62,3 @@
                                  expected-state {:current-password {} :new-password {:value "1234567" :error :anything :tick false}}]
                              (is (= expected-state (cp/update-new-password-input current-state))
                                  "short new password did not turn tick to false and/or changed the error")))))
-
-;;NOTES
-; :new-password
-; {:value "12345678" :error nil} => add tick, everything is good
-; {:value "123456" :error nil} => no tick, no err msg
-; {:value "1234567" :error :too-short} => invalid field, add too-short err message
-; {:value "" :error :blank}
-; {:value "1234" :error :blank}
