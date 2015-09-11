@@ -1,7 +1,8 @@
 (ns stonecutter.change-password
   (:require [dommy.core :as d]
             [stonecutter.validation :as v]
-            [stonecutter.renderer.change-password :as r])
+            [stonecutter.renderer.change-password :as r]
+            [stonecutter.controller.change-password :as c])
   (:require-macros [dommy.core :as dm]))
 
 (def current-password-input :#current-password)
@@ -70,12 +71,25 @@
   (when-let [e (dm/sel1 selector)]
     (d/listen! e event function)))
 
+(def change-password-form-state (atom {}))
+
+(defn update-state-input! [field]
+  (let [new-input-value (field (field-values))]
+    (swap! change-password-form-state #(assoc-in % [field :value] new-input-value))))
+
+(defn update-state-and-render [field controller-fn]
+  (update-state-input! field)
+  (swap! change-password-form-state controller-fn)
+  (r/render! @change-password-form-state))
+
 (defn start []
-  (setup-listener current-password-input :input update-current-password!)
+
+  (setup-listener current-password-input :input #(update-state-and-render :current-password (partial c/update-current-password-input)))
   (setup-listener new-password-input :input update-new-password!)
   (setup-listener current-password-input :input update-new-password!)
-  (setup-listener current-password-input :blur check-current-password!)
+  (setup-listener current-password-input :blur #(update-state-and-render :current-password (partial c/update-current-password-blur)))
   (setup-listener new-password-input :blur check-new-password!)
+
   (setup-listener change-password-form :submit block-invalid-submit))
 
 (set! (.-onload js/window) start)
