@@ -23,8 +23,10 @@
     (assoc-in state [:new-password :error] error)))
 
 (defn update-new-password-input [state]
-  (let [password (get-in state [:new-password :value])
-        error (v/validate-password-format password)]
+  (let [current-password (get-in state [:current-password :value])
+        new-password (get-in state [:new-password :value])
+        error (or (v/validate-password-format new-password)
+                  (v/validate-passwords-are-different current-password new-password))]
     (if error
       (assoc-in state [:new-password :tick] false)
       (-> state
