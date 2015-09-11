@@ -59,8 +59,15 @@
 
 
        (fact "can delete a user"
+             (user/retrieve-user user-store "email@server.com") =not=> nil
              (user/delete-user! user-store "email@server.com") => {}
-             (user/authenticate-and-retrieve-user user-store "email@server.com" "password") => nil))
+             (user/retrieve-user user-store "email@server.com") => nil)
+
+       (fact "deletion is case-insensitive"
+             (user/store-user! user-store "email@server.com" "password")
+             (user/delete-user! user-store "EMAIL@SERVER.COM")
+             (user/retrieve-user user-store "email@server.com") => nil)
+       )
 
 (facts "about retrieving all users"
        (fact "can retrieve all users"

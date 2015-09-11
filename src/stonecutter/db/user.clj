@@ -38,7 +38,7 @@
   (not (nil? (retrieve-user user-store (s/lower-case email)))))
 
 (defn delete-user! [user-store email]
-  (cl-store/revoke! user-store email))
+  (cl-store/revoke! user-store (s/lower-case email)))
 
 (defn authenticate-and-retrieve-user [user-store email password]
   (-> (cl-user/authenticate-user user-store (s/lower-case email) password)
