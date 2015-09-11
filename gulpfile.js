@@ -10,6 +10,7 @@ var gulp = require('gulp'),
     del = require('del'),
     replace = require('gulp-replace'),
     runSequence = require('run-sequence'),
+    html5Lint = require('gulp-html5-lint'),
     browsersync = '',
     nodemon = '',
     ghPages = '';
@@ -91,6 +92,11 @@ gulp.task('favicons', function () {
   return gulp.src(dev_path.favicons)
       .pipe(imagemin({optimizationLevel: 3}))
       .pipe(gulp.dest(build_path.html));
+});
+
+gulp.task('html5lint', ['jade'], function() {
+  return gulp.src(output_path + '/*.html')
+      .pipe(html5Lint());
 });
 
 gulp.task('fonts', function () {
