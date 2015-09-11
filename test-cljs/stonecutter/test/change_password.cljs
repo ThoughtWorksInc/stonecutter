@@ -32,6 +32,9 @@
 (defn setup-page! [html]
     (dommy/set-html! (sel1 :html) html))
 
+(defn reset-change-password-form-atom! []
+  (reset! cp/change-password-form-state {}))
+
 (def change-password-template (load-template "public/change-password.html"))
 
 (defn enter-text [sel text]
@@ -82,6 +85,7 @@
 (deftest new-password-validation-on-input
          (setup-page! change-password-template)
          (cp/start)
+         (reset-change-password-form-atom!)
 
          (testing "typing in valid password causes valid class to appear"
                   (test-field-validates-client-side new-password-input new-password-field))
@@ -114,13 +118,10 @@
     (is (some #{message} err-messages)
         (str "Missing error message " message " when error occurs"))))
 
-(defn has-no-message-on-selector
-  ([selector]
-    (has-no-message-on-selector selector ""))
-  ([selector message]
+(defn has-no-message-on-selector [selector]
   (let [error-message (dommy/text (sel1 selector))]
-    (is (= message error-message)
-        (str error-message " should not equal to " message)))))
+    (is (= "" error-message)
+        (str error-message " should not equal to " message))))
 
 (defn has-summary-message [message]
   (has-message-on-selector :.validation-summary__item message))
@@ -148,16 +149,18 @@
                            (lose-focus current-password-input)
                            (test-field-has-class current-password-field field-invalid-class)))
 
+         (reset-change-password-form-atom!)
+
          (testing "new password field"
                   (testing "losing focus when blank adds invalid field class"
                            (lose-focus new-password-input)
                            (test-field-has-class new-password-field field-invalid-class)
-                           (has-no-message-on-selector form-row-new-password-error-class (get-in r/error-to-message [:new-password :blank])))
+                           (has-message-on-selector form-row-new-password-error-class (get-in r/error-to-message [:new-password :blank])))
 
                   (testing "valid input adds valid field class"
                            (enter-text new-password-input valid-password)
                            (test-field-has-class new-password-field field-valid-class)
-                           (has-no-message-on-selector form-row-new-password-error-class (get-in r/error-to-message [:new-password :blank])))
+                           (has-no-message-on-selector form-row-new-password-error-class))
 
                   (testing "losing focus when correct format does not add invalid field class"
                            (lose-focus new-password-input)

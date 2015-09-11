@@ -34,10 +34,16 @@
     (d/remove-class! element form-row-help)
     (d/set-text! element message)))
 
+(defn toggle-class [field-sel add? class]
+  (if add?
+    (d/add-class! (dm/sel1 field-sel) class)
+    (d/remove-class! (dm/sel1 field-sel) class)))
+
 (defn toggle-invalid-class [field-sel err?]
-  (if err?
-    (d/add-class! (dm/sel1 field-sel) field-invalid-class)
-    (d/remove-class! (dm/sel1 field-sel) field-invalid-class)))
+  (toggle-class field-sel err? field-invalid-class))
+
+(defn toggle-valid-class [field-sel err?]
+  (toggle-class field-sel err? field-valid-class))
 
 (defn toggle-error-class [field-sel err?]
   (if err?
@@ -59,7 +65,8 @@
     state))
 
 (defn render-new-password-tick! [state]
-  (toggle-error-class new-password-field (not (get-in state [:new-password :tick])))
+  (let [tick (get-in state [:new-password :tick])]
+    (toggle-valid-class new-password-field tick))
   state)
 
 (defn render! [state]

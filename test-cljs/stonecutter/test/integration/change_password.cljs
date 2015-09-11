@@ -65,4 +65,11 @@
                            (let [state (assoc-in default-state [:new-password :tick] true)]
                              (r/render! state))
                            (cp-test/test-field-has-class cp-test/new-password-field cp-test/field-valid-class)
-                           (cp-test/test-field-doesnt-have-class cp-test/new-password-field cp-test/field-invalid-class))))
+                           (cp-test/test-field-doesnt-have-class cp-test/new-password-field cp-test/field-invalid-class))
+
+                  (testing "tick false removes valid class and does not add invalid class"
+                           (let [state (assoc-in default-state [:new-password :tick] false)]
+                             (r/render! state))
+                           (cp-test/test-field-doesnt-have-class cp-test/new-password-field cp-test/field-valid-class)
+                           (cp-test/test-field-doesnt-have-class cp-test/new-password-field cp-test/field-invalid-class))
+                  ))
