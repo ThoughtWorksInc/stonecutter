@@ -3,6 +3,7 @@ mixin userListItemEmpty()
     .user-item__text(data-l8n="content:admin-user-list/list-empty") !There are no users
 
 mixin userItem(fullName, emailAddress, emailIsConfirmed, userIsTrusted)
+  - var inputID = fullName.replace(/ /g, "").toLowerCase();
   li.user-item.clj--user-item
     .user-item__text
       .user-item__name.clj-wip !#{fullName}
@@ -16,8 +17,8 @@ mixin userItem(fullName, emailAddress, emailIsConfirmed, userIsTrusted)
         span.clj--user-item__email-address__text !#{emailAddress}
     .user-item__action-list.clj-wip
       .user-item__toggle-trust
-        label.toggle(for="toggle-#{fullName}")
-          input.toggle__input(type="checkbox" id="toggle-#{fullName}" checked=userIsTrusted)
+        label.toggle(for="toggle-#{inputID}")
+          input.toggle__input(type="checkbox" id="toggle-#{inputID}" checked=userIsTrusted)
           span.toggle__title.visuallyhidden(data-l8n="content:admin-user-list/trust-label") !Toggle trust
           span.toggle__switch
             span.toggle__handle

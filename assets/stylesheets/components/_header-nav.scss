@@ -14,50 +14,21 @@ $tab_link_colour_hover: $medium_cyan !default;
   margin: 0 auto;
   list-style: none;
   text-align: center;
-
   @include  width-from($medium_device) {
     @include vertical-middle-me;
     right: 0;
     text-align: right;
   }
 
-  &__item {
-    position: relative;
-    z-index: 10;
-    display: inline-block;
-    //float: left;
-    margin-right: -6px;
-    border-top: 1px solid transparent;
-    border-right: 1px solid transparent;
-    border-left: 1px solid transparent;
-    color: $tab_link_colour;
-    &--active {
-      color: $tab_link_colour_hover;
-      background-color: $tab_bg_color_active;
-      &:after {
-        content: '';
-        display: block;
-        position: absolute;
-        bottom: 1px;
-        left: 0;
-        z-index: 1;
-        width: 100%;
-        height: 1px;
-        border-bottom: 1px solid white;
-      }
-      a {
-        pointer-events: none;
-      }
-    }
-  }
   &__link {
-    display: block;
+    position: relative;
+    display: inline-block;
     text-align: center;
-    padding: 10px 30px;
+    padding: 10px 20px;
     text-decoration: none;
     font-weight: bold;
     @include font-size(13px);
-    color: inherit;
+    color: $tab_link_colour;
     transition: color 250ms ease;
     &:hover {
       cursor: pointer;

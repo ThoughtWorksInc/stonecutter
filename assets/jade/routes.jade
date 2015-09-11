@@ -15,18 +15,17 @@ block headerScripts
       list-style: none;
     }
     .demo-item {
+      display: block;
       margin: 0 0 15px 0;
-    }
-    .demo-item:last-child {
-      margin-bottom: 0;
-    }
-    .demo-item a {
       color: #007E84;
       font-size: 20px;
       text-decoration: none;
     }
-    .demo-item a:hover {
+    .demo-item:hover {
       text-decoration: underline;
+    }
+    .demo-item:last-child {
+      margin-bottom: 0;
     }
 
 block content
@@ -36,24 +35,24 @@ block content
 
       h2 Main
       nav.demo-nav
-        li.demo-item: a(href="./library") Library
-        li.demo-item: a(href="./") Home
-        li.demo-item: a(href="./change-password") Change password
-        li.demo-item: a(href="./profile-created") Profile created
-        li.demo-item: a(href="./profile-deleted") Profile deleted
-        li.demo-item: a(href="./forgot-password") Forgot password
-        li.demo-item: a(href="./forgot-password-confirmation") Forgot password confirmation
-        li.demo-item: a(href="./reset-password") Reset password
-        li.demo-item: a(href="./authorise") Authorise
-        li.demo-item: a(href="./authorise-failure") Authorise failure
-        li.demo-item: a(href="./profile") Profile
-        li.demo-item: a(href="./unshare-profile-card") Unshare Profile Card No JS
-        li.demo-item: a(href="./delete-account") Delete account No JS
-        li.demo-item: a(href="./confirm-email-expired") Email confirmation expired
-        li.demo-item: a(href="./confirm-email-resent") Confirm email resent
+        a.demo-item(href="./library") Library
+        a.demo-item(href="./") Home
+        a.demo-item(href="./change-password") Change password
+        a.demo-item(href="./profile-created") Profile created
+        a.demo-item(href="./profile-deleted") Profile deleted
+        a.demo-item(href="./forgot-password") Forgot password
+        a.demo-item(href="./forgot-password-confirmation") Forgot password confirmation
+        a.demo-item(href="./reset-password") Reset password
+        a.demo-item(href="./authorise") Authorise
+        a.demo-item(href="./authorise-failure") Authorise failure
+        a.demo-item(href="./profile") Profile
+        a.demo-item(href="./unshare-profile-card") Unshare Profile Card No JS
+        a.demo-item(href="./delete-account") Delete account No JS
+        a.demo-item(href="./confirm-email-expired") Email confirmation expired
+        a.demo-item(href="./confirm-email-resent") Confirm email resent
 
       h2 Admin
       nav.demo-nav
-        li.demo-item: a(href="./admin/sign-in") Admin sign in
-        li.demo-item: a(href="./admin/user-list") Admin user list
-        li.demo-item: a(href="./admin/invite") Admin invite
+        a.demo-item(href="./admin/sign-in") Admin sign in
+        a.demo-item(href="./admin/user-list") Admin user list
+        a.demo-item(href="./admin/invite") Admin invite

@@ -8,8 +8,8 @@ block vars
 block headerScripts
 
 block headerContent
-  li.header-nav__item: a.header-nav__link(href="./profile", data-l8n="content:profile/profile-link") !Profile
-  li.header-nav__item: a.header-nav__link.clj--sign-out__link.func--sign-out__link(href="./sign-out", data-l8n="content:profile/sign-out-link") !Sign out
+  a.header-nav__link(href="./profile", data-l8n="content:profile/profile-link") !Profile
+  a.header-nav__link.clj--sign-out__link.func--sign-out__link(href="./sign-out", data-l8n="content:profile/sign-out-link") !Sign out
 
 block content
   .single-column
@@ -44,16 +44,16 @@ block content
         .card
           .card__row.card__row--bottom-border
             .card__photo.clj-wip
-              //a.button.button--full-width.card__photo-button(href="#") Update
+              //-a.button.button--full-width.card__photo-button(href="#") Update
               .card__image
                 +imageIncludeTag("temp-avatar-300x300.jpg", "", {alt:"Your profile picture"})
-                //img(src="http://placekitten.com/g/302/302")
+                //-img(src="http://placekitten.com/g/302/302")
             .card__details
               .card__heading.clj-wip
                 .card__name.clj--card--name.clj-wip Peter Thomas Cheshire
                 .card__display-name.clj-wip PTC
               .card__description.clj-wip
-                p Hoodie bespoke Tumblr, Pitchfork Etsy dreamcatcher cronut sartorial flexitarian vinyl synth PBR&B Neutra single-origin coffee.
+                p Hoodie bespoke Tumblr, Pitchfork Etsy dreamcatcher cronut sartorial flexitarian vinyl synth PBRB Neutra single-origin coffee.
           .card__row
             dl.card__items
               dt.card__items-key Email
