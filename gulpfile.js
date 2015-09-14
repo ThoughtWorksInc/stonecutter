@@ -68,7 +68,9 @@ gulp.task('sass', function () {
         console.log(err);
         this.emit('end');
       })
-      .pipe(autoprefixer())
+      .pipe(autoprefixer({
+        browsers: ['last 3 versions']
+      }))
       .pipe(gulpif(!isDev, minifyCSS({noAdvanced: true}))) // minify if Prod
       .pipe(gulp.dest(build_path.css));
 });
