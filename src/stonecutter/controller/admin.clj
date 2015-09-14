@@ -18,6 +18,11 @@
         trusted? (get-in request [:params :trust-toggle])
         role (if trusted?
                (:trusted config/roles)
-               (:untrusted config/roles))]
+               (:untrusted config/roles))
+        flash-key (if trusted?
+                    :user-trusted
+                    :user-untrusted)]
+
     (u/update-user-role! user-store email role)
-    (r/redirect (routes/path :show-user-list))))
+    (-> (r/redirect (routes/path :show-user-list))
+        (assoc :flash flash-key))))

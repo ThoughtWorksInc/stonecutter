@@ -66,3 +66,19 @@
   (let [translator (t/translations-fn t/translation-map)
         request (th/create-request translator)]
     (th/test-translations "user-list" user-list request)))
+
+(facts "about flash messages"
+       (fact "no flash messages are displayed by default"
+             (let [page (-> (th/create-request) user-list)]
+               (-> page (html/select [:.clj--flash-message-container])) => empty?))
+
+       (tabular
+         (fact "appropriate flash message is displayed on page when a flash key is included in the request"
+               (let [page (-> (th/create-request) (assoc :flash ?flash-key) user-list)]
+                 (-> page (html/select [:.clj--flash-message-container])) =not=> empty?
+                 (-> page (html/select [:.clj--flash-message-text]) first :attrs :data-l8n)
+                 => ?translation-key))
+
+         ?flash-key                 ?translation-key
+         :user-trusted              "content:flash/user-trusted"
+         :user-untrusted            "content:flash/user-untrusted"))

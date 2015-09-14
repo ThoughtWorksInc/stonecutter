@@ -43,11 +43,18 @@
 (defn not-an-admin? [user]
   (not (= (:admin config/roles) (:role user))))
 
+(defn set-flash-message [enlive-m request]
+  (case (:flash request)
+    :user-trusted (html/at enlive-m [:.clj--flash-message-text] (html/set-attr :data-l8n "content:flash/user-trusted"))
+    :user-untrusted (html/at enlive-m [:.clj--flash-message-text] (html/set-attr :data-l8n "content:flash/user-untrusted"))
+    (vh/remove-element enlive-m [:.clj--flash-message-container])))
+
 (defn user-list [request]
   (let [users (get-in request [:context :users])
         non-admin-users (filterv not-an-admin? users)]
     (-> (vh/load-template "public/user-list.html")
         (add-user-list non-admin-users)
+        (set-flash-message request)
         set-sign-out-link
         vh/add-anti-forgery
         vh/remove-work-in-progress)))

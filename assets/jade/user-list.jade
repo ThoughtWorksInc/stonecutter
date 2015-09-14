@@ -15,6 +15,11 @@ block headerContent
 
 block content
   .single-column
+
+    .clj--flash-message-container.func--flash-message-container
+      .flash-message.flash-message--success
+        p.flash-message__title.clj--flash-message-text !Success Flash Message.
+
     h1(data-l8n="content:admin-user-list/page-title") !User list
     form(action="#", method="post", role="search")
       p.search-row.clj-wip

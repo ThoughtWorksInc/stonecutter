@@ -43,3 +43,22 @@
                (admin/set-user-trustworthiness user-store request)
                (-> (user/retrieve-user user-store user-email)
                    :role) => (:untrusted config/roles))))
+
+(facts "post will respond with flash message"
+       (fact "trusting user sends user-trusted flash message"
+             (let [user-store (m/create-memory-store)
+                   user-email "user3#email.com"
+                   _user3 (user/store-user! user-store user-email "password3")
+                   request (th/create-request :post (routes/path :set-user-trustworthiness) {:login user-email :trust-toggle "on"})
+                   response (admin/set-user-trustworthiness user-store request)]
+
+               response => (contains {:flash :user-trusted})))
+
+       (fact "untrusting user sends user-untrusted flash message"
+             (let [user-store (m/create-memory-store)
+                   user-email "user3#email.com"
+                   _user (user/store-user! user-store user-email "password")
+                   request (th/create-request :post (routes/path :set-user-trustworthiness) {:login user-email})
+                   response (admin/set-user-trustworthiness user-store request)]
+
+               response => (contains {:flash :user-untrusted}))))
