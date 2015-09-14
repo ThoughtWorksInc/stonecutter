@@ -127,6 +127,11 @@ app.get('/admin/invite', function (req, res) {
   customRender(res, 'admin-invite-user', pageData);
 });
 
+app.get('/email-demo', function (req, res) {
+  customRender(res, 'email-demo', pageData);
+});
+
+
 
 app.listen(app.get('port'), function () {
   console.log('Node app is running on port', app.get('port'));

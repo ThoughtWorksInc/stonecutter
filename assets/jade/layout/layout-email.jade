@@ -1,0 +1,81 @@
+//-
+  Using the xHTML doctype is a good practice when sending HTML email. While not the only doctype you can use, it seems to have the least inconsistencies. For more information on which one may work best for you, check out the resources below.
+  UPDATED: Now using xHTML strict based on the fact that gmail and hotmail uses it.  Find out more about that, and another great boilerplate, here: http://www.emailology.org/#1
+  More info/Reference on doctypes in email:
+  Campaign Monitor - http://www.campaignmonitor.com/blog/post/3317/correct-doctype-to-use-in-html-email/
+  Email on Acid - http://www.emailonacid.com/blog/details/C18/doctype_-_the_black_sheep_of_html_email_design
+//--->
+
+- var font_family = "Helvetica,Arial,sans-serif"
+- var basicLinkColor = "#367cc9"
+- var basicTextColor = "#222222"
+- var footerTextColor = "#aaaaaa"
+- var appName = "Stonecutter"
+- var allowHeaderLink = false
+- var subjectTitle = "Your Message Subject or Title"
+block vars
+
+doctype strict
+html(xmlns="http://www.w3.org/1999/xhtml")
+  head
+    meta(http-equiv="Content-Type", content="text/html; charset=utf-8")
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    title #{subjectTitle}
+    //-All devices
+    style(type="text/css")
+      | #outlook a{padding:0}body{width:100%!important;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;margin:0;padding:0}.ExternalClass{width:100%}.ExternalClass,.ExternalClass div,.ExternalClass font,.ExternalClass p,.ExternalClass span,.ExternalClass td{line-height:100%}#backgroundTable{margin:0;padding:0;width:100%!important;line-height:100%!important}img{outline:0;text-decoration:none;-ms-interpolation-mode:bicubic}a img{border:none}.image_fix{display:block}p{margin:1em 0}h1,h2,h3,h4,h5,h6{color:#000!important}h1 a,h2 a,h3 a,h4 a,h5 a,h6 a{color:#00f!important}h1 a:active,h2 a:active,h3 a:active,h4 a:active,h5 a:active,h6 a:active{color:red!important}h1 a:visited,h2 a:visited,h3 a:visited,h4 a:visited,h5 a:visited,h6 a:visited{color:purple!important}table td{border-collapse:collapse}table{border-collapse:collapse;mso-table-lspace:0;mso-table-rspace:0}a{color:orange}@media only screen and (max-device-width:480px){a[href^=tel],a[href^=sms]{text-decoration:none;color:#000;pointer-events:none;cursor:default}.mobile_link a[href^=tel],.mobile_link a[href^=sms]{text-decoration:default;color:orange!important;pointer-events:auto;cursor:default}}@media only screen and (min-device-width:768px) and (max-device-width:1024px){a[href^=tel],a[href^=sms]{text-decoration:none;color:#00f;pointer-events:none;cursor:default}.mobile_link a[href^=tel],.mobile_link a[href^=sms]{text-decoration:default;color:orange!important;pointer-events:auto;cursor:default}}
+      block inlineStyles
+    //-Targeting Windows Mobile
+    <!--[if IEMobile 7]>
+    style(type="text/css")
+      block inlineIE7Styles
+    <![endif]-->
+    //-END MOBILE TARGETING
+    <!--[if gte mso 9]>
+    style
+      //-Target Outlook 2007 and 2010
+      block inlineOutlookStyles
+    <![endif]-->
+  body(style="width:100%; margin:0; padding:0; -webkit-text-size-adjust:100%; -ms-text-size-adjust:100%;")
+    //- Wrapper/Container Table: Use a wrapper table to control the width and the background color consistently of your email. Use this approach instead of setting attributes on the body tag.
+    table#backgroundTable(cellpadding="0", cellspacing="0", border="0", style="margin:0; padding:0; width:100%; line-height: 100% !important;")
+      tr
+        td(valign="top", colspan="3")
+          table(cellpadding="0", cellspacing="0", border="0", align="center", width="600", style="background: #eeeeee;")
+            tr
+              td(width="20")
+              td(style="height: 60px; font-family:#{font_family}; font-size: 26px; font-weight: bold; color: #222222; margin: 0;")
+                if allowHeaderLink
+                  a(href="#", style="height: 60px; font-family:#{font_family}; font-size: 26px; font-weight: bold; color: #222222; margin: 0;") #{AppName}
+                else
+                  | #{appName}
+              td(width="20")
+      tr(height="20")
+        td(height="20", colspan="3")
+      tr
+        td(width="20")
+        td(valign="top")
+          table(cellpadding="0", cellspacing="0", border="0", align="center", width="560", style="background: #fff;")
+            tr
+              td(valign="top", style="vertical-align: top;")
+                block content
+            tr(height="20")
+              td(height="20")
+            tr(height="20", style="border-top: 1px solid #eeeeee;")
+              td(height="20")
+            tr
+              td(style="font-family:#{font_family}; font-size: 10px; color: #{footerTextColor}; margin: 0;")
+                | Standard stuff
+            tr
+              td(style="font-family:#{font_family}; font-size: 10px; color: #{footerTextColor}; margin: 0;")
+                block footerContent
+        td(width="20")
+        //-
+          //- Yahoo Link color fix updated: Simply bring your link styling inline. -->
+          a(href="http://htmlemailboilerplate.com", target ="_blank", title="Styling Links", style="color: orange; text-decoration: none;") Coloring Links appropriately
+
+          //- Gmail/Hotmail image display fix: Gmail and Hotmail unwantedly adds in an extra space below images when using non IE browsers.  This can be especially painful when you putting images on top of each other or putting back together an image you spliced for formatting reasons.  Either way, you can add the 'image_fix' class to remove that space below the image.  Make sure to set alignment (don't use float) on your images if you are placing them inline with text.-->
+          img.image_fix(src="full path to image", alt="Your alt text", title="Your title text", width="x", height="x")
+
+          //- Step 2: Working with telephone numbers (including sms prompts).  Use the "mobile_link" class with a span tag to control what number links and what doesn't in mobile clients. -->
+          span.mobile_link 123-456-7890

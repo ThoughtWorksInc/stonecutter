@@ -20,7 +20,7 @@ var staticMode = false;
 var output_path = 'resources/public';
 var deployed_path = 'deployed';
 var dev_path = {
-  sass: ['assets/stylesheets/*.scss', '!assets/stylesheets/_*.scss'],
+  sass: ['assets/stylesheets/**/*.scss', '!assets/stylesheets/_*.scss'],
   jadedev: ['assets/jade/**/*.jade', '!assets/jade/_*.jade'],
   jade: ['assets/jade/**/*.jade', '!assets/jade/_*.jade', '!assets/jade/layout/*', '!assets/jade/mixins/*'],
   js: ['assets/javascripts/**/*.js'],
