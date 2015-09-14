@@ -234,6 +234,7 @@ admin-user-list:
   user-not-confirmed-email: Not confirmed
   trust-label: Toggle trust
   list-empty: There are no users.
+  trust-form-button: Update
 
 admin-invite-user:
   title: Invite a user

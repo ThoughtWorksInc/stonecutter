@@ -16,12 +16,15 @@ mixin userItem(fullName, emailAddress, emailIsConfirmed, userIsTrusted)
             span.visuallyhidden(data-l8n="content:admin-user-list/user-not-confirmed-email") !Not confirmed
         span.clj--user-item__email-address__text !#{emailAddress}
     .user-item__action-list.clj-wip
-      .user-item__toggle-trust
-        label.toggle(for="toggle-#{inputID}")
-          input.toggle__input(type="checkbox" id="toggle-#{inputID}" checked=userIsTrusted)
-          span.toggle__title.visuallyhidden(data-l8n="content:admin-user-list/trust-label") !Toggle trust
-          span.toggle__switch
-            span.toggle__handle
-              span.toggle__handle-icon
-                i.fa.fa-lock
-
+      form(action="#", method="post")
+        .user-item__toggle-trust
+          label.toggle(for="toggle-#{inputID}")
+            input.toggle__input(type="checkbox" id="toggle-#{inputID}" checked=userIsTrusted)
+            span.toggle__title.visuallyhidden(data-l8n="content:admin-user-list/trust-label") !Toggle trust
+            span.toggle__switch
+              span.toggle__handle
+                span.toggle__handle-icon
+                  i.fa.fa-lock
+        button.user-item__trust-button(type="submit", value="update")
+          i.fa.fa-check
+          span.visuallyhidden(data-l8n="content:admin-user-list/trust-form-button") !Update
