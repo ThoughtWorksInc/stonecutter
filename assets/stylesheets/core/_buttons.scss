@@ -26,7 +26,8 @@
 
 .button {
   display: inline-block;
-  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
   height: $button--height;
   line-height: 1.3;
   border: none;
