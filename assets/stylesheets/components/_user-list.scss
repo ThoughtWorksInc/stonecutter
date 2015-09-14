@@ -41,6 +41,7 @@
     float: left;
   }
   &__trust-button {
+    display: inline-block;
     @include circle(22px);
     @include ellipsis;
     float: left;
