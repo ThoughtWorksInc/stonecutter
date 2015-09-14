@@ -7,7 +7,7 @@
     "node": "0.12.4"
   },
   "dependencies": {
-    "font-awesome": "^4.3.0",
+    "font-awesome": "latest",
     "gulp": "^3.8.10",
     "gulp-autoprefixer": "^1.0.1",
     "del": "^1.2.0",
