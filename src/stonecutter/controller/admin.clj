@@ -15,8 +15,9 @@
 
 (defn set-user-trustworthiness [user-store request]
   (let [email (get-in request [:params :login])
-        trusted? (get-in request [:params :trust-toggle])]
-    (if trusted?
-      (u/update-user-role! user-store email (:trusted config/roles))
-      (u/update-user-role! user-store email (:untrusted config/roles)))
+        trusted? (get-in request [:params :trust-toggle])
+        role (if trusted?
+               (:trusted config/roles)
+               (:untrusted config/roles))]
+    (u/update-user-role! user-store email role)
     (r/redirect (routes/path :show-user-list))))

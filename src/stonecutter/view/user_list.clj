@@ -40,10 +40,14 @@
   (html/at enlive-m
            [:.clj--sign-out__link] (html/set-attr :href (r/path :sign-out))))
 
+(defn not-an-admin? [user]
+  (not (= (:admin config/roles) (:role user))))
+
 (defn user-list [request]
-  (let [users (get-in request [:context :users])]
+  (let [users (get-in request [:context :users])
+        non-admin-users (filterv not-an-admin? users)]
     (-> (vh/load-template "public/user-list.html")
-        (add-user-list users)
+        (add-user-list non-admin-users)
         set-sign-out-link
         vh/add-anti-forgery
         vh/remove-work-in-progress)))

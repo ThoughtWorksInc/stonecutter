@@ -8,13 +8,17 @@
             [stonecutter.config :as config]))
 
 (facts "about show-user-list"
-       (fact "reponse body displays the users"
+       (fact "response body displays the users"
              (let [user-store (m/create-memory-store)
+                   _admin (user/store-admin! user-store "admin@email.com" "password")
                    _user1 (user/store-user! user-store "user1@email.com" "password1")
-                   _user2 (user/store-user! user-store "user2@email.com" "password2")]
-               (->> (th/create-request :get (routes/path :show-user-list) nil)
-                    (admin/show-user-list user-store)
-                    :body)) => (contains #"user1@email.com[\s\S]+user2@email.com"))
+                   _user2 (user/store-user! user-store "user2@email.com" "password2")
+                   page (->> (th/create-request :get (routes/path :show-user-list) nil)
+                             (admin/show-user-list user-store)
+                             :body)]
+
+               page => (contains #"user1@email.com[\s\S]+user2@email.com")
+               page =not=> (contains #"admin@email.com")))
 
        (fact "post to set-user-trustworthiness redirects to show-user-list"
              (let [user-store (m/create-memory-store)
