@@ -117,9 +117,7 @@
          (fact "email validation element is removed"
                (html/select page [:.clj--registration-email__validation]) => empty?)
          (fact "password validation element is removed"
-               (html/select page [:.clj--registration-password__validation]) => empty?)
-         (fact "validation summary element is removed"
-               (html/select page [:.clj--registration-validation-summary]) => empty?)))
+               (html/select page [:.clj--registration-password__validation]) => empty?)))
 
 (facts "about displaying registration errors"
        (facts "when email is invalid"
@@ -192,17 +190,4 @@
                (fact "password validation element is present"
                      (html/select page [:.clj--registration-password__validation]) =not=> empty?)
                (fact "correct error message is displayed"
-                     (html/select page [[:.clj--registration-password__validation (html/attr= :data-l8n "content:index/register-password-too-long-validation-message")]]) =not=> empty?)))
-
-       (fact "when confirm password is invalid"
-             (let [errors {:registration-confirm-password :invalid}
-                   params {:registration-password "password"
-                           :registration-confirm-password "invalid-password"}
-                   page (-> (th/create-request {} errors params) index)]
-               (fact "validation-summary--show class is added to the validation summary element"
-                     (-> (html/select page [:.clj--registration-validation-summary])
-                         first :attrs :class) => (contains "validation-summary--show"))
-               (fact "confirm password validation is present as a validation summary item"
-                     (html/select page [:.clj--registration-validation-summary__item]) =not=> empty?)
-               (fact "correct error message is displayed"
-                     (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n "content:index/register-confirm-password-invalid-validation-message")]]) =not=> empty?))))
+                     (html/select page [[:.clj--registration-password__validation (html/attr= :data-l8n "content:index/register-password-too-long-validation-message")]]) =not=> empty?))))

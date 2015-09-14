@@ -10,7 +10,6 @@
       (k/visit (r/path :index))
       (kc/check-and-fill-in ks/registration-email-input email)
       (kc/check-and-fill-in ks/registration-password-input password)
-      (kc/check-and-fill-in ks/registration-confirm-input password)
       (kc/check-and-press ks/registration-submit)))
 
 (defn sign-in [state email password]

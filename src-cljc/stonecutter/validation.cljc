@@ -39,22 +39,16 @@
         (is-too-short? password password-min-length) :too-short
         :default nil))
 
-(defn validate-passwords-match [password-1 password-2]
-  (if (= password-1 password-2)
-    nil
-    :invalid))
-
 (defn validate-passwords-are-different [password-1 password-2]
   (if (= password-1 password-2)
     :unchanged
     nil))
 
 (defn validate-registration [params user-exists?-fn]
-  (let [{:keys [registration-email registration-password registration-confirm-password]} params]
+  (let [{:keys [registration-email registration-password]} params]
     (->
       {:registration-email            (validate-registration-email registration-email user-exists?-fn)
-       :registration-password         (validate-password-format registration-password)
-       :registration-confirm-password (validate-passwords-match registration-password registration-confirm-password)}
+       :registration-password         (validate-password-format registration-password)}
       remove-nil-values)))
 
 (defn validate-user-exists [email user-exists?-fn]
@@ -85,7 +79,5 @@
         remove-nil-values)))
 
 (defn validate-reset-password [params]
-  (let [{:keys [new-password confirm-new-password]} params]
-    (-> {:new-password         (validate-password-format new-password)
-         :confirm-new-password (validate-passwords-match new-password confirm-new-password)}
-        remove-nil-values)))
+  (-> {:new-password (validate-password-format (:new-password params))}
+      remove-nil-values))

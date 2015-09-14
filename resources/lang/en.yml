@@ -31,7 +31,6 @@ index:
   register-password-too-long-validation-message: Password is too long
   register-password-too-short-validation-message: Password should be at least 8 characters long
   register-confirm-password: Confirm password
-  register-confirm-password-invalid-validation-message: Ensure your passwords match
   register-unknown-error: Whoops! Unknown error
   register-create-account: Create Profile Card
 
@@ -49,7 +48,6 @@ reset-password-form:
   title: Reset your password
   page-header: Reset your password
   new-password: New password
-  confirm-new-password: Confirm new password
   confirm-password-invalid-validation-message: Confirm new password must match new password
   form-button: Reset password
 

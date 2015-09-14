@@ -58,7 +58,6 @@
            ; User resets password
            (kc/page-title-is "Reset your password")
            (k/fill-in ks/reset-password-field "new-password")
-           (k/fill-in ks/reset-confirm-password-field "new-password")
            (k/press ks/reset-password-submit)
 
            ; user is signed in to profile

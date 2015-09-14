@@ -6,7 +6,6 @@
 
 (def registration-email-input :.func--registration-email__input)
 (def registration-password-input :.func--registration-password__input)
-(def registration-confirm-input :.func--registration-confirm-password__input)
 (def registration-submit :.func--create-profile__button)
 (def registration-email-validation-element :.clj--registration-email__validation)
 
@@ -51,7 +50,6 @@
 (def forgotten-password-email-sent-page-body :.func--forgotten-password-confirmation-page)
 
 (def reset-password-field :.func--new-password__input)
-(def reset-confirm-password-field :.func--confirm-new-password__input)
 (def reset-password-submit :.func--reset-password__button)
 
 (def error-404-page-body :.func--error-404-page)

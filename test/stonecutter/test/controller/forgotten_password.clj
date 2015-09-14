@@ -131,13 +131,12 @@
        )
 
 (defn create-reset-password-post
-  ([forgotten-password-id new-password confirm-password]
+  ([forgotten-password-id new-password]
    (th/create-request :post "reset-password-endpoint"
                       {:forgotten-password-id forgotten-password-id
-                       :new-password          new-password
-                       :confirm-new-password  confirm-password}))
-  ([forgotten-password-id new-password confirm-password session]
-   (-> (create-reset-password-post forgotten-password-id new-password confirm-password)
+                       :new-password          new-password}))
+  ([forgotten-password-id new-password session]
+   (-> (create-reset-password-post forgotten-password-id new-password)
        (assoc :session session))))
 
 (facts "about resetting a password"
@@ -148,26 +147,26 @@
          (fpdb/store-id-for-user! forgotten-password-store test-clock forgotten-password-id email-address 24)
 
          (fact "if there are validation errors, then the reset password form is returned with the validation errors"
-               (let [test-request (create-reset-password-post forgotten-password-id "" "")
+               (let [test-request (create-reset-password-post forgotten-password-id "")
                      response (fp/reset-password-form-post forgotten-password-store user-store token-store test-clock test-request)]
                  (:status response) => 200
                  (vth/response->enlive-m response) => (vth/element-exists? [:.form-row--invalid])))
 
          (fact "if the id doesn't exist and params are invalid then redirect to resend e-mail"
-               (let [response (->> (create-reset-password-post "unknown-forgotten-password-id" "" "")
+               (let [response (->> (create-reset-password-post "unknown-forgotten-password-id" "")
                                    (fp/reset-password-form-post forgotten-password-store user-store token-store test-clock))]
                  response => (th/check-redirects-to (r/path :show-forgotten-password-form))
                  (:flash response) => :expired-password-reset))
 
          (fact "if the id doesn't exist and params are valid then redirect to resend e-mail"
-               (->> (create-reset-password-post "unknown-forgotten-password-id" "new-password" "new-password")
+               (->> (create-reset-password-post "unknown-forgotten-password-id" "new-password")
                     (fp/reset-password-form-post forgotten-password-store user-store token-store test-clock))
                => (th/check-redirects-to (r/path :show-forgotten-password-form)))
 
          (fact "if id exists and params are valid, but related user no longer exists, then delete record and return 404"
                (let [forgotten-password-store (m/create-memory-store)]
                  (fpdb/store-id-for-user! forgotten-password-store test-clock "id-without-user" "nonexistant@user.com" 24)
-                 (->> (create-reset-password-post "id-without-user" "new-password" "new-password")
+                 (->> (create-reset-password-post "id-without-user" "new-password")
                       (fp/reset-password-form-post forgotten-password-store user-store token-store test-clock))
                  => nil
                  (cl-s/entries forgotten-password-store) => empty?))
@@ -178,13 +177,13 @@
                  (fpdb/store-id-for-user! forgotten-password-store clock forgotten-password-id email-address 24)
                  ;; move forward in time
                  (test-time/update-time clock (partial + (* 2 time/day)))
-                 (->> (create-reset-password-post forgotten-password-id "new-password" "new-password")
+                 (->> (create-reset-password-post forgotten-password-id "new-password")
                       (fp/reset-password-form-post forgotten-password-store user-store token-store clock))
                  => (th/check-redirects-to (r/path :show-forgotten-password-form))))
 
-         (fact "if the password and confirm password is valid"
+         (fact "if the password is valid"
                (let [existing-session {:other-value "other-value"}
-                     valid-request (create-reset-password-post forgotten-password-id "new-password" "new-password" existing-session)
+                     valid-request (create-reset-password-post forgotten-password-id "new-password" existing-session)
                      response (fp/reset-password-form-post forgotten-password-store user-store token-store test-clock valid-request)]
                  (fact "the new password is successfully saved"
                        (let [new-encrypted-password (:password (user/retrieve-user user-store email-address))]

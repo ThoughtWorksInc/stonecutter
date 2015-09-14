@@ -81,7 +81,6 @@
            (k/visit "/")
            (kc/check-and-fill-in ks/registration-email-input "existing@user.com")
            (kc/check-and-fill-in ks/registration-password-input "password")
-           (kc/check-and-fill-in ks/registration-confirm-input "password")
            (kc/check-and-press ks/registration-submit)
            (kc/page-uri-is "/")
            (kc/response-status-is 200)

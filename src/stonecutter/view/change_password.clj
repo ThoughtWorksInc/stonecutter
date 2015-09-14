@@ -18,14 +18,12 @@
    :new-password {:blank "content:change-password-form/new-password-blank-validation-message"
                   :too-short "content:change-password-form/new-password-too-short-validation-message"
                   :too-long "content:change-password-form/new-password-too-long-validation-message"
-                  :unchanged "content:change-password-form/new-password-unchanged-validation-message"}
-   :confirm-new-password {:invalid "content:change-password-form/confirm-new-password-invalid-validation-message"}})
+                  :unchanged "content:change-password-form/new-password-unchanged-validation-message"}})
 
-(def error-display-order [:current-password :new-password :confirm-new-password])
+(def error-display-order [:current-password :new-password])
 
 (def error-highlight-selectors {:current-password [:.clj--current-password]
-                                :new-password [:.clj--new-password]
-                                :confirm-new-password [:.clj--confirm-new-password]})
+                                :new-password [:.clj--new-password]})
 
 (defn get-kv-for-key [a-map a-key]
     (when-let [v (a-key a-map)]

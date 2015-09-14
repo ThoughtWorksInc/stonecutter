@@ -27,13 +27,12 @@
    :sign-in-password default-password
    :action           "sign-in"})
 
-(defn register-user-params [email password confirm-password]
+(defn register-user-params [email password]
   {:registration-email            email
    :registration-password         password
-   :registration-confirm-password confirm-password
    :action                        "register"})
 
-(def default-register-user-params (register-user-params default-email default-password default-password))
+(def default-register-user-params (register-user-params default-email default-password))
 
 (defn test-email-renderer [email-data]
   {:subject "confirmation"
@@ -119,7 +118,7 @@
                    confirmation-store (m/create-memory-store)
                    test-email-sender (test-email/create-test-email-sender)
                    original-user (user/store-user! user-store default-email default-password)
-                   html-response (->> (th/create-request :post (routes/path :sign-in-or-register) (register-user-params default-email default-password default-password))
+                   html-response (->> (th/create-request :post (routes/path :sign-in-or-register) (register-user-params default-email default-password))
                                       (u/sign-in-or-register user-store token-store confirmation-store test-email-sender)
                                       :body
                                       html/html-snippet)]

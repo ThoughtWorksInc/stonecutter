@@ -71,11 +71,6 @@ block content
               span(data-l8n="content:index/register-intro-2") !Profile Card.
           form.register-form.clj--register__form(action="./profile-created", method="post", role="form")
             input(type="hidden", name="action", value="register")
-            .validation-summary.clj--registration-validation-summary
-              .validation-summary__title
-              ul.validation-summary__list
-                li.validation-summary__item.clj--registration-validation-summary__item(data-l8n="content:index/register-confirm-password-invalid-validation-message")
-                  | !Ensure your passwords match
             p.form-row.clj--registration-first-name.clj-wip
               label.form-row__label(for="reg-first-name")
                 span.form-row__title(data-l8n="content:index/register-first-name")
@@ -104,11 +99,6 @@ block content
                 span.form-row__validation.clj--registration-password__validation(data-l8n="content:index/register-password-too-short-validation-message")
                   | !Password must be between 8 and 50 characters long
               input.form-row__input.func--registration-password__input(type="password", id="reg-password", name="registration-password")
-            p.form-row.clj--registration-confirm-password
-              label.form-row__label(for="reg-confirm-password")
-                span.form-row__title(data-l8n="content:index/register-confirm-password")
-                  | !Confirm Password
-              input.form-row__input.func--registration-confirm-password__input(type="password", id="reg-confirm-password", name="registration-confirm-password")
             button.button.button--full-width-smallish-devices.func--create-profile__button(type="submit" data-l8n="content:index/register-create-account")
               | !Create a Profile
 

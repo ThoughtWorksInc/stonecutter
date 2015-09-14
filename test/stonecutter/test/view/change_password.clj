@@ -29,12 +29,8 @@
        (let [page (-> (th/create-request) change-password-form)]
          (fact "no elements have class for styling errors"
                (html/select page [:.form-row--invalid]) => empty?)
-         (fact "validation summary element is not shown by styling class"
-               (-> page
-                   (html/select [:.clj--validation-summary])
-                   first
-                   :attrs
-                   :class) =not=> (contains "validation-summary--show"))))
+         (fact "validation summary element is not shown (the class is removed)"
+               (html/select page [:.validation-summary--show]) => empty?)))
 
 (fact "page has script link to javascript file"
       (let [page (-> (th/create-request) change-password-form)]
@@ -53,7 +49,9 @@
                       (map #(get-in % [:attrs :data-l8n]))) => ?validation-translations)
            (fact "correct elements are highlighted"
                  (->> (html/select page [:.form-row--invalid])
-                      (map #(get-in % [:attrs :class]))) => (contains ?highlighted-elements)))
+                      (map #(get-in % [:attrs :class]))) => (contains ?highlighted-elements))
+           (fact "all validation messages are properly translated"
+                 (th/test-translations "Change password" (constantly page))))
 
          ?errors                          ?validation-translations                                                          ?highlighted-elements
          {:current-password :blank}       [current-password-error-translation-key]                                          [#"clj--current-password"]

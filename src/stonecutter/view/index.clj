@@ -19,8 +19,7 @@
                                    :too-long  "content:index/register-email-address-too-long-validation-message"}
    :registration-password         {:blank     "content:index/register-password-blank-validation-message"
                                    :too-long  "content:index/register-password-too-long-validation-message"
-                                   :too-short "content:index/register-password-too-short-validation-message"}
-   :registration-confirm-password {:invalid "content:index/register-confirm-password-invalid-validation-message"}})
+                                   :too-short "content:index/register-password-too-short-validation-message"}})
 
 (defn add-sign-in-email-error [err enlive-m]
   (if-let [sign-in-email-error (:sign-in-email err)]
@@ -77,19 +76,10 @@
           (html/at [:.clj--registration-password__validation] (html/set-attr :data-l8n (or error-translation "content:index/register-unknown-error")))))
     (vh/remove-element enlive-m [:.clj--registration-password__validation])))
 
-(defn add-registration-confirm-password-error [enlive-m err]
-  (if-let [registration-confirm-password-error (:registration-confirm-password err)]
-    (let [error-translation (get-in error-translations [:registration-confirm-password registration-confirm-password-error])]
-      (-> enlive-m
-          (html/at [:.clj--registration-validation-summary] (html/add-class "validation-summary--show"))
-          (html/at [:.clj--registration-validation-summary__item] (html/set-attr :data-l8n (or error-translation "content:index/register-unknown-error")))))
-    (vh/remove-element enlive-m [:.clj--registration-validation-summary])))
-
 (defn add-registration-errors [err enlive-m]
   (-> enlive-m
       (add-registration-email-error err)
-      (add-registration-password-error err)
-      (add-registration-confirm-password-error err)))
+      (add-registration-password-error err)))
 
 (defn index [request]
   (let [error-m (get-in request [:context :errors])]
