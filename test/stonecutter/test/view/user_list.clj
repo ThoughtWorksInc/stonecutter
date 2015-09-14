@@ -33,6 +33,29 @@
                => (just [(th/text-is? [:.clj--user-item__email-address__text] "confirmed@email.com")
                          (th/text-is? [:.clj--user-item__email-address__text] "unconfirmed@email.com")])))
 
+       (fact "when user has trusted role, the checkbox value should be checked"
+             (let [page (-> (th/create-request)
+                            (assoc-in [:context :users] [{:login "confirmed@email.com" :confirmed? true :role (:trusted config/roles)}])
+                            user-list)]
+               (-> page
+                   (html/select [:.clj--user-item__toggle])
+                   first
+                   :attrs
+                   :checked) => "checked"))
+
+       (fact "when user has untrusted role, the checkbox value should be nil, but input should exist"
+             (let [page (-> (th/create-request)
+                            (assoc-in [:context :users] [{:login "confirmed@email.com" :confirmed? true :role (:untrusted config/roles)}])
+                            user-list)]
+               (-> page
+                   (html/select [:.clj--user-item__toggle])
+                   first
+                   :attrs
+                   :checked) => nil
+
+               (-> page
+                   (html/select [:.clj--user-item])) => (th/element-exists? [:.clj--user-item__toggle])))
+
        (fact "when there are no users an empty list is rendered"
              (let [page (-> (th/create-request)
                             (assoc-in [:context :users] [])

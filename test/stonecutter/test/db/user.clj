@@ -195,6 +195,13 @@
                (provided
                  (cl-user/bcrypt "new-raw-password") => "new-hashed-password"))))
 
+(facts "about updating user role"
+       (fact "update-user-role returns a function that changes user role accordingly"
+             (let [user {:login "email@email.com" :role "untrusted"}
+                   update-role-fn (user/update-user-role "trusted")]
+
+               (update-role-fn user) => {:login "email@email.com" :role "trusted"})))
+
 (facts "about admins"
        (fact "creating an admin user includes the role admin"
              (let [email "email@admin.com"

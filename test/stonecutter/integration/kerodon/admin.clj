@@ -5,7 +5,8 @@
             [stonecutter.db.storage :as s]
             [kerodon.core :as k]
             [stonecutter.integration.kerodon.steps :as steps]
-            [stonecutter.integration.kerodon.kerodon-checkers :as kc]))
+            [stonecutter.integration.kerodon.kerodon-checkers :as kc]
+            [stonecutter.integration.kerodon.kerodon-selectors :as ks]))
 
 (l/init-logger!)
 (ih/setup-db)
@@ -28,3 +29,12 @@
            (steps/register "normal-user@user.com" "password")
            (k/visit "/admin/users")
            (kc/response-status-is 404)))
+
+(facts "Admin can make a user trusted or untrusted"
+       (-> (k/session test-app)
+           (steps/register "normal-user@user.com" "password1")
+           (steps/sign-out)
+           (steps/sign-in "admin-user@user.com" "password")
+           (k/visit "/admin/users")
+           (kc/check-and-press ks/user-trustworthiness-submit)
+           (kc/response-status-is 302)))

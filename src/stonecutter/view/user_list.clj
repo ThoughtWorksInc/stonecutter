@@ -1,7 +1,8 @@
 (ns stonecutter.view.user-list
   (:require [net.cgrand.enlive-html :as html]
             [stonecutter.view.view-helpers :as vh]
-            [stonecutter.routes :as r]))
+            [stonecutter.routes :as r]
+            [stonecutter.config :as config]))
 
 (def library-m (vh/load-template "public/library.html"))
 
@@ -22,6 +23,12 @@
            (html/clone-for [user users]
                            [:.clj--user-item__email-confirmed] (when (:confirmed? user) identity)
                            [:.clj--user-item__email-unconfirmed] (when-not (:confirmed? user) identity)
+                           [:.clj--user-item__toggle] (if (= (:role user) (:trusted config/roles))
+                                                        (html/set-attr :checked "checked")
+                                                        (html/remove-attr :checked))
+                           [:.clj--user-item__label] (html/set-attr :for (:login user))
+                           [:.clj--user-item__toggle] (html/set-attr :id (:login user))
+                           [:.clj--user-item__email-input] (html/set-attr :value (:login user))
                            [:.clj--user-item__email-address__text] (html/content (:login user)))))
 
 (defn add-user-list [enlive-m users]
@@ -38,4 +45,5 @@
     (-> (vh/load-template "public/user-list.html")
         (add-user-list users)
         set-sign-out-link
+        vh/add-anti-forgery
         vh/remove-work-in-progress)))

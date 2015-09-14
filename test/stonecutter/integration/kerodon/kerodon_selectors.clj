@@ -32,6 +32,8 @@
 
 (def sign-out-link :.func--sign-out__link)
 
+(def user-trustworthiness-submit :.func--user-item__trust-submit)
+
 (def authorise-share-profile-button :.func--authorise-share-profile__button)
 (def authorise-cancel-link :.func--authorise-cancel__link)
 

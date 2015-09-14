@@ -94,3 +94,10 @@
 
 (defn authorisation-checker [user-store]
   (comp has-admin-role? (partial retrieve-user user-store) session/request->user-login))
+
+(defn update-user-role [role]
+  (fn [user]
+    (assoc user :role role)))
+
+(defn update-user-role! [user-store email role]
+  (m/update! user-store email (update-user-role role)))

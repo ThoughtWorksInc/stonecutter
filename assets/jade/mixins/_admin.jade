@@ -15,16 +15,17 @@ mixin userItem(fullName, emailAddress, emailIsConfirmed, userIsTrusted)
           i.fa.fa-times-circle-o.user-item__email-address__icon.clj--user-item__email-unconfirmed
             span.visuallyhidden(data-l8n="content:admin-user-list/user-not-confirmed-email") !Not confirmed
         span.clj--user-item__email-address__text !#{emailAddress}
-    .user-item__action-list.clj-wip
-      form(action="#", method="post")
+    .user-item__action-list
+      form(action="/admin/set-user-trustworthiness", method="post")
         .user-item__toggle-trust
-          label.toggle(for="toggle-#{inputID}")
-            input.toggle__input(type="checkbox" id="toggle-#{inputID}" checked=userIsTrusted)
+          label.toggle.clj--user-item__label(for="toggle-#{inputID}")
+            input.clj--user-item__email-input(type="hidden" name="login")
+            input.toggle__input.clj--user-item__toggle(type="checkbox" id="toggle-#{inputID}" name="trust-toggle" checked=userIsTrusted)
             span.toggle__title.visuallyhidden(data-l8n="content:admin-user-list/trust-label") !Toggle trust
             span.toggle__switch
               span.toggle__handle
                 span.toggle__handle-icon
                   i.fa.fa-lock
-        button.user-item__trust-button(type="submit", value="update")
+        button.user-item__trust-button.func--user-item__trust-submit(type="submit", value="update")
           i.fa.fa-check
           span.visuallyhidden(data-l8n="content:admin-user-list/trust-form-button") !Update

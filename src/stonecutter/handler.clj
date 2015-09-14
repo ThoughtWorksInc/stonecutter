@@ -95,11 +95,12 @@
        :authorise                            (partial oauth/authorise auth-code-store client-store user-store token-store)
        :authorise-client                     (partial oauth/authorise-client auth-code-store client-store user-store token-store)
        :show-authorise-failure               (partial oauth/show-authorise-failure client-store)
-       :show-user-list                       (partial admin/show-user-list user-store)}
+       :show-user-list                       (partial admin/show-user-list user-store)
+       :set-user-trustworthiness             (partial admin/set-user-trustworthiness user-store)}
       (m/wrap-handlers-except #(m/wrap-handle-403 % forbidden-err-handler) #{})
       (m/wrap-handlers-except m/wrap-disable-caching #{:theme-css :index :sign-in-or-register})
       (m/wrap-just-these-handlers #(m/wrap-authorised % (u/authorisation-checker user-store))
-                                  #{:show-user-list})
+                                  #{:show-user-list :set-user-trustworthiness})
       (m/wrap-handlers-except m/wrap-signed-in #{:index :sign-in-or-register
                                                  :sign-out
                                                  :show-profile-deleted

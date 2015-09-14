@@ -28,6 +28,7 @@
 (def env-var-set (->> vars (partition 2) (map first) set))
 
 (def roles {:untrusted "untrusted"
+            :trusted   "trusted"
             :admin     "admin"})
 
 (defn create-config []
