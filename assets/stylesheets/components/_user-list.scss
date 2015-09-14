@@ -1,5 +1,9 @@
 .user-list {
   @include reset-list;
+  margin-left: -$main-content--side-padding;
+  margin-right: -$main-content--side-padding;
+  padding-left: $main-content--side-padding;
+  padding-right: $main-content--side-padding;
 }
 
 .user-item {
@@ -7,9 +11,11 @@
   display: table;
   width: 100%;
   min-height: $button--height;
-  margin-bottom: 0.75rem;
-  padding: 1rem 75px 1rem 1rem;
-  background-color: $light_grey;
+  padding: 1rem 95px 1rem 0;
+  border-bottom: 1px solid $light_grey;
+  &:hover {
+    border-color: $medium_cyan;
+  }
   &__text {
     display: table-cell;
     vertical-align: middle;
@@ -24,7 +30,6 @@
     word-break: break-all;
     @include font-size(12px);
     &__icon {
-      //color: red;
       padding-right: 0.2rem;
     }
   }
@@ -46,7 +51,6 @@
     @include ellipsis;
     float: left;
     margin-top: 21px;
-    margin-right: 1rem;
     margin-left: -0.25rem;
     padding: 0;
     -webkit-appearance: none;

@@ -17,8 +17,8 @@
 .main-content {
   max-width: $large_device;
   margin: 0 auto;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  padding-left: $main-content--side-padding;
+  padding-right: $main-content--side-padding;
   padding-bottom: 1rem;
   @include width-from($medium_device) {
     padding-bottom: 2rem;
