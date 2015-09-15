@@ -42,7 +42,6 @@
   &__toggle-trust {
     height: $button--height;
     padding-top: 21px;
-    padding-right: 1rem;
     float: left;
   }
   &__trust-button {
@@ -50,7 +49,7 @@
     @include circle(22px);
     float: left;
     margin-top: 21px;
-    margin-left: -0.25rem;
+    margin-left: 0.75rem;
     padding: 0;
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -61,6 +60,9 @@
     border: 0;
     transition: background 250ms ease, color 250ms ease, box-shadow 250ms ease, transform 250ms ease;
     outline: 0;
+    .js & {
+      //display: none; //hide if JS class is present on html
+    }
     &:focus, &:hover {
       background-color: lighten($dark_cyan, 1%);
       box-shadow: 0 19px 60px -10px rgba(0,0,0,.35);
