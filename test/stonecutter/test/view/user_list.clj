@@ -74,11 +74,15 @@
 
        (tabular
          (fact "appropriate flash message is displayed on page when a flash key is included in the request"
-               (let [page (-> (th/create-request) (assoc :flash ?flash-key) user-list)]
+               (let [page (-> (th/create-request)
+                              (assoc-in [:flash :translation-key] ?flash-key)
+                              (assoc-in [:flash :updated-account-email] ?user-login)
+                              user-list)]
                  (-> page (html/select [:.clj--flash-message-container])) =not=> empty?
+                 (-> page (html/select [:.clj--flash-message-login]) first html/text) => (contains ?user-login)
                  (-> page (html/select [:.clj--flash-message-text]) first :attrs :data-l8n)
                  => ?translation-key))
 
-         ?flash-key                 ?translation-key
-         :user-trusted              "content:flash/user-trusted"
-         :user-untrusted            "content:flash/user-untrusted"))
+         ?flash-key                ?user-login                ?translation-key
+         :user-trusted             "valid@test.com"           "content:flash/user-trusted"
+         :user-untrusted           "valid@test.com"           "content:flash/user-untrusted"))

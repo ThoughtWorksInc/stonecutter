@@ -52,7 +52,8 @@
                    request (th/create-request :post (routes/path :set-user-trustworthiness) {:login user-email :trust-toggle "on"})
                    response (admin/set-user-trustworthiness user-store request)]
 
-               response => (contains {:flash :user-trusted})))
+               (:flash response) => (contains {:translation-key       :user-trusted
+                                               :updated-account-email user-email})))
 
        (fact "untrusting user sends user-untrusted flash message"
              (let [user-store (m/create-memory-store)
@@ -61,4 +62,5 @@
                    request (th/create-request :post (routes/path :set-user-trustworthiness) {:login user-email})
                    response (admin/set-user-trustworthiness user-store request)]
 
-               response => (contains {:flash :user-untrusted}))))
+               (:flash response) => (contains {:translation-key       :user-untrusted
+                                               :updated-account-email user-email}))))

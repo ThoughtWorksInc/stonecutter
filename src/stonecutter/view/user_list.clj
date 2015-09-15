@@ -44,10 +44,13 @@
   (not (= (:admin config/roles) (:role user))))
 
 (defn set-flash-message [enlive-m request]
-  (case (:flash request)
-    :user-trusted (html/at enlive-m [:.clj--flash-message-text] (html/set-attr :data-l8n "content:flash/user-trusted"))
-    :user-untrusted (html/at enlive-m [:.clj--flash-message-text] (html/set-attr :data-l8n "content:flash/user-untrusted"))
-    (vh/remove-element enlive-m [:.clj--flash-message-container])))
+  (let [translation-key (get-in request [:flash :translation-key])
+        updated-account-email (get-in request [:flash :updated-account-email])
+        enlive-m-with-user-login (html/at enlive-m [:.clj--flash-message-login] (html/content updated-account-email))]
+    (case translation-key
+      :user-trusted (html/at enlive-m-with-user-login [:.clj--flash-message-text] (html/set-attr :data-l8n "content:flash/user-trusted"))
+      :user-untrusted (html/at enlive-m-with-user-login [:.clj--flash-message-text] (html/set-attr :data-l8n "content:flash/user-untrusted"))
+      (vh/remove-element enlive-m [:.clj--flash-message-container]))))
 
 (defn user-list [request]
   (let [users (get-in request [:context :users])

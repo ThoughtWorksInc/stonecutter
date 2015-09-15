@@ -25,4 +25,5 @@
 
     (u/update-user-role! user-store email role)
     (-> (r/redirect (routes/path :show-user-list))
-        (assoc :flash flash-key))))
+        (assoc-in [:flash :translation-key] flash-key)
+        (assoc-in [:flash :updated-account-email] email))))
