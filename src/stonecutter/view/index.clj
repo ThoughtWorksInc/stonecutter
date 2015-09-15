@@ -8,18 +8,22 @@
   (html/at enlive-m field-row-selector (html/add-class "form-row--invalid")))
 
 (def error-translations
-  {:sign-in-email                 {:invalid  "content:index/sign-in-email-address-invalid-validation-message"
-                                   :too-long "content:index/sign-in-email-address-too-long-validation-message"}
-   :sign-in-password              {:blank     "content:index/sign-in-password-blank-validation-message"
-                                   :too-long  "content:index/sign-in-password-too-long-validation-message"
-                                   :too-short "content:index/sign-in-password-too-short-validation-message"}
-   :sign-in-credentials           {:invalid "content:index/sign-in-invalid-credentials-validation-message"}
-   :registration-email            {:invalid   "content:index/register-email-address-invalid-validation-message"
-                                   :duplicate "content:index/register-email-address-duplicate-validation-message"
-                                   :too-long  "content:index/register-email-address-too-long-validation-message"}
-   :registration-password         {:blank     "content:index/register-password-blank-validation-message"
-                                   :too-long  "content:index/register-password-too-long-validation-message"
-                                   :too-short "content:index/register-password-too-short-validation-message"}})
+  {:sign-in-email           {:invalid  "content:index/sign-in-email-address-invalid-validation-message"
+                             :too-long "content:index/sign-in-email-address-too-long-validation-message"}
+   :sign-in-password        {:blank     "content:index/sign-in-password-blank-validation-message"
+                             :too-long  "content:index/sign-in-password-too-long-validation-message"
+                             :too-short "content:index/sign-in-password-too-short-validation-message"}
+   :sign-in-credentials     {:invalid "content:index/sign-in-invalid-credentials-validation-message"}
+   :registration-first-name {:blank    "content:index/register-first-name-invalid-validation-message"
+                             :too-long "content:index/register-first-name-invalid-validation-message"}
+   :registration-last-name  {:blank    "content:index/register-last-name-invalid-validation-message"
+                             :too-long "content:index/register-last-name-invalid-validation-message"}
+   :registration-email      {:invalid   "content:index/register-email-address-invalid-validation-message"
+                             :duplicate "content:index/register-email-address-duplicate-validation-message"
+                             :too-long  "content:index/register-email-address-too-long-validation-message"}
+   :registration-password   {:blank     "content:index/register-password-blank-validation-message"
+                             :too-long  "content:index/register-password-too-long-validation-message"
+                             :too-short "content:index/register-password-too-short-validation-message"}})
 
 (defn add-sign-in-email-error [err enlive-m]
   (if-let [sign-in-email-error (:sign-in-email err)]
@@ -55,10 +59,27 @@
   (html/at enlive-m
            [:.clj--sign-in-email__input] (html/set-attr :value (:sign-in-email params))))
 
-(defn set-registration-email-input [params enlive-m]
+(defn set-registration-email-inputs [params enlive-m]
   (html/at enlive-m
-           [:.clj--registration-email__input] (html/set-attr :value (:registration-email params))))
+           [:.clj--registration-email__input] (html/set-attr :value (:registration-email params))
+           [:.clj--registration-first-name__input] (html/set-attr :value (:registration-first-name params))
+           [:.clj--registration-last-name__input] (html/set-attr :value (:registration-last-name params))))
 
+(defn add-registration-first-name-error [enlive-m err]
+  (if-let [registration-first-name-error (:registration-first-name err)]
+    (let [error-translation (get-in error-translations [:registration-first-name registration-first-name-error])]
+      (-> enlive-m
+          (add-error-class [:.clj--registration-first-name])
+          (html/at [:.clj--registration-first-name__validation] (html/set-attr :data-l8n (or error-translation "content:index/register-unknown-error")))))
+    (vh/remove-element enlive-m [:.clj--registration-first-name__validation])))
+
+(defn add-registration-last-name-error [enlive-m err]
+  (if-let [registration-last-name-error (:registration-last-name err)]
+    (let [error-translation (get-in error-translations [:registration-last-name registration-last-name-error])]
+      (-> enlive-m
+          (add-error-class [:.clj--registration-last-name])
+          (html/at [:.clj--registration-last-name__validation] (html/set-attr :data-l8n (or error-translation "content:index/register-unknown-error")))))
+    (vh/remove-element enlive-m [:.clj--registration-last-name__validation])))
 
 (defn add-registration-email-error [enlive-m err]
   (if-let [registration-email-error (:registration-email err)]
@@ -78,6 +99,8 @@
 
 (defn add-registration-errors [err enlive-m]
   (-> enlive-m
+      (add-registration-first-name-error err)
+      (add-registration-last-name-error err)
       (add-registration-email-error err)
       (add-registration-password-error err)))
 
@@ -90,7 +113,7 @@
          (add-sign-in-errors error-m)
          (add-registration-errors error-m)
          (set-sign-in-email-input (:params request))
-         (set-registration-email-input (:params request))
+         (set-registration-email-inputs (:params request))
          vh/remove-work-in-progress
          vh/add-anti-forgery)))
 

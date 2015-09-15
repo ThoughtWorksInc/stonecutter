@@ -114,12 +114,66 @@
                       index)]
          (fact "no elements have class for styling errors"
                (html/select page [:.form-row--invalid]) => empty?)
+         (fact "first name validation element is removed"
+               (html/select page [:.clj--registration-first-name__validation]) => empty?)
+         (fact "last name validation element is removed"
+               (html/select page [:.clj--registration-last-name__validation]) => empty?)
          (fact "email validation element is removed"
                (html/select page [:.clj--registration-email__validation]) => empty?)
          (fact "password validation element is removed"
                (html/select page [:.clj--registration-password__validation]) => empty?)))
 
 (facts "about displaying registration errors"
+       (facts "when first name is blank"
+              (let [errors {:registration-first-name :blank}
+                    params {:registration-first-name ""}
+                    page (-> (th/create-request {} errors params) index)]
+                (fact "the class for styling errors is added"
+                      (html/select page [[:.clj--registration-first-name :.form-row--invalid]]) =not=> empty?)
+                (fact "email validation element is present"
+                      (html/select page [:.clj--registration-first-name__validation]) =not=> empty?)
+                (fact "correct error message is displayed"
+                      (html/select page [[:.clj--registration-first-name__validation (html/attr= :data-l8n "content:index/register-first-name-invalid-validation-message")]]) =not=> empty?)))
+
+       (facts "when first name is too long"
+              (let [errors {:registration-first-name :too-long}
+                    long-string "SOMETHING LONGER THAN 70 CHARACTERS --------------------------------------------------"
+                    params {:registration-first-name long-string}
+                    page (-> (th/create-request {} errors params) index)]
+                (fact "the class for styling errors is added"
+                      (html/select page [[:.clj--registration-first-name :.form-row--invalid]]) =not=> empty?)
+                (fact "email validation element is present"
+                      (html/select page [:.clj--registration-first-name__validation]) =not=> empty?)
+                (fact "correct error message is displayed"
+                      (html/select page [[:.clj--registration-first-name__validation (html/attr= :data-l8n "content:index/register-first-name-invalid-validation-message")]]) =not=> empty?)
+                (fact "invalid value is preserved in input field"
+                      (-> page (html/select [:.clj--registration-first-name__input]) first :attrs :value) => long-string)))
+
+       (facts "when last name is blank"
+              (let [errors {:registration-last-name :blank}
+                    params {:registration-last-name ""}
+                    page (-> (th/create-request {} errors params) index)]
+                (fact "the class for styling errors is added"
+                      (html/select page [[:.clj--registration-last-name :.form-row--invalid]]) =not=> empty?)
+                (fact "email validation element is present"
+                      (html/select page [:.clj--registration-last-name__validation]) =not=> empty?)
+                (fact "correct error message is displayed"
+                      (html/select page [[:.clj--registration-last-name__validation (html/attr= :data-l8n "content:index/register-last-name-invalid-validation-message")]]) =not=> empty?)))
+
+       (facts "when last name is too long"
+              (let [errors {:registration-last-name :too-long}
+                    long-string "SOMETHING LONGER THAN 70 CHARACTERS --------------------------------------------------"
+                    params {:registration-last-name long-string}
+                    page (-> (th/create-request {} errors params) index)]
+                (fact "the class for styling errors is added"
+                      (html/select page [[:.clj--registration-last-name :.form-row--invalid]]) =not=> empty?)
+                (fact "email validation element is present"
+                      (html/select page [:.clj--registration-last-name__validation]) =not=> empty?)
+                (fact "correct error message is displayed"
+                      (html/select page [[:.clj--registration-last-name__validation (html/attr= :data-l8n "content:index/register-last-name-invalid-validation-message")]]) =not=> empty?)
+                (fact "invalid value is preserved in input field"
+                      (-> page (html/select [:.clj--registration-last-name__input]) first :attrs :value) => long-string)))
+
        (facts "when email is invalid"
               (let [errors {:registration-email :invalid}
                     params {:registration-email "invalidEmail"}
