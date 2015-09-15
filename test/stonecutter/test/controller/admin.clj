@@ -48,7 +48,7 @@
        (fact "trusting user sends user-trusted flash message"
              (let [user-store (m/create-memory-store)
                    user-email "user3#email.com"
-                   _user3 (user/store-user! user-store user-email "password3")
+                   _user3 (th/store-user! user-store user-email "password3")
                    request (th/create-request :post (routes/path :set-user-trustworthiness) {:login user-email :trust-toggle "on"})
                    response (admin/set-user-trustworthiness user-store request)]
 
@@ -58,7 +58,7 @@
        (fact "untrusting user sends user-untrusted flash message"
              (let [user-store (m/create-memory-store)
                    user-email "user3#email.com"
-                   _user (user/store-user! user-store user-email "password")
+                   _user (th/store-user! user-store user-email "password")
                    request (th/create-request :post (routes/path :set-user-trustworthiness) {:login user-email})
                    response (admin/set-user-trustworthiness user-store request)]
 
