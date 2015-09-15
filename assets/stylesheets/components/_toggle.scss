@@ -43,6 +43,20 @@ $toggle--size: $toggle__handle--size * 2;
     @include font-size(14px);
     color: $dark_grey;
     transition: color 250ms ease-in-out;
+    border-radius: inherit;
+    &:after {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      content: '\f09c';
+      background-color: $white;
+      @include size(100%);
+      font-family: FontAwesome;
+      text-align: center;
+      opacity: 0;
+      border-radius: inherit;
+    }
   }
   &__input {
     position: absolute;
@@ -57,6 +71,9 @@ $toggle--size: $toggle__handle--size * 2;
     }
     &:checked ~ .toggle__switch .toggle__handle .toggle__handle-icon {
       color: $medium_cyan;
+      &:after {
+        opacity: 1;
+      }
     }
     &:checked ~ .toggle__switch {
       background-color: $medium_cyan;
