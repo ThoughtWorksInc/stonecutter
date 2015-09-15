@@ -37,7 +37,6 @@
         (-> state :response :body) => (contains content))
   state)
 
-
 (defn check-and-follow-redirect
   ([state description]
    "Possibly a double redirect"
@@ -124,6 +123,11 @@
   (fact {:midje/name (str "Checking that response type is " response-type)}
         (get-in state [:response :headers "Content-Type"]) => response-type)
   state)
+
+(defn check-page-is [state route-action body-selector]
+  (page-route-is state route-action)
+  (response-status-is state 200)
+  (selector-exists state body-selector))
 
 ;; FIXME can't reuse the body because it's a buffered input stream - 06 Jul 2015
 (defn replay-last-request [state]

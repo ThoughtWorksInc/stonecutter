@@ -48,9 +48,7 @@
            (k/fill-in ks/forgotten-password-email user-email)
            (k/press ks/forgotten-password-submit)
            (kc/check-and-follow-redirect)
-           (kc/page-route-is :show-forgotten-password-confirmation)
-           (kc/response-status-is 200)
-           (kc/selector-exists [ks/forgotten-password-email-sent-page-body])
+           (kc/check-page-is :show-forgotten-password-confirmation [ks/forgotten-password-email-sent-page-body])
 
            ; User receives email and follows reset link
            (visit-email-link email-sender base-url)

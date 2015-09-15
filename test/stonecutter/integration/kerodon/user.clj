@@ -60,18 +60,14 @@
 (facts "User can access index page"
        (-> (k/session test-app)
            (k/visit "/")
-           (kc/page-uri-is "/")
-           (kc/response-status-is 200)
-           (kc/selector-exists [ks/index-page-body])))
+           (kc/check-page-is :index [ks/index-page-body])))
 
 (facts "User is returned to index page when registration is invalid"
        (-> (k/session test-app)
            (k/visit "/")
            (kc/check-and-fill-in ks/registration-email-input "invalid-email")
            (kc/check-and-press ks/registration-submit)
-           (kc/page-uri-is "/")
-           (kc/response-status-is 200)
-           (kc/selector-exists [ks/index-page-body])
+           (kc/check-page-is :index [ks/index-page-body])
            (kc/selector-includes-content [ks/registration-email-validation-element] "Enter a valid email address")))
 
 (facts "User is returned to same page when existing email is used"
@@ -82,23 +78,17 @@
            (kc/check-and-fill-in ks/registration-email-input "existing@user.com")
            (kc/check-and-fill-in ks/registration-password-input "password")
            (kc/check-and-press ks/registration-submit)
-           (kc/page-uri-is "/")
-           (kc/response-status-is 200)
-           (kc/selector-exists [ks/index-page-body])))
+           (kc/check-page-is :index [ks/index-page-body])))
 
 (facts "Index page redirects to profile-created page and profile card is displayed"
        (-> (k/session test-app)
            (steps/register "Frank" "Lasty" "email@server.com" "valid-password")
            (kc/check-and-follow-redirect)
-           (kc/page-uri-is "/profile-created")
-           (kc/response-status-is 200)
-           (kc/selector-exists [ks/profile-created-page-body])
+           (kc/check-page-is :show-profile-created [ks/profile-created-page-body])
            (kc/selector-includes-content [ks/profile-created-flash] "email@server.com")
 
            (k/visit "/profile")
-           (kc/page-uri-is "/profile")
-           (kc/response-status-is 200)
-           (kc/selector-exists [ks/profile-page-body])
+           (kc/check-page-is :show-profile [ks/profile-page-body])
            (kc/selector-includes-content [ks/profile-page-profile-card-email] "email@server.com")
            (kc/selector-includes-content [ks/profile-page-profile-card-name] "Frank Lasty")))
 
@@ -106,17 +96,13 @@
        (-> (k/session test-app)
            (k/visit "/profile")
            (kc/check-and-follow-redirect)
-           (kc/page-uri-is "/")
-           (kc/response-status-is 200)
-           (kc/selector-exists [ks/index-page-body])))
+           (kc/check-page-is :index [ks/index-page-body])))
 
 (facts "User can sign in"
        (-> (k/session test-app)
            (steps/sign-in "email@server.com" "valid-password")
            (kc/check-and-follow-redirect)
-           (kc/page-uri-is "/profile")
-           (kc/response-status-is 200)
-           (kc/selector-exists [ks/profile-page-body])
+           (kc/check-page-is :show-profile [ks/profile-page-body])
            (kc/selector-includes-content [:body] "email@server.com")))
 
 (facts "User can sign out"
@@ -125,22 +111,21 @@
            (k/visit "/profile")
            (k/follow ks/sign-out-link)
            (kc/check-and-follow-redirect)
-           (kc/page-uri-is "/")
-           (kc/selector-exists [ks/index-page-body])))
+           (kc/check-page-is :index [ks/index-page-body])))
 
 (facts "Index url redirects to profile page if user is signed in"
        (-> (k/session test-app)
            (steps/sign-in "email@server.com" "valid-password")
            (k/visit "/")
            (kc/check-and-follow-redirect)
-           (kc/page-uri-is "/profile")))
+           (kc/check-page-is :show-profile [ks/profile-page-body])))
 
 (facts "Index url redirects to profile page if user is registered"
        (-> (k/session test-app)
            (steps/register "email2@server.com" "valid-password")
            (k/visit "/")
            (kc/check-and-follow-redirect)
-           (kc/page-uri-is "/profile")))
+           (kc/check-page-is :show-profile [ks/profile-page-body])))
 
 (facts "Clients appear on user profile page"
        (-> (k/session test-app)
@@ -160,7 +145,7 @@
            (kc/page-uri-contains "/unshare-profile-card")
            (kc/check-and-press ks/unshare-profile-card-confirm-button)
            (kc/check-and-follow-redirect)
-           (kc/page-uri-is "/profile")
+           (kc/check-page-is :show-profile [ks/profile-page-body])
            (kc/selector-does-not-include-content [ks/profile-authorised-client-list] "myapp")))
 
 (facts "User can request a new confirmation email"
@@ -169,7 +154,7 @@
            (k/visit "/profile")
            (kc/check-and-press ks/profile-resend-confirmation-email)
            (kc/check-and-follow-redirect)
-           (kc/page-uri-is "/profile")
+           (kc/check-page-is :show-profile [ks/profile-page-body])
            (kc/selector-exists [ks/profile-flash-message])))
 
 (facts "User can change password"
@@ -177,16 +162,12 @@
            (steps/sign-in "user@withclient.com" "valid-password")
            (k/visit "/profile")
            (k/follow ks/profile-change-password-link)
-           (kc/page-uri-is "/change-password")
-           (kc/response-status-is 200)
-           (kc/selector-exists [ks/change-password-page-body])
+           (kc/check-page-is :show-change-password-form [ks/change-password-page-body])
            (kc/check-and-fill-in ks/change-password-current-password-input "valid-password")
            (kc/check-and-fill-in ks/change-password-new-password-input "new-valid-password")
            (kc/check-and-press ks/change-password-submit)
            (kc/check-and-follow-redirect)
-           (kc/page-uri-is "/profile")
-           (kc/response-status-is 200)
-           (kc/selector-exists [ks/profile-page-body])
+           (kc/check-page-is :show-profile [ks/profile-page-body])
            (kc/selector-exists [ks/profile-flash-message])))
 
 (facts "User can delete account"
@@ -194,14 +175,10 @@
            (steps/register "account_to_be@deleted.com" "valid-password")
            (k/visit "/profile")
            (k/follow ks/profile-delete-account-link)
-           (kc/page-uri-is "/delete-account")
-           (kc/response-status-is 200)
-           (kc/selector-exists [ks/delete-account-page-body])
+           (kc/check-page-is :show-delete-account-confirmation [ks/delete-account-page-body])
            (kc/check-and-press ks/delete-account-button)
            (kc/check-and-follow-redirect)
-           (kc/page-uri-is "/profile-deleted")
-           (kc/response-status-is 200)
-           (kc/selector-exists [ks/profile-deleted-page-body])))
+           (kc/check-page-is :show-profile-deleted [ks/profile-deleted-page-body])))
 
 (facts "Not found page is shown for unknown url"
        (-> (k/session test-app)

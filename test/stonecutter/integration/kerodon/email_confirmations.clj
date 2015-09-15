@@ -62,7 +62,7 @@
            (k/visit (routes/path :confirm-email-with-id
                                  :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
            (kc/check-and-follow-redirect)
-           (kc/page-uri-is (routes/path :show-profile))
+           (kc/page-route-is :show-profile)
            (kc/selector-exists [ks/profile-flash-message])
 
            (teardown-test-directory)))
@@ -93,7 +93,7 @@
                                         :confirmation-id (get-in (parse-test-email) [:body :confirmation-id])))
 
            (kc/check-and-follow-redirect "redirecting to profile page")
-           (kc/page-uri-is (routes/path :show-profile))
+           (kc/page-route-is :show-profile)
            (kc/selector-exists [ks/profile-flash-message])
 
            (teardown-test-directory)))
@@ -117,8 +117,6 @@
            (kc/check-and-press ks/delete-account-button)
 
            (kc/check-and-follow-redirect)
-           (kc/page-uri-is "/profile-deleted")
-           (kc/response-status-is 200)
-           (kc/selector-exists [ks/profile-deleted-page-body])
+           (kc/check-page-is :show-profile-deleted [ks/profile-deleted-page-body])
 
            (teardown-test-directory)))
