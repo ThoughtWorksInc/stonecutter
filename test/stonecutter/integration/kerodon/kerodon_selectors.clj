@@ -4,8 +4,8 @@
 (def index-page-body :.func--index-page)
 (def index-app-name :.func--welcome-app-name)
 
-(def registration-first-name-input :.func--first-name__input)
-(def registration-last-name-input :.func--last-name__input)
+(def registration-first-name-input :.func--registration-first-name__input)
+(def registration-last-name-input :.func--registration-last-name__input)
 (def registration-email-input :.func--registration-email__input)
 (def registration-password-input :.func--registration-password__input)
 (def registration-submit :.func--create-profile__button)
