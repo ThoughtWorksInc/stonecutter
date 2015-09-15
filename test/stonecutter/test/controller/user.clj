@@ -19,6 +19,8 @@
 (def check-body-not-blank
   (checker [response] (not (empty? (:body response)))))
 
+(def default-first-name "Frank")
+(def default-last-name "Lasty")
 (def default-email "valid@email.com")
 (def default-password "password")
 (def confirmation-id "1234-ABCD")
@@ -27,12 +29,15 @@
    :sign-in-password default-password
    :action           "sign-in"})
 
-(defn register-user-params [email password]
-  {:registration-email            email
+(defn register-user-params [first-name last-name email password]
+  {:registration-first-name       first-name
+   :registration-last-name        last-name
+   :registration-email            email
    :registration-password         password
    :action                        "register"})
 
-(def default-register-user-params (register-user-params default-email default-password))
+(def default-register-user-params (register-user-params default-first-name default-last-name
+                                                        default-email default-password))
 
 (defn test-email-renderer [email-data]
   {:subject "confirmation"
@@ -83,7 +88,7 @@
                (->> (th/create-request :post (routes/path :sign-in-or-register) default-register-user-params)
                     (u/sign-in-or-register user-store token-store confirmation-store test-email-sender))) => anything
              (provided
-               (user/store-user! anything "valid@email.com" "password") => ...user...))
+               (user/store-user! anything "Frank" "Lasty" "valid@email.com" "password") => ...user...))
 
        (fact "user is sent a confirmation email with the correct content"
              (against-background
@@ -117,8 +122,10 @@
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
                    test-email-sender (test-email/create-test-email-sender)
-                   original-user (user/store-user! user-store default-email default-password)
-                   html-response (->> (th/create-request :post (routes/path :sign-in-or-register) (register-user-params default-email default-password))
+                   original-user (th/store-user! user-store default-email default-password)
+                   html-response (->> (th/create-request :post (routes/path :sign-in-or-register) (register-user-params
+                                                                                                    default-first-name default-last-name
+                                                                                                    default-email default-password))
                                       (u/sign-in-or-register user-store token-store confirmation-store test-email-sender)
                                       :body
                                       html/html-snippet)]
@@ -222,7 +229,7 @@
 (facts "about deleting accounts"
        (let [user-store (m/create-memory-store)
              confirmation-store (m/create-memory-store)
-             _user (user/store-user! user-store default-email default-password)
+             _user (th/store-user! user-store default-email default-password)
              _confirmation (confirmation/store! confirmation-store default-email confirmation-id)
              request (th/create-request :post "/delete-account" nil {:user-login   default-email
                                                                      :access_token ...token...})]
@@ -262,7 +269,7 @@
        (fact "user cannot change password if current-password is invalid"
              (let [user-store (m/create-memory-store)
                    email "user_who_is@changing_password.com"]
-               (user/store-user! user-store email "new-password")
+               (th/store-user! user-store email "new-password")
                (let [original-encrypted-password (:password (user/retrieve-user user-store email))]
                  (->> (th/create-request :post "/change-password" {:current-password "wrong-password"} {:user-login email})
                       (u/change-password user-store)) => (every-checker (contains {:status 200})
@@ -292,7 +299,7 @@
               (fact "when authorisation fails"
                     (let [user-store (m/create-memory-store)
                           email "user_who_is@changing_password.com"]
-                      (user/store-user! user-store email "new-password")
+                      (th/store-user! user-store email "new-password")
                       (-> (u/change-password user-store (th/create-request :post "/change-password" {:current-password "wrong-password"} {:user-login email}))
                           :body
                           html/html-snippet
@@ -385,7 +392,7 @@
               (let [test-email-sender (test-email/create-test-email-sender)
                     user-store (m/create-memory-store)
                     confirmation-store (m/create-memory-store)
-                    user (user/store-user! user-store default-email default-password)
+                    user (th/store-user! user-store default-email default-password)
                     _confirmation (confirmation/store! confirmation-store (:login user) confirmation-id)
                     request (th/create-request :post (routes/path :resend-confirmation-email)
                                                {}
@@ -404,7 +411,7 @@
               (let [test-email-sender (test-email/create-test-email-sender)
                     user-store (m/create-memory-store)
                     confirmation-store (m/create-memory-store)
-                    _user-with-confirmed-email (->> (user/store-user! user-store default-email default-password)
+                    _user-with-confirmed-email (->> (th/store-user! user-store default-email default-password)
                                                     (user/confirm-email! user-store))
                     request (th/create-request :post (routes/path :resend-confirmation-email)
                                                {}

@@ -9,26 +9,30 @@
             [stonecutter.session :as session]))
 
 (defn create-user
-  ([id-gen email password]
-   (create-user id-gen email password (:untrusted config/roles)))
-  ([id-gen email password role]
+  ([id-gen first-name last-name email password]
+   (create-user id-gen first-name last-name email password (:untrusted config/roles)))
+  ([id-gen first-name last-name email password role]
    (let [lower-email (s/lower-case email)]
      (->
        (cl-user/new-user lower-email password)
-       (assoc :confirmed? false)
+       (dissoc :name)
        (assoc :uid (id-gen))
+       (assoc :first-name first-name)
+       (assoc :last-name last-name)
+       (assoc :confirmed? false)
        (assoc :role role)))))
 
-(defn create-admin [id-gen email password]
-  (create-user id-gen email password (:admin config/roles)))
+(defn create-admin [id-gen first-name last-name email password]
+  (create-user id-gen first-name last-name email password (:admin config/roles)))
 
-(defn store-user! [user-store email password]
-  (let [user (create-user uuid/uuid email password)]
+(defn store-user! [user-store first-name last-name email password]
+  (let [user (create-user uuid/uuid first-name last-name email password)]
     (-> (cl-user/store-user user-store user)
         (dissoc :password))))
 
-(defn store-admin! [user-store email password]
-  (let [user (create-admin uuid/uuid email password)]
+(defn store-admin! [user-store first-name last-name email password]
+  (let [user (create-admin uuid/uuid first-name last-name email password)]
+
     (-> (cl-user/store-user user-store user)
         (dissoc :password))))
 

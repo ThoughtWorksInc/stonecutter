@@ -10,9 +10,9 @@
 (facts "about show-user-list"
        (fact "response body displays the users"
              (let [user-store (m/create-memory-store)
-                   _admin (user/store-admin! user-store "admin@email.com" "password")
-                   _user1 (user/store-user! user-store "user1@email.com" "password1")
-                   _user2 (user/store-user! user-store "user2@email.com" "password2")
+                   _admin (user/store-admin! user-store "first name" "last name" "admin@email.com" "password")
+                   _user1 (th/store-user! user-store "Frank" "Lasty" "user1@email.com" "password1")
+                   _user2 (th/store-user! user-store "Frank" "Lasty" "user2@email.com" "password2")
                    page (->> (th/create-request :get (routes/path :show-user-list) nil)
                              (admin/show-user-list user-store)
                              :body)]
@@ -29,7 +29,7 @@
        (fact "post with trust toggle attr changes user's role to trusted"
              (let [user-store (m/create-memory-store)
                    user-email "user1@email.com"
-                   _user1 (user/store-user! user-store user-email "password1")
+                   _user1 (th/store-user! user-store "Frank" "Lasty" user-email "password1")
                    request (th/create-request :post (routes/path :set-user-trustworthiness) {:trust-toggle "on" :login user-email})]
                (admin/set-user-trustworthiness user-store request)
                (-> (user/retrieve-user user-store user-email)
@@ -38,7 +38,7 @@
        (fact "post without trust toggle attr changes user's role to untrusted"
              (let [user-store (m/create-memory-store)
                    user-email "user2@email.com"
-                   _user2 (user/store-user! user-store user-email "password2")
+                   _user2 (th/store-user! user-store user-email "password2")
                    request (th/create-request :post (routes/path :set-user-trustworthiness) {:login user-email})]
                (admin/set-user-trustworthiness user-store request)
                (-> (user/retrieve-user user-store user-email)

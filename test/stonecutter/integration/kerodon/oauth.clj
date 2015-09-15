@@ -10,6 +10,7 @@
             [stonecutter.integration.kerodon.kerodon-selectors :as ks]
             [stonecutter.integration.integration-helpers :as ih]
             [stonecutter.db.user :as user]
+            [stonecutter.test.test-helpers :as th]
             [stonecutter.test.email :as test-email]))
 
 ;; CLIENT => AUTH    /authorisation?client-id=123&response_type=code&redirect_uri=callback-url
@@ -66,6 +67,8 @@
     (do (prn "============ Error: Unable to get auth-code")
         state)))
 
+(def first-name "Frank")
+(def last-name "Lasty")
 (def email "email@server.com")
 (def password "valid-password")
 
@@ -74,7 +77,7 @@
         client-id (:client-id client)
         client-secret (:client-secret client)
         invalid-client-secret (string/reverse client-secret)
-        user (-> (s/get-user-store stores) (user/store-user! email password))]
+        user (-> (s/get-user-store stores) (th/store-user! email password))]
     {:client-id             client-id
      :client-secret         client-secret
      :client-name           (:name client)

@@ -5,12 +5,18 @@
             [stonecutter.routes :as r]
             [stonecutter.integration.kerodon.kerodon-helpers :as kh]))
 
-(defn register [state email password]
-  (-> state
-      (k/visit (r/path :index))
-      (kc/check-and-fill-in ks/registration-email-input email)
-      (kc/check-and-fill-in ks/registration-password-input password)
-      (kc/check-and-press ks/registration-submit)))
+
+(defn register
+  ([state email password]
+    (register state "dummy first" "dummy last" email password))
+  ([state first-name last-name email password]
+   (-> state
+       (k/visit (r/path :index))
+       (kc/check-and-fill-in ks/registration-first-name-input first-name)
+       (kc/check-and-fill-in ks/registration-last-name-input last-name)
+       (kc/check-and-fill-in ks/registration-email-input email)
+       (kc/check-and-fill-in ks/registration-password-input password)
+       (kc/check-and-press ks/registration-submit))))
 
 (defn sign-in [state email password]
   (-> state

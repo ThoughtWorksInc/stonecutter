@@ -18,12 +18,13 @@
            :static-resources-dir-path "Optional location of additional static resources (i.e. logo and favicon)"
            :logo-file-name "Name of logo file in static resources directory"
            :favicon-file-name "Name of favicon file in static resources directory"
+           :admin-first-name "First name of admin user"
+           :admin-last-name "Last name of admin user"
            :admin-login "Username of admin user"
            :admin-password "Password of admin user"
            :password-reset-expiry "Time (in hours) before password-reset email expires"
            :open-id-connect-id-token-lifetime-minutes "Time (in minutes) before Open ID Connect token expires"
-           :rsa-keypair-file-path "Location of json file containing RSA keypair (for Open ID Connect)"
-           ])
+           :rsa-keypair-file-path "Location of json file containing RSA keypair (for Open ID Connect)"])
 
 (def env-var-set (->> vars (partition 2) (map first) set))
 
@@ -95,6 +96,12 @@
 
 (defn favicon-file-name [config-m]
   (get-env config-m :favicon-file-name))
+
+(defn admin-first-name [config-m]
+  (get-env config-m :admin-first-name "Mighty"))
+
+(defn admin-last-name [config-m]
+  (get-env config-m :admin-last-name "Admin"))
 
 (defn admin-login [config-m]
   (if-let [result (get-env config-m :admin-login)]

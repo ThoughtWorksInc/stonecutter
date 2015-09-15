@@ -2,18 +2,20 @@
   (:require [midje.sweet :refer :all]
             [clauth.user :as cl-user]
             [clauth.auth-code :as cl-auth-code]
-            [stonecutter.db.mongo :as m]
             [stonecutter.util.uuid :as uuid]
             [stonecutter.config :as config]
+            [stonecutter.test.test-helpers :as th]
+            [stonecutter.db.mongo :as m]
             [stonecutter.db.user :as user]))
 
 (def user-store (m/create-memory-store))
 
 (facts "about storage of users - user storage journey"
        (fact "can store a user"
-             (user/store-user! user-store "email@server.com" "password")
+             (user/store-user! user-store "Frank" "Lasty" "email@server.com" "password")
              => (just {:login      "email@server.com"
-                       :name       nil
+                       :first-name "Frank"
+                       :last-name  "Lasty"
                        :url        nil
                        :confirmed? false
                        :uid        anything
@@ -22,17 +24,19 @@
        (fact "can authenticate a user"
              (user/authenticate-and-retrieve-user user-store "email@server.com" "password")
              => (contains {:login "email@server.com"
-                           :name  nil
+                           :first-name "Frank"
+                           :last-name  "Lasty"
                            :url   nil}))
 
        (fact "can retrieve a user"
              (user/retrieve-user user-store "email@server.com")
              => (contains {:login "email@server.com"
-                           :name  nil
+                           :first-name "Frank"
+                           :last-name  "Lasty"
                            :url   nil}))
 
        (fact "can confirm user's account"
-             (let [confirmed-user-record (->> (user/store-user! user-store "email@server.com" "password")
+             (let [confirmed-user-record (->> (user/store-user! user-store "Frank" "Lasty" "email@server.com" "password")
                                               (user/confirm-email! user-store))]
                confirmed-user-record =not=> (contains {:confirmation-id anything})
                confirmed-user-record => (contains {:confirmed? true})))
@@ -40,14 +44,16 @@
        (fact "can add authorised client for user"
              (user/add-authorised-client-for-user! user-store "email@server.com" "a-client-id")
              => (contains {:login              "email@server.com"
-                           :name               nil
+                           :first-name         "Frank"
+                           :last-name          "Lasty"
                            :url                nil
                            :authorised-clients ["a-client-id"]}))
 
        (fact "can remove authorised client for user"
              (user/remove-authorised-client-for-user! user-store "email@server.com" "a-client-id")
              => (contains {:login              "email@server.com"
-                           :name               nil
+                           :first-name         "Frank"
+                           :last-name          "Lasty"
                            :url                nil
                            :authorised-clients []}))
 
@@ -55,7 +61,7 @@
              (user/change-password! user-store "email@server.com" "new-password")
              (user/authenticate-and-retrieve-user user-store "email@server.com" "password") => nil
              (user/authenticate-and-retrieve-user user-store "email@server.com" "new-password")
-             => (contains {:login "email@server.com" :name nil :url nil}))
+             => (contains {:login "email@server.com"}))
 
 
        (fact "can delete a user"
@@ -64,27 +70,26 @@
              (user/retrieve-user user-store "email@server.com") => nil)
 
        (fact "deletion is case-insensitive"
-             (user/store-user! user-store "email@server.com" "password")
+             (th/store-user! user-store "email@server.com" "password")
              (user/delete-user! user-store "EMAIL@SERVER.COM")
-             (user/retrieve-user user-store "email@server.com") => nil)
-       )
+             (user/retrieve-user user-store "email@server.com") => nil))
 
 (facts "about retrieving all users"
        (fact "can retrieve all users"
              (let [user-store (m/create-memory-store)
-                   user-1 (user/store-user! user-store "email1@server.com" "password1")
-                   user-2 (user/store-user! user-store "email2@server.com" "password2")
-                   user-3 (user/store-user! user-store "email3@server.com" "password3")]
+                   user-1 (th/store-user! user-store "email1@server.com" "password1")
+                   user-2 (th/store-user! user-store "email2@server.com" "password2")
+                   user-3 (th/store-user! user-store "email3@server.com" "password3")]
                (user/retrieve-users user-store) => (contains [user-1 user-2 user-3] :in-any-order)))
 
        (fact "users are retrieved without password hashes"
              (let [user-store (m/create-memory-store)
-                   _user (user/store-user! user-store "email@email.com" "password")]
+                   _user (th/store-user! user-store "email@email.com" "password")]
                (first (user/retrieve-users user-store)) =not=> (contains {:password anything}))))
 
 (facts "about is-duplicate-user?"
        (let [user-store (m/create-memory-store)]
-         (user/store-user! user-store "valid@email.com" "1234")
+         (th/store-user! user-store "valid@email.com" "1234")
          (fact "non-existant email in not a duplicate"
                (user/user-exists? user-store "unique@email.com") => false)
 
@@ -97,31 +102,38 @@
 (fact "about creating a user record"
       (let [id-gen (constantly "id")]
         (fact "a uuid is added"
-              (user/create-user id-gen "email" "password") => {:login "email" :password "encrypted_password" :uid "id" :name nil :url nil :confirmed? false :role (:untrusted config/roles)}
+              (user/create-user id-gen "first-name" "last-name" "email" "password") => {:login "email"
+                                                                                        :password "encrypted_password"
+                                                                                        :uid "id"
+                                                                                        :first-name "first-name"
+                                                                                        :last-name "last-name"
+                                                                                        :url nil
+                                                                                        :confirmed? false
+                                                                                        :role (:untrusted config/roles)}
               (provided (cl-user/bcrypt "password") => "encrypted_password"))
         (fact "email is lower-cased"
-              (user/create-user id-gen "EMAIL" "password") => (contains {:login "email"}))))
+              (user/create-user id-gen "first-name" "last-name" "EMAIL" "password") => (contains {:login "email"}))))
 
 (facts "about storing users"
        (let [user-store (m/create-memory-store)]
          (fact "users are stored in the user-store"
                (user/retrieve-user user-store "email@server.com") => nil
-               (user/store-user! user-store "email@server.com" "password") => (contains {:login "email@server.com"})
+               (th/store-user! user-store "email@server.com" "password") => (contains {:login "email@server.com"})
                (user/retrieve-user user-store "email@server.com") => (contains {:login "email@server.com"}))
 
          (fact "password is removed before returning user"
-               (-> (user/store-user! user-store "email@server.com" "password") :password) => nil)))
+               (-> (th/store-user! user-store "email@server.com" "password") :password) => nil)))
 
 (facts "about authenticating and retrieving users"
        (let [user-store (m/create-memory-store)]
          (fact "with valid credentials"
-               (user/store-user! user-store "email@server.com" "password")
+               (th/store-user! user-store "email@server.com" "password")
                (let [user (user/authenticate-and-retrieve-user user-store "email@server.com" "password")]
                  user => (contains {:login "email@server.com"})
                  (fact "password is removed before returning user"
                        (:password user) => nil)))
          (fact "authentication is case-insensitive"
-               (user/store-user! user-store "email2@server.com" "password")
+               (th/store-user! user-store "email2@server.com" "password")
                (user/authenticate-and-retrieve-user user-store "EMAIL2@server.COM" "password") => (contains {:login "email2@server.com"}))
 
          (fact "with invalid credentials returns nil"
@@ -129,7 +141,7 @@
 
 (fact "can retrieve user without authentication"
       (let [user-store (m/create-memory-store)]
-        (user/store-user! user-store "email@server.com" "password")
+        (th/store-user! user-store "email@server.com" "password")
         (user/retrieve-user user-store "email@server.com") => (contains {:login "email@server.com"})
         (fact "retrieval is case insensitive"
               (user/retrieve-user user-store "EMAIL@SERVER.COM") => (contains {:login "email@server.com"}))))
@@ -210,22 +222,30 @@
                    id "random-uuid-1234"
                    id-gen (constantly id)]
 
-               (user/create-admin id-gen email password) => {:login      email
-                                                             :password   hashed-password
-                                                             :confirmed? false
-                                                             :uid        id
-                                                             :role       (:admin config/roles)}
+               (user/create-admin id-gen "admin-first-name" "admin-last-name" email password) => {:first-name "admin-first-name"
+                                                                                                  :last-name  "admin-last-name"
+                                                                                                  :login      email
+                                                                                                  :password   hashed-password
+                                                                                                  :confirmed? false
+                                                                                                  :uid        id
+                                                                                                  :role       (:admin config/roles)}
                (provided
                  (cl-user/new-user email password) => {:login email :password hashed-password})))
 
        (let [admin-login "admin@email.com"
              password "password456"
-             hashed-password "PA134SN"]
+             hashed-password "PA134SN"
+             admin-first-name "first name"
+             admin-last-name "last name"]
          (fact "storing an admin calls create admin user"
-               (against-background
-                 (user/create-admin anything admin-login password) => {:login admin-login :password hashed-password :role (:admin config/roles)})
-
-               (user/store-admin! user-store admin-login password)
-               (user/retrieve-user user-store admin-login) => {:login    admin-login
-                                                               :password hashed-password
-                                                               :role     (:admin config/roles)})))
+               (user/store-admin! user-store admin-first-name admin-last-name admin-login password) => {:first-name admin-first-name
+                                                                                                        :last-name  admin-last-name
+                                                                                                        :login      admin-login
+                                                                                                        :role       (:admin config/roles)}
+               (provided
+                 (user/create-admin anything admin-first-name admin-last-name admin-login password) => {:first-name admin-first-name
+                                                                                                        :last-name  admin-last-name
+                                                                                                        :login      admin-login
+                                                                                                        :password   hashed-password
+                                                                                                        :role       (:admin config/roles)})
+               )))

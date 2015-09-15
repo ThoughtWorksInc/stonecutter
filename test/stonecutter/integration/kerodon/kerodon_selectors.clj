@@ -4,6 +4,8 @@
 (def index-page-body :.func--index-page)
 (def index-app-name :.func--welcome-app-name)
 
+(def registration-first-name-input :.func--first-name__input)
+(def registration-last-name-input :.func--last-name__input)
 (def registration-email-input :.func--registration-email__input)
 (def registration-password-input :.func--registration-password__input)
 (def registration-submit :.func--create-profile__button)
@@ -12,6 +14,8 @@
 (def profile-created-page-body :.func--profile-created-page)
 (def profile-created-flash :.func--flash-message-container)
 (def profile-page-body :.func--profile-page)
+(def profile-page-profile-card-email :.func--card-email)
+(def profile-page-profile-card-name :.func--card-name)
 (def profile-deleted-page-body :.func--profile-deleted-page)
 (def profile-authorised-client-list :.func--app__list)
 (def profile-authorised-client-unshare-link :.func--app-item__unshare-link)

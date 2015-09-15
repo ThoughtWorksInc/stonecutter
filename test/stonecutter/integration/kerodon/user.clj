@@ -86,10 +86,9 @@
            (kc/response-status-is 200)
            (kc/selector-exists [ks/index-page-body])))
 
-(facts "Index page redirects to profile-created page when registered and
-       user-login is in the session so that email address is displayed on profile card"
+(facts "Index page redirects to profile-created page and profile card is displayed"
        (-> (k/session test-app)
-           (steps/register "email@server.com" "valid-password")
+           (steps/register "Frank" "Lasty" "email@server.com" "valid-password")
            (kc/check-and-follow-redirect)
            (kc/page-uri-is "/profile-created")
            (kc/response-status-is 200)
@@ -100,7 +99,8 @@
            (kc/page-uri-is "/profile")
            (kc/response-status-is 200)
            (kc/selector-exists [ks/profile-page-body])
-           (kc/selector-includes-content [:.func--card-email] "email@server.com")))
+           (kc/selector-includes-content [ks/profile-page-profile-card-email] "email@server.com")
+           (kc/selector-includes-content [ks/profile-page-profile-card-name] "Frank Lasty")))
 
 (facts "User is redirected to index page when accessing profile page not signed in"
        (-> (k/session test-app)

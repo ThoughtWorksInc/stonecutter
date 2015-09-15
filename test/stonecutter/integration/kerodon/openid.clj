@@ -12,6 +12,7 @@
             [stonecutter.integration.kerodon.kerodon-selectors :as ks]
             [stonecutter.integration.integration-helpers :as ih]
             [stonecutter.db.user :as user]
+            [stonecutter.test.test-helpers :as th]
             [stonecutter.test.email :as test-email]))
 
 (defn browser-sends-authorisation-request-from-client-redirect [state client-id]
@@ -47,6 +48,8 @@
                           :client_secret client-secret}))
     (throw (Exception. "Unable to get auth-code"))))
 
+(def first-name "Frank")
+(def last-name "Lasty")
 (def email "email@server.com")
 (def password "valid-password")
 
@@ -55,7 +58,7 @@
         client-id (:client-id client)
         client-secret (:client-secret client)
         invalid-client-secret (string/reverse client-secret)
-        user (-> (s/get-user-store stores) (user/store-user! email password))]
+        user (-> (s/get-user-store stores) (th/store-user! email password))]
     {:client-id             client-id
      :client-secret         client-secret
      :client-name           (:name client)

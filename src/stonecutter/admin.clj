@@ -5,7 +5,9 @@
             [stonecutter.db.user :as u]))
 
 (defn create-admin-user [config-m user-store]
-  (let [admin-login (config/admin-login config-m)
+  (let [admin-first-name (config/admin-first-name config-m)
+        admin-last-name (config/admin-last-name config-m)
+        admin-login (config/admin-login config-m)
         admin-password (config/admin-password config-m)
         duplication-checker (partial u/user-exists? user-store)
         errors (or (v/validate-registration-email admin-login duplication-checker)
@@ -18,5 +20,7 @@
         :too-long  (throw (Exception. "ADMIN PASSWORD is too long - please check that admin password is in the correct format"))
         nil (u/store-admin!
               user-store
+              admin-first-name
+              admin-last-name
               admin-login
               admin-password)))))

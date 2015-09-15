@@ -36,6 +36,8 @@
 
 (defn register-user [user-store token-store confirmation-store email-sender request]
   (let [params (:params request)
+        first-name (:registration-first-name params)
+        last-name (:registration-last-name params)
         email (:registration-email params)
         password (:registration-password params)
         confirmation-id (uuid/uuid)
@@ -44,7 +46,7 @@
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
       (do (confirmation/store! confirmation-store email confirmation-id)
-          (let [user (user/store-user! user-store email password)]
+          (let [user (user/store-user! user-store first-name last-name email password)]
             (send-confirmation-email! email-sender user email confirmation-id config-m)
             (-> (response/redirect (routes/path :show-profile-created))
                 (common/sign-in-user token-store user (:session request))
@@ -124,6 +126,9 @@
         (assoc-in [:context :authorised-clients] authorised-clients)
         (assoc-in [:context :confirmed?] confirmed?)
         (assoc-in [:context :role] role)
+        (assoc-in [:context :user-login] (:login user))
+        (assoc-in [:context :user-first-name] (:first-name user))
+        (assoc-in [:context :user-last-name] (:last-name user))
         profile/profile
         (sh/enlive-response (:context request)))))
 

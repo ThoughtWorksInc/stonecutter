@@ -38,7 +38,7 @@
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
-                   user (user/store-user! user-store email "password")
+                   user (th/store-user! user-store email "password")
                    confirmation (conf/store! confirmation-store email confirmation-id)
                    request (-> confirm-email-request
                                (with-signed-in-user token-store user))
@@ -52,8 +52,8 @@
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
-                   signed-in-user (user/store-user! user-store "signed-in@email.com" "password")
-                   confirming-user (user/store-user! user-store "confirming@email.com" "password")
+                   signed-in-user (th/store-user! user-store "signed-in@email.com" "password")
+                   confirming-user (th/store-user! user-store "confirming@email.com" "password")
                    confirmation (conf/store! confirmation-store "confirming@email.com" confirmation-id)
                    request (-> confirm-email-request
                                (with-signed-in-user token-store signed-in-user))
@@ -64,7 +64,7 @@
        (fact "when user is not signed in, redirects to index page with the confirmation endpoint (including confirmation UUID URL) as the successful sign-in redirect target"
              (let [user-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
-                   confirming-user (user/store-user! user-store email "password")
+                   confirming-user (th/store-user! user-store email "password")
                    confirmation (conf/store! confirmation-store email confirmation-id)
                    response (ec/confirm-email-with-id user-store confirmation-store confirm-email-request)]
                response => (th/check-redirects-to (routes/path :confirmation-sign-in-form
@@ -74,7 +74,7 @@
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
-                   user (user/store-user! user-store email "password")
+                   user (th/store-user! user-store email "password")
                    confirmation (conf/store! confirmation-store email confirmation-id)
                    request (-> confirm-email-request
                                (with-signed-in-user token-store user))]
@@ -85,7 +85,7 @@
              (let [user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
-                   user (user/store-user! user-store email "password")
+                   user (th/store-user! user-store email "password")
                    request (-> confirm-email-request
                                (with-signed-in-user token-store user))]
                (ec/confirm-email-with-id user-store confirmation-store request) => nil))
@@ -135,7 +135,7 @@
        (fact "if the confirmation id exists, the account is deleted, the confirmation id is revoked and profile-deleted page is rendered"
              (let [user-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
-                   user (user/store-user! user-store email "password")
+                   user (th/store-user! user-store email "password")
                    confirmation (conf/store! confirmation-store email confirmation-id)
                    response (ec/confirmation-delete user-store confirmation-store confirmation-delete-request)]
                (user/retrieve-user user-store (:login user)) => nil
@@ -169,7 +169,7 @@
        (fact "if the confirmation id exists and the user exists the confirmation-delete page is rendered"
              (let [user-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
-                   user (user/store-user! user-store email "password")
+                   user (th/store-user! user-store email "password")
                    confirmation (conf/store! confirmation-store email confirmation-id)
                    response (ec/show-confirmation-delete user-store confirmation-store show-confirmation-delete-request)]
                response => (th/check-renders-page [:.func--delete-account-page])))

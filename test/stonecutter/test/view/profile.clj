@@ -93,3 +93,16 @@
                             profile)]
                (html/select page [:.clj--authorised-app__list-item--empty]) =not=> empty?
                (html/select page [:.clj--authorised-app__list-item]) => empty?)))
+
+(facts "about displaying profile card"
+       (let [page (-> (th/create-request)
+                      (assoc-in [:context :user-login] "valid@web.co.uk")
+                      (assoc-in [:context :user-first-name] "Frank")
+                      (assoc-in [:context :user-last-name] "Lasty")
+                      profile)]
+         (fact "it should display email address"
+               (-> page (html/select [:.clj--card-email]) first html/text) => "valid@web.co.uk")
+
+         (fact "it should display full name"
+               (-> page (html/select [:.clj--card-name]) first html/text) => "Frank Lasty")))
+

@@ -5,9 +5,12 @@
             [stonecutter.view.view-helpers :as vh]
             [stonecutter.session :as session]))
 
-(defn add-username [enlive-m request]
-  (let [email (session/request->user-login request)]
+(defn add-profile-card [enlive-m request]
+  (let [email (get-in request [:context :user-login])
+        first-name (get-in request [:context :user-first-name])
+        last-name (get-in request [:context :user-last-name])]
     (html/at enlive-m
+             [:.clj--card-name] (html/content (str first-name " " last-name))
              [:.clj--card-email] (html/content email))))
 
 (defn application-list-item [library-m] (first (html/select library-m [:.clj--authorised-app__list-item])))
@@ -65,7 +68,7 @@
     (-> (vh/load-template "public/profile.html")
         (set-flash-message request)
         (diplay-email-unconfirmed-message request)
-        (add-username request)
+        (add-profile-card request)
         (add-application-list request library-m)
         set-sign-out-link
         set-change-password-link

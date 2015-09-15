@@ -2,6 +2,7 @@
   (:require [midje.sweet :as midje]
             [net.cgrand.enlive-html :as html]
             [ring.mock.request :as mock]
+            [stonecutter.db.user :as user]
             [stonecutter.session :as session]))
 
 (defn create-request
@@ -50,3 +51,9 @@
    :password password
    :name     nil
    :url      nil})
+
+(defn store-user!
+  ([user-store email password]
+   (store-user! user-store "Frank" "Lasty" email password))
+  ([user-store first-name last-name email password]
+   (user/store-user! user-store first-name last-name email password)))

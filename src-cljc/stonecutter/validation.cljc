@@ -1,6 +1,8 @@
 (ns stonecutter.validation
   (:require [clojure.string :as s]))
 
+(def name-max-length 70)
+
 (def email-max-length 254)
 
 (def password-min-length 8)
@@ -21,6 +23,11 @@
 
 (defn is-too-short? [string min-length]
   (< (count string) min-length))
+
+(defn validate-registration-name [name]
+  (cond (s/blank? name) :blank
+        (is-too-long? name name-max-length) :too-long
+        :default nil))
 
 (defn validate-registration-email [email user-exists?-fn]
   (cond (is-too-long? email email-max-length) :too-long
@@ -45,10 +52,12 @@
     nil))
 
 (defn validate-registration [params user-exists?-fn]
-  (let [{:keys [registration-email registration-password]} params]
+  (let [{:keys [registration-first-name registration-last-name registration-email registration-password]} params]
     (->
-      {:registration-email            (validate-registration-email registration-email user-exists?-fn)
-       :registration-password         (validate-password-format registration-password)}
+      {:registration-first-name   (validate-registration-name registration-first-name)
+       :registration-last-name    (validate-registration-name registration-last-name)
+       :registration-email        (validate-registration-email registration-email user-exists?-fn)
+       :registration-password     (validate-password-format registration-password)}
       remove-nil-values)))
 
 (defn validate-user-exists [email user-exists?-fn]

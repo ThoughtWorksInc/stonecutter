@@ -11,30 +11,37 @@
 
 (facts "about registering admins"
        (fact "valid login and password stores an admin"
-             (admin/create-admin-user {:admin-login admin-login :admin-password admin-password} user-store)
+             (admin/create-admin-user {:admin-login      admin-login
+                                       :admin-password   admin-password} user-store)
              => :return-value
 
              (provided
-               (u/store-admin! user-store admin-login admin-password) => :return-value))
+               (u/store-admin! user-store "Mighty" "Admin" admin-login admin-password) => :return-value))
 
        (fact "duplicating login is not stored"
-             (admin/create-admin-user {:admin-login admin-login :admin-password admin-password} user-store)
+             (admin/create-admin-user {:admin-first-name ...first-name...
+                                       :admin-last-name  ...last-name...
+                                       :admin-login      admin-login
+                                       :admin-password   admin-password
+                                       } user-store)
              => nil
 
              (provided
                (u/user-exists? user-store admin-login) => true
-               (u/store-admin! user-store admin-login admin-password) => :return :times 0))
+               (u/store-admin! anything anything anything anything anything) => :return :times 0))
 
        (fact "login not in email format throws an exception"
              (against-background
                (u/user-exists? user-store invalid-admin-login) => false)
 
              (admin/create-admin-user
-               {:admin-login invalid-admin-login
-               :admin-password admin-password} user-store) => (throws Exception)
+               {:admin-login      invalid-admin-login
+                :admin-first-name ...first-name...
+                :admin-last-name  ...last-name...
+                :admin-password   admin-password} user-store) => (throws Exception)
              (provided
-               (u/store-admin! user-store invalid-admin-login admin-password) => :return :times 0))
-       
+               (u/store-admin! anything anything anything anything anything) => :return :times 0))
+
        (def string-of-255 (apply str (repeat 255 "x")))
 
        (tabular
@@ -43,10 +50,12 @@
                  (u/user-exists? user-store ?admin-login) => false)
 
                (admin/create-admin-user
-                 {:admin-login ?admin-login
-                  :admin-password ?password} user-store) => (throws Exception)
+                 {:admin-login      ?admin-login
+                  :admin-first-name ...first-name...
+                  :admin-last-name  ...last-name...
+                  :admin-password   ?password} user-store) => (throws Exception)
                (provided
-                 (u/store-admin! user-store ?admin-login ?password) => :return :times 0))
+                 (u/store-admin! anything anything anything anything anything) => :return :times 0))
 
         ?admin-login        ?password
         "admin@admin.com"   "short"

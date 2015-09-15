@@ -32,6 +32,16 @@
   "valid@email.averylongdsn"    truthy)
 
 (tabular
+  (fact "testing name validation"
+        (v/validate-registration-name ?name) => ?error)
+  ?name                   ?error
+  "Barry"                 nil
+  nil                     :blank
+  ""                      :blank
+  (string-of-length 70)   nil
+  (string-of-length 71)   :too-long)
+
+(tabular
   (fact "testing email validation"
         (v/validate-registration-email ?email not-duplicate-user)=> ?error)
 
@@ -59,17 +69,23 @@
 (tabular
   (fact "validating registration"
         (v/validate-registration
-          {:registration-email ?email
-           :registration-password ?password}
+          {:registration-first-name ?first-name
+           :registration-last-name  ?last-name
+           :registration-email      ?email
+           :registration-password   ?password}
           ?duplicate-user-fn) => ?validations)
 
-  ?email                   ?password           ?duplicate-user-fn        ?validations
-  "valid@email.com"        "valid-password"    not-duplicate-user        {}
-  "invalid-email"          "valid-password"    not-duplicate-user        {:registration-email :invalid}
-  "valid@email.com"        "password"          is-duplicate-user         {:registration-email :duplicate}
-  "valid@email.com"        ""                  not-duplicate-user        {:registration-password :blank}
-  "invalid-email"          ""                  not-duplicate-user        {:registration-email :invalid
-                                                                          :registration-password :blank})
+  ?first-name  ?last-name  ?email             ?password         ?duplicate-user-fn  ?validations
+  "Frank"      "Lasty"     "valid@email.com"  "valid-password"  not-duplicate-user  {}
+  ""           "Lasty"     "valid@email.com"  "valid-password"  not-duplicate-user  {:registration-first-name :blank}
+  "Frank"      ""          "valid@email.com"  "valid-password"  not-duplicate-user  {:registration-last-name :blank}
+  "Frank"      "Lasty"     "invalid-email"    "valid-password"  not-duplicate-user  {:registration-email :invalid}
+  "Frank"      "Lasty"     "valid@email.com"  "password"        is-duplicate-user   {:registration-email :duplicate}
+  "Frank"      "Lasty"     "valid@email.com"  ""                not-duplicate-user  {:registration-password :blank}
+  ""           ""          "invalid-email"    ""                not-duplicate-user  {:registration-first-name :blank
+                                                                                     :registration-last-name :blank
+                                                                                     :registration-email :invalid
+                                                                                     :registration-password :blank})
 
 (tabular
   (fact "validating sign-in"

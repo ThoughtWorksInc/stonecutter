@@ -1,6 +1,8 @@
 (ns stonecutter.test.controller.forgotten-password
   (:require [midje.sweet :refer :all]
             [clauth.store :as cl-store]
+            [clojure.string :as string]
+            [clauth.store :as cl-s]
             [stonecutter.test.test-helpers :as th]
             [stonecutter.test.view.test-helpers :as vth]
             [stonecutter.controller.forgotten-password :as fp]
@@ -11,12 +13,8 @@
             [stonecutter.db.user :as user]
             [stonecutter.db.forgotten-password :as fpdb]
             [stonecutter.routes :as r]
-            [clojure.string :as string]
-            [clj-time.core :as t]
-            [clj-time.coerce :as c]
             [stonecutter.util.time :as time]
-            [stonecutter.test.util.time :as test-time]
-            [clauth.store :as cl-s])
+            [stonecutter.test.util.time :as test-time])
   (:import (org.mindrot.jbcrypt BCrypt)))
 
 (def email-address "email@address.com")
@@ -39,7 +37,7 @@
 
 (fact "about valid email address"
       (let [user-store (m/create-memory-store)
-            _ (user/store-user! user-store email-address "password")]
+            _ (th/store-user! user-store email-address "password")]
 
         (fact "if user exists then forgotten-password-id is created and stored, e-mail is sent, and user is redirected to confirmation page"
               (let [email-sender (test-email/create-test-email-sender)
@@ -103,7 +101,7 @@
        (fact "if the forgotten-password-id in the URL corresponds to a non-expired forgotten-password record, the reset password form is displayed"
              (let [user-store (m/create-memory-store)
                    forgotten-password-store (m/create-memory-store)
-                   _ (user/store-user! user-store email-address "password")
+                   _ (th/store-user! user-store email-address "password")
                    _ (fpdb/store-id-for-user! forgotten-password-store test-clock forgotten-password-id email-address 24)
                    test-request (th/create-request :get (routes/path :show-reset-password-form
                                                                      :forgotten-password-id forgotten-password-id)
@@ -143,7 +141,7 @@
        (let [user-store (m/create-memory-store)
              forgotten-password-store (m/create-memory-store)
              token-store (m/create-memory-store)]
-         (user/store-user! user-store email-address "password")
+         (th/store-user! user-store email-address "password")
          (fpdb/store-id-for-user! forgotten-password-store test-clock forgotten-password-id email-address 24)
 
          (fact "if there are validation errors, then the reset password form is returned with the validation errors"
