@@ -59,7 +59,7 @@
   (html/at enlive-m
            [:.clj--sign-in-email__input] (html/set-attr :value (:sign-in-email params))))
 
-(defn set-registration-email-inputs [params enlive-m]
+(defn set-registration-inputs [params enlive-m]
   (html/at enlive-m
            [:.clj--registration-email__input] (html/set-attr :value (:registration-email params))
            [:.clj--registration-first-name__input] (html/set-attr :value (:registration-first-name params))
@@ -113,7 +113,7 @@
          (add-sign-in-errors error-m)
          (add-registration-errors error-m)
          (set-sign-in-email-input (:params request))
-         (set-registration-email-inputs (:params request))
+         (set-registration-inputs (:params request))
          vh/remove-work-in-progress
          vh/add-anti-forgery)))
 
