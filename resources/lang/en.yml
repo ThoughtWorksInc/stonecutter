@@ -206,7 +206,7 @@ flash:
   confirm-email-sent-post-email-address: "Please follow the instructions to confirm your email address."
   expired-password-reset: "This reset password link has already been used, or has expired -  please enter your e-mail below to receive a new email."
   user-trusted: "The account of this user is now trusted"
-  user-untrusted: "The account this user is now untrusted"
+  user-untrusted: "The account of this user is now untrusted"
 
 admin:
   nav-users: Users
