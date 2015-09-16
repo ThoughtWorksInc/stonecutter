@@ -43,6 +43,7 @@ $flash-message--border-radius: 3px;
     white-space: pre-line;
     font-weight: bold;
     @include font-size(17px);
+    word-wrap: break-word;
     &--not-bold {
       font-weight: normal;
     }
