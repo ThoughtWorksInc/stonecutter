@@ -19,6 +19,7 @@
     (load-translations-from-file "lang/en.yml")
     (load-translations-from-file "lang/en-client.yml")))
 
+
 (defmacro load-client-translations []
   (load-translations-from-file "lang/en-client.yml"))
 

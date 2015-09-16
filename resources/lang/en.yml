@@ -19,9 +19,11 @@ index:
   sign-in-forgot-password: Forgot password?
   register-header: Create a Profile
   register-first-name: First name
-  register-first-name-invalid-validation-message: Enter a first name
+  register-first-name-blank-validation-message: First name cannot be blank
+  register-first-name-too-long-validation-message: First name must be shorter
   register-last-name: Last name
-  register-last-name-invalid-validation-message: Enter a last name
+  register-last-name-blank-validation-message: Last name cannot be blank
+  register-last-name-too-long-validation-message: Last name must be shorter
   register-email-address: Email address
   register-email-address-invalid-validation-message: Enter a valid email address
   register-email-address-duplicate-validation-message: User already exists

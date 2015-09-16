@@ -14,10 +14,10 @@
                              :too-long  "content:index/sign-in-password-too-long-validation-message"
                              :too-short "content:index/sign-in-password-too-short-validation-message"}
    :sign-in-credentials     {:invalid "content:index/sign-in-invalid-credentials-validation-message"}
-   :registration-first-name {:blank    "content:index/register-first-name-invalid-validation-message"
-                             :too-long "content:index/register-first-name-invalid-validation-message"}
-   :registration-last-name  {:blank    "content:index/register-last-name-invalid-validation-message"
-                             :too-long "content:index/register-last-name-invalid-validation-message"}
+   :registration-first-name {:blank    "content:index/register-first-name-blank-validation-message"
+                             :too-long "content:index/register-first-name-too-long-validation-message"}
+   :registration-last-name  {:blank    "content:index/register-last-name-blank-validation-message"
+                             :too-long "content:index/register-last-name-too-long-validation-message"}
    :registration-email      {:invalid   "content:index/register-email-address-invalid-validation-message"
                              :duplicate "content:index/register-email-address-duplicate-validation-message"
                              :too-long  "content:index/register-email-address-too-long-validation-message"}
