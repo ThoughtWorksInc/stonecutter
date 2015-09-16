@@ -67,13 +67,13 @@ block content
       .library-item
         h3.library-title Success
         .library__demo
-          .flash-message.flash-message--success.clj--flash-message--success
+          +flashMessageWithCljContainer('clj--flash-message-container','func--flash-message-container', 'success')
             p.flash-message__title.clj--flash-message--success-title Your password was saved successfully.
 
       .library-item
         h3.library-title Fail
         .library__demo
-          .flash-message.flash-message--fail.clj--flash-message--fail
+          +flashMessageWithCljContainer('clj--flash-message-container','func--flash-message-container', 'fail')
             p.flash-message__title.clj--flash-message--fail-title
               | There was a problem saving your password.
               //-= " "

@@ -14,9 +14,8 @@ block headerContent
 block content
   .single-column
 
-    .clj--flash-message-container.func--flash-message-container
-      .flash-message.flash-message--success
-        p.flash-message__title.clj--flash-message-text !Success Flash Message.
+    +flashMessageWithCljContainer('clj--flash-message-container','func--flash-message-container', 'success')
+      p.flash-message__title.clj--flash-message-text !Success Flash Message.
 
     .verify-email-address.clj--unconfirmed-email-message-container.func--unconfirmed-email-message-container
       .flash-message.flash-message--fail.flash-message--no-round-bottom

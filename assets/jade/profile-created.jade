@@ -12,13 +12,12 @@ block content
     h1.page-title(data-l8n="content:profile-created/page-header")
       | !Your Profile Card has been created
 
-    .clj--flash-message-container.func--flash-message-container
-      .flash-message.flash-message--success.flash-message--small-bottom-margin
-        p.flash-message__title
-          span(data-l8n="content:flash/confirm-email-sent-pre-email-address") !A confirmation email has been sent to:
-          = " "
-          span.clj--email-address !email@example.com
-        p.flash-message__title.flash-message__title--not-bold(data-l8n="content:flash/confirm-email-sent-post-email-address") !Please follow the instructions to confirm your email address.
+    +flashMessageWithCljContainer('clj--flash-message-container','func--flash-message-container', 'success', ['small-bottom-margin'])
+      p.flash-message__title
+        span(data-l8n="content:flash/confirm-email-sent-pre-email-address") !A confirmation email has been sent to:
+        = " "
+        span.clj--email-address !email@example.com
+      p.flash-message__title.flash-message__title--not-bold(data-l8n="content:flash/confirm-email-sent-post-email-address") !Please follow the instructions to confirm your email address.
 
     .card-demo
       .card-demo__created

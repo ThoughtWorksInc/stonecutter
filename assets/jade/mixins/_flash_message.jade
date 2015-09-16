@@ -1,0 +1,14 @@
+mixin flashMessage(messageType, modifierClasses)
+  - modifiers = ""
+  - modifierClasses = modifierClasses || []
+
+  each cssClass in modifierClasses
+    - modifiers += " flash-message--" + cssClass
+
+  .flash-message(class="flash-message--#{messageType} #{modifiers}")
+    block
+
+mixin flashMessageWithCljContainer(cljClass, funcClass, messageType, modifierClasses)
+  div(class="#{cljClass} #{funcClass}")
+    +flashMessage(messageType, modifierClasses)
+      block
