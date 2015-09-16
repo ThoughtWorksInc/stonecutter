@@ -64,9 +64,8 @@
                                         :secure                "false"
                                         :rsa-keypair-file-path "test-resources/test-key.json"}
                        :cljsbuild      {:builds        [{:source-paths ["src-cljs" "src-cljc"]
-                                                         :compiler     {:output-to     "resources/public/js/change_password.js"
+                                                         :compiler     {:output-to     "resources/public/js/main.js"
                                                                         :output-dir    "resources/public/js/out"
-                                                                        :main          "stonecutter.change-password"
                                                                         :asset-path    "js/out"
                                                                         :optimizations :whitespace
                                                                         :pretty-print  true}}
@@ -83,8 +82,7 @@
                        :omit-source true
                        :cljsbuild   {:jar    true
                                      :builds [{:source-paths ["src-cljs" "src-cljc"]
-                                               :compiler     {:output-to     "resources/public/js/change_password.js"
-                                                              :main          "stonecutter.change-password"
+                                               :compiler     {:output-to     "resources/public/js/main.js"
                                                               :optimizations :advanced
                                                               :pretty-print  false}}]}}}
   :clean-targets ^{:protect false} [:target-path

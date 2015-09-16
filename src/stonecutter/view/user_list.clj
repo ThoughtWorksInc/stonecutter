@@ -60,4 +60,5 @@
         (set-flash-message request)
         set-sign-out-link
         vh/add-anti-forgery
+        (#(vh/add-script "../js/main.js" %))
         vh/remove-work-in-progress)))

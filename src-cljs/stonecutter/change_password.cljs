@@ -39,10 +39,6 @@
       (.preventDefault submitEvent)
       (focus-on-element (first-input-with-errors err)))))
 
-(defn setup-listener [selector event function]
-  (when-let [e (dm/sel1 selector)]
-    (d/listen! e event function)))
-
 (def change-password-form-state (atom {}))
 
 (defn update-state-input! [field]
@@ -54,15 +50,3 @@
   (swap! change-password-form-state controller-fn)
   (r/render! @change-password-form-state))
 
-(defn start []
-
-  (setup-listener current-password-input :input #(update-state-and-render :current-password (partial c/update-current-password-input)))
-  (setup-listener new-password-input :input #(update-state-and-render :new-password (partial c/update-new-password-input)))
-  (setup-listener current-password-input :input #(update-state-and-render :current-password (partial c/update-new-password-input)))
-
-  (setup-listener current-password-input :blur #(update-state-and-render :current-password (partial c/update-current-password-blur)))
-  (setup-listener new-password-input :blur #(update-state-and-render :new-password (partial c/update-new-password-blur)))
-
-  (setup-listener change-password-form :submit block-invalid-submit))
-
-(set! (.-onload js/window) start)

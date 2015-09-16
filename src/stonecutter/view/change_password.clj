@@ -73,5 +73,5 @@
          (add-change-password-errors err)
          vh/add-anti-forgery
          vh/remove-work-in-progress
-         (vh/add-script "js/change_password.js")
+         (vh/add-script "js/main.js")
          )))

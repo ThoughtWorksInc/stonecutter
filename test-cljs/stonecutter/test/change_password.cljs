@@ -4,6 +4,7 @@
             [dommy.utils :as du]
             [clojure.string :as string]
             [stonecutter.change-password :as cp]
+            [stonecutter.utils :as utils]
             [stonecutter.renderer.change-password :as r]
             [stonecutter.test.test-utils :as test-utils])
   (:require-macros [cemerick.cljs.test :refer [deftest is testing run-tests]]
@@ -73,7 +74,7 @@
 
 (deftest current-password-validation-on-input
          (setup-page! change-password-template)
-         (cp/start)
+         (utils/start)
 
          (testing "correcting invalid password will cause field invalid class to disappear"
                   (enter-text current-password-input invalid-password)
@@ -84,7 +85,7 @@
 
 (deftest new-password-validation-on-input
          (setup-page! change-password-template)
-         (cp/start)
+         (utils/start)
          (reset-change-password-form-atom!)
 
          (testing "typing in valid password causes valid class to appear"
@@ -96,7 +97,7 @@
                   (test-field-doesnt-have-class new-password-field field-valid-class))
 
          (setup-page! change-password-template)
-         (cp/start)
+         (utils/start)
 
          (testing "form rows are checked on current-password input event as well"
                   (enter-text new-password-input valid-password)
@@ -125,7 +126,7 @@
 
 (deftest losing-focus-on-input-fields
          (setup-page! change-password-template)
-         (cp/start)
+         (utils/start)
 
          (testing "current password field"
                   (testing "losing focus when blank adds invalid field class"
@@ -182,7 +183,7 @@
 
 (deftest submitting-invalid-forms
          (setup-page! change-password-template)
-         (cp/start)
+         (utils/start)
 
          (testing "submitting empty form"
                   (press-submit change-password-form)
