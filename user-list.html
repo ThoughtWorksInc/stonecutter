@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
     <link rel="shortcut icon" href="/stonecutter-favicon.ico">
+    <script type="text/javascript">document.getElementsByTagName('html')[0].className += ' js';</script>
     <link href="./stylesheets/application.css" media="screen" rel="stylesheet" type="text/css"/>
     <link href="./stylesheets/theme.css" media="screen" rel="stylesheet" type="text/css"/>
   </head>
@@ -20,6 +21,12 @@
     <div id="main" role="main" class="main-content">
       <div class="columns">
         <div class="single-column">
+          <div class="clj--flash-message-container func--flash-message-container">
+            <div class="flash-message flash-message--success">
+              <p><span class="clj--flash-message-login">Email</span> <span class="flash-message__title clj--flash-message-text">Success Flash Message.</span>
+              </p>
+            </div>
+          </div>
           <h1 data-l8n="content:admin-user-list/page-title">User list</h1>
           <form action="#" method="post" role="search">
             <p class="search-row clj-wip">
@@ -34,12 +41,16 @@
                 <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-times-circle-o user-item__email-address__icon clj--user-item__email-unconfirmed"><span data-l8n="content:admin-user-list/user-not-confirmed-email" class="visuallyhidden">Not confirmed</span></i><span class="clj--user-item__email-address__text">Shadi.Erlendr@gmail.com</span>
                 </div>
               </div>
-              <div class="user-item__action-list clj-wip">
-                <div class="user-item__toggle-trust">
-                  <label for="toggle-shadierlendr" class="toggle">
-                    <input type="checkbox" id="toggle-shadierlendr" checked="checked" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
-                  </label>
-                </div>
+              <div class="user-item__action-list">
+                <form action="/admin/set-user-trustworthiness" method="post">
+                  <div class="user-item__toggle-trust">
+                    <label for="toggle-shadierlendr" class="toggle clj--user-item__label">
+                      <input type="hidden" name="login" class="clj--user-item__email-input"/>
+                      <input type="checkbox" id="toggle-shadierlendr" name="trust-toggle" checked="checked" class="toggle__input clj--user-item__toggle"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                    </label>
+                  </div>
+                  <button type="submit" value="update" class="user-item__trust-button func--user-item__trust-submit"><i class="fa fa-check"></i><span data-l8n="content:admin-user-list/trust-form-button" class="visuallyhidden">Update</span></button>
+                </form>
               </div>
             </li>
             <li class="user-item clj--user-item">
@@ -48,12 +59,16 @@
                 <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-times-circle-o user-item__email-address__icon clj--user-item__email-unconfirmed"><span data-l8n="content:admin-user-list/user-not-confirmed-email" class="visuallyhidden">Not confirmed</span></i><span class="clj--user-item__email-address__text">Horatius.Vilhelm@live.com</span>
                 </div>
               </div>
-              <div class="user-item__action-list clj-wip">
-                <div class="user-item__toggle-trust">
-                  <label for="toggle-horatiusvilhelm" class="toggle">
-                    <input type="checkbox" id="toggle-horatiusvilhelm" checked="checked" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
-                  </label>
-                </div>
+              <div class="user-item__action-list">
+                <form action="/admin/set-user-trustworthiness" method="post">
+                  <div class="user-item__toggle-trust">
+                    <label for="toggle-horatiusvilhelm" class="toggle clj--user-item__label">
+                      <input type="hidden" name="login" class="clj--user-item__email-input"/>
+                      <input type="checkbox" id="toggle-horatiusvilhelm" name="trust-toggle" checked="checked" class="toggle__input clj--user-item__toggle"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                    </label>
+                  </div>
+                  <button type="submit" value="update" class="user-item__trust-button func--user-item__trust-submit"><i class="fa fa-check"></i><span data-l8n="content:admin-user-list/trust-form-button" class="visuallyhidden">Update</span></button>
+                </form>
               </div>
             </li>
             <li class="user-item clj--user-item">
@@ -62,12 +77,16 @@
                 <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-check-circle-o user-item__email-address__icon clj--user-item__email-confirmed"><span data-l8n="content:admin-user-list/user-confirmed-email" class="visuallyhidden">Confirmed</span></i><span class="clj--user-item__email-address__text">Kepa.Othello@amazon.com</span>
                 </div>
               </div>
-              <div class="user-item__action-list clj-wip">
-                <div class="user-item__toggle-trust">
-                  <label for="toggle-kepaothello" class="toggle">
-                    <input type="checkbox" id="toggle-kepaothello" checked="checked" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
-                  </label>
-                </div>
+              <div class="user-item__action-list">
+                <form action="/admin/set-user-trustworthiness" method="post">
+                  <div class="user-item__toggle-trust">
+                    <label for="toggle-kepaothello" class="toggle clj--user-item__label">
+                      <input type="hidden" name="login" class="clj--user-item__email-input"/>
+                      <input type="checkbox" id="toggle-kepaothello" name="trust-toggle" checked="checked" class="toggle__input clj--user-item__toggle"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                    </label>
+                  </div>
+                  <button type="submit" value="update" class="user-item__trust-button func--user-item__trust-submit"><i class="fa fa-check"></i><span data-l8n="content:admin-user-list/trust-form-button" class="visuallyhidden">Update</span></button>
+                </form>
               </div>
             </li>
             <li class="user-item clj--user-item">
@@ -76,12 +95,16 @@
                 <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-times-circle-o user-item__email-address__icon clj--user-item__email-unconfirmed"><span data-l8n="content:admin-user-list/user-not-confirmed-email" class="visuallyhidden">Not confirmed</span></i><span class="clj--user-item__email-address__text">Kevyn.Hildred@hotmail.com</span>
                 </div>
               </div>
-              <div class="user-item__action-list clj-wip">
-                <div class="user-item__toggle-trust">
-                  <label for="toggle-kevynhildred" class="toggle">
-                    <input type="checkbox" id="toggle-kevynhildred" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
-                  </label>
-                </div>
+              <div class="user-item__action-list">
+                <form action="/admin/set-user-trustworthiness" method="post">
+                  <div class="user-item__toggle-trust">
+                    <label for="toggle-kevynhildred" class="toggle clj--user-item__label">
+                      <input type="hidden" name="login" class="clj--user-item__email-input"/>
+                      <input type="checkbox" id="toggle-kevynhildred" name="trust-toggle" class="toggle__input clj--user-item__toggle"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                    </label>
+                  </div>
+                  <button type="submit" value="update" class="user-item__trust-button func--user-item__trust-submit"><i class="fa fa-check"></i><span data-l8n="content:admin-user-list/trust-form-button" class="visuallyhidden">Update</span></button>
+                </form>
               </div>
             </li>
             <li class="user-item clj--user-item">
@@ -90,12 +113,16 @@
                 <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-check-circle-o user-item__email-address__icon clj--user-item__email-confirmed"><span data-l8n="content:admin-user-list/user-confirmed-email" class="visuallyhidden">Confirmed</span></i><span class="clj--user-item__email-address__text">Wallis.Fran@live.com</span>
                 </div>
               </div>
-              <div class="user-item__action-list clj-wip">
-                <div class="user-item__toggle-trust">
-                  <label for="toggle-wallisfran" class="toggle">
-                    <input type="checkbox" id="toggle-wallisfran" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
-                  </label>
-                </div>
+              <div class="user-item__action-list">
+                <form action="/admin/set-user-trustworthiness" method="post">
+                  <div class="user-item__toggle-trust">
+                    <label for="toggle-wallisfran" class="toggle clj--user-item__label">
+                      <input type="hidden" name="login" class="clj--user-item__email-input"/>
+                      <input type="checkbox" id="toggle-wallisfran" name="trust-toggle" class="toggle__input clj--user-item__toggle"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                    </label>
+                  </div>
+                  <button type="submit" value="update" class="user-item__trust-button func--user-item__trust-submit"><i class="fa fa-check"></i><span data-l8n="content:admin-user-list/trust-form-button" class="visuallyhidden">Update</span></button>
+                </form>
               </div>
             </li>
             <li class="user-item clj--user-item">
@@ -104,12 +131,16 @@
                 <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-check-circle-o user-item__email-address__icon clj--user-item__email-confirmed"><span data-l8n="content:admin-user-list/user-confirmed-email" class="visuallyhidden">Confirmed</span></i><span class="clj--user-item__email-address__text">Ricki.Robbie@gmail.com</span>
                 </div>
               </div>
-              <div class="user-item__action-list clj-wip">
-                <div class="user-item__toggle-trust">
-                  <label for="toggle-rickirobbie" class="toggle">
-                    <input type="checkbox" id="toggle-rickirobbie" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
-                  </label>
-                </div>
+              <div class="user-item__action-list">
+                <form action="/admin/set-user-trustworthiness" method="post">
+                  <div class="user-item__toggle-trust">
+                    <label for="toggle-rickirobbie" class="toggle clj--user-item__label">
+                      <input type="hidden" name="login" class="clj--user-item__email-input"/>
+                      <input type="checkbox" id="toggle-rickirobbie" name="trust-toggle" class="toggle__input clj--user-item__toggle"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                    </label>
+                  </div>
+                  <button type="submit" value="update" class="user-item__trust-button func--user-item__trust-submit"><i class="fa fa-check"></i><span data-l8n="content:admin-user-list/trust-form-button" class="visuallyhidden">Update</span></button>
+                </form>
               </div>
             </li>
             <li class="user-item clj--user-item">
@@ -118,12 +149,16 @@
                 <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-times-circle-o user-item__email-address__icon clj--user-item__email-unconfirmed"><span data-l8n="content:admin-user-list/user-not-confirmed-email" class="visuallyhidden">Not confirmed</span></i><span class="clj--user-item__email-address__text">Lindsay.Claude@google.com</span>
                 </div>
               </div>
-              <div class="user-item__action-list clj-wip">
-                <div class="user-item__toggle-trust">
-                  <label for="toggle-lindsayclaude" class="toggle">
-                    <input type="checkbox" id="toggle-lindsayclaude" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
-                  </label>
-                </div>
+              <div class="user-item__action-list">
+                <form action="/admin/set-user-trustworthiness" method="post">
+                  <div class="user-item__toggle-trust">
+                    <label for="toggle-lindsayclaude" class="toggle clj--user-item__label">
+                      <input type="hidden" name="login" class="clj--user-item__email-input"/>
+                      <input type="checkbox" id="toggle-lindsayclaude" name="trust-toggle" class="toggle__input clj--user-item__toggle"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                    </label>
+                  </div>
+                  <button type="submit" value="update" class="user-item__trust-button func--user-item__trust-submit"><i class="fa fa-check"></i><span data-l8n="content:admin-user-list/trust-form-button" class="visuallyhidden">Update</span></button>
+                </form>
               </div>
             </li>
             <li class="user-item clj--user-item">
@@ -132,12 +167,16 @@
                 <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-times-circle-o user-item__email-address__icon clj--user-item__email-unconfirmed"><span data-l8n="content:admin-user-list/user-not-confirmed-email" class="visuallyhidden">Not confirmed</span></i><span class="clj--user-item__email-address__text">Kenzie.Mackenzie@email-address.com</span>
                 </div>
               </div>
-              <div class="user-item__action-list clj-wip">
-                <div class="user-item__toggle-trust">
-                  <label for="toggle-kenziemackenzie" class="toggle">
-                    <input type="checkbox" id="toggle-kenziemackenzie" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
-                  </label>
-                </div>
+              <div class="user-item__action-list">
+                <form action="/admin/set-user-trustworthiness" method="post">
+                  <div class="user-item__toggle-trust">
+                    <label for="toggle-kenziemackenzie" class="toggle clj--user-item__label">
+                      <input type="hidden" name="login" class="clj--user-item__email-input"/>
+                      <input type="checkbox" id="toggle-kenziemackenzie" name="trust-toggle" class="toggle__input clj--user-item__toggle"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                    </label>
+                  </div>
+                  <button type="submit" value="update" class="user-item__trust-button func--user-item__trust-submit"><i class="fa fa-check"></i><span data-l8n="content:admin-user-list/trust-form-button" class="visuallyhidden">Update</span></button>
+                </form>
               </div>
             </li>
             <li class="user-item clj--user-item">
@@ -146,12 +185,16 @@
                 <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-check-circle-o user-item__email-address__icon clj--user-item__email-confirmed"><span data-l8n="content:admin-user-list/user-confirmed-email" class="visuallyhidden">Confirmed</span></i><span class="clj--user-item__email-address__text">Kayden.Andy@apple.com</span>
                 </div>
               </div>
-              <div class="user-item__action-list clj-wip">
-                <div class="user-item__toggle-trust">
-                  <label for="toggle-kaydenandy" class="toggle">
-                    <input type="checkbox" id="toggle-kaydenandy" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
-                  </label>
-                </div>
+              <div class="user-item__action-list">
+                <form action="/admin/set-user-trustworthiness" method="post">
+                  <div class="user-item__toggle-trust">
+                    <label for="toggle-kaydenandy" class="toggle clj--user-item__label">
+                      <input type="hidden" name="login" class="clj--user-item__email-input"/>
+                      <input type="checkbox" id="toggle-kaydenandy" name="trust-toggle" class="toggle__input clj--user-item__toggle"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                    </label>
+                  </div>
+                  <button type="submit" value="update" class="user-item__trust-button func--user-item__trust-submit"><i class="fa fa-check"></i><span data-l8n="content:admin-user-list/trust-form-button" class="visuallyhidden">Update</span></button>
+                </form>
               </div>
             </li>
             <li class="user-item clj--user-item">
@@ -160,12 +203,16 @@
                 <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-times-circle-o user-item__email-address__icon clj--user-item__email-unconfirmed"><span data-l8n="content:admin-user-list/user-not-confirmed-email" class="visuallyhidden">Not confirmed</span></i><span class="clj--user-item__email-address__text">Rene.Phoenix@mobileme.com</span>
                 </div>
               </div>
-              <div class="user-item__action-list clj-wip">
-                <div class="user-item__toggle-trust">
-                  <label for="toggle-renephoenix" class="toggle">
-                    <input type="checkbox" id="toggle-renephoenix" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
-                  </label>
-                </div>
+              <div class="user-item__action-list">
+                <form action="/admin/set-user-trustworthiness" method="post">
+                  <div class="user-item__toggle-trust">
+                    <label for="toggle-renephoenix" class="toggle clj--user-item__label">
+                      <input type="hidden" name="login" class="clj--user-item__email-input"/>
+                      <input type="checkbox" id="toggle-renephoenix" name="trust-toggle" class="toggle__input clj--user-item__toggle"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                    </label>
+                  </div>
+                  <button type="submit" value="update" class="user-item__trust-button func--user-item__trust-submit"><i class="fa fa-check"></i><span data-l8n="content:admin-user-list/trust-form-button" class="visuallyhidden">Update</span></button>
+                </form>
               </div>
             </li>
             <li class="user-item clj--user-item">
@@ -174,12 +221,16 @@
                 <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-check-circle-o user-item__email-address__icon clj--user-item__email-confirmed"><span data-l8n="content:admin-user-list/user-confirmed-email" class="visuallyhidden">Confirmed</span></i><span class="clj--user-item__email-address__text">Odell.Indigo@yahoo.com</span>
                 </div>
               </div>
-              <div class="user-item__action-list clj-wip">
-                <div class="user-item__toggle-trust">
-                  <label for="toggle-odellindigo" class="toggle">
-                    <input type="checkbox" id="toggle-odellindigo" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
-                  </label>
-                </div>
+              <div class="user-item__action-list">
+                <form action="/admin/set-user-trustworthiness" method="post">
+                  <div class="user-item__toggle-trust">
+                    <label for="toggle-odellindigo" class="toggle clj--user-item__label">
+                      <input type="hidden" name="login" class="clj--user-item__email-input"/>
+                      <input type="checkbox" id="toggle-odellindigo" name="trust-toggle" class="toggle__input clj--user-item__toggle"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                    </label>
+                  </div>
+                  <button type="submit" value="update" class="user-item__trust-button func--user-item__trust-submit"><i class="fa fa-check"></i><span data-l8n="content:admin-user-list/trust-form-button" class="visuallyhidden">Update</span></button>
+                </form>
               </div>
             </li>
             <li class="user-item clj--user-item">
@@ -188,12 +239,16 @@
                 <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-times-circle-o user-item__email-address__icon clj--user-item__email-unconfirmed"><span data-l8n="content:admin-user-list/user-not-confirmed-email" class="visuallyhidden">Not confirmed</span></i><span class="clj--user-item__email-address__text">Sammy.Laurie@gmail.com</span>
                 </div>
               </div>
-              <div class="user-item__action-list clj-wip">
-                <div class="user-item__toggle-trust">
-                  <label for="toggle-sammylaurie" class="toggle">
-                    <input type="checkbox" id="toggle-sammylaurie" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
-                  </label>
-                </div>
+              <div class="user-item__action-list">
+                <form action="/admin/set-user-trustworthiness" method="post">
+                  <div class="user-item__toggle-trust">
+                    <label for="toggle-sammylaurie" class="toggle clj--user-item__label">
+                      <input type="hidden" name="login" class="clj--user-item__email-input"/>
+                      <input type="checkbox" id="toggle-sammylaurie" name="trust-toggle" class="toggle__input clj--user-item__toggle"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                    </label>
+                  </div>
+                  <button type="submit" value="update" class="user-item__trust-button func--user-item__trust-submit"><i class="fa fa-check"></i><span data-l8n="content:admin-user-list/trust-form-button" class="visuallyhidden">Update</span></button>
+                </form>
               </div>
             </li>
             <li class="user-item clj--user-item">
@@ -202,12 +257,16 @@
                 <div class="user-item__email-address clj--user-item__email-address"><i class="fa fa-times-circle-o user-item__email-address__icon clj--user-item__email-unconfirmed"><span data-l8n="content:admin-user-list/user-not-confirmed-email" class="visuallyhidden">Not confirmed</span></i><span class="clj--user-item__email-address__text">Averill.Bernie@gmail.com</span>
                 </div>
               </div>
-              <div class="user-item__action-list clj-wip">
-                <div class="user-item__toggle-trust">
-                  <label for="toggle-averillbernie" class="toggle">
-                    <input type="checkbox" id="toggle-averillbernie" class="toggle__input"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
-                  </label>
-                </div>
+              <div class="user-item__action-list">
+                <form action="/admin/set-user-trustworthiness" method="post">
+                  <div class="user-item__toggle-trust">
+                    <label for="toggle-averillbernie" class="toggle clj--user-item__label">
+                      <input type="hidden" name="login" class="clj--user-item__email-input"/>
+                      <input type="checkbox" id="toggle-averillbernie" name="trust-toggle" class="toggle__input clj--user-item__toggle"/><span data-l8n="content:admin-user-list/trust-label" class="toggle__title visuallyhidden">Toggle trust</span><span class="toggle__switch"><span class="toggle__handle"><span class="toggle__handle-icon"><i class="fa fa-lock"></i></span></span></span>
+                    </label>
+                  </div>
+                  <button type="submit" value="update" class="user-item__trust-button func--user-item__trust-submit"><i class="fa fa-check"></i><span data-l8n="content:admin-user-list/trust-form-button" class="visuallyhidden">Update</span></button>
+                </form>
               </div>
             </li>
           </ul>

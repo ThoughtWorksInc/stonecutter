@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="format-detection" content="telephone=no">
     <link rel="shortcut icon" href="/stonecutter-favicon.ico">
+    <script type="text/javascript">document.getElementsByTagName('html')[0].className += ' js';</script>
     <link href="./stylesheets/application.css" media="screen" rel="stylesheet" type="text/css"/>
     <link href="./stylesheets/theme.css" media="screen" rel="stylesheet" type="text/css"/>
   </head>
@@ -69,12 +70,6 @@
                 </div>
                 <form action="./profile-created" method="post" role="form" class="register-form clj--register__form">
                   <input type="hidden" name="action" value="register">
-                  <div class="validation-summary clj--registration-validation-summary">
-                    <div class="validation-summary__title"></div>
-                    <ul class="validation-summary__list">
-                      <li data-l8n="content:index/register-confirm-password-invalid-validation-message" class="validation-summary__item clj--registration-validation-summary__item">Ensure your passwords match</li>
-                    </ul>
-                  </div>
                   <p class="form-row clj--registration-first-name clj-wip">
                     <label for="reg-first-name" class="form-row__label"><span data-l8n="content:index/register-first-name" class="form-row__title">First name</span><span data-l8n="content:index/register-first-name-invalid-validation-message" class="form-row__validation clj--registration-first-name__validation">Enter a first name</span></label>
                     <input type="text" id="reg-first-name" name="registration-first-name" class="form-row__input registration-first-name-input func--first-name__input">
@@ -90,10 +85,6 @@
                   <p class="form-row clj--registration-password">
                     <label for="reg-password" class="form-row__label"><span data-l8n="content:index/register-password" class="form-row__title">Password</span><span data-l8n="content:index/register-password-too-short-validation-message" class="form-row__validation clj--registration-password__validation">Password must be between 8 and 50 characters long</span></label>
                     <input type="password" id="reg-password" name="registration-password" class="form-row__input func--registration-password__input">
-                  </p>
-                  <p class="form-row clj--registration-confirm-password">
-                    <label for="reg-confirm-password" class="form-row__label"><span data-l8n="content:index/register-confirm-password" class="form-row__title">Confirm Password</span></label>
-                    <input type="password" id="reg-confirm-password" name="registration-confirm-password" class="form-row__input func--registration-confirm-password__input">
                   </p>
                   <button type="submit" data-l8n="content:index/register-create-account" class="button button--full-width-smallish-devices func--create-profile__button">Create a Profile</button>
                 </form>
