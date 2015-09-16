@@ -68,4 +68,22 @@
 
 
 
+(deftest update-model-on-input
+         (testing "first name error is set to nil for any value"
+                  (is (= {:first-name {:value "Barry" :error nil}}
+                         (rf/update-first-name-input {:first-name {:value "Barry" :error :anything}}))))
+         (testing "last name error is set to nil for any value"
+                  (is (= {:last-name {:value "Barry" :error nil}}
+                         (rf/update-last-name-input {:last-name {:value "Barry" :error :anything}}))))
+         (testing "email-address error is set to nil for any value"
+                  (is (= {:email-address {:value "hello@world.com" :error nil}}
+                         (rf/update-email-address-input {:email-address {:value "hello@world.com" :error :anything}}))))
+         (testing "when password value is valid, error is set to nil and tick is set to true"
+                  (is (= {:password {:value "a-valid-password" :error nil :tick true}}
+                         (rf/update-password-input {:password {:value "a-valid-password" :error :anything :tick :anything}}))))
+         (testing "when password value is invalid, error is unchanged and tick is set to false"
+                  (is (= {:password {:value "short" :error :anything :tick false}}
+                         (rf/update-password-input {:password {:value "short" :error :anything :tick true}})))))
+
+
 
