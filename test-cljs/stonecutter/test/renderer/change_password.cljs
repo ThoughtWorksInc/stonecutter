@@ -71,5 +71,4 @@
                            (let [state (assoc-in default-state [:new-password :tick] false)]
                              (r/render! state))
                            (cp-test/test-field-doesnt-have-class cp-test/new-password-field cp-test/field-valid-class)
-                           (cp-test/test-field-doesnt-have-class cp-test/new-password-field cp-test/field-invalid-class))
-                  ))
+                           (cp-test/test-field-doesnt-have-class cp-test/new-password-field cp-test/field-invalid-class))))

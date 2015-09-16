@@ -1,5 +1,5 @@
 (ns stonecutter.test.unit.change-password
-  (:require [cemerick.cljs.test :as t]
+  (:require [cemerick.cljs.test]
             [stonecutter.controller.change-password :as cp])
   (:require-macros [cemerick.cljs.test :refer [deftest is testing run-tests]]))
 
@@ -51,7 +51,7 @@
                                  "short current password changed the error"))))
 
          (testing "new-password"
-                  (testing "when input is valid, error should be nil, tickshould be true"
+                  (testing "when input is valid, error should be nil, tick should be true"
                            (let [current-state {:current-password {} :new-password {:value "12345678" :error :something}}
                                  expected-state {:current-password {} :new-password {:value "12345678" :error nil :tick true}}]
                              (is (= expected-state (cp/update-new-password-input current-state))

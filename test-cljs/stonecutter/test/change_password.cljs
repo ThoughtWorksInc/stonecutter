@@ -1,5 +1,5 @@
 (ns stonecutter.test.change-password
-  (:require [cemerick.cljs.test :as t]
+  (:require [cemerick.cljs.test]
             [dommy.core :as dommy]
             [dommy.utils :as du]
             [clojure.string :as string]
@@ -103,7 +103,7 @@
                   (enter-text current-password-input valid-password)
                   (test-field-doesnt-have-class new-password-field field-valid-class))
 
-         (testing "field error class get removed if the new password is correct"
+         (testing "field error class gets removed if the new password is correct"
                   (enter-text new-password-input invalid-password)
                   (enter-text current-password-input invalid-password)
                   (press-submit change-password-form)
@@ -121,10 +121,7 @@
 (defn has-no-message-on-selector [selector]
   (let [error-message (dommy/text (sel1 selector))]
     (is (= "" error-message)
-        (str error-message " should not equal to " message))))
-
-(defn has-summary-message [message]
-  (has-message-on-selector :.validation-summary__item message))
+        (str "Expecting no error message but received: " error-message))))
 
 (deftest losing-focus-on-input-fields
          (setup-page! change-password-template)
