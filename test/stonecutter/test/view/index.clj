@@ -117,16 +117,16 @@
                       index)]
          (fact "validation summary is removed"
                (html/select page [:.clj--validation-summary]) => empty?)
-         (fact "no elements have class for styling errors"
+         (fact "no elements have class for styling and unhiding errors"
                (html/select page [:.form-row--invalid]) => empty?)
-         (fact "first name validation element is removed"
-               (html/select page [:.clj--registration-first-name__validation]) => empty?)
-         (fact "last name validation element is removed"
-               (html/select page [:.clj--registration-last-name__validation]) => empty?)
-         (fact "email validation element is removed"
-               (html/select page [:.clj--registration-email__validation]) => empty?)
-         (fact "password validation element is removed"
-               (html/select page [:.clj--registration-password__validation]) => empty?)))
+         (fact "first name validation element is not removed - it is hidden by not having the <form-row--invalid> in a parent"
+               (html/select page [:.clj--registration-first-name__validation]) =not=> empty?)
+         (fact "last name validation element is not removed - it is hidden by not having the <form-row--invalid> in a parent"
+               (html/select page [:.clj--registration-last-name__validation]) =not=> empty?)
+         (fact "email validation element is not removed - it is hidden by not having the <form-row--invalid> in a parent"
+               (html/select page [:.clj--registration-email__validation]) =not=> empty?)
+         (fact "password validation element is not removed - it is hidden by not having the <form-row--invalid> in a parent"
+               (html/select page [:.clj--registration-password__validation]) =not=> empty?)))
 
 (facts "about displaying registration errors"
        (facts "when first name is blank"

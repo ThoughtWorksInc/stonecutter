@@ -73,7 +73,7 @@
       (-> enlive-m
           (add-error-class [:.clj--registration-first-name])
           (html/at [:.clj--registration-first-name__validation] (html/set-attr :data-l8n (or error-translation "content:index/register-unknown-error")))))
-    (vh/remove-element enlive-m [:.clj--registration-first-name__validation])))
+    enlive-m))
 
 (defn add-registration-last-name-error [enlive-m err]
   (if-let [registration-last-name-error (:registration-last-name err)]
@@ -81,7 +81,7 @@
       (-> enlive-m
           (add-error-class [:.clj--registration-last-name])
           (html/at [:.clj--registration-last-name__validation] (html/set-attr :data-l8n (or error-translation "content:index/register-unknown-error")))))
-    (vh/remove-element enlive-m [:.clj--registration-last-name__validation])))
+    enlive-m))
 
 (defn add-registration-email-error [enlive-m err]
   (if-let [registration-email-error (:registration-email err)]
@@ -89,7 +89,7 @@
       (-> enlive-m
           (add-error-class [:.clj--registration-email])
           (html/at [:.clj--registration-email__validation] (html/set-attr :data-l8n (or error-translation "content:index/register-unknown-error")))))
-    (vh/remove-element enlive-m [:.clj--registration-email__validation])))
+    enlive-m))
 
 (defn add-registration-password-error [enlive-m err]
   (if-let [registration-password-error (:registration-password err)]
@@ -97,7 +97,7 @@
       (-> enlive-m
           (add-error-class [:.clj--registration-password])
           (html/at [:.clj--registration-password__validation] (html/set-attr :data-l8n (or error-translation "content:index/register-unknown-error")))))
-    (vh/remove-element enlive-m [:.clj--registration-password__validation])))
+    enlive-m))
 
 (def error-display-order [:registration-first-name :registration-last-name :registration-email :registration-password])
 
