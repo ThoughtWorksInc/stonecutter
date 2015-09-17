@@ -19,19 +19,9 @@ index:
   sign-in-forgot-password: Forgot password?
   register-header: Create a Profile
   register-first-name: First name
-  register-first-name-blank-validation-message: First name cannot be blank
-  register-first-name-too-long-validation-message: First name must be shorter
   register-last-name: Last name
-  register-last-name-blank-validation-message: Last name cannot be blank
-  register-last-name-too-long-validation-message: Last name must be shorter
   register-email-address: Email address
-  register-email-address-invalid-validation-message: Enter a valid email address
-  register-email-address-duplicate-validation-message: User already exists
-  register-email-address-too-long-validation-message: Email address is too long
   register-password: Password (8 or more characters)
-  register-password-blank-validation-message: Password cannot be blank
-  register-password-too-long-validation-message: Password is too long
-  register-password-too-short-validation-message: Password should be at least 8 characters long
   register-confirm-password: Confirm password
   register-unknown-error: Whoops! Unknown error
   register-create-account: Create Profile Card

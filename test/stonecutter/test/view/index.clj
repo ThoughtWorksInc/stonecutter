@@ -128,6 +128,7 @@
          (fact "password validation element is not removed - it is hidden by not having the <form-row--invalid> in a parent"
                (html/select page [:.clj--registration-password__validation]) =not=> empty?)))
 
+
 (facts "about displaying registration errors"
        (facts "when first name is blank"
               (let [errors {:registration-first-name :blank}
