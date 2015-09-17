@@ -126,6 +126,9 @@ app.all('/admin/user-list', function (req, res) {
 app.get('/admin/invite', function (req, res) {
   customRender(res, 'admin-invite-user', pageData);
 });
+app.get('/admin/apps', function (req, res) {
+  customRender(res, 'admin-apps', pageData);
+});
 
 app.get('/email-demo', function (req, res) {
   customRender(res, 'email-demo', pageData);

@@ -8,10 +8,7 @@ block vars
 block headerScripts
 
 block headerContent
-  a.header-nav__link.clj-wip(href="./user-list", data-l8n="content:admin/nav-users") !Users
-  a.header-nav__link.clj-wip(href="./invite", data-l8n="content:admin/nav-invite-user") !Invite
-  a.header-nav__link.clj--sign-out__link.func--sign-out__link(href="./sign-in", data-l8n="content:profile/sign-out-link") !Sign out
-
+  include _admin_navigation
 
 block content
   .single-column

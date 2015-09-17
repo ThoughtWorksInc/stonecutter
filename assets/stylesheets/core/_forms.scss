@@ -41,9 +41,17 @@ input {
   }
 }
 
+fieldset {
+  position: relative;
+  border: 0;
+  padding: 0;
+}
+legend {
+}
+
 .form-row {
   position: relative;
-  max-width: $smallish_device;
+  //max-width: $smallish_device;
   margin-bottom: 1.25rem;
   color: #5d5d5d;
   transition: background-color 250ms ease;

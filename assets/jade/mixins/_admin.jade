@@ -29,3 +29,15 @@ mixin userItem(fullName, emailAddress, emailIsConfirmed, userIsTrusted)
         button.user-item__trust-button.func--user-item__trust-submit(type="submit", value="update")
           i.fa.fa-check
           span.visuallyhidden(data-l8n="content:admin-user-list/trust-form-button") !Update
+
+mixin adminAppItem(appName, appURL, clientID, clientSecret)
+  li.admin-app-item
+    h2.admin-app-item__title #{appName}
+    dl.def-list
+      dt.def-list__title(data-l8n="content:admin-app-list/label-app-url") !App URL
+      dd.def-list__data #{appURL}
+      dt.def-list__title(data-l8n="content:admin-app-list/label-app-id") !Client ID
+      dd.def-list__data #{clientID}
+      dt.def-list__title(data-l8n="content:admin-app-list/label-app-secret") !Client Secret
+      dd.def-list__data #{clientSecret}
+

@@ -1,0 +1,31 @@
+@mixin admin-app-box {
+  margin-bottom: 1rem;
+  padding: 1.3rem;
+  border: 1px solid $light_grey;
+  border-radius: 3px;
+}
+
+.admin-app-list {
+  @include reset-list;
+  margin-bottom: 0;
+}
+.admin-app-item {
+  @include admin-app-box;
+  &__title {
+    margin-top: 0;
+    margin-bottom: 0;
+    @include font-size($h3_font_size--small);
+    font-weight: 500;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: $default_text_color;
+    @include width-from($medium_device) {
+      @include font-size($h3_font_size--medium);
+    }
+  }
+}
+
+
+.admin-add-app-form {
+  @include admin-app-box;
+}

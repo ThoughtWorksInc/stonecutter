@@ -213,6 +213,7 @@ flash:
 admin:
   nav-users: Users
   nav-invite-user: Invite
+  nav-apps: Apps
 
 admin-sign-in-form:
   title: Sign in
@@ -237,6 +238,20 @@ admin-user-list:
   trust-label: Toggle trust
   list-empty: There are no users.
   trust-form-button: Update
+
+admin-app-list:
+  title: Apps
+  page-title: Apps
+  added-flash-success: was successfully added
+  link-to-add-more: Add more apps
+  label-app: App name
+  app-invalid-validation-message: Enter the application name
+  label-app-url: App url
+  url-invalid-validation-message: Enter the application url
+  add-app-button: Add app
+  label-app-id: Client ID
+  label-app-secret: Client Secret
+
 
 admin-invite-user:
   title: Invite a user
