@@ -23,10 +23,6 @@
          (testing "adding and removing invalid class from first name, last name and email address fields"
                   (are [?field-key ?form-row-selector]
                        (testing "tabular"
-                                (testing "- no error, does not add invalid class"
-                                         (r/render! default-state)
-                                         (cp-test/test-field-doesnt-have-class ?form-row-selector r/field-invalid-class))
-
                                 (testing "- any error, adds invalid class"
                                          (r/render! (assoc-in default-state [?field-key :error] :ANYTHING))
                                          (cp-test/test-field-has-class ?form-row-selector r/field-invalid-class))
@@ -45,10 +41,6 @@
 
 
          (testing "valid class on password field"
-                  (testing "- tick false, does not add valid class"
-                           (r/render! default-state)
-                           (cp-test/test-field-doesnt-have-class r/password-form-row-element-selector r/field-valid-class))
-
                   (testing "- tick true, adds valid class"
                            (r/render! (assoc-in default-state [:password :tick] true))
                            (cp-test/test-field-has-class r/password-form-row-element-selector r/field-valid-class))
@@ -57,4 +49,12 @@
                            (r/render! (assoc-in default-state [:password :tick] true))
                            (cp-test/test-field-has-class r/password-form-row-element-selector r/field-valid-class)
                            (r/render! (assoc-in default-state [:password :tick] false))
-                           (cp-test/test-field-doesnt-have-class r/password-form-row-element-selector r/field-valid-class))))
+                           (cp-test/test-field-doesnt-have-class r/password-form-row-element-selector r/field-valid-class)))
+
+         #_(testing "error messages"
+                  (testing "first name"
+                           (testing "blank"
+                                    (r/render! (assoc-in default-state [:first-name :error] :blank))
+                                    )
+                           (testing "too long")
+                           (testing "no error"))))

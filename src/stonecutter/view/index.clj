@@ -7,6 +7,8 @@
 (defn add-error-class [enlive-m field-row-selector]
   (html/at enlive-m field-row-selector (html/add-class "form-row--invalid")))
 
+(def unknown-error-translation-key "content:index/register-unknown-error")
+
 (def error-translations
   {:sign-in-email           {:invalid  "content:index/sign-in-email-address-invalid-validation-message"
                              :too-long "content:index/sign-in-email-address-too-long-validation-message"}
@@ -97,8 +99,29 @@
           (html/at [:.clj--registration-password__validation] (html/set-attr :data-l8n (or error-translation "content:index/register-unknown-error")))))
     (vh/remove-element enlive-m [:.clj--registration-password__validation])))
 
+(def error-display-order [:registration-first-name :registration-last-name :registration-email :registration-password])
+
+(defn get-kv-for-key [a-map a-key]
+  (when-let [v (a-key a-map)]
+    [a-key v]))
+
+(defn kv-pairs-from-map-ordered-by [the-map ordered-keys]
+  (remove nil? (map #(get-kv-for-key the-map %) ordered-keys)))
+
+
+(defn add-registration-validation-summary [enlive-m err]
+  (if (empty? err)
+    (vh/remove-element enlive-m [:.clj--validation-summary])
+    (let [ordered-error-key-pairs (kv-pairs-from-map-ordered-by err error-display-order)]
+      (-> enlive-m
+          (html/at [:.clj--validation-summary__item]
+                   (html/clone-for [error-key-pair ordered-error-key-pairs]
+                                   (html/set-attr :data-l8n (or (get-in error-translations error-key-pair)
+                                                                unknown-error-translation-key))))))))
+
 (defn add-registration-errors [err enlive-m]
   (-> enlive-m
+      (add-registration-validation-summary err)
       (add-registration-first-name-error err)
       (add-registration-last-name-error err)
       (add-registration-email-error err)
