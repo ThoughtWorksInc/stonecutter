@@ -48,11 +48,11 @@
 (defn lose-focus [sel]
   (test-utils/fire! (sel1 sel) :blur))
 
-(defn test-field-class-existance [has-class? selector valid-class]
-  (is (= has-class? (dommy/has-class? (sel1 selector) valid-class))
+(defn test-field-class-existance [has-class? selector css-class]
+  (is (= has-class? (dommy/has-class? (sel1 selector) css-class))
       (if has-class?
-        (str "field: " selector " does not contain correct class: " valid-class)
-        (str "field: " selector " contains class " valid-class " when it shouldn't"))))
+        (str "field: " selector " does not contain expected class: " css-class)
+        (str "field: " selector " contains class " css-class " when it shouldn't"))))
 
 (def test-field-has-class (partial test-field-class-existance true))
 (def test-field-doesnt-have-class (partial test-field-class-existance false))
@@ -113,8 +113,8 @@
                   (test-field-doesnt-have-class new-password-field field-invalid-class)))
 
 (defn has-message-on-selector [selector message]
-  (let [validation-classes (sel selector)
-        err-messages (mapv (partial dommy/text) validation-classes)]
+  (let [selected-elements (sel selector)
+        err-messages (mapv (partial dommy/text) selected-elements)]
     (is (not (string/blank? message)) "Error message key returns blank string")
     (is (some #{message} err-messages)
         (str "Missing error message " message " when error occurs"))))
