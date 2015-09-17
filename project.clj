@@ -24,7 +24,9 @@
                  [org.bitbucket.b_c/jose4j "0.4.4"]
                  [org.slf4j/slf4j-simple "1.7.12"]
                  [org.clojure/clojurescript "0.0-3308" :scope "provided"]
-                 [prismatic/dommy "1.1.0"]]
+                 [prismatic/dommy "1.1.0"]
+                 [cljs-ajax "0.3.14"]
+                 [ring/ring-json "0.4.0"]]
   :main stonecutter.handler
   :jvm-opts ["-Dlog4j.configuration=log4j.dev"]
   :aot :all

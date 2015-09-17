@@ -3,6 +3,7 @@
             [ring.middleware.content-type :as ring-mct]
             [ring.util.response :as r]
             [ring.adapter.jetty :as ring-jetty]
+            [ring.middleware.json :as ring-json]
             [scenic.routes :as scenic]
             [clojure.tools.logging :as log]
             [stonecutter.session :as session]
@@ -120,8 +121,8 @@
         user-store (storage/get-user-store stores-m)
         client-store (storage/get-client-store stores-m)
         token-store (storage/get-token-store stores-m)]
-    {:validate-token (partial oauth/validate-token config-m auth-code-store client-store user-store token-store id-token-generator)
-     :jwk-set        (partial oauth/jwk-set json-web-key-set)}))
+    {:validate-token                (partial oauth/validate-token config-m auth-code-store client-store user-store token-store id-token-generator)
+     :jwk-set                       (partial oauth/jwk-set json-web-key-set)}))
 
 (defn splitter [site api]
   (fn [request]
@@ -148,6 +149,7 @@
       (m/wrap-config config-m)
       (m/wrap-error-handling err-handler dev-mode?)
       (m/wrap-custom-static-resources config-m)
+      (ring-json/wrap-json-params)
       ring-mct/wrap-content-type))
 
 (defn create-api-app [config-m stores-m id-token-generator json-web-key-set dev-mode?]

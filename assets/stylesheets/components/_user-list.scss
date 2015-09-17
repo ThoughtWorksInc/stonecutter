@@ -61,7 +61,7 @@
     transition: background 250ms ease, color 250ms ease, box-shadow 250ms ease, transform 250ms ease;
     outline: 0;
     .js & {
-      //display: none; //hide if JS class is present on html
+      display: none; //hide if JS class is present on html
     }
     &:focus, &:hover {
       background-color: lighten($dark_cyan, 1%);
