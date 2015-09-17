@@ -5,9 +5,16 @@
 
 (def first-name-form-row-element-selector :.clj--registration-first-name)
 (def last-name-form-row-element-selector :.clj--registration-last-name)
+(def email-address-form-row-element-selector :.clj--registration-email)
 
 (def field-invalid-class "form-row--invalid")
 (def field-valid-class "form-row--valid")
+
+(defn render-email-address-error! [state]
+  (if (get-in state [:email-address :error])
+    (d/add-class! (dm/sel1 email-address-form-row-element-selector) field-invalid-class)
+    (d/remove-class! (dm/sel1 email-address-form-row-element-selector) field-invalid-class))
+  state)
 
 (defn render-last-name-error! [state]
   (if (get-in state [:last-name :error])
@@ -24,4 +31,5 @@
 (defn render! [state]
   (-> state
       render-first-name-error!
-      render-last-name-error!))
+      render-last-name-error!
+      render-email-address-error!))
