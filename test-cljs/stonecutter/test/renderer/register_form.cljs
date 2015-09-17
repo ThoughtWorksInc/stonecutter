@@ -22,7 +22,7 @@
 
          (testing "first name, last name and email address fields"
                   (are [?field-key ?form-row-selector]
-                       (testing "tablular"
+                       (testing "invalid class"
                                 (testing "- no error, does not add invalid class"
                                          (r/render! default-state)
                                          (cp-test/test-field-doesnt-have-class ?form-row-selector r/field-invalid-class))
@@ -40,4 +40,5 @@
                        ;?field-key    ?form-row-selector
                        :first-name    r/first-name-form-row-element-selector
                        :last-name     r/last-name-form-row-element-selector
-                       :email-address r/email-address-form-row-element-selector)))
+                       :email-address r/email-address-form-row-element-selector
+                       :password      r/password-form-row-element-selector)))
