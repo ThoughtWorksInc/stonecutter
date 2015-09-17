@@ -8,8 +8,8 @@
 (def email-address-form-row-element-selector :.clj--registration-email)
 (def password-form-row-element-selector :.clj--registration-password)
 
-(def field-invalid-class "form-row--invalid")
-(def field-valid-class "form-row--valid")
+(def field-invalid-class :form-row--invalid)
+(def field-valid-class :form-row--valid)
 
 (defn add-or-remove-class! [element-selector css-class add?]
   (let [element (dm/sel1 element-selector)]
