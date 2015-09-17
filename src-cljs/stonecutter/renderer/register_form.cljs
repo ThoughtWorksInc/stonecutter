@@ -11,15 +11,23 @@
 (def field-invalid-class "form-row--invalid")
 (def field-valid-class "form-row--valid")
 
+(defn add-or-remove-class! [element-selector css-class add?]
+  (let [element (dm/sel1 element-selector)]
+    (if add?
+      (d/add-class! element css-class)
+      (d/remove-class! element css-class))))
+
+(defn set-valid-class! [state field-key form-row-element-selector]
+  (let [valid? (boolean (get-in state [field-key :tick]))]
+    (add-or-remove-class! form-row-element-selector field-valid-class valid?)))
 
 (defn set-invalid-class! [state field-key form-row-element-selector]
-  (let [element (dm/sel1 form-row-element-selector)]
-    (if (get-in state [field-key :error])
-      (d/add-class! element field-invalid-class)
-      (d/remove-class! element field-invalid-class))))
+  (let [invalid? (boolean (get-in state [field-key :error]))]
+    (add-or-remove-class! form-row-element-selector field-invalid-class invalid?)))
 
 (defn render-password-error! [state]
   (set-invalid-class! state :password password-form-row-element-selector)
+  (set-valid-class! state :password password-form-row-element-selector)
   state)
 
 (defn render-email-address-error! [state]
