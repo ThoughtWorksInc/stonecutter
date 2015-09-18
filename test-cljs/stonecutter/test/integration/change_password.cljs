@@ -38,8 +38,11 @@
 
 (def change-password-template (load-template "public/change-password.html"))
 
+(defn set-value [sel text]
+  (dommy/set-value! (sel1 sel) text))
+
 (defn enter-text [sel text]
-      (dommy/set-value! (sel1 sel) text)
+      (set-value sel text)
       (test-utils/fire! (sel1 sel) :input))
 
 (defn press-submit [form-sel]

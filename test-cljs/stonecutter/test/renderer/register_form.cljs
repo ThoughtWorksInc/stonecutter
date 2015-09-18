@@ -13,10 +13,10 @@
 
 (def index-page-template (load-template "public/index.html"))
 
-(def default-state {:first-name    {:value "" :error nil}
-                    :last-name     {:value "" :error nil}
-                    :email-address {:value "" :error nil}
-                    :password      {:value "" :error nil :tick nil}})
+(def default-state {:registration-first-name {:value "" :error nil}
+                    :registration-last-name  {:value "" :error nil}
+                    :registration-email      {:value "" :error nil}
+                    :registration-password   {:value "" :error nil :tick nil}})
 
 (defn element-has-text [selector expected-text]
   (let [selected-element (sel1 selector)
@@ -48,75 +48,75 @@
                                          (cp-test/test-field-doesnt-have-class ?form-row-selector r/field-invalid-class)))
 
                        ;?field-key    ?form-row-selector
-                       :first-name    r/first-name-form-row-element-selector
-                       :last-name     r/last-name-form-row-element-selector
-                       :email-address r/email-address-form-row-element-selector
-                       :password      r/password-form-row-element-selector))
+                       :registration-first-name r/first-name-form-row-element-selector
+                       :registration-last-name r/last-name-form-row-element-selector
+                       :registration-email r/email-address-form-row-element-selector
+                       :registration-password r/password-form-row-element-selector))
 
-
-         (testing "valid class on password field"
-                  (testing "- tick true, adds valid class"
-                           (r/render! (assoc-in default-state [:password :tick] true))
-                           (cp-test/test-field-has-class r/password-form-row-element-selector r/field-valid-class))
-                  (testing "- tick false, removes valid class"
-                           (r/render! (assoc-in default-state [:password :tick] true))
-                           (cp-test/test-field-has-class r/password-form-row-element-selector r/field-valid-class)
-                           (r/render! (assoc-in default-state [:password :tick] false))
-                           (cp-test/test-field-doesnt-have-class r/password-form-row-element-selector r/field-valid-class)))
 
          (testing "error messages"
                   (testing "first name"
                            (testing "blank"
-                                    (r/render! (assoc-in default-state [:first-name :error] :blank))
+                                    (r/render! (assoc-in default-state [:registration-first-name :error] :blank))
                                     (element-has-text r/first-name-validation-element-selector
                                                       (get-in r/translations [:index :register-first-name-blank-validation-message])))
                            (testing "too long"
-                                    (r/render! (assoc-in default-state [:first-name :error] :too-long))
+                                    (r/render! (assoc-in default-state [:registration-first-name :error] :too-long))
                                     (element-has-text r/first-name-validation-element-selector
                                                       (get-in r/translations [:index :register-first-name-too-long-validation-message])))
                            (testing "no error"
-                                    (r/render! (assoc-in default-state [:first-name :error] nil))
+                                    (r/render! (assoc-in default-state [:registration-first-name :error] nil))
                                     (element-has-no-text r/first-name-validation-element-selector)))
 
                   (testing "last name"
                            (testing "blank"
-                                    (r/render! (assoc-in default-state [:last-name :error] :blank))
+                                    (r/render! (assoc-in default-state [:registration-last-name :error] :blank))
                                     (element-has-text r/last-name-validation-element-selector
                                                       (get-in r/translations [:index :register-last-name-blank-validation-message])))
                            (testing "too long"
-                                    (r/render! (assoc-in default-state [:last-name :error] :too-long))
+                                    (r/render! (assoc-in default-state [:registration-last-name :error] :too-long))
                                     (element-has-text r/last-name-validation-element-selector
                                                       (get-in r/translations [:index :register-last-name-too-long-validation-message])))
                            (testing "no error"
-                                    (r/render! (assoc-in default-state [:last-name :error] nil))
+                                    (r/render! (assoc-in default-state [:registration-last-name :error] nil))
                                     (element-has-no-text r/last-name-validation-element-selector)))
 
                   (testing "email address"
                            (testing "invalid"
-                                    (r/render! (assoc-in default-state [:email-address :error] :invalid))
+                                    (r/render! (assoc-in default-state [:registration-email :error] :invalid))
                                     (element-has-text r/email-address-validation-element-selector
                                                       (get-in r/translations [:index :register-email-address-invalid-validation-message])))
                            (testing "too long"
-                                    (r/render! (assoc-in default-state [:email-address :error] :too-long))
+                                    (r/render! (assoc-in default-state [:registration-email :error] :too-long))
                                     (element-has-text r/email-address-validation-element-selector
                                                       (get-in r/translations [:index :register-email-address-too-long-validation-message])))
                            (testing "no error"
-                                    (r/render! (assoc-in default-state [:last-name :error] nil))
+                                    (r/render! (assoc-in default-state [:registration-last-name :error] nil))
                                     (element-has-no-text r/email-address-validation-element-selector)))
 
                   (testing "password"
                            (testing "blank"
-                                    (r/render! (assoc-in default-state [:password :error] :blank))
+                                    (r/render! (assoc-in default-state [:registration-password :error] :blank))
                                     (element-has-text r/password-validation-element-selector
                                                       (get-in r/translations [:index :register-password-blank-validation-message])))
                            (testing "too short"
-                                    (r/render! (assoc-in default-state [:password :error] :too-short))
+                                    (r/render! (assoc-in default-state [:registration-password :error] :too-short))
                                     (element-has-text r/password-validation-element-selector
                                                       (get-in r/translations [:index :register-password-too-short-validation-message])))
                            (testing "too long"
-                                    (r/render! (assoc-in default-state [:password :error] :too-long))
+                                    (r/render! (assoc-in default-state [:registration-password :error] :too-long))
                                     (element-has-text r/password-validation-element-selector
                                                       (get-in r/translations [:index :register-password-too-long-validation-message])))
                            (testing "no error"
-                                    (r/render! (assoc-in default-state [:password :error] nil))
-                                    (element-has-no-text r/password-validation-element-selector)))))
+                                    (r/render! (assoc-in default-state [:registration-password :error] nil))
+                                    (element-has-no-text r/password-validation-element-selector))))
+
+         (testing "valid class on password field"
+                  (testing "- tick true, adds valid class"
+                           (r/render! (assoc-in default-state [:registration-password :tick] true))
+                           (cp-test/test-field-has-class r/password-form-row-element-selector r/field-valid-class))
+                  (testing "- tick false, removes valid class"
+                           (r/render! (assoc-in default-state [:registration-password :tick] true))
+                           (cp-test/test-field-has-class r/password-form-row-element-selector r/field-valid-class)
+                           (r/render! (assoc-in default-state [:registration-password :tick] false))
+                           (cp-test/test-field-doesnt-have-class r/password-form-row-element-selector r/field-valid-class))))

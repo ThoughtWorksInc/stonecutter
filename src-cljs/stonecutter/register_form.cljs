@@ -1,16 +1,24 @@
 (ns stonecutter.register-form
   (:require [dommy.core :as d]
-            [stonecutter.renderer.register-form :as rfr])
+            [stonecutter.renderer.register-form :as rfr]
+            [stonecutter.validation :as sv])
   (:require-macros [dommy.core :as dm]))
-
 
 (def form-state (atom {}))
 
 (def field-key-to-input-field
-  {:first-name    rfr/first-name-input-element-selector
-   :last-name     rfr/last-name-input-element-selector
-   :email-address rfr/email-address-input-element-selector
-   :password      rfr/password-input-element-selector})
+  {:registration-first-name    rfr/first-name-input-element-selector
+   :registration-last-name     rfr/last-name-input-element-selector
+   :registration-email rfr/email-address-input-element-selector
+   :registration-password      rfr/password-input-element-selector})
+
+(def error-field-order [:registration-first-name :registration-last-name :registration-email :registration-password])
+
+(defn first-input-with-errors [err]
+  (->> error-field-order
+       (filter #(get err %))
+       first
+       field-key-to-input-field))
 
 (defn get-value [field-key]
   (d/value (dm/sel1 (field-key field-key-to-input-field))))
@@ -24,9 +32,20 @@
   (swap! form-state func))
 
 (defn update-state-and-render! [field-key controller-fn]
-  ;(prn "FORM STATE 1" @form-state)
   (update-state-with-value! field-key)
-  ;(prn "FORM STATE 2" @form-state)
   (update-state-with-controller-fn! controller-fn)
-  ;(prn "FORM STATE 3" @form-state)
   (rfr/render! @form-state))
+
+(defn focus-on-element [sel]
+  (when-let [e (dm/sel1 sel)]
+    (.focus e)))
+
+(defn block-invalid-submit [submitEvent]
+  (let [params {:registration-first-name (get-value :registration-first-name)
+                :registration-last-name  (get-value :registration-last-name)
+                :registration-email      (get-value :registration-email)
+                :registration-password    (get-value :registration-password)}
+        err (sv/validate-registration params (constantly false))]
+    (when-not (empty? err)
+      (.preventDefault submitEvent)
+      (focus-on-element (first-input-with-errors err)))))

@@ -3,6 +3,8 @@
   (:require-macros [dommy.core :as dm]
                    [stonecutter.translation :as t]))
 
+(def register-form-element-selector :.clj--register__form)
+
 (def first-name-form-row-element-selector :.clj--registration-first-name)
 (def first-name-validation-element-selector :.clj--registration-first-name__validation)
 (def first-name-input-element-selector :.clj--registration-first-name__input)
@@ -25,15 +27,15 @@
   (-> translations :index key))
 
 (def error-to-message
-  {:first-name {:blank (get-translated-message :register-first-name-blank-validation-message)
-                :too-long (get-translated-message :register-first-name-too-long-validation-message)}
-   :last-name {:blank (get-translated-message :register-last-name-blank-validation-message)
-               :too-long (get-translated-message :register-last-name-too-long-validation-message)}
-   :email-address {:invalid (get-translated-message :register-email-address-invalid-validation-message)
-                   :too-long (get-translated-message :register-email-address-too-long-validation-message)}
-   :password {:blank (get-translated-message :register-password-blank-validation-message)
-              :too-short (get-translated-message :register-password-too-short-validation-message)
-              :too-long (get-translated-message :register-password-too-long-validation-message)}})
+  {:registration-first-name {:blank    (get-translated-message :register-first-name-blank-validation-message)
+                             :too-long (get-translated-message :register-first-name-too-long-validation-message)}
+   :registration-last-name  {:blank    (get-translated-message :register-last-name-blank-validation-message)
+                             :too-long (get-translated-message :register-last-name-too-long-validation-message)}
+   :registration-email      {:invalid  (get-translated-message :register-email-address-invalid-validation-message)
+                             :too-long (get-translated-message :register-email-address-too-long-validation-message)}
+   :registration-password   {:blank     (get-translated-message :register-password-blank-validation-message)
+                             :too-short (get-translated-message :register-password-too-short-validation-message)
+                             :too-long  (get-translated-message :register-password-too-long-validation-message)}})
 
 (def field-invalid-class :form-row--invalid)
 (def field-valid-class :form-row--valid)
@@ -58,24 +60,24 @@
     (d/set-text! (dm/sel1 validation-element-selector) message)))
 
 (defn render-password-error! [state]
-  (set-invalid-class! state :password password-form-row-element-selector)
-  (set-valid-class! state :password password-form-row-element-selector)
-  (set-error-message! state :password password-validation-element-selector)
+  (set-invalid-class! state :registration-password password-form-row-element-selector)
+  (set-valid-class! state :registration-password password-form-row-element-selector)
+  (set-error-message! state :registration-password password-validation-element-selector)
   state)
 
 (defn render-email-address-error! [state]
-  (set-invalid-class! state :email-address email-address-form-row-element-selector)
-  (set-error-message! state :email-address email-address-validation-element-selector)
+  (set-invalid-class! state :registration-email email-address-form-row-element-selector)
+  (set-error-message! state :registration-email email-address-validation-element-selector)
   state)
 
 (defn render-last-name-error! [state]
-  (set-invalid-class! state :last-name last-name-form-row-element-selector)
-  (set-error-message! state :last-name last-name-validation-element-selector)
+  (set-invalid-class! state :registration-last-name last-name-form-row-element-selector)
+  (set-error-message! state :registration-last-name last-name-validation-element-selector)
   state)
 
 (defn render-first-name-error! [state]
-  (set-invalid-class! state :first-name first-name-form-row-element-selector)
-  (set-error-message! state :first-name first-name-validation-element-selector)
+  (set-invalid-class! state :registration-first-name first-name-form-row-element-selector)
+  (set-error-message! state :registration-first-name first-name-validation-element-selector)
   state)
 
 (defn render! [state]

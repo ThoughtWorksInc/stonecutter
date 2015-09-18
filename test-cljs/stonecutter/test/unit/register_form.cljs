@@ -15,8 +15,8 @@
 (deftest update-model-on-blur
          (testing "first name error is set correctly based on the value"
                   (are [input-value expected-output-error]
-                       (= {:first-name {:value input-value :error expected-output-error}}
-                          (rf/update-first-name-blur {:first-name {:value input-value :error nil}}))
+                       (= {:registration-first-name {:value input-value :error expected-output-error}}
+                          (rf/update-first-name-blur {:registration-first-name {:value input-value :error nil}}))
 
                        ;input-value           expected-output-error
                        "something"            nil
@@ -28,8 +28,8 @@
 
          (testing "last name error is set correctly based on the value"
                   (are [input-value expected-output-error]
-                       (= {:last-name {:value input-value :error expected-output-error}}
-                          (rf/update-last-name-blur {:last-name {:value input-value :error nil}}))
+                       (= {:registration-last-name {:value input-value :error expected-output-error}}
+                          (rf/update-last-name-blur {:registration-last-name {:value input-value :error nil}}))
 
                        ;input-value           expected-output-error
                        "something"            nil
@@ -41,8 +41,8 @@
 
          (testing "email-address error is set correctly based on the value"
                   (are [input-value expected-output-error]
-                       (= {:email-address {:value input-value :error expected-output-error}}
-                          (rf/update-email-address-blur {:email-address {:value input-value :error nil}}))
+                       (= {:registration-email {:value input-value :error expected-output-error}}
+                          (rf/update-email-address-blur {:registration-email {:value input-value :error nil}}))
 
                        ;input-value           expected-output-error
                        "valid@email.com"             nil
@@ -52,8 +52,8 @@
 
          (testing "password error is set correctly based on the value"
                   (are [input-value expected-output-error]
-                       (= {:password {:value input-value :error expected-output-error}}
-                          (rf/update-password-blur {:password {:value input-value :error nil}}))
+                       (= {:registration-password {:value input-value :error expected-output-error}}
+                          (rf/update-password-blur {:registration-password {:value input-value :error nil}}))
 
                        ;input-value           expected-output-error
                        "some-valid-password"         nil
@@ -70,20 +70,20 @@
 
 (deftest update-model-on-input
          (testing "first name error is set to nil for any value"
-                  (is (= {:first-name {:value "Barry" :error nil}}
-                         (rf/update-first-name-input {:first-name {:value "Barry" :error :anything}}))))
+                  (is (= {:registration-first-name {:value "Barry" :error nil}}
+                         (rf/update-first-name-input {:registration-first-name {:value "Barry" :error :anything}}))))
          (testing "last name error is set to nil for any value"
-                  (is (= {:last-name {:value "Barry" :error nil}}
-                         (rf/update-last-name-input {:last-name {:value "Barry" :error :anything}}))))
+                  (is (= {:registration-last-name {:value "Barry" :error nil}}
+                         (rf/update-last-name-input {:registration-last-name {:value "Barry" :error :anything}}))))
          (testing "email-address error is set to nil for any value"
-                  (is (= {:email-address {:value "hello@world.com" :error nil}}
-                         (rf/update-email-address-input {:email-address {:value "hello@world.com" :error :anything}}))))
+                  (is (= {:registration-email {:value "hello@world.com" :error nil}}
+                         (rf/update-email-address-input {:registration-email {:value "hello@world.com" :error :anything}}))))
          (testing "when password value is valid, error is set to nil and tick is set to true"
-                  (is (= {:password {:value "a-valid-password" :error nil :tick true}}
-                         (rf/update-password-input {:password {:value "a-valid-password" :error :anything :tick :anything}}))))
+                  (is (= {:registration-password {:value "a-valid-password" :error nil :tick true}}
+                         (rf/update-password-input {:registration-password {:value "a-valid-password" :error :anything :tick :anything}}))))
          (testing "when password value is invalid, error is unchanged and tick is set to false"
-                  (is (= {:password {:value "short" :error :anything :tick false}}
-                         (rf/update-password-input {:password {:value "short" :error :anything :tick true}})))))
+                  (is (= {:registration-password {:value "short" :error :anything :tick false}}
+                         (rf/update-password-input {:registration-password {:value "short" :error :anything :tick true}})))))
 
 
 
