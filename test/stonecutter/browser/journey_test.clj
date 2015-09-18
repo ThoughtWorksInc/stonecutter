@@ -7,7 +7,8 @@
             [stonecutter.handler :as h]
             [stonecutter.config :as config]
             [stonecutter.db.storage :as storage]
-            [stonecutter.admin :as ad]))
+            [stonecutter.admin :as ad]
+            [stonecutter.browser.common :as c]))
 
 (def test-port 5439)
 
@@ -32,42 +33,6 @@
 
 (def server (atom {}))
 
-;; COMMON
-(def stonecutter-index-page-body ".func--index-page")
-(def stonecutter-sign-in-email-input ".func--sign-in-email__input")
-(def stonecutter-sign-in-password-input ".func--sign-in-password__input")
-(def stonecutter-sign-in-button ".func--sign-in__button")
-
-(def stonecutter-register-first-name-input ".func--registration-first-name__input")
-(def stonecutter-register-last-name-input ".func--registration-last-name__input")
-(def stonecutter-register-email-input ".func--registration-email__input")
-(def stonecutter-register-password-input ".func--registration-password__input")
-(def stonecutter-register-create-profile-button ".func--create-profile__button")
-
-(def stonecutter-trust-toggle ".clj--user-item__toggle")
-
-(defn input-register-credentials-and-submit []
-  (wd/input-text stonecutter-register-first-name-input "Journey")
-  (wd/input-text stonecutter-register-last-name-input "Test")
-  (wd/input-text stonecutter-register-email-input "stonecutter-journey-test@tw.com")
-  (wd/input-text stonecutter-register-password-input "password")
-  (wd/click stonecutter-register-create-profile-button))
-
-
-(defn wait-for-selector [selector]
-  (try
-    (wd/wait-until #(not (empty? (wd/css-finder selector))) 5000)
-    (catch Exception e
-      (prn (str ">>>>>>>>>> Selector could not be found: " selector))
-      (prn "==========  PAGE SOURCE ==========")
-      (prn (wd/page-source))
-      (prn "==========  END PAGE SOURCE ==========")
-      (throw e))))
-
-;;______________
-
-(def localhost "localhost:5439")
-
 (against-background
   [(before :contents (do (reset! server (start-server))
                          (start-browser)))
@@ -75,36 +40,39 @@
                         (stop-server @server)))]
 
   (try
-    (fact "can login as admin account" :browser
-          (wd/to localhost)
-          (wait-for-selector stonecutter-index-page-body)
+    (facts "admin journey on user-list page" :browser
+          (wd/to c/localhost)
+          (c/wait-for-selector c/stonecutter-index-page-body)
 
-          (input-register-credentials-and-submit)
+          (c/input-register-credentials-and-submit)
 
-          (wd/to (str localhost "/sign-out"))
-          (wait-for-selector stonecutter-index-page-body)
-          (wd/current-url) => (contains (str localhost "/"))
+          (wd/to (str c/localhost "/sign-out"))
+          (c/wait-for-selector c/stonecutter-index-page-body)
+          (wd/current-url) => (contains (str c/localhost "/"))
 
-          (wd/input-text stonecutter-sign-in-email-input "test@test.com")
-          (wd/input-text stonecutter-sign-in-password-input "password")
-          (wd/click stonecutter-sign-in-button)
+          (wd/input-text c/stonecutter-sign-in-email-input "test@test.com")
+          (wd/input-text c/stonecutter-sign-in-password-input "password")
+          (wd/click c/stonecutter-sign-in-button)
           (wd/current-url) => (contains "/profile")
 
-          (wd/to (str localhost "/admin/users"))
+           (fact "admin can toggle users"
+                 (wd/to c/user-list-page)
 
-          (wd/attribute stonecutter-trust-toggle :checked) => nil
-          (wd/toggle stonecutter-trust-toggle)
-          (wd/attribute stonecutter-trust-toggle :checked) => "checked"
+                 (wd/attribute c/stonecutter-trust-toggle :checked) => nil
+                 (wd/toggle c/stonecutter-trust-toggle)
+                 (wd/attribute c/stonecutter-trust-toggle :checked) => "checked"
 
-          (wd/to (str localhost "/admin/users"))
-          (wd/attribute stonecutter-trust-toggle :checked) => "checked"
+                 (wd/to c/user-list-page)
+                 (wd/attribute c/stonecutter-trust-toggle :checked) => "checked"
 
-          (wd/toggle stonecutter-trust-toggle)
-          (wd/to (str localhost "/admin/users"))
-          (wd/attribute stonecutter-trust-toggle :checked) => nil
+                 (wd/toggle c/stonecutter-trust-toggle)
+                 (wd/to c/user-list-page)
+                 (wd/attribute c/stonecutter-trust-toggle :checked) => nil)
 
-          )
-
-
+           (fact "admin should see flash message on toggle"
+                 (wd/to c/user-list-page)
+                 (wd/toggle c/stonecutter-trust-toggle)
+                 (wd/page-source) => (every-checker (contains "stonecutter-journey-test@tw.com")
+                                                    (contains "is now set to trusted"))))
     (catch Exception e
-      (prn "hello, you have an error"))))
+      (throw e))))

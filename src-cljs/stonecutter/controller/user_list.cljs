@@ -1,10 +1,16 @@
 (ns stonecutter.controller.user-list 
   (:require [ajax.core :refer [POST]]
-            [dommy.core :as d])
+            [dommy.core :as d]
+            [hickory.core :as hic])
   (:require-macros [dommy.core :as dm]))
 
 (defn handler [response]
-  (.log js/console (str response)))
+  (let [flash-message-html-snippet (-> response
+                                       hic/parse
+                                       (. getElementsByClassName "clj--flash-message-container")
+                                       (. item 0)
+                                       (. -innerHTML))]
+    (d/set-html! (dm/sel1 :.clj--flash-message-container) flash-message-html-snippet)))
 
 (defn error-handler [{:keys [status status-text]}]
   (.log js/console (str "something bad happened: " status " " status-text)))

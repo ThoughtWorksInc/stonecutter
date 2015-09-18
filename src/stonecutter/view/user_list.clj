@@ -50,7 +50,7 @@
     (case translation-key
       :user-trusted (html/at enlive-m-with-user-login [:.clj--flash-message-text] (html/set-attr :data-l8n "content:flash/user-trusted"))
       :user-untrusted (html/at enlive-m-with-user-login [:.clj--flash-message-text] (html/set-attr :data-l8n "content:flash/user-untrusted"))
-      (vh/remove-element enlive-m [:.clj--flash-message-container]))))
+      (html/at enlive-m [:.clj--flash-message-container] (html/html-content "")))))
 
 (defn user-list [request]
   (let [users (get-in request [:context :users])

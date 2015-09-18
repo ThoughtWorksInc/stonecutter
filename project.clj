@@ -8,6 +8,7 @@
                  [scenic "0.2.5"]
                  [enlive "1.1.6"]
                  [hiccup "1.0.5"]
+                 [hickory "0.5.4"]
                  [com.cemerick/url "0.1.1"]
                  [johncowie/clauth "2.0.1"]
                  [traduki "0.1.3-SNAPSHOT"]
