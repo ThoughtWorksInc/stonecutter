@@ -142,6 +142,9 @@ legend {
       -webkit-box-shadow: 0 0 0 1000px white inset;
       -webkit-text-fill-color: $dark_cyan;
     }
+    @include placeholder {
+      color: rgba($medium_grey,0.25);
+    }
   }
 }
 
