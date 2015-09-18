@@ -69,22 +69,28 @@
                   </p>
                 </div>
                 <form action="./profile-created" method="post" role="form" class="register-form clj--register__form">
+                  <div class="validation-summary validation-summary--show clj--validation-summary">
+                    <div class="validation-summary__title"></div>
+                    <ul class="validation-summary__list">
+                      <li data-l8n="content:index/register-unknown-error" class="validation-summary__item clj--validation-summary__item">Validation summary item</li>
+                    </ul>
+                  </div>
                   <input type="hidden" name="action" value="register">
                   <p class="form-row clj--registration-first-name">
-                    <label for="reg-first-name" class="form-row__label"><span data-l8n="content:index/register-first-name" class="form-row__title">First name</span><span data-l8n="content:index/register-first-name-invalid-validation-message" class="form-row__validation clj--registration-first-name__validation">Enter a first name</span></label>
+                    <label for="reg-first-name" class="form-row__label"><span data-l8n="content:index/register-first-name" class="form-row__title">First name</span><span data-l8n="content:index/register-unknown-error" class="form-row__validation clj--registration-first-name__validation">Enter a first name</span></label>
                     <input type="text" id="reg-first-name" name="registration-first-name" class="form-row__input registration-first-name-input clj--registration-first-name__input func--registration-first-name__input">
                   </p>
                   <p class="form-row clj--registration-last-name">
-                    <label for="reg-last-name" class="form-row__label"><span data-l8n="content:index/register-last-name" class="form-row__title">Last name</span><span data-l8n="content:index/register-last-name-invalid-validation-message" class="form-row__validation clj--registration-last-name__validation">Enter a last name</span></label>
+                    <label for="reg-last-name" class="form-row__label"><span data-l8n="content:index/register-last-name" class="form-row__title">Last name</span><span data-l8n="content:index/register-unknown-error" class="form-row__validation clj--registration-last-name__validation">Enter a last name</span></label>
                     <input type="text" id="reg-last-name" name="registration-last-name" class="form-row__input registration-last-name-input clj--registration-last-name__input func--registration-last-name__input">
                   </p>
                   <p class="form-row clj--registration-email">
-                    <label for="reg-email" class="form-row__label"><span data-l8n="content:index/register-email-address" class="form-row__title">Email address</span><span data-l8n="content:index/register-email-address-invalid-validation-message" class="form-row__validation clj--registration-email__validation">Enter a valid email address</span></label>
+                    <label for="reg-email" class="form-row__label"><span data-l8n="content:index/register-email-address" class="form-row__title">Email address</span><span data-l8n="content:index/register-unknown-error" class="form-row__validation clj--registration-email__validation">Enter a valid email address</span></label>
                     <input type="email" id="reg-email" name="registration-email" class="form-row__input clj--registration-email__input func--registration-email__input">
                   </p>
                   <p class="form-row clj--registration-password">
-                    <label for="reg-password" class="form-row__label"><span data-l8n="content:index/register-password" class="form-row__title">Password</span><span data-l8n="content:index/register-password-too-short-validation-message" class="form-row__validation clj--registration-password__validation">Password must be between 8 and 50 characters long</span></label>
-                    <input type="password" id="reg-password" name="registration-password" class="form-row__input func--registration-password__input">
+                    <label for="reg-password" class="form-row__label"><span data-l8n="content:index/register-password" class="form-row__title">Password</span><span data-l8n="content:index/register-unknown-error" class="form-row__validation clj--registration-password__validation">Password must be between 8 and 50 characters long</span></label>
+                    <input type="password" id="reg-password" name="registration-password" class="form-row__input clj--registration-password__input func--registration-password__input">
                   </p>
                   <button type="submit" data-l8n="content:index/register-create-account" class="button button--full-width-smallish-devices func--create-profile__button">Create a Profile</button>
                 </form>

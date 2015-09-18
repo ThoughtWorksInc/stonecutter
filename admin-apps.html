@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title data-l8n="content:admin-app-list/title">Apps</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="format-detection" content="telephone=no">
+    <link rel="shortcut icon" href="/stonecutter-favicon.ico">
+    <script type="text/javascript">document.getElementsByTagName('html')[0].className += ' js';</script>
+    <link href="./stylesheets/application.css" media="screen" rel="stylesheet" type="text/css"/>
+    <link href="./stylesheets/theme.css" media="screen" rel="stylesheet" type="text/css"/>
+  </head>
+  <body class="func--admin-app-list-page"><a href="#main" class="skip-link">Skip navigation</a>
+    <div role="banner" class="header">
+      <div class="header__inner middle-container">
+        <div class="header__logo"><span class="visuallyhidden clj--app-name">Stonecutter</span></div>
+        <nav role="navigation" class="header-nav clj--header-nav"><a href="./apps" data-l8n="content:admin/nav-apps" class="header-nav__link clj-wip">Apps</a><a href="./user-list" data-l8n="content:admin/nav-users" class="header-nav__link">Users</a><a href="./invite" data-l8n="content:admin/nav-invite-user" class="header-nav__link clj-wip">Invite</a><a href="./sign-in" data-l8n="content:profile/sign-out-link" class="header-nav__link clj--sign-out__link func--sign-out__link">Sign out</a></nav>
+      </div>
+    </div>
+    <div id="main" role="main" class="main-content">
+      <div class="columns">
+        <div class="single-column">
+          <div class="clj--flash-message-container func--flash-message-container">
+            <div class="flash-message flash-message--success ">
+              <p class="flash-message__title"><span class="clj-new-app-name">Wild_monkey_juice</span> <span data-l8n="content:admin-app-list/added-flash-success">was successfully added</span>
+              </p>
+            </div>
+          </div>
+          <h1 data-l8n="content:admin-app-list/page-title">Apps</h1>
+          <p><a href="#application-name" data-l8n="content:admin-app-list/link-to-add-more" class="link-button">Add more apps</a></p>
+          <ul class="admin-app-list">
+            <li class="admin-app-item">
+              <h2 class="admin-app-item__title">Objective8</h2>
+              <form action="#" method="post" class="admin-app-item__delete">
+                <button type="submit" value="Delete" class="icon-button"><i class="fa fa-trash-o icon-button__icon"></i><span data-l8n="content:admin-app-list/delete-app-button" class="visuallyhidden">Delete</span> <span class="visuallyhidden">Objective8</span>
+                </button>
+              </form>
+              <dl class="def-list">
+                <dt data-l8n="content:admin-app-list/label-app-url" class="def-list__title">App URL</dt>
+                <dd class="def-list__data">objective8.dcentproject.eu</dd>
+                <dt data-l8n="content:admin-app-list/label-app-id" class="def-list__title">Client ID</dt>
+                <dd class="def-list__data">WZAWAXAWADQE</dd>
+                <dt data-l8n="content:admin-app-list/label-app-secret" class="def-list__title">Client Secret</dt>
+                <dd class="def-list__data">765456789ABB</dd>
+              </dl>
+            </li>
+            <li class="admin-app-item">
+              <h2 class="admin-app-item__title">Wild_monkey_juice</h2>
+              <form action="#" method="post" class="admin-app-item__delete">
+                <button type="submit" value="Delete" class="icon-button"><i class="fa fa-trash-o icon-button__icon"></i><span data-l8n="content:admin-app-list/delete-app-button" class="visuallyhidden">Delete</span> <span class="visuallyhidden">Wild_monkey_juice</span>
+                </button>
+              </form>
+              <dl class="def-list">
+                <dt data-l8n="content:admin-app-list/label-app-url" class="def-list__title">App URL</dt>
+                <dd class="def-list__data">www.wild-monkey-jui.ce</dd>
+                <dt data-l8n="content:admin-app-list/label-app-id" class="def-list__title">Client ID</dt>
+                <dd class="def-list__data">AZAZAXACADQE</dd>
+                <dt data-l8n="content:admin-app-list/label-app-secret" class="def-list__title">Client Secret</dt>
+                <dd class="def-list__data">123456789TTD</dd>
+              </dl>
+            </li>
+          </ul>
+          <form action="#" method="post" class="admin-add-app-form">
+            <fieldset>
+              <legend class="visuallyhidden">Add new App</legend>
+              <p class="form-row clj--application-name">
+                <label for="application-name" class="form-row__label"><span data-l8n="content:admin-app-list/label-app" class="form-row__title">App name</span> <span data-l8n="content:admin-app-list/app-invalid-validation-message" class="form-row__validation clj--application-name__validation">Enter the application name</span>
+                </label>
+                <input type="text" id="application-name" name="application-name" placeholder="Example" class="form-row__input">
+              </p>
+              <p class="form-row clj--application-url">
+                <label for="application-url" class="form-row__label"><span data-l8n="content:admin-app-list/label-app-url" class="form-row__title">App url</span> <span data-l8n="content:admin-app-list/url-invalid-validation-message" class="form-row__validation clj--application-url__validation">Enter the application url</span>
+                </label>
+                <input type="text" id="application-url" name="application-url" placeholder="www.example.com/" class="form-row__input">
+              </p>
+              <button type="submit" data-l8n="content:admin-app-list/add-app-button" class="button button--full-width-smallish-devices func--create-add__button">Add app</button>
+            </fieldset>
+          </form>
+        </div>
+      </div>
+    </div>
+    <script>document.addEventListener("touchstart", function(){}, true);</script>
+  </body>
+</html>
