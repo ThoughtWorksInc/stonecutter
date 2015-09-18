@@ -1,7 +1,7 @@
-(ns stonecutter.test.integration.change-password
+(ns stonecutter.test.renderer.change-password
   (:require [cemerick.cljs.test :as t]
             [stonecutter.renderer.change-password :as r]
-            [stonecutter.test.change-password :as cp-test]
+            [stonecutter.test.integration.change-password :as cp-test]
             [dommy.core :as dommy])
   (:require-macros [cemerick.cljs.test :refer [deftest is testing run-tests]]
                    [dommy.core :refer [sel1 sel]]

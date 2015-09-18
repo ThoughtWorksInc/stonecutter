@@ -1,7 +1,7 @@
-(ns stonecutter.test.integration.register-form
+(ns stonecutter.test.renderer.register-form
   (:require [cemerick.cljs.test :as t]
             [stonecutter.renderer.register-form :as r]
-            [stonecutter.test.change-password :as cp-test]
+            [stonecutter.test.integration.change-password :as cp-test]
             [dommy.core :as dommy]
             [clojure.string :as string])
   (:require-macros [cemerick.cljs.test :refer [deftest is testing run-tests are]]

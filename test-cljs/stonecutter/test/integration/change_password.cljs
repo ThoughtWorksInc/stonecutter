@@ -1,4 +1,4 @@
-(ns stonecutter.test.change-password
+(ns stonecutter.test.integration.change-password
   (:require [cemerick.cljs.test]
             [dommy.core :as dommy]
             [dommy.utils :as du]
@@ -31,7 +31,7 @@
 (def field-invalid-class "form-row--invalid")
 
 (defn setup-page! [html]
-    (dommy/set-html! (sel1 :html) html))
+  (dommy/set-html! (sel1 :html) html))
 
 (defn reset-change-password-form-atom! []
   (reset! cp/change-password-form-state {}))

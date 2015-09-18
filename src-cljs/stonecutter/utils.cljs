@@ -1,7 +1,10 @@
 (ns stonecutter.utils
   (:require [dommy.core :as d]
-            [stonecutter.controller.change-password :as c]
+            [stonecutter.controller.change-password :as cpc]
             [stonecutter.change-password :as cp]
+            [stonecutter.renderer.register-form :as rfr]
+            [stonecutter.register-form :as rf]
+            [stonecutter.controller.register-form :as rfc]
             [stonecutter.controller.user-list :as ul])
   (:require-macros [dommy.core :as dm]))
 
@@ -17,12 +20,20 @@
   (.log js/console "set up listener for user list")
   (setup-multi-listeners :.clj--user-item__toggle :change ul/update-role)
 
-  (setup-listener cp/current-password-input :input #(cp/update-state-and-render :current-password (partial c/update-current-password-input)))
-  (setup-listener cp/new-password-input :input #(cp/update-state-and-render :new-password (partial c/update-new-password-input)))
-  (setup-listener cp/current-password-input :input #(cp/update-state-and-render :current-password (partial c/update-new-password-input)))
+  (setup-listener rfr/first-name-input-element-selector :input #(rf/update-state-and-render! :first-name rfc/update-first-name-input))
+  (setup-listener rfr/last-name-input-element-selector :input #(rf/update-state-and-render! :last-name rfc/update-last-name-input))
+  (setup-listener rfr/email-address-input-element-selector :input #(rf/update-state-and-render! :email-address rfc/update-email-address-input))
+  (setup-listener rfr/password-form-row-element-selector :input #(rf/update-state-and-render! :password rfc/update-password-input))
 
-  (setup-listener cp/current-password-input :blur #(cp/update-state-and-render :current-password (partial c/update-current-password-blur)))
-  (setup-listener cp/new-password-input :blur #(cp/update-state-and-render :new-password (partial c/update-new-password-blur)))
+  (setup-listener rfr/first-name-input-element-selector :blur #(rf/update-state-and-render! :first-name rfc/update-first-name-blur))
+
+
+  (setup-listener cp/current-password-input :input #(cp/update-state-and-render :current-password cpc/update-current-password-input))
+  (setup-listener cp/new-password-input :input #(cp/update-state-and-render :new-password cpc/update-new-password-input))
+  (setup-listener cp/current-password-input :input #(cp/update-state-and-render :current-password cpc/update-new-password-input))
+
+  (setup-listener cp/current-password-input :blur #(cp/update-state-and-render :current-password cpc/update-current-password-blur))
+  (setup-listener cp/new-password-input :blur #(cp/update-state-and-render :new-password cpc/update-new-password-blur))
 
   (setup-listener cp/change-password-form :submit cp/block-invalid-submit))
 

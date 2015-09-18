@@ -5,15 +5,19 @@
 
 (def first-name-form-row-element-selector :.clj--registration-first-name)
 (def first-name-validation-element-selector :.clj--registration-first-name__validation)
+(def first-name-input-element-selector :.clj--registration-first-name__input)
 
 (def last-name-form-row-element-selector :.clj--registration-last-name)
 (def last-name-validation-element-selector :.clj--registration-last-name__validation)
+(def last-name-input-element-selector :.clj--registration-last-name__input)
 
 (def email-address-form-row-element-selector :.clj--registration-email)
 (def email-address-validation-element-selector :.clj--registration-email__validation)
+(def email-address-input-element-selector :.clj--registration-email__input)
 
 (def password-form-row-element-selector :.clj--registration-password)
 (def password-validation-element-selector :.clj--registration-password__validation)
+(def password-input-element-selector :.clj--registration-password__input)
 
 (def translations (t/load-client-translations))
 
