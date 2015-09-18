@@ -33,6 +33,13 @@ mixin userItem(fullName, emailAddress, emailIsConfirmed, userIsTrusted)
 mixin adminAppItem(appName, appURL, clientID, clientSecret)
   li.admin-app-item
     h2.admin-app-item__title #{appName}
+    form.admin-app-item__delete(action="#", method="post")
+      button.icon-button(type="submit", value="Delete")
+        i.fa.fa-trash-o.icon-button__icon
+        span.visuallyhidden(data-l8n="content:admin-app-list/delete-app-button") !Delete
+        = " "
+        span.visuallyhidden #{appName}
+
     dl.def-list
       dt.def-list__title(data-l8n="content:admin-app-list/label-app-url") !App URL
       dd.def-list__data #{appURL}

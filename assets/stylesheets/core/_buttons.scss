@@ -37,12 +37,12 @@
   color: $white;
   font-weight: bold;
   text-decoration: none;
-  transition: background 250ms ease, color 250ms ease, box-shadow 250ms ease, transform 250ms ease, border 250ms ease;
   outline: 0;
   white-space: nowrap;
   border-radius: $box--border-radius;
-  @include no-select;
+  transition: background 250ms ease, color 250ms ease, box-shadow 250ms ease, transform 250ms ease, border 250ms ease;
   transform-style: preserve-3d; // Fix safari text flicker (children need backface-visibility: hidden;)
+  @include no-select;
   @include width-from($smallish_device) {
     text-align: left;
   }
@@ -146,6 +146,29 @@
       border-left-color: $medium_cyan;
     }
   }
+}
+
+.icon-button {
+  display: inline-block;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding: 0;
+  border: 0;
+  background: $white;
+  outline: 0;
+  @include size(32px);
+  line-height: 32px;
+  @include font-size(22px);
+  transition: background 250ms ease, color 250ms ease, box-shadow 250ms ease, transform 250ms ease, border 250ms ease;
+  transform-style: preserve-3d; // Fix safari text flicker (children need backface-visibility: hidden;)
+  &:focus, &:hover {
+    box-shadow: 0 19px 60px -10px rgba(0,0,0,.35);
+    transform: translateY(-2px);
+  }
+  &:active {
+    outline: 0;
+  }
+
 }
 
 .link-button {

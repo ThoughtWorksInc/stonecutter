@@ -11,6 +11,7 @@
 }
 .admin-app-item {
   @include admin-app-box;
+  position: relative;
   &__title {
     margin-top: 0;
     margin-bottom: 0;
@@ -22,6 +23,12 @@
     @include width-from($medium_device) {
       @include font-size($h3_font_size--medium);
     }
+  }
+  &__delete {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    @include size(32px);
   }
 }
 
