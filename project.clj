@@ -34,6 +34,14 @@
   :profiles {:dev     {:dependencies   [[ring-mock "0.1.5"]
                                         [midje "1.7.0"]
                                         [prone "0.8.2"]
+                                        [clj-webdriver "0.6.1" :exclusions [org.seleniumhq.selenium/selenium-java
+                                                                            org.seleniumhq.selenium/selenium-server
+                                                                            org.seleniumhq.selenium/selenium-remote-driver
+                                                                            xml-apis]]
+                                        [xml-apis "1.4.01"]
+                                        [org.seleniumhq.selenium/selenium-server "2.45.0"]
+                                        [org.seleniumhq.selenium/selenium-java "2.45.0"]
+                                        [org.seleniumhq.selenium/selenium-remote-driver "2.45.0"]
                                         [kerodon "0.6.1"]]
                        :plugins        [[lein-ring "0.9.6"]
                                         [lein-environ "1.0.0"]
@@ -49,10 +57,11 @@
                                         :stacktrace-middleware prone.middleware/wrap-exceptions}
                        :resource-paths ["resources" "test-resources"]
                        :aliases        {"test"        ["do" "clean," "midje," "test-cljs"]
-                                        "midje"       ["do" "gulp," "midje"]
+                                        "midje"       ["do" "gulp," "cljs-build," "midje"]
                                         "test-cljs"   ["cljsbuild" "test"]
                                         "unit"        ["midje" "stonecutter.test.*"]
                                         "integration" ["midje" "stonecutter.integration.*"]
+                                        "browser"     ["midje" "stonecutter.browser.*"]
                                         "auto-unit"   ["midje" ":autotest" "test/stonecutter/test/" "src/"]
                                         "gencred"     ["run" "-m" "stonecutter.util.gencred"]
                                         "gen-keypair" ["run" "-m" "stonecutter.util.gen-key-pair"]
@@ -60,8 +69,7 @@
                                         "gulp"        ["shell" "gulp" "build"]
                                         "cljs-build"  ["cljsbuild" "once"]
                                         "start"       ["do" "gulp," "cljs-build," "run"]
-                                        "gen-config"  ["run" "-m" "stonecutter.config"]
-                                        }
+                                        "gen-config"  ["run" "-m" "stonecutter.config"]}
                        :env            {:dev                   true
                                         :secure                "false"
                                         :rsa-keypair-file-path "test-resources/test-key.json"}
@@ -89,5 +97,4 @@
                                                               :pretty-print  false}}]}}}
   :clean-targets ^{:protect false} [:target-path
                                     [:cljsbuild :builds :app :compiler :output-dir]
-                                    [:cljsbuild :builds :app :compiler :output-to]]
-  )
+                                    [:cljsbuild :builds :app :compiler :output-to]])
