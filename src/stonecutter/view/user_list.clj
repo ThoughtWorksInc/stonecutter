@@ -29,7 +29,8 @@
                            [:.clj--user-item__label] (html/set-attr :for (:login user))
                            [:.clj--user-item__toggle] (html/set-attr :id (:login user))
                            [:.clj--user-item__email-input] (html/set-attr :value (:login user))
-                           [:.clj--user-item__email-address__text] (html/content (:login user)))))
+                           [:.clj--user-item__email-address__text] (html/content (:login user))
+                           [:.clj--user-item__full-name] (html/content (str (:first-name user) " " (:last-name user))))))
 
 (defn add-user-list [enlive-m users]
   (if-not (empty? users)

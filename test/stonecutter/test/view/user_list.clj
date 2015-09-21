@@ -33,6 +33,15 @@
                => (just [(th/text-is? [:.clj--user-item__email-address__text] "confirmed@email.com")
                          (th/text-is? [:.clj--user-item__email-address__text] "unconfirmed@email.com")])))
 
+       (fact "users are displayed along with their full name"
+             (let [page (-> (th/create-request)
+                            (assoc-in [:context :users] [{:first-name "Frank" :last-name "Kenstein"}
+                                                         {:first-name "Meily" :last-name "User"}])
+                            user-list)]
+               (-> page (html/select [:.clj--user-item]))
+               => (just [(th/text-is? [:.clj--user-item__full-name] "Frank Kenstein")
+                         (th/text-is? [:.clj--user-item__full-name] "Meily User")])))
+
        (fact "when user has trusted role, the checkbox value should be checked"
              (let [page (-> (th/create-request)
                             (assoc-in [:context :users] [{:login "confirmed@email.com" :confirmed? true :role (:trusted config/roles)}])
