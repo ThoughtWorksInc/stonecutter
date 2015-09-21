@@ -1,4 +1,4 @@
-(ns stonecutter.controller.user-list 
+(ns stonecutter.controller.user-list
   (:require [ajax.core :refer [POST]]
             [dommy.core :as d])
   (:require-macros [dommy.core :as dm]))
