@@ -45,13 +45,6 @@
 (defn toggle-valid-class [field-sel err?]
   (toggle-class field-sel err? field-valid-class))
 
-(defn toggle-error-class [field-sel err?]
-  (if err?
-    (do (d/add-class! (dm/sel1 field-sel) field-invalid-class)
-        (d/remove-class! (dm/sel1 field-sel) field-valid-class))
-    (do (d/remove-class! (dm/sel1 field-sel) field-invalid-class)
-        (d/add-class! (dm/sel1 field-sel) field-valid-class))))
-
 (defn render-current-password-error! [state]
   (let [error (get-in state [:current-password :error])]
     (update-inline-message form-row-current-password-error-class error-to-message {:current-password error})

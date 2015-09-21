@@ -1,5 +1,6 @@
 (ns stonecutter.test.test-utils
-  (:require [dommy.core :as dommy]
+  (:require [cemerick.cljs.test]
+            [dommy.core :as dommy]
             [clojure.string :as string])
   (:require-macros [cemerick.cljs.test :refer [deftest is testing run-tests]]
                    [dommy.core :refer [sel1 sel]]))

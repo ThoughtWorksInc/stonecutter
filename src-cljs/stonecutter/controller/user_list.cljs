@@ -1,7 +1,6 @@
 (ns stonecutter.controller.user-list 
   (:require [ajax.core :refer [POST]]
-            [dommy.core :as d]
-            [hickory.core :as hic])
+            [dommy.core :as d])
   (:require-macros [dommy.core :as dm]))
 
 ;(defn handler [response]
