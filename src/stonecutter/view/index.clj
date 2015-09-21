@@ -138,5 +138,6 @@
          (set-sign-in-email-input (:params request))
          (set-registration-inputs (:params request))
          vh/remove-work-in-progress
-         vh/add-anti-forgery)))
+         vh/add-anti-forgery
+         (vh/add-script "js/main.js"))))
 

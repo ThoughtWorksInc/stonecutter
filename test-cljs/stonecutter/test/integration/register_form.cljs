@@ -34,6 +34,7 @@
   (cp/enter-text rfr/password-input-element-selector blank-string)
   (cp/lose-focus rfr/password-input-element-selector))
 
+
 (deftest on-input
          (setup-index-page!)
          (utils/start)
@@ -72,40 +73,58 @@
                            (cp/test-field-has-class rfr/password-form-row-element-selector rfr/field-invalid-class))))
 
 
+(defn check-first-name-has-blank-validation-errors []
+  (cp/test-field-has-class rfr/first-name-form-row-element-selector rfr/field-invalid-class)
+  (rfrt/element-has-text rfr/first-name-validation-element-selector
+                         (get-in rfr/translations [:index :register-first-name-blank-validation-message])))
+
+(defn check-last-name-has-blank-validation-errors []
+  (cp/test-field-has-class rfr/last-name-form-row-element-selector rfr/field-invalid-class)
+  (rfrt/element-has-text rfr/last-name-validation-element-selector
+                         (get-in rfr/translations [:index :register-last-name-blank-validation-message])))
+
+(defn check-email-address-has-invalid-validation-errors []
+  (cp/test-field-has-class rfr/email-address-form-row-element-selector rfr/field-invalid-class)
+  (rfrt/element-has-text rfr/email-address-validation-element-selector
+                         (get-in rfr/translations [:index :register-email-address-invalid-validation-message])))
+
+(defn check-password-has-blank-validation-errors []
+  (cp/test-field-has-class rfr/password-form-row-element-selector rfr/field-invalid-class)
+  (rfrt/element-has-text rfr/password-validation-element-selector
+                         (get-in rfr/translations [:index :register-password-blank-validation-message])))
+
+
 (deftest losing-focus
          (setup-index-page!)
          (utils/start)
+
          (testing "first-name"
                   (testing "- losing focus when blank adds invalid field class and validation message"
                            (cp/lose-focus rfr/first-name-input-element-selector)
-                           (cp/test-field-has-class rfr/first-name-form-row-element-selector rfr/field-invalid-class)
-                           (rfrt/element-has-text rfr/first-name-validation-element-selector
-                                                  (get-in rfr/translations [:index :register-first-name-blank-validation-message])))
+                           (check-first-name-has-blank-validation-errors)))
 
-                  (testing "- losing focus when too-long adds invalid field class and validation message"
-                           (cp/set-value rfr/first-name-input-element-selector too-long-name)
-                           (cp/lose-focus rfr/first-name-input-element-selector)
-                           (cp/test-field-has-class rfr/first-name-form-row-element-selector rfr/field-invalid-class)
-                           (rfrt/element-has-text rfr/first-name-validation-element-selector
-                                                  (get-in rfr/translations [:index :register-first-name-too-long-validation-message])))
+         (testing "- losing focus when too-long adds invalid field class and validation message"
+                  (cp/set-value rfr/first-name-input-element-selector too-long-name)
+                  (cp/lose-focus rfr/first-name-input-element-selector)
+                  (cp/test-field-has-class rfr/first-name-form-row-element-selector rfr/field-invalid-class)
+                  (rfrt/element-has-text rfr/first-name-validation-element-selector
+                                         (get-in rfr/translations [:index :register-first-name-too-long-validation-message])))
 
-                  (testing "- losing focus when valid removes invalid field class and validation message"
-                           (cp/test-field-has-class rfr/first-name-form-row-element-selector rfr/field-invalid-class)
-                           (rfrt/element-has-text rfr/first-name-validation-element-selector
-                                                  (get-in rfr/translations [:index :register-first-name-too-long-validation-message]))
+         (testing "- losing focus when valid removes invalid field class and validation message"
+                  (cp/test-field-has-class rfr/first-name-form-row-element-selector rfr/field-invalid-class)
+                  (rfrt/element-has-text rfr/first-name-validation-element-selector
+                                         (get-in rfr/translations [:index :register-first-name-too-long-validation-message]))
 
-                           (cp/set-value rfr/first-name-input-element-selector valid-name)
-                           (cp/lose-focus rfr/first-name-input-element-selector)
+                  (cp/set-value rfr/first-name-input-element-selector valid-name)
+                  (cp/lose-focus rfr/first-name-input-element-selector)
 
-                           (cp/test-field-doesnt-have-class rfr/first-name-form-row-element-selector rfr/field-invalid-class)
-                           (rfrt/element-has-no-text rfr/first-name-validation-element-selector)))
+                  (cp/test-field-doesnt-have-class rfr/first-name-form-row-element-selector rfr/field-invalid-class)
+                  (rfrt/element-has-no-text rfr/first-name-validation-element-selector))
 
          (testing "last-name"
                   (testing "- losing focus when blank adds invalid field class and validation message"
                            (cp/lose-focus rfr/last-name-input-element-selector)
-                           (cp/test-field-has-class rfr/last-name-form-row-element-selector rfr/field-invalid-class)
-                           (rfrt/element-has-text rfr/last-name-validation-element-selector
-                                                  (get-in rfr/translations [:index :register-last-name-blank-validation-message])))
+                           (check-last-name-has-blank-validation-errors))
 
                   (testing "- losing focus when too-long adds invalid field class and validation message"
                            (cp/set-value rfr/last-name-input-element-selector too-long-name)
@@ -129,9 +148,7 @@
                   (testing "- losing focus when invalid adds invalid field class and validation message"
                            (cp/set-value rfr/email-address-input-element-selector invalid-email)
                            (cp/lose-focus rfr/email-address-input-element-selector)
-                           (cp/test-field-has-class rfr/email-address-form-row-element-selector rfr/field-invalid-class)
-                           (rfrt/element-has-text rfr/email-address-validation-element-selector
-                                                  (get-in rfr/translations [:index :register-email-address-invalid-validation-message])))
+                           (check-email-address-has-invalid-validation-errors))
 
                   (testing "- losing focus when too-long adds invalid field class and validation message"
                            (cp/set-value rfr/email-address-input-element-selector too-long-email)
@@ -151,12 +168,12 @@
                            (cp/test-field-doesnt-have-class rfr/email-address-form-row-element-selector rfr/field-invalid-class)
                            (rfrt/element-has-no-text rfr/email-address-validation-element-selector)))
 
+
+
          (testing "password"
                   (testing "- losing focus when blank adds invalid field class and validation message"
                            (cp/lose-focus rfr/password-input-element-selector)
-                           (cp/test-field-has-class rfr/password-form-row-element-selector rfr/field-invalid-class)
-                           (rfrt/element-has-text rfr/password-validation-element-selector
-                                                  (get-in rfr/translations [:index :register-password-blank-validation-message])))
+                           (check-password-has-blank-validation-errors))
 
                   (testing "- losing focus when too short adds invalid field class and validation message"
                            (cp/set-value rfr/password-input-element-selector too-short-password)
@@ -189,21 +206,31 @@
 
          (testing "submitting empty form"
                   (cp/press-submit rfr/register-form-element-selector)
+                  (check-first-name-has-blank-validation-errors)
+                  (check-last-name-has-blank-validation-errors)
+                  (check-email-address-has-invalid-validation-errors)
+                  (check-password-has-blank-validation-errors)
                   (cp/has-focus? rfr/first-name-input-element-selector))
 
          (testing "submitting form with only valid first-name"
                   (cp/enter-text rfr/first-name-input-element-selector valid-name)
                   (cp/press-submit rfr/register-form-element-selector)
+                  (check-last-name-has-blank-validation-errors)
+                  (check-email-address-has-invalid-validation-errors)
+                  (check-password-has-blank-validation-errors)
                   (cp/has-focus? rfr/last-name-input-element-selector))
 
          (testing "submitting form with only valid first-name and last-name"
                   (cp/enter-text rfr/last-name-input-element-selector valid-name)
                   (cp/press-submit rfr/register-form-element-selector)
+                  (check-email-address-has-invalid-validation-errors)
+                  (check-password-has-blank-validation-errors)
                   (cp/has-focus? rfr/email-address-input-element-selector))
 
          (testing "submitting form with only valid first-name, last-name and email-address"
                   (cp/enter-text rfr/email-address-input-element-selector valid-email)
                   (cp/press-submit rfr/register-form-element-selector)
+                  (check-password-has-blank-validation-errors)
                   (cp/has-focus? rfr/password-input-element-selector)))
 
 (deftest prevent-default-submit

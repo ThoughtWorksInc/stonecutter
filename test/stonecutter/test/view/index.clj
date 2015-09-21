@@ -20,7 +20,10 @@
                page => (th/has-form-action? [:.clj--sign-in__form] (r/path :sign-in-or-register)))
          (fact "forgotten-password button should link to correct page"
                page => (th/has-attr? [:.clj--forgot-password]
-                                     :href (r/path :show-forgotten-password-form)))))
+                                     :href (r/path :show-forgotten-password-form)))
+         
+         (fact "page has script link to javascript file"
+               (html/select page [[:script (html/attr= :src "js/main.js")]]) =not=> empty?)))
 
 (fact (th/test-translations "index page" index))
 

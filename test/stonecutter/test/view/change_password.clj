@@ -34,7 +34,7 @@
 
 (fact "page has script link to javascript file"
       (let [page (-> (th/create-request) change-password-form)]
-        (html/select page [[:script (html/attr-has :src "js/main.js")]]) =not=> empty?))
+        (html/select page [[:script (html/attr= :src "js/main.js")]]) =not=> empty?))
 
 (facts "about displaying errors"
        (tabular

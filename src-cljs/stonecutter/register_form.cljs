@@ -1,6 +1,7 @@
 (ns stonecutter.register-form
   (:require [dommy.core :as d]
             [stonecutter.renderer.register-form :as rfr]
+            [stonecutter.controller.register-form :as rfc]
             [stonecutter.validation :as sv])
   (:require-macros [dommy.core :as dm]))
 
@@ -48,4 +49,8 @@
         err (sv/validate-registration params (constantly false))]
     (when-not (empty? err)
       (.preventDefault submitEvent)
+      (update-state-and-render! :registration-first-name rfc/update-first-name-blur)
+      (update-state-and-render! :registration-last-name rfc/update-last-name-blur)
+      (update-state-and-render! :registration-email rfc/update-email-address-blur)
+      (update-state-and-render! :registration-password rfc/update-password-blur)
       (focus-on-element (first-input-with-errors err)))))
