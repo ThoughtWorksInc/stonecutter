@@ -3,7 +3,6 @@
             [stonecutter.controller.change-password :as cpc]
             [stonecutter.change-password :as cp]
             [stonecutter.renderer.register-form :as rfr]
-            [stonecutter.register-form :as rf]
             [stonecutter.controller.register-form :as rfc]
             [stonecutter.controller.user-list :as ul])
   (:require-macros [dommy.core :as dm]))
@@ -19,17 +18,17 @@
 (defn start []
   (setup-multi-listeners :.clj--user-item__toggle :change ul/update-role)
 
-  (setup-listener rfr/first-name-input-element-selector :input #(rf/update-state-and-render! :registration-first-name rfc/update-first-name-input))
-  (setup-listener rfr/last-name-input-element-selector :input #(rf/update-state-and-render! :registration-last-name rfc/update-last-name-input))
-  (setup-listener rfr/email-address-input-element-selector :input #(rf/update-state-and-render! :registration-email rfc/update-email-address-input))
-  (setup-listener rfr/password-form-row-element-selector :input #(rf/update-state-and-render! :registration-password rfc/update-password-input))
+  (setup-listener rfr/first-name-input-element-selector :input #(rfr/update-state-and-render! :registration-first-name rfc/update-first-name-input))
+  (setup-listener rfr/last-name-input-element-selector :input #(rfr/update-state-and-render! :registration-last-name rfc/update-last-name-input))
+  (setup-listener rfr/email-address-input-element-selector :input #(rfr/update-state-and-render! :registration-email rfc/update-email-address-input))
+  (setup-listener rfr/password-form-row-element-selector :input #(rfr/update-state-and-render! :registration-password rfc/update-password-input))
 
-  (setup-listener rfr/first-name-input-element-selector :blur #(rf/update-state-and-render! :registration-first-name rfc/update-first-name-blur))
-  (setup-listener rfr/last-name-input-element-selector :blur #(rf/update-state-and-render! :registration-last-name rfc/update-last-name-blur))
-  (setup-listener rfr/email-address-input-element-selector :blur #(rf/update-state-and-render! :registration-email rfc/update-email-address-blur))
-  (setup-listener rfr/password-input-element-selector :blur #(rf/update-state-and-render! :registration-password rfc/update-password-blur))
+  (setup-listener rfr/first-name-input-element-selector :blur #(rfr/update-state-and-render! :registration-first-name rfc/update-first-name-blur))
+  (setup-listener rfr/last-name-input-element-selector :blur #(rfr/update-state-and-render! :registration-last-name rfc/update-last-name-blur))
+  (setup-listener rfr/email-address-input-element-selector :blur #(rfr/update-state-and-render! :registration-email rfc/update-email-address-blur))
+  (setup-listener rfr/password-input-element-selector :blur #(rfr/update-state-and-render! :registration-password rfc/update-password-blur))
 
-  (setup-listener rfr/register-form-element-selector :submit rf/block-invalid-submit)
+  (setup-listener rfr/register-form-element-selector :submit rfc/block-invalid-submit)
 
   (setup-listener cp/current-password-input :input #(cp/update-state-and-render :current-password cpc/update-current-password-input))
   (setup-listener cp/new-password-input :input #(cp/update-state-and-render :new-password cpc/update-new-password-input))

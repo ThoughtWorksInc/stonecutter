@@ -1,5 +1,7 @@
 (ns stonecutter.controller.register-form
-  (:require [stonecutter.validation :as v]))
+  (:require [stonecutter.renderer.register-form :as rf]
+            [stonecutter.validation :as v])
+  (:require-macros [dommy.core :as dm]))
 
 (defn update-first-name-blur [state]
   (assoc-in state [:registration-first-name :error]
@@ -28,8 +30,27 @@
   (assoc-in state [:registration-email :error] nil))
 
 (defn update-password-input [state]
-  (if-let [error (v/validate-password-format (-> state :registration-password :value))]
-    (assoc-in state [:registration-password :tick] false)
-    (-> state
-        (assoc-in [:registration-password :error] nil)
-        (assoc-in [:registration-password :tick] true))))
+  (let [error (v/validate-password-format (-> state :registration-password :value))]
+    (if error
+      (assoc-in state [:registration-password :tick] false)
+      (-> state
+          (assoc-in [:registration-password :error] nil)
+          (assoc-in [:registration-password :tick] true)))))
+
+(defn focus-on-element [sel]
+  (when-let [e (dm/sel1 sel)]
+    (.focus e)))
+
+(defn block-invalid-submit [submitEvent]
+  (let [params {:registration-first-name (rf/get-value :registration-first-name)
+                :registration-last-name  (rf/get-value :registration-last-name)
+                :registration-email      (rf/get-value :registration-email)
+                :registration-password   (rf/get-value :registration-password)}
+        err (v/validate-registration params (constantly false))]
+    (when-not (empty? err)
+      (.preventDefault submitEvent)
+      (rf/update-state-and-render! :registration-first-name update-first-name-blur)
+      (rf/update-state-and-render! :registration-last-name update-last-name-blur)
+      (rf/update-state-and-render! :registration-email update-email-address-blur)
+      (rf/update-state-and-render! :registration-password update-password-blur)
+      (focus-on-element (rf/first-input-with-errors err)))))

@@ -23,6 +23,19 @@
 
 (def translations (t/load-client-translations))
 
+(def form-state (atom {:registration-first-name {:value nil :error nil}
+                       :registration-last-name  {:value nil :error nil}
+                       :registration-email      {:value nil :error nil}
+                       :registration-password   {:value nil :error nil :tick false}}))
+
+(def field-key-to-input-field
+  {:registration-first-name first-name-input-element-selector
+   :registration-last-name  last-name-input-element-selector
+   :registration-email      email-address-input-element-selector
+   :registration-password   password-input-element-selector})
+
+(def error-field-order [:registration-first-name :registration-last-name :registration-email :registration-password])
+
 (defn get-translated-message [key]
   (-> translations :index key))
 
@@ -86,3 +99,25 @@
       render-last-name-error!
       render-email-address-error!
       render-password-error!))
+
+(defn first-input-with-errors [err]
+  (->> error-field-order
+       (filter #(get err %))
+       first
+       field-key-to-input-field))
+
+(defn get-value [field-key]
+  (d/value (dm/sel1 (field-key field-key-to-input-field))))
+
+(defn update-state-with-value! [field-key]
+  (let [value (get-value field-key)]
+    (swap! form-state #(assoc-in % [field-key :value] value))))
+
+
+(defn update-state-with-controller-fn! [func]
+  (swap! form-state func))
+
+(defn update-state-and-render! [field-key controller-fn]
+  (update-state-with-value! field-key)
+  (update-state-with-controller-fn! controller-fn)
+  (render! @form-state))

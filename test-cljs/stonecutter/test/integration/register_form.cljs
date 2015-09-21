@@ -1,7 +1,7 @@
 (ns stonecutter.test.integration.register-form
   (:require [cemerick.cljs.test]
             [dommy.core :as dommy]
-            [stonecutter.register-form :as rf]
+            [stonecutter.controller.register-form :as rfc]
             [stonecutter.utils :as utils]
             [stonecutter.renderer.register-form :as rfr]
             [stonecutter.test.renderer.register-form :as rfrt]
@@ -236,7 +236,7 @@
 
          (testing "prevents default when page has errors"
                   (let [submit-event (tu/create-event :submit)]
-                    (rf/block-invalid-submit submit-event)
+                    (rfc/block-invalid-submit submit-event)
                     (tu/default-prevented? submit-event true)))
 
          (testing "doesn't prevent default when inputs are valid"
@@ -245,7 +245,7 @@
                     (tu/enter-text rfr/last-name-input-element-selector valid-name)
                     (tu/enter-text rfr/email-address-input-element-selector valid-email)
                     (tu/enter-text rfr/password-input-element-selector valid-password)
-                    (rf/block-invalid-submit submit-event)
+                    (rfc/block-invalid-submit submit-event)
                     (testing "all error classes are removed"
                              (tu/test-field-doesnt-have-class rfr/first-name-form-row-element-selector rfr/field-invalid-class)
                              (tu/test-field-doesnt-have-class rfr/last-name-form-row-element-selector rfr/field-invalid-class)
