@@ -67,12 +67,6 @@
 
                  (wd/toggle c/stonecutter-trust-toggle)
                  (wd/to c/user-list-page)
-                 (wd/attribute c/stonecutter-trust-toggle :checked) => nil)
-
-           (fact "admin should see flash message on toggle"
-                 (wd/to c/user-list-page)
-                 (wd/toggle c/stonecutter-trust-toggle)
-                 (wd/page-source) => (every-checker (contains "stonecutter-journey-test@tw.com")
-                                                    (contains "is now set to trusted"))))
+                 (wd/attribute c/stonecutter-trust-toggle :checked) => nil))
     (catch Exception e
       (throw e))))

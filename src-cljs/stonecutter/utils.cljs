@@ -17,7 +17,6 @@
     (doseq [elem elems] (d/listen! elem event function))))
 
 (defn start []
-  (.log js/console "set up listener for user list")
   (setup-multi-listeners :.clj--user-item__toggle :change ul/update-role)
 
   (setup-listener rfr/first-name-input-element-selector :input #(rf/update-state-and-render! :registration-first-name rfc/update-first-name-input))

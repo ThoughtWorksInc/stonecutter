@@ -74,15 +74,15 @@
                        :env            {:dev                   true
                                         :secure                "false"
                                         :rsa-keypair-file-path "test-resources/test-key.json"}
-                       :cljsbuild      {:builds        [{:source-paths ["src-cljs" "src-cljc"]
-                                                         :compiler     {:output-to     "resources/public/js/main.js"
-                                                                        :output-dir    "resources/public/js/out"
-                                                                        :asset-path    "js/out"
-                                                                        :optimizations :whitespace
-                                                                        :pretty-print  true}}
-                                                        {:source-paths ["src-cljs" "src-cljc" "test-cljs"]
-                                                         :compiler     {:output-to     "target/cljs/testable.js"
-                                                                        :optimizations :whitespace}}]
+                       :cljsbuild      {:builds        {:prod {:source-paths ["src-cljs" "src-cljc"]
+                                                               :compiler     {:output-to     "resources/public/js/main.js"
+                                                                              :asset-path    "js/out"
+                                                                              :optimizations :advanced
+                                                                              :pretty-print  false}}
+                                                        :test {:source-paths ["src-cljs" "src-cljc" "test-cljs"]
+                                                               :compiler     {:output-to     "target/cljs/testable.js"
+                                                                              :optimizations :whitespace
+                                                                              :pretty-print  true}}}
                                         :test-commands {"unit-tests" ["phantomjs" :runner
                                                                       "target/cljs/testable.js"]}}}
 

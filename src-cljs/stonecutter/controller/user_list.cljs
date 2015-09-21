@@ -4,13 +4,8 @@
             [hickory.core :as hic])
   (:require-macros [dommy.core :as dm]))
 
-(defn handler [response]
-  (let [flash-message-html-snippet (-> response
-                                       hic/parse
-                                       (. getElementsByClassName "clj--flash-message-container")
-                                       (. item 0)
-                                       (. -innerHTML))]
-    (d/set-html! (dm/sel1 :.clj--flash-message-container) flash-message-html-snippet)))
+;(defn handler [response]
+;  (.log js/console (str "successful response: " status " " status-text)))
 
 (defn error-handler [{:keys [status status-text]}]
   (.log js/console (str "something bad happened: " status " " status-text)))
@@ -26,5 +21,5 @@
                      "trust-toggle" checked}
            :headers {:X-CSRF-Token (anti-forgery)}  
                     :format :json
-                    :handler handler 
+                    ;:handler handler 
                     :error-handler error-handler})))
