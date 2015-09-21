@@ -1,6 +1,6 @@
 (ns stonecutter.test.renderer.register-form
   (:require [cemerick.cljs.test :as t]
-            [stonecutter.renderer.register-form :as r]
+            [stonecutter.dom.register-form :as rfr]
             [stonecutter.test.test-utils :as tu]
             [dommy.core :as dommy]
             [clojure.string :as string])
@@ -38,85 +38,85 @@
                   (are [?field-key ?form-row-selector]
                        (testing "tabular"
                                 (testing "- any error, adds invalid class"
-                                         (r/render! (assoc-in default-state [?field-key :error] :ANYTHING))
-                                         (tu/test-field-has-class ?form-row-selector r/field-invalid-class))
+                                         (rfr/render! (assoc-in default-state [?field-key :error] :ANYTHING))
+                                         (tu/test-field-has-class ?form-row-selector rfr/field-invalid-class))
 
                                 (testing "- no error, removes invalid class"
-                                         (r/render! (assoc-in default-state [?field-key :error] :ANYTHING))
-                                         (tu/test-field-has-class ?form-row-selector r/field-invalid-class)
-                                         (r/render! (assoc-in default-state [?field-key :error] nil))
-                                         (tu/test-field-doesnt-have-class ?form-row-selector r/field-invalid-class)))
+                                         (rfr/render! (assoc-in default-state [?field-key :error] :ANYTHING))
+                                         (tu/test-field-has-class ?form-row-selector rfr/field-invalid-class)
+                                         (rfr/render! (assoc-in default-state [?field-key :error] nil))
+                                         (tu/test-field-doesnt-have-class ?form-row-selector rfr/field-invalid-class)))
 
                        ;?field-key    ?form-row-selector
-                       :registration-first-name r/first-name-form-row-element-selector
-                       :registration-last-name r/last-name-form-row-element-selector
-                       :registration-email r/email-address-form-row-element-selector
-                       :registration-password r/password-form-row-element-selector))
+                       :registration-first-name (rfr/form-row-selector :registration-first-name)
+                       :registration-last-name (rfr/form-row-selector :registration-last-name)
+                       :registration-email (rfr/form-row-selector :registration-email)
+                       :registration-password (rfr/form-row-selector :registration-password)))
 
 
          (testing "error messages"
                   (testing "first name"
                            (testing "blank"
-                                    (r/render! (assoc-in default-state [:registration-first-name :error] :blank))
-                                    (element-has-text r/first-name-validation-element-selector
-                                                      (get-in r/translations [:index :register-first-name-blank-validation-message])))
+                                    (rfr/render! (assoc-in default-state [:registration-first-name :error] :blank))
+                                    (element-has-text (rfr/validation-selector :registration-first-name)
+                                                      (get-in rfr/translations [:index :register-first-name-blank-validation-message])))
                            (testing "too long"
-                                    (r/render! (assoc-in default-state [:registration-first-name :error] :too-long))
-                                    (element-has-text r/first-name-validation-element-selector
-                                                      (get-in r/translations [:index :register-first-name-too-long-validation-message])))
+                                    (rfr/render! (assoc-in default-state [:registration-first-name :error] :too-long))
+                                    (element-has-text (rfr/validation-selector :registration-first-name)
+                                                      (get-in rfr/translations [:index :register-first-name-too-long-validation-message])))
                            (testing "no error"
-                                    (r/render! (assoc-in default-state [:registration-first-name :error] nil))
-                                    (element-has-no-text r/first-name-validation-element-selector)))
+                                    (rfr/render! (assoc-in default-state [:registration-first-name :error] nil))
+                                    (element-has-no-text (rfr/validation-selector :registration-first-name))))
 
                   (testing "last name"
                            (testing "blank"
-                                    (r/render! (assoc-in default-state [:registration-last-name :error] :blank))
-                                    (element-has-text r/last-name-validation-element-selector
-                                                      (get-in r/translations [:index :register-last-name-blank-validation-message])))
+                                    (rfr/render! (assoc-in default-state [:registration-last-name :error] :blank))
+                                    (element-has-text (rfr/validation-selector :registration-last-name)
+                                                      (get-in rfr/translations [:index :register-last-name-blank-validation-message])))
                            (testing "too long"
-                                    (r/render! (assoc-in default-state [:registration-last-name :error] :too-long))
-                                    (element-has-text r/last-name-validation-element-selector
-                                                      (get-in r/translations [:index :register-last-name-too-long-validation-message])))
+                                    (rfr/render! (assoc-in default-state [:registration-last-name :error] :too-long))
+                                    (element-has-text (rfr/validation-selector :registration-last-name)
+                                                      (get-in rfr/translations [:index :register-last-name-too-long-validation-message])))
                            (testing "no error"
-                                    (r/render! (assoc-in default-state [:registration-last-name :error] nil))
-                                    (element-has-no-text r/last-name-validation-element-selector)))
+                                    (rfr/render! (assoc-in default-state [:registration-last-name :error] nil))
+                                    (element-has-no-text (rfr/validation-selector :registration-last-name))))
 
                   (testing "email address"
                            (testing "invalid"
-                                    (r/render! (assoc-in default-state [:registration-email :error] :invalid))
-                                    (element-has-text r/email-address-validation-element-selector
-                                                      (get-in r/translations [:index :register-email-address-invalid-validation-message])))
+                                    (rfr/render! (assoc-in default-state [:registration-email :error] :invalid))
+                                    (element-has-text (rfr/validation-selector :registration-email)
+                                                      (get-in rfr/translations [:index :register-email-address-invalid-validation-message])))
                            (testing "too long"
-                                    (r/render! (assoc-in default-state [:registration-email :error] :too-long))
-                                    (element-has-text r/email-address-validation-element-selector
-                                                      (get-in r/translations [:index :register-email-address-too-long-validation-message])))
+                                    (rfr/render! (assoc-in default-state [:registration-email :error] :too-long))
+                                    (element-has-text (rfr/validation-selector :registration-email)
+                                                      (get-in rfr/translations [:index :register-email-address-too-long-validation-message])))
                            (testing "no error"
-                                    (r/render! (assoc-in default-state [:registration-last-name :error] nil))
-                                    (element-has-no-text r/email-address-validation-element-selector)))
+                                    (rfr/render! (assoc-in default-state [:registration-last-name :error] nil))
+                                    (element-has-no-text (rfr/validation-selector :registration-email))))
 
                   (testing "password"
                            (testing "blank"
-                                    (r/render! (assoc-in default-state [:registration-password :error] :blank))
-                                    (element-has-text r/password-validation-element-selector
-                                                      (get-in r/translations [:index :register-password-blank-validation-message])))
+                                    (rfr/render! (assoc-in default-state [:registration-password :error] :blank))
+                                    (element-has-text (rfr/validation-selector :registration-password)
+                                                      (get-in rfr/translations [:index :register-password-blank-validation-message])))
                            (testing "too short"
-                                    (r/render! (assoc-in default-state [:registration-password :error] :too-short))
-                                    (element-has-text r/password-validation-element-selector
-                                                      (get-in r/translations [:index :register-password-too-short-validation-message])))
+                                    (rfr/render! (assoc-in default-state [:registration-password :error] :too-short))
+                                    (element-has-text (rfr/validation-selector :registration-password)
+                                                      (get-in rfr/translations [:index :register-password-too-short-validation-message])))
                            (testing "too long"
-                                    (r/render! (assoc-in default-state [:registration-password :error] :too-long))
-                                    (element-has-text r/password-validation-element-selector
-                                                      (get-in r/translations [:index :register-password-too-long-validation-message])))
+                                    (rfr/render! (assoc-in default-state [:registration-password :error] :too-long))
+                                    (element-has-text (rfr/validation-selector :registration-password)
+                                                      (get-in rfr/translations [:index :register-password-too-long-validation-message])))
                            (testing "no error"
-                                    (r/render! (assoc-in default-state [:registration-password :error] nil))
-                                    (element-has-no-text r/password-validation-element-selector))))
+                                    (rfr/render! (assoc-in default-state [:registration-password :error] nil))
+                                    (element-has-no-text (rfr/validation-selector :registration-password)))))
 
          (testing "valid class on password field"
                   (testing "- tick true, adds valid class"
-                           (r/render! (assoc-in default-state [:registration-password :tick] true))
-                           (tu/test-field-has-class r/password-form-row-element-selector r/field-valid-class))
+                           (rfr/render! (assoc-in default-state [:registration-password :tick] true))
+                           (tu/test-field-has-class (rfr/form-row-selector :registration-password) rfr/field-valid-class))
                   (testing "- tick false, removes valid class"
-                           (r/render! (assoc-in default-state [:registration-password :tick] true))
-                           (tu/test-field-has-class r/password-form-row-element-selector r/field-valid-class)
-                           (r/render! (assoc-in default-state [:registration-password :tick] false))
-                           (tu/test-field-doesnt-have-class r/password-form-row-element-selector r/field-valid-class))))
+                           (rfr/render! (assoc-in default-state [:registration-password :tick] true))
+                           (tu/test-field-has-class (rfr/form-row-selector :registration-password) rfr/field-valid-class)
+                           (rfr/render! (assoc-in default-state [:registration-password :tick] false))
+                           (tu/test-field-doesnt-have-class (rfr/form-row-selector :registration-password) rfr/field-valid-class))))

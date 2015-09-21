@@ -1,25 +1,32 @@
-(ns stonecutter.renderer.register-form
+(ns stonecutter.dom.register-form
   (:require [dommy.core :as d])
   (:require-macros [dommy.core :as dm]
                    [stonecutter.translation :as t]))
 
 (def register-form-element-selector :.clj--register__form)
 
-(def first-name-form-row-element-selector :.clj--registration-first-name)
-(def first-name-validation-element-selector :.clj--registration-first-name__validation)
-(def first-name-input-element-selector :.clj--registration-first-name__input)
+(def selectors
+  {:registration-first-name {:input      :.clj--registration-first-name__input
+                             :form-row   :.clj--registration-first-name
+                             :validation :.clj--registration-first-name__validation}
+   :registration-last-name  {:input      :.clj--registration-last-name__input
+                             :form-row   :.clj--registration-last-name
+                             :validation :.clj--registration-last-name__validation}
+   :registration-email      {:input      :.clj--registration-email__input
+                             :form-row   :.clj--registration-email
+                             :validation :.clj--registration-email__validation}
+   :registration-password   {:input      :.clj--registration-password__input
+                             :form-row   :.clj--registration-password
+                             :validation :.clj--registration-password__validation}})
 
-(def last-name-form-row-element-selector :.clj--registration-last-name)
-(def last-name-validation-element-selector :.clj--registration-last-name__validation)
-(def last-name-input-element-selector :.clj--registration-last-name__input)
+(defn form-row-selector [field-key]
+  (get-in selectors [field-key :form-row]))
 
-(def email-address-form-row-element-selector :.clj--registration-email)
-(def email-address-validation-element-selector :.clj--registration-email__validation)
-(def email-address-input-element-selector :.clj--registration-email__input)
+(defn input-selector [field-key]
+  (get-in selectors [field-key :input]))
 
-(def password-form-row-element-selector :.clj--registration-password)
-(def password-validation-element-selector :.clj--registration-password__validation)
-(def password-input-element-selector :.clj--registration-password__input)
+(defn validation-selector [field-key]
+  (get-in selectors [field-key :validation]))
 
 (def translations (t/load-client-translations))
 
@@ -27,12 +34,6 @@
                        :registration-last-name  {:value nil :error nil}
                        :registration-email      {:value nil :error nil}
                        :registration-password   {:value nil :error nil :tick false}}))
-
-(def field-key-to-input-field
-  {:registration-first-name first-name-input-element-selector
-   :registration-last-name  last-name-input-element-selector
-   :registration-email      email-address-input-element-selector
-   :registration-password   password-input-element-selector})
 
 (def error-field-order [:registration-first-name :registration-last-name :registration-email :registration-password])
 
@@ -73,24 +74,24 @@
     (d/set-text! (dm/sel1 validation-element-selector) message)))
 
 (defn render-password-error! [state]
-  (set-invalid-class! state :registration-password password-form-row-element-selector)
-  (set-valid-class! state :registration-password password-form-row-element-selector)
-  (set-error-message! state :registration-password password-validation-element-selector)
+  (set-invalid-class! state :registration-password (form-row-selector :registration-password))
+  (set-valid-class! state :registration-password (form-row-selector :registration-password))
+  (set-error-message! state :registration-password (validation-selector :registration-password))
   state)
 
 (defn render-email-address-error! [state]
-  (set-invalid-class! state :registration-email email-address-form-row-element-selector)
-  (set-error-message! state :registration-email email-address-validation-element-selector)
+  (set-invalid-class! state :registration-email (form-row-selector :registration-email))
+  (set-error-message! state :registration-email (validation-selector :registration-email))
   state)
 
 (defn render-last-name-error! [state]
-  (set-invalid-class! state :registration-last-name last-name-form-row-element-selector)
-  (set-error-message! state :registration-last-name last-name-validation-element-selector)
+  (set-invalid-class! state :registration-last-name (form-row-selector :registration-last-name))
+  (set-error-message! state :registration-last-name (validation-selector :registration-last-name))
   state)
 
 (defn render-first-name-error! [state]
-  (set-invalid-class! state :registration-first-name first-name-form-row-element-selector)
-  (set-error-message! state :registration-first-name first-name-validation-element-selector)
+  (set-invalid-class! state :registration-first-name (form-row-selector :registration-first-name))
+  (set-error-message! state :registration-first-name (validation-selector :registration-first-name))
   state)
 
 (defn render! [state]
@@ -104,10 +105,10 @@
   (->> error-field-order
        (filter #(get err %))
        first
-       field-key-to-input-field))
+       input-selector))
 
 (defn get-value [field-key]
-  (d/value (dm/sel1 (field-key field-key-to-input-field))))
+  (d/value (dm/sel1 (input-selector field-key))))
 
 (defn update-state-with-value! [field-key]
   (let [value (get-value field-key)]
