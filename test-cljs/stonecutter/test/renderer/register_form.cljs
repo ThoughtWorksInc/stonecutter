@@ -1,7 +1,7 @@
 (ns stonecutter.test.renderer.register-form
   (:require [cemerick.cljs.test :as t]
             [stonecutter.renderer.register-form :as r]
-            [stonecutter.test.integration.change-password :as cp-test]
+            [stonecutter.test.test-utils :as tu]
             [dommy.core :as dommy]
             [clojure.string :as string])
   (:require-macros [cemerick.cljs.test :refer [deftest is testing run-tests are]]
@@ -39,13 +39,13 @@
                        (testing "tabular"
                                 (testing "- any error, adds invalid class"
                                          (r/render! (assoc-in default-state [?field-key :error] :ANYTHING))
-                                         (cp-test/test-field-has-class ?form-row-selector r/field-invalid-class))
+                                         (tu/test-field-has-class ?form-row-selector r/field-invalid-class))
 
                                 (testing "- no error, removes invalid class"
                                          (r/render! (assoc-in default-state [?field-key :error] :ANYTHING))
-                                         (cp-test/test-field-has-class ?form-row-selector r/field-invalid-class)
+                                         (tu/test-field-has-class ?form-row-selector r/field-invalid-class)
                                          (r/render! (assoc-in default-state [?field-key :error] nil))
-                                         (cp-test/test-field-doesnt-have-class ?form-row-selector r/field-invalid-class)))
+                                         (tu/test-field-doesnt-have-class ?form-row-selector r/field-invalid-class)))
 
                        ;?field-key    ?form-row-selector
                        :registration-first-name r/first-name-form-row-element-selector
@@ -114,9 +114,9 @@
          (testing "valid class on password field"
                   (testing "- tick true, adds valid class"
                            (r/render! (assoc-in default-state [:registration-password :tick] true))
-                           (cp-test/test-field-has-class r/password-form-row-element-selector r/field-valid-class))
+                           (tu/test-field-has-class r/password-form-row-element-selector r/field-valid-class))
                   (testing "- tick false, removes valid class"
                            (r/render! (assoc-in default-state [:registration-password :tick] true))
-                           (cp-test/test-field-has-class r/password-form-row-element-selector r/field-valid-class)
+                           (tu/test-field-has-class r/password-form-row-element-selector r/field-valid-class)
                            (r/render! (assoc-in default-state [:registration-password :tick] false))
-                           (cp-test/test-field-doesnt-have-class r/password-form-row-element-selector r/field-valid-class))))
+                           (tu/test-field-doesnt-have-class r/password-form-row-element-selector r/field-valid-class))))
