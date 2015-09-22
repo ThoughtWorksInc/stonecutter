@@ -3,11 +3,25 @@
   (:require-macros [dommy.core :as dm]
                    [stonecutter.translation :as t]))
 
+(def selectors
+  {:current-password {:input      :.clj--current-password__input
+                      :form-row   :.clj--current-password
+                      }                                     ;; NOOOOOOOOOOOOOOOOOOOOO VALIDATION
+   :new-password     {:input      :.clj--new-password__input
+                      :form-row   :.clj--new-password
+                      }})
+
+(defn input-selector [field-key]
+  (get-in selectors [field-key :input]))
+
+(defn form-row-selector [field-key]
+  (get-in selectors [field-key :form-row]))
+
 (def form-row-validation "form-row__validation")
 (def form-row-help "form-row__help")
 
-(def field-valid-class "form-row--valid")
-(def field-invalid-class "form-row--invalid")
+(def field-invalid-class :form-row--invalid)
+(def field-valid-class :form-row--valid)
 
 (def current-password-field :.clj--current-password)
 (def new-password-field :.clj--new-password)
@@ -33,6 +47,9 @@
     (d/add-class! element form-row-validation)
     (d/remove-class! element form-row-help)
     (d/set-text! element message)))
+
+(defn add-class! [selector css-class]
+  (d/add-class! (dm/sel1 selector) css-class))
 
 (defn toggle-class [field-sel add? class]
   (if add?
@@ -67,3 +84,6 @@
       render-current-password-error!
       render-new-password-error!
       render-new-password-tick!))
+
+(defn get-value [field-key]
+  (d/value (dm/sel1 (input-selector field-key))))

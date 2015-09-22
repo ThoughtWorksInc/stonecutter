@@ -37,15 +37,3 @@
     (when-not (empty? err)
       (.preventDefault submitEvent)
       (focus-on-element (first-input-with-errors err)))))
-
-(def change-password-form-state (atom {}))
-
-(defn update-state-input! [field]
-  (let [new-input-value (field (field-values))]
-    (swap! change-password-form-state #(assoc-in % [field :value] new-input-value))))
-
-(defn update-state-and-render [field controller-fn]
-  (update-state-input! field)
-  (swap! change-password-form-state controller-fn)
-  (r/render! @change-password-form-state))
-

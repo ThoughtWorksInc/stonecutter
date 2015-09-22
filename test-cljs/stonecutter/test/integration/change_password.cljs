@@ -3,12 +3,14 @@
             [dommy.core :as dommy]
             [stonecutter.js.change-password :as cp]
             [stonecutter.js.app :as app]
-            [stonecutter.js.renderer.change-password :as r]
+            [stonecutter.js.renderer.change-password :as cpd]
+            [stonecutter.js.controller.change-password :as cpc]
             [stonecutter.test.test-utils :as tu])
   (:require-macros [cemerick.cljs.test :refer [deftest is testing run-tests]]
                    [dommy.core :refer [sel1 sel]]
                    [stonecutter.test.macros :refer [load-template]]))
 
+(def blank-string "")
 (def invalid-password "blah")
 (def valid-password "12345678")
 (def valid-new-password "23456789")
@@ -28,70 +30,77 @@
 (def field-valid-class "form-row--valid")
 (def field-invalid-class "form-row--invalid")
 
-(defn setup-page! [html]
-  (dommy/set-html! (sel1 :html) html))
-
-(defn reset-change-password-form-atom! []
-  (reset! cp/change-password-form-state {}))
-
 (def change-password-template (load-template "public/change-password.html"))
 
-(defn test-field-validates-client-side [selector target-element]
-  (tu/test-field-doesnt-have-class target-element field-valid-class)
-  (tu/enter-text selector valid-password)
-  (tu/test-field-has-class target-element field-valid-class)
-  (tu/enter-text selector invalid-password)
-  (tu/test-field-doesnt-have-class target-element field-valid-class))
+(defn setup-change-password-page! []
+  (dommy/set-html! (sel1 :html) change-password-template))
 
-(deftest current-password-validation-on-input
-         (setup-page! change-password-template)
-         (app/start)
+(defn reset-change-password-form-atom! []
+  (reset! app/change-password-form-state cpc/default-state))
 
-         (testing "correcting invalid password will cause field invalid class to disappear"
-                  (tu/enter-text current-password-input invalid-password)
-                  (tu/press-submit change-password-form)
+(defn clean-setup! []
+  (setup-change-password-page!)
+  (app/start)
+  (reset-change-password-form-atom!))
 
-                  (tu/enter-text current-password-input valid-password)
-                  (tu/test-field-doesnt-have-class current-password-field field-invalid-class)))
 
-(deftest new-password-validation-on-input
-         (setup-page! change-password-template)
-         (app/start)
-         (reset-change-password-form-atom!)
+(defn invalid-new-password-state! []
+  (clean-setup!)
+  (tu/enter-text (cpd/input-selector :new-password) blank-string)
+  (tu/lose-focus (cpd/input-selector :new-password)))
 
-         (testing "typing in valid password causes valid class to appear"
-                  (test-field-validates-client-side new-password-input new-password-field))
+(deftest on-input
+         (testing "inputing text in current-password field will cause field invalid class to disappear"
+                  (clean-setup!)
+                  (cpd/add-class! (cpd/form-row-selector :current-password) cpd/field-invalid-class)
+                  (tu/enter-text (cpd/input-selector :current-password) valid-password)
+                  (tu/test-field-doesnt-have-class (cpd/form-row-selector :current-password) cpd/field-invalid-class))
 
-         (testing "valid class disappears if new password is the same as current password"
-                  (tu/enter-text current-password-input valid-password)
-                  (tu/enter-text new-password-input valid-password)
-                  (tu/test-field-doesnt-have-class new-password-field field-valid-class))
+         (testing "new-password"
+                  (testing "- valid input will cause field invalid class to disappear"
+                           (clean-setup!)
+                           (cpd/add-class! (cpd/form-row-selector :new-password) cpd/field-invalid-class)
+                           (tu/enter-text (cpd/input-selector :new-password) valid-new-password)
+                           (tu/test-field-doesnt-have-class (cpd/form-row-selector :new-password) cpd/field-invalid-class))
+                  (testing "- valid input will cause field valid class to appear"
+                           (clean-setup!)
+                           (tu/enter-text (cpd/input-selector :new-password) valid-new-password)
+                           (tu/test-field-has-class (cpd/form-row-selector :new-password) cpd/field-valid-class))
+                  (testing "- from valid to invalid causes field valid class to disappear"
+                           (clean-setup!)
+                           (cpd/add-class! (cpd/form-row-selector :new-password) cpd/field-valid-class)
+                           (tu/enter-text (cpd/input-selector :new-password) invalid-password)
+                           (tu/test-field-doesnt-have-class (cpd/form-row-selector :new-password) cpd/field-valid-class))
+                  (testing "- from invalid to invalid causes field invalid class to remain"
+                           (invalid-new-password-state!)
+                           (tu/test-field-has-class (cpd/form-row-selector :new-password) cpd/field-invalid-class)
+                           (tu/enter-text (cpd/input-selector :new-password) invalid-password)
+                           (tu/test-field-has-class (cpd/form-row-selector :new-password) cpd/field-invalid-class)))
 
-         (setup-page! change-password-template)
-         (app/start)
+         (testing "current-password & new-password interaction"
+                  (testing "- if new-password matches current-password, valid class disappears from new-password"
+                           (clean-setup!)
+                           (tu/enter-text (cpd/input-selector :current-password) valid-password)
+                           (cpd/add-class! (cpd/form-row-selector :new-password) cpd/field-valid-class)
+                           (tu/enter-text (cpd/input-selector :new-password) valid-password)
+                           (tu/test-field-doesnt-have-class (cpd/form-row-selector :new-password) cpd/field-valid-class))
 
-         (testing "form rows are checked on current-password input event as well"
-                  (tu/enter-text new-password-input valid-password)
-                  (tu/enter-text current-password-input valid-password)
-                  (tu/test-field-doesnt-have-class new-password-field field-valid-class))
-
-         (testing "field error class gets removed if the new password is correct"
-                  (tu/enter-text new-password-input invalid-password)
-                  (tu/enter-text current-password-input invalid-password)
-                  (tu/press-submit change-password-form)
-                  (tu/enter-text current-password-input valid-password)
-                  (tu/enter-text new-password-input valid-new-password)
-                  (tu/test-field-doesnt-have-class new-password-field field-invalid-class)))
+                  (testing "- if new-password matches current-password, valid class disappears from new-password when current-password is entered later"
+                           (clean-setup!)
+                           (cpd/add-class! (cpd/form-row-selector :new-password) cpd/field-valid-class)
+                           (tu/enter-text (cpd/input-selector :new-password) valid-password)
+                           (tu/enter-text (cpd/input-selector :current-password) valid-password)
+                           (tu/test-field-doesnt-have-class (cpd/form-row-selector :new-password) cpd/field-valid-class))))
 
 (deftest losing-focus-on-input-fields
-         (setup-page! change-password-template)
+         (setup-change-password-page!)
          (app/start)
 
          (testing "current password field"
                   (testing "losing focus when blank adds invalid field class"
                            (tu/lose-focus current-password-input)
                            (tu/test-field-has-class current-password-field field-invalid-class)
-                           (tu/has-message-on-selector form-row-current-password-error-class (get-in r/error-to-message [:current-password :blank])))
+                           (tu/has-message-on-selector form-row-current-password-error-class (get-in cpd/error-to-message [:current-password :blank])))
 
                   (testing "losing focus when correct format does not add invalid field class"
                            (tu/enter-text current-password-input valid-password)
@@ -112,7 +121,7 @@
                   (testing "losing focus when blank adds invalid field class"
                            (tu/lose-focus new-password-input)
                            (tu/test-field-has-class new-password-field field-invalid-class)
-                           (tu/has-message-on-selector form-row-new-password-error-class (get-in r/error-to-message [:new-password :blank])))
+                           (tu/has-message-on-selector form-row-new-password-error-class (get-in cpd/error-to-message [:new-password :blank])))
 
                   (testing "valid input adds valid field class"
                            (tu/enter-text new-password-input valid-password)
@@ -130,18 +139,18 @@
 
                   (testing "losing focus when incorrect format adds invalid field class"
                            (tu/lose-focus new-password-input)
-                           (tu/has-message-on-selector form-row-new-password-error-class (get-in r/error-to-message [:new-password :too-short]))
+                           (tu/has-message-on-selector form-row-new-password-error-class (get-in cpd/error-to-message [:new-password :too-short]))
                            (tu/test-field-has-class new-password-field field-invalid-class))
 
                   (testing "losing focus when password is unchange adds invalid field class and message"
                            (tu/enter-text current-password-input valid-password)
                            (tu/enter-text new-password-input valid-password)
                            (tu/lose-focus new-password-input)
-                           (tu/has-message-on-selector form-row-new-password-error-class (get-in r/error-to-message [:new-password :unchanged]))
+                           (tu/has-message-on-selector form-row-new-password-error-class (get-in cpd/error-to-message [:new-password :unchanged]))
                            (tu/test-field-has-class new-password-field field-invalid-class))))
 
 (deftest submitting-invalid-forms
-         (setup-page! change-password-template)
+         (setup-change-password-page!)
          (app/start)
 
          (testing "submitting empty form"
@@ -154,7 +163,7 @@
                   (tu/has-focus? new-password-input)))
 
 (deftest prevent-default-submit
-         (setup-page! change-password-template)
+         (setup-change-password-page!)
          (testing "prevents default when page has errors"
                   (let [submit-event (tu/create-event :submit)]
                     (cp/block-invalid-submit submit-event)

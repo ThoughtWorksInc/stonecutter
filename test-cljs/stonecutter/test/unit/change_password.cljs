@@ -39,16 +39,16 @@
 (deftest update-model-on-input
          (testing "current-password"
                   (testing "when input is valid, error should be nil"
-                           (let [current-state {:current-password {:value "12345678" :error :too-short} :new-password {}}
-                                 expected-state {:current-password {:value "12345678" :error nil} :new-password {}}]
-                             (is (= expected-state (cp/update-current-password-input current-state))
-                                 "correcting an error did not clear error in state")))
+                           (is (= nil (-> (cp/update-current-password-input {:current-password {:value "12345678"}})
+                                          (get-in [:current-password :error])))))
 
                   (testing "when password is less than 8 characters, error is not changed"
-                           (let [current-state {:current-password {:value "123" :error :anything} :new-password {}}
-                                 expected-state {:current-password {:value "123" :error :anything} :new-password {}}]
-                             (is (= expected-state (cp/update-current-password-input current-state))
-                                 "short current password changed the error"))))
+                           (is (= :previous-error (-> (cp/update-current-password-input {:current-password {:value "123" :error :previous-error}})
+                                                      (get-in [:current-password :error])))))
+
+                  (testing "when input is the same as new-password, new-password tick should be false"
+                           (is (= false (-> (cp/update-current-password-input {:current-password {:value "12345678"} :new-password {:value "12345678" :tick true}})
+                                            (get-in [:new-password :tick]))))))
 
          (testing "new-password"
                   (testing "when input is valid, error should be nil, tick should be true"
@@ -64,7 +64,9 @@
                                  "short new password did not turn tick to false and/or changed the error")))
 
                   (testing "when input is the same as current-password, tick should be false and error should stay nil"
-                           (let [current-state {:current-password {:value "12345678" :error :anything} :new-password {:value "12345678" :error nil :tick true}}
-                                 expected-state {:current-password {:value "12345678" :error :anything} :new-password {:value "12345678" :error nil :tick false}}]
+                           (let [current-state {:current-password {:value "12345678" :error :anything}
+                                                :new-password     {:value "12345678" :error nil :tick true}}
+                                 expected-state {:current-password {:value "12345678" :error :anything}
+                                                 :new-password     {:value "12345678" :error nil :tick false}}]
                              (is (= expected-state (cp/update-new-password-input current-state))
                                  "new password that is the same as current password did not turn tick to false and/or changed the error")))))

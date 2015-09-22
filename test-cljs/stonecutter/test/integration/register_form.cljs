@@ -12,9 +12,10 @@
                    [stonecutter.test.macros :refer [load-template]]))
 
 
+(defonce index-page-template (load-template "public/index.html"))
+
 (defn setup-index-page! []
-  (dommy/set-html! (sel1 :html)
-                   (load-template "public/index.html")))
+  (dommy/set-html! (sel1 :html) index-page-template))
 
 (def blank-string "")
 (def valid-name "Frank")
