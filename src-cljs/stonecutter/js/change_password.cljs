@@ -1,7 +1,7 @@
-(ns stonecutter.change-password
+(ns stonecutter.js.change-password
   (:require [dommy.core :as d]
             [stonecutter.validation :as v]
-            [stonecutter.renderer.change-password :as r])
+            [stonecutter.js.renderer.change-password :as r])
   (:require-macros [dommy.core :as dm]))
 
 (def current-password-input :#current-password)

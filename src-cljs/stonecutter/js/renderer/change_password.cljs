@@ -1,4 +1,4 @@
-(ns stonecutter.renderer.change-password
+(ns stonecutter.js.renderer.change-password
   (:require [dommy.core :as d])
   (:require-macros [dommy.core :as dm]
                    [stonecutter.translation :as t]))

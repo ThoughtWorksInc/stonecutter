@@ -1,4 +1,4 @@
-(ns stonecutter.controller.change-password
+(ns stonecutter.js.controller.change-password
   (:require [stonecutter.validation :as v]))
 
 ;; CURRENT PASSWORD

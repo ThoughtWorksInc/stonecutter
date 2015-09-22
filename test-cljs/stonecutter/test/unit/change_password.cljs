@@ -1,6 +1,6 @@
 (ns stonecutter.test.unit.change-password
   (:require [cemerick.cljs.test]
-            [stonecutter.controller.change-password :as cp])
+            [stonecutter.js.controller.change-password :as cp])
   (:require-macros [cemerick.cljs.test :refer [deftest is testing run-tests]]))
 
 (deftest update-model-on-blur

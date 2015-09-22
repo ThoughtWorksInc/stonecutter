@@ -1,5 +1,5 @@
-(ns stonecutter.controller.register-form
-  (:require [stonecutter.dom.register-form :as rf]
+(ns stonecutter.js.controller.register-form
+  (:require [stonecutter.js.dom.register-form :as rf]
             [stonecutter.validation :as v])
   (:require-macros [dommy.core :as dm]))
 

@@ -1,6 +1,6 @@
 (ns stonecutter.test.unit.register-form
   (:require [cemerick.cljs.test]
-            [stonecutter.controller.register-form :as rf])
+            [stonecutter.js.controller.register-form :as rf])
   (:require-macros [cemerick.cljs.test :refer [deftest is testing run-tests are]]))
 
 (defn string-of-length [n]

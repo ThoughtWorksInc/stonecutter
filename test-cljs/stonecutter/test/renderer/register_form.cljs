@@ -1,6 +1,6 @@
 (ns stonecutter.test.renderer.register-form
-  (:require [cemerick.cljs.test :as t]
-            [stonecutter.dom.register-form :as rfr]
+  (:require [cemerick.cljs.test]
+            [stonecutter.js.dom.register-form :as rfr]
             [stonecutter.test.test-utils :as tu]
             [dommy.core :as dommy]
             [clojure.string :as string])

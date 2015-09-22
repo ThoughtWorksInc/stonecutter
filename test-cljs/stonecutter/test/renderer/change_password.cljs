@@ -1,6 +1,6 @@
 (ns stonecutter.test.renderer.change-password
-  (:require [cemerick.cljs.test :as t]
-            [stonecutter.renderer.change-password :as r]
+  (:require [cemerick.cljs.test]
+            [stonecutter.js.renderer.change-password :as r]
             [stonecutter.test.integration.change-password :as cp-test]
             [stonecutter.test.test-utils :as tu]
             [dommy.core :as dommy])

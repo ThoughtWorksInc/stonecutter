@@ -1,10 +1,10 @@
-(ns stonecutter.utils
+(ns stonecutter.js.app
   (:require [dommy.core :as d]
-            [stonecutter.controller.change-password :as cpc]
-            [stonecutter.change-password :as cp]
-            [stonecutter.dom.register-form :as rfr]
-            [stonecutter.controller.register-form :as rfc]
-            [stonecutter.controller.user-list :as ul])
+            [stonecutter.js.controller.change-password :as cpc]
+            [stonecutter.js.change-password :as cp]
+            [stonecutter.js.dom.register-form :as rfr]
+            [stonecutter.js.controller.register-form :as rfc]
+            [stonecutter.js.controller.user-list :as ul])
   (:require-macros [dommy.core :as dm]))
 
 (defn setup-listener [selector event function]

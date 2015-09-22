@@ -1,9 +1,9 @@
 (ns stonecutter.test.integration.register-form
   (:require [cemerick.cljs.test]
             [dommy.core :as dommy]
-            [stonecutter.controller.register-form :as rfc]
-            [stonecutter.utils :as utils]
-            [stonecutter.dom.register-form :as rfr]
+            [stonecutter.js.controller.register-form :as rfc]
+            [stonecutter.js.app :as app]
+            [stonecutter.js.dom.register-form :as rfr]
             [stonecutter.test.renderer.register-form :as rfrt]
             [stonecutter.test.unit.register-form :as rfut]
             [stonecutter.test.test-utils :as tu])
@@ -34,7 +34,7 @@
 
 (deftest on-input
          (setup-index-page!)
-         (utils/start)
+         (app/start)
          (testing "inputing text in first name field will cause field invalid class to disappear"
                   (rfr/add-or-remove-class! (rfr/form-row-selector :registration-first-name) rfr/field-invalid-class true)
                   (tu/enter-text (rfr/input-selector :registration-first-name) valid-name)
@@ -93,7 +93,7 @@
 
 (deftest losing-focus
          (setup-index-page!)
-         (utils/start)
+         (app/start)
 
          (testing "first-name"
                   (testing "- losing focus when blank adds invalid field class and validation message"
@@ -199,7 +199,7 @@
 
 (deftest submitting-invalid-forms
          (setup-index-page!)
-         (utils/start)
+         (app/start)
 
          (testing "submitting empty form"
                   (tu/press-submit rfr/register-form-element-selector)
@@ -232,7 +232,7 @@
 
 (deftest prevent-default-submit
          (setup-index-page!)
-         (utils/start)
+         (app/start)
 
          (testing "prevents default when page has errors"
                   (let [submit-event (tu/create-event :submit)]

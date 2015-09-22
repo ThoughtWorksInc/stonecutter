@@ -1,9 +1,9 @@
 (ns stonecutter.test.integration.change-password
   (:require [cemerick.cljs.test]
             [dommy.core :as dommy]
-            [stonecutter.change-password :as cp]
-            [stonecutter.utils :as utils]
-            [stonecutter.renderer.change-password :as r]
+            [stonecutter.js.change-password :as cp]
+            [stonecutter.js.app :as app]
+            [stonecutter.js.renderer.change-password :as r]
             [stonecutter.test.test-utils :as tu])
   (:require-macros [cemerick.cljs.test :refer [deftest is testing run-tests]]
                    [dommy.core :refer [sel1 sel]]
@@ -45,7 +45,7 @@
 
 (deftest current-password-validation-on-input
          (setup-page! change-password-template)
-         (utils/start)
+         (app/start)
 
          (testing "correcting invalid password will cause field invalid class to disappear"
                   (tu/enter-text current-password-input invalid-password)
@@ -56,7 +56,7 @@
 
 (deftest new-password-validation-on-input
          (setup-page! change-password-template)
-         (utils/start)
+         (app/start)
          (reset-change-password-form-atom!)
 
          (testing "typing in valid password causes valid class to appear"
@@ -68,7 +68,7 @@
                   (tu/test-field-doesnt-have-class new-password-field field-valid-class))
 
          (setup-page! change-password-template)
-         (utils/start)
+         (app/start)
 
          (testing "form rows are checked on current-password input event as well"
                   (tu/enter-text new-password-input valid-password)
@@ -85,7 +85,7 @@
 
 (deftest losing-focus-on-input-fields
          (setup-page! change-password-template)
-         (utils/start)
+         (app/start)
 
          (testing "current password field"
                   (testing "losing focus when blank adds invalid field class"
@@ -142,7 +142,7 @@
 
 (deftest submitting-invalid-forms
          (setup-page! change-password-template)
-         (utils/start)
+         (app/start)
 
          (testing "submitting empty form"
                   (tu/press-submit change-password-form)
