@@ -31,20 +31,25 @@
   (tu/enter-text (rfr/input-selector :registration-password) blank-string)
   (tu/lose-focus (rfr/input-selector :registration-password)))
 
+(defn add-class [selector class]
+  (rfr/add-or-remove-class! selector class true))
+
+(defn remove-class [selector class]
+  (rfr/add-or-remove-class! selector class false))
 
 (deftest on-input
          (setup-index-page!)
          (app/start)
          (testing "inputing text in first name field will cause field invalid class to disappear"
-                  (rfr/add-or-remove-class! (rfr/form-row-selector :registration-first-name) rfr/field-invalid-class true)
+                  (add-class (rfr/form-row-selector :registration-first-name) rfr/field-invalid-class)
                   (tu/enter-text (rfr/input-selector :registration-first-name) valid-name)
                   (tu/test-field-doesnt-have-class (rfr/form-row-selector :registration-first-name) rfr/field-invalid-class))
          (testing "inputing text in last name field will cause field invalid class to disappear"
-                  (rfr/add-or-remove-class! (rfr/form-row-selector :registration-last-name) rfr/field-invalid-class true)
+                  (add-class (rfr/form-row-selector :registration-last-name) rfr/field-invalid-class)
                   (tu/enter-text (rfr/input-selector :registration-last-name) valid-name)
                   (tu/test-field-doesnt-have-class (rfr/form-row-selector :registration-last-name) rfr/field-invalid-class))
          (testing "inputing text in email address field will cause field invalid class to disappear"
-                  (rfr/add-or-remove-class! (rfr/form-row-selector :registration-email) rfr/field-invalid-class true)
+                  (add-class (rfr/form-row-selector :registration-email) rfr/field-invalid-class)
                   (tu/enter-text (rfr/input-selector :registration-email) valid-email)
                   (tu/test-field-doesnt-have-class (rfr/form-row-selector :registration-email) rfr/field-invalid-class))
 
@@ -58,8 +63,8 @@
                            (tu/enter-text (rfr/input-selector :registration-password) too-short-password)
                            (tu/test-field-doesnt-have-class (rfr/form-row-selector :registration-password) rfr/field-valid-class))
                   (testing "- from invalid password to valid password causes field valid class to appear and field invalid class to disappear"
-                           (rfr/add-or-remove-class! (rfr/form-row-selector :registration-password) rfr/field-invalid-class true)
-                           (rfr/add-or-remove-class! (rfr/form-row-selector :registration-password) rfr/field-valid-class false)
+                           (add-class (rfr/form-row-selector :registration-password) rfr/field-invalid-class)
+                           (remove-class (rfr/form-row-selector :registration-password) rfr/field-valid-class)
                            (tu/enter-text (rfr/input-selector :registration-password) valid-password)
                            (tu/test-field-doesnt-have-class (rfr/form-row-selector :registration-password) rfr/field-invalid-class)
                            (tu/test-field-has-class (rfr/form-row-selector :registration-password) rfr/field-valid-class))
@@ -230,13 +235,15 @@
                   (check-password-has-blank-validation-errors)
                   (tu/has-focus? (rfr/input-selector :registration-password))))
 
+(defn default-state [] (atom rfc/default-state))
+
 (deftest prevent-default-submit
          (setup-index-page!)
          (app/start)
 
          (testing "prevents default when page has errors"
                   (let [submit-event (tu/create-event :submit)]
-                    (rfc/block-invalid-submit submit-event)
+                    (rfc/block-invalid-submit (default-state) submit-event)
                     (tu/default-prevented? submit-event true)))
 
          (testing "doesn't prevent default when inputs are valid"
@@ -245,7 +252,7 @@
                     (tu/enter-text (rfr/input-selector :registration-last-name) valid-name)
                     (tu/enter-text (rfr/input-selector :registration-email) valid-email)
                     (tu/enter-text (rfr/input-selector :registration-password) valid-password)
-                    (rfc/block-invalid-submit submit-event)
+                    (rfc/block-invalid-submit (default-state) submit-event)
                     (testing "all error classes are removed"
                              (tu/test-field-doesnt-have-class (rfr/form-row-selector :registration-first-name) rfr/field-invalid-class)
                              (tu/test-field-doesnt-have-class (rfr/form-row-selector :registration-last-name) rfr/field-invalid-class)
