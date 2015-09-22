@@ -80,6 +80,7 @@
                                                                               :optimizations :advanced
                                                                               :pretty-print  false}}
                                                         :test {:source-paths ["src-cljs" "src-cljc" "test-cljs"]
+                                                               :notify-command ["phantomjs" :cljs.test/runner "target/cljs/testable.js"]
                                                                :compiler     {:output-to     "target/cljs/testable.js"
                                                                               :optimizations :whitespace
                                                                               :pretty-print  true}}}
