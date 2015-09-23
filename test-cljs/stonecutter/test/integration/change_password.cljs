@@ -177,5 +177,3 @@
                              (tu/test-field-doesnt-have-class current-password-field field-invalid-class)
                              (tu/test-field-doesnt-have-class new-password-field field-invalid-class))
                     (tu/default-prevented? submit-event false))))
-
-(defn run-all []  (run-tests))

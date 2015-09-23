@@ -1,7 +1,5 @@
 (ns stonecutter.js.dom.register-form
-  (:require [dommy.core :as d])
-  (:require-macros [dommy.core :as dm]
-                   [stonecutter.translation :as t]))
+  (:require [stonecutter.js.dom.common :as dom]))
 
 (def register-form-element-selector :.clj--register__form)
 
@@ -31,27 +29,9 @@
 (defn validation-selector [field-key]
   (get-in selectors [field-key :validation]))
 
-(def translations (t/load-client-translations))
-
 (defn get-translated-message [key]
-  (-> translations :index key))
-
-(defn add-class! [selector css-class]
-  (d/add-class! (dm/sel1 selector) css-class))
-
-(defn remove-class! [selector css-class]
-  (d/remove-class! (dm/sel1 selector) css-class))
-
-(defn set-text! [selector message]
-  (d/set-text! (dm/sel1 selector) message))
-
-(defn focus-on-element! [sel]
-  (when-let [e (dm/sel1 sel)]
-    (.focus e)))
-
-(defn prevent-default-submit! [submitEvent]
-  (.preventDefault submitEvent))
+  (-> dom/translations :index key))
 
 (defn get-value [field-key]
-  (d/value (dm/sel1 (input-selector field-key))))
+  (dom/get-value (input-selector field-key)))
 

@@ -1,6 +1,7 @@
 (ns stonecutter.test.unit.register-form
   (:require [cemerick.cljs.test]
             [stonecutter.js.dom.register-form :as rfd]
+            [stonecutter.js.dom.common :as dom]
             [stonecutter.js.controller.register-form :as rfc])
   (:require-macros [cemerick.cljs.test :refer [deftest is testing are]]))
 
@@ -118,9 +119,9 @@
       (str "the last call to set-text! with selector: '" selector "' did not have the message: \"" message "\"")))
 
 (deftest render!
-         (with-redefs [rfd/add-class! mock-add-class!
-                       rfd/remove-class! mock-remove-class!
-                       rfd/set-text! mock-set-text!]
+         (with-redefs [dom/add-class! mock-add-class!
+                       dom/remove-class! mock-remove-class!
+                       dom/set-text! mock-set-text!]
                       (testing "adding and removing invalid class from first name, last name and email address fields"
                                (are [?field-key ?form-row-selector]
                                     (testing "- tabular"
@@ -146,12 +147,12 @@
                                                  (reset-mock-call-state!)
                                                  (rfc/render! (assoc-in default-state [:registration-first-name :error] :blank))
                                                  (test-set-text-was-called-with (rfd/validation-selector :registration-first-name)
-                                                                                (get-in rfd/translations [:index :register-first-name-blank-validation-message])))
+                                                                                (get-in dom/translations [:index :register-first-name-blank-validation-message])))
                                         (testing "- too long"
                                                  (reset-mock-call-state!)
                                                  (rfc/render! (assoc-in default-state [:registration-first-name :error] :too-long))
                                                  (test-set-text-was-called-with (rfd/validation-selector :registration-first-name)
-                                                                                (get-in rfd/translations [:index :register-first-name-too-long-validation-message])))
+                                                                                (get-in dom/translations [:index :register-first-name-too-long-validation-message])))
                                         (testing "- no error"
                                                  (reset-mock-call-state!)
                                                  (rfc/render! (assoc-in default-state [:registration-first-name :error] nil))
@@ -162,12 +163,12 @@
                                                  (reset-mock-call-state!)
                                                  (rfc/render! (assoc-in default-state [:registration-last-name :error] :blank))
                                                  (test-set-text-was-called-with (rfd/validation-selector :registration-last-name)
-                                                                                (get-in rfd/translations [:index :register-last-name-blank-validation-message])))
+                                                                                (get-in dom/translations [:index :register-last-name-blank-validation-message])))
                                         (testing "- too long"
                                                  (reset-mock-call-state!)
                                                  (rfc/render! (assoc-in default-state [:registration-last-name :error] :too-long))
                                                  (test-set-text-was-called-with (rfd/validation-selector :registration-last-name)
-                                                                                (get-in rfd/translations [:index :register-last-name-too-long-validation-message])))
+                                                                                (get-in dom/translations [:index :register-last-name-too-long-validation-message])))
                                         (testing "- no error"
                                                  (reset-mock-call-state!)
                                                  (rfc/render! (assoc-in default-state [:registration-last-name :error] nil))
@@ -178,12 +179,12 @@
                                                  (reset-mock-call-state!)
                                                  (rfc/render! (assoc-in default-state [:registration-email :error] :invalid))
                                                  (test-set-text-was-called-with (rfd/validation-selector :registration-email)
-                                                                                (get-in rfd/translations [:index :register-email-address-invalid-validation-message])))
+                                                                                (get-in dom/translations [:index :register-email-address-invalid-validation-message])))
                                         (testing "- too long"
                                                  (reset-mock-call-state!)
                                                  (rfc/render! (assoc-in default-state [:registration-email :error] :too-long))
                                                  (test-set-text-was-called-with (rfd/validation-selector :registration-email)
-                                                                                (get-in rfd/translations [:index :register-email-address-too-long-validation-message])))
+                                                                                (get-in dom/translations [:index :register-email-address-too-long-validation-message])))
                                         (testing "- no error"
                                                  (reset-mock-call-state!)
                                                  (rfc/render! (assoc-in default-state [:registration-last-name :error] nil))
@@ -194,17 +195,17 @@
                                                  (reset-mock-call-state!)
                                                  (rfc/render! (assoc-in default-state [:registration-password :error] :blank))
                                                  (test-set-text-was-called-with (rfd/validation-selector :registration-password)
-                                                                                (get-in rfd/translations [:index :register-password-blank-validation-message])))
+                                                                                (get-in dom/translations [:index :register-password-blank-validation-message])))
                                         (testing "- too short"
                                                  (reset-mock-call-state!)
                                                  (rfc/render! (assoc-in default-state [:registration-password :error] :too-short))
                                                  (test-set-text-was-called-with (rfd/validation-selector :registration-password)
-                                                                                (get-in rfd/translations [:index :register-password-too-short-validation-message])))
+                                                                                (get-in dom/translations [:index :register-password-too-short-validation-message])))
                                         (testing "- too long"
                                                  (reset-mock-call-state!)
                                                  (rfc/render! (assoc-in default-state [:registration-password :error] :too-long))
                                                  (test-set-text-was-called-with (rfd/validation-selector :registration-password)
-                                                                                (get-in rfd/translations [:index :register-password-too-long-validation-message])))
+                                                                                (get-in dom/translations [:index :register-password-too-long-validation-message])))
                                         (testing "- no error"
                                                  (reset-mock-call-state!)
                                                  (rfc/render! (assoc-in default-state [:registration-password :error] nil))

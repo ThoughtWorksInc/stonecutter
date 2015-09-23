@@ -1,5 +1,6 @@
 (ns stonecutter.js.controller.register-form
   (:require [stonecutter.js.dom.register-form :as rfd]
+            [stonecutter.js.dom.common :as dom]
             [stonecutter.validation :as v]))
 
 (def default-state {:registration-first-name {:value nil :error nil}
@@ -55,19 +56,19 @@
 (defn set-valid-class! [state-map field-key form-row-element-selector]
   (let [valid? (boolean (get-in state-map [field-key :tick]))]
     (if valid?
-      (rfd/add-class! form-row-element-selector rfd/field-valid-class)
-      (rfd/remove-class! form-row-element-selector rfd/field-valid-class))))
+      (dom/add-class! form-row-element-selector rfd/field-valid-class)
+      (dom/remove-class! form-row-element-selector rfd/field-valid-class))))
 
 (defn set-invalid-class! [state field-key form-row-element-selector]
   (let [invalid? (boolean (get-in state [field-key :error]))]
     (if invalid?
-      (rfd/add-class! form-row-element-selector rfd/field-invalid-class)
-      (rfd/remove-class! form-row-element-selector rfd/field-invalid-class))))
+      (dom/add-class! form-row-element-selector rfd/field-invalid-class)
+      (dom/remove-class! form-row-element-selector rfd/field-invalid-class))))
 
 (defn set-error-message! [state field-key validation-element-selector]
   (let [error-key (get-in state [field-key :error])
         message (get-in error-to-message [field-key error-key])]
-    (rfd/set-text! validation-element-selector message)))
+    (dom/set-text! validation-element-selector message)))
 
 (defn render-password-error! [state-map]
   (set-invalid-class! state-map :registration-password (rfd/form-row-selector :registration-password))
@@ -120,9 +121,9 @@
                 :registration-password   (rfd/get-value :registration-password)}
         err (v/validate-registration params (constantly false))]
     (when-not (empty? err)
-      (rfd/prevent-default-submit! submitEvent)
+      (dom/prevent-default-submit! submitEvent)
       (update-state-and-render! state :registration-first-name update-first-name-blur)
       (update-state-and-render! state :registration-last-name update-last-name-blur)
       (update-state-and-render! state :registration-email update-email-address-blur)
       (update-state-and-render! state :registration-password update-password-blur)
-      (rfd/focus-on-element! (first-input-with-errors err)))))
+      (dom/focus-on-element! (first-input-with-errors err)))))
