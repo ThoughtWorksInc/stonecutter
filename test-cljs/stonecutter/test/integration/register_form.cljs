@@ -1,14 +1,14 @@
 (ns stonecutter.test.integration.register-form
   (:require [cemerick.cljs.test]
             [dommy.core :as dommy]
+            [clojure.string :as string]
             [stonecutter.js.controller.register-form :as rfc]
             [stonecutter.js.app :as app]
             [stonecutter.js.dom.register-form :as rfd]
-            [stonecutter.test.renderer.register-form :as rfrt]
             [stonecutter.test.unit.register-form :as rfut]
             [stonecutter.test.test-utils :as tu])
-  (:require-macros [cemerick.cljs.test :refer [deftest is testing run-tests]]
-                   [dommy.core :refer [sel1 sel]]
+  (:require-macros [cemerick.cljs.test :refer [deftest is testing]]
+                   [dommy.core :refer [sel1]]
                    [stonecutter.test.macros :refer [load-template]]))
 
 
@@ -27,6 +27,17 @@
 (def too-short-password "short")
 (def too-long-password (rfut/string-of-length 255))
 
+(defn element-has-text [selector expected-text]
+  (let [selected-element (sel1 selector)
+        text (dommy/text selected-element)]
+    (is (not (string/blank? text)) "Element has no text")
+    (is (= expected-text text)
+        (str "Expected element to have <" expected-text "> but actually found <" text ">"))))
+
+(defn element-has-no-text [selector]
+  (let [selected-element (sel1 selector)
+        text (dommy/text selected-element)]
+    (is (string/blank? text) "Element is not blank")))
 
 (defn invalid-password-state! []
   (tu/enter-text (rfd/input-selector :registration-password) blank-string)
@@ -72,22 +83,22 @@
 
 (defn check-first-name-has-blank-validation-errors []
   (tu/test-field-has-class (rfd/form-row-selector :registration-first-name) rfd/field-invalid-class)
-  (rfrt/element-has-text (rfd/validation-selector :registration-first-name)
+  (element-has-text (rfd/validation-selector :registration-first-name)
                          (get-in rfd/translations [:index :register-first-name-blank-validation-message])))
 
 (defn check-last-name-has-blank-validation-errors []
   (tu/test-field-has-class (rfd/form-row-selector :registration-last-name) rfd/field-invalid-class)
-  (rfrt/element-has-text (rfd/validation-selector :registration-last-name)
+  (element-has-text (rfd/validation-selector :registration-last-name)
                          (get-in rfd/translations [:index :register-last-name-blank-validation-message])))
 
 (defn check-email-address-has-invalid-validation-errors []
   (tu/test-field-has-class (rfd/form-row-selector :registration-email) rfd/field-invalid-class)
-  (rfrt/element-has-text (rfd/validation-selector :registration-email)
+  (element-has-text (rfd/validation-selector :registration-email)
                          (get-in rfd/translations [:index :register-email-address-invalid-validation-message])))
 
 (defn check-password-has-blank-validation-errors []
   (tu/test-field-has-class (rfd/form-row-selector :registration-password) rfd/field-invalid-class)
-  (rfrt/element-has-text (rfd/validation-selector :registration-password)
+  (element-has-text (rfd/validation-selector :registration-password)
                          (get-in rfd/translations [:index :register-password-blank-validation-message])))
 
 
@@ -104,19 +115,19 @@
                   (tu/set-value (rfd/input-selector :registration-first-name) too-long-name)
                   (tu/lose-focus (rfd/input-selector :registration-first-name))
                   (tu/test-field-has-class (rfd/form-row-selector :registration-first-name) rfd/field-invalid-class)
-                  (rfrt/element-has-text (rfd/validation-selector :registration-first-name)
+                  (element-has-text (rfd/validation-selector :registration-first-name)
                                          (get-in rfd/translations [:index :register-first-name-too-long-validation-message])))
 
          (testing "- losing focus when valid removes invalid field class and validation message"
                   (tu/test-field-has-class (rfd/form-row-selector :registration-first-name) rfd/field-invalid-class)
-                  (rfrt/element-has-text (rfd/validation-selector :registration-first-name)
+                  (element-has-text (rfd/validation-selector :registration-first-name)
                                          (get-in rfd/translations [:index :register-first-name-too-long-validation-message]))
 
                   (tu/set-value (rfd/input-selector :registration-first-name) valid-name)
                   (tu/lose-focus (rfd/input-selector :registration-first-name))
 
                   (tu/test-field-doesnt-have-class (rfd/form-row-selector :registration-first-name) rfd/field-invalid-class)
-                  (rfrt/element-has-no-text (rfd/validation-selector :registration-first-name)))
+                  (element-has-no-text (rfd/validation-selector :registration-first-name)))
 
          (testing "last-name"
                   (testing "- losing focus when blank adds invalid field class and validation message"
@@ -127,19 +138,19 @@
                            (tu/set-value (rfd/input-selector :registration-last-name) too-long-name)
                            (tu/lose-focus (rfd/input-selector :registration-last-name))
                            (tu/test-field-has-class (rfd/form-row-selector :registration-last-name) rfd/field-invalid-class)
-                           (rfrt/element-has-text (rfd/validation-selector :registration-last-name)
+                           (element-has-text (rfd/validation-selector :registration-last-name)
                                                   (get-in rfd/translations [:index :register-last-name-too-long-validation-message])))
 
                   (testing "- losing focus when valid removes invalid field class and validation message"
                            (tu/test-field-has-class (rfd/form-row-selector :registration-last-name) rfd/field-invalid-class)
-                           (rfrt/element-has-text (rfd/validation-selector :registration-last-name)
+                           (element-has-text (rfd/validation-selector :registration-last-name)
                                                   (get-in rfd/translations [:index :register-last-name-too-long-validation-message]))
 
                            (tu/set-value (rfd/input-selector :registration-last-name) valid-name)
                            (tu/lose-focus (rfd/input-selector :registration-last-name))
 
                            (tu/test-field-doesnt-have-class (rfd/form-row-selector :registration-last-name) rfd/field-invalid-class)
-                           (rfrt/element-has-no-text (rfd/validation-selector :registration-last-name))))
+                           (element-has-no-text (rfd/validation-selector :registration-last-name))))
 
          (testing "email-address"
                   (testing "- losing focus when invalid adds invalid field class and validation message"
@@ -151,19 +162,19 @@
                            (tu/set-value (rfd/input-selector :registration-email) too-long-email)
                            (tu/lose-focus (rfd/input-selector :registration-email))
                            (tu/test-field-has-class (rfd/form-row-selector :registration-email) rfd/field-invalid-class)
-                           (rfrt/element-has-text (rfd/validation-selector :registration-email)
+                           (element-has-text (rfd/validation-selector :registration-email)
                                                   (get-in rfd/translations [:index :register-email-address-too-long-validation-message])))
 
                   (testing "- losing focus when valid removes invalid field class and validation message"
                            (tu/test-field-has-class (rfd/form-row-selector :registration-email) rfd/field-invalid-class)
-                           (rfrt/element-has-text (rfd/validation-selector :registration-email)
+                           (element-has-text (rfd/validation-selector :registration-email)
                                                   (get-in rfd/translations [:index :register-email-address-too-long-validation-message]))
 
                            (tu/set-value (rfd/input-selector :registration-email) valid-email)
                            (tu/lose-focus (rfd/input-selector :registration-email))
 
                            (tu/test-field-doesnt-have-class (rfd/form-row-selector :registration-email) rfd/field-invalid-class)
-                           (rfrt/element-has-no-text (rfd/validation-selector :registration-email))))
+                           (element-has-no-text (rfd/validation-selector :registration-email))))
 
 
 
@@ -176,26 +187,26 @@
                            (tu/set-value (rfd/input-selector :registration-password) too-short-password)
                            (tu/lose-focus (rfd/input-selector :registration-password))
                            (tu/test-field-has-class (rfd/form-row-selector :registration-password) rfd/field-invalid-class)
-                           (rfrt/element-has-text (rfd/validation-selector :registration-password)
+                           (element-has-text (rfd/validation-selector :registration-password)
                                                   (get-in rfd/translations [:index :register-password-too-short-validation-message])))
 
                   (testing "- losing focus when too long adds invalid field class and validation message"
                            (tu/set-value (rfd/input-selector :registration-password) too-long-password)
                            (tu/lose-focus (rfd/input-selector :registration-password))
                            (tu/test-field-has-class (rfd/form-row-selector :registration-password) rfd/field-invalid-class)
-                           (rfrt/element-has-text (rfd/validation-selector :registration-password)
+                           (element-has-text (rfd/validation-selector :registration-password)
                                                   (get-in rfd/translations [:index :register-password-too-long-validation-message])))
 
                   (testing "- losing focus when valid removes invalid field class and validation message"
                            (tu/test-field-has-class (rfd/form-row-selector :registration-password) rfd/field-invalid-class)
-                           (rfrt/element-has-text (rfd/validation-selector :registration-password)
+                           (element-has-text (rfd/validation-selector :registration-password)
                                                   (get-in rfd/translations [:index :register-password-too-long-validation-message])) ; gg|rs 18Sept - what about (element-has-any-text ...) ?
 
                            (tu/set-value (rfd/input-selector :registration-password) valid-password)
                            (tu/lose-focus (rfd/input-selector :registration-password))
 
                            (tu/test-field-doesnt-have-class (rfd/form-row-selector :registration-password) rfd/field-invalid-class)
-                           (rfrt/element-has-no-text (rfd/validation-selector :registration-password)))))
+                           (element-has-no-text (rfd/validation-selector :registration-password)))))
 
 (deftest submitting-invalid-forms
          (setup-index-page!)
