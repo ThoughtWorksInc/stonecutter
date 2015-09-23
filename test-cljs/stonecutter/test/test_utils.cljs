@@ -70,3 +70,30 @@
   (let [error-message (dommy/text (sel1 selector))]
     (is (= "" error-message)
         (str "Expecting no error message but received: " error-message))))
+
+
+(def mock-call-state (atom {}))
+
+(defn reset-mock-call-state! []
+  (reset! mock-call-state {}))
+
+(defn mock-add-class! [selector css-class]
+  (swap! mock-call-state update-in [:add-class-calls selector] conj css-class))
+
+(defn test-add-class-was-called-with [selector css-class]
+  (is (= css-class (some #{css-class} (get-in @mock-call-state [:add-class-calls selector])))
+      (str "add-class! was not called with selector: " selector " and css class: " css-class)))
+
+(defn mock-remove-class! [selector css-class]
+  (swap! mock-call-state update-in [:remove-class-calls selector] conj css-class))
+
+(defn test-remove-class-was-called-with [selector css-class]
+  (is (= css-class (some #{css-class} (get-in @mock-call-state [:remove-class-calls selector])))
+      (str "remove-class! was not called with selector: " selector " and css class: " css-class)))
+
+(defn mock-set-text! [selector message]
+  (swap! mock-call-state assoc-in [:set-text-calls selector] message))
+
+(defn test-set-text-was-called-with [selector message]
+  (is (= message (get-in @mock-call-state [:set-text-calls selector]))
+      (str "the last call to set-text! with selector: '" selector "' did not have the message: \"" message "\"")))

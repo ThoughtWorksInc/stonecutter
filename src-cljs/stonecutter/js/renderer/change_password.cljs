@@ -1,21 +1,23 @@
 (ns stonecutter.js.renderer.change-password
-  (:require [dommy.core :as d])
-  (:require-macros [dommy.core :as dm]
-                   [stonecutter.translation :as t]))
+  (:require [stonecutter.js.dom.common :as dom])
+  (:require-macros [stonecutter.translation :as t]))
 
 (def selectors
   {:current-password {:input      :.clj--current-password__input
                       :form-row   :.clj--current-password
-                      }                                     ;; NOOOOOOOOOOOOOOOOOOOOO VALIDATION
+                      :validation :.clj--current-password__validation}
    :new-password     {:input      :.clj--new-password__input
                       :form-row   :.clj--new-password
-                      }})
+                      :validation   :.clj--new-password__validation}})
 
 (defn input-selector [field-key]
   (get-in selectors [field-key :input]))
 
 (defn form-row-selector [field-key]
   (get-in selectors [field-key :form-row]))
+
+(defn validation-selector [field-key]
+  (get-in selectors [field-key :validation]))
 
 (def form-row-validation "form-row__validation")
 (def form-row-help "form-row__help")
@@ -41,20 +43,19 @@
                       :unchanged (get-translated-message :new-password-unchanged-validation-message)
                       :too-short (get-translated-message :new-password-too-short-validation-message)}})
 
-(defn update-inline-message [field message-map error-map]
-  (let [message (get-in message-map (first (seq error-map)))
-        element (dm/sel1 field)]
-    (d/add-class! element form-row-validation)
-    (d/remove-class! element form-row-help)
-    (d/set-text! element message)))
+(defn update-inline-message [selector message-map error-map]
+  (let [message (get-in message-map (first (seq error-map)))]
+    (dom/add-class! selector form-row-validation)
+    (dom/remove-class! selector form-row-help)
+    (dom/set-text! selector message)))
 
 (defn add-class! [selector css-class]
-  (d/add-class! (dm/sel1 selector) css-class))
+  (dom/add-class! selector css-class))
 
-(defn toggle-class [field-sel add? class]
+(defn toggle-class [selector add? class]
   (if add?
-    (d/add-class! (dm/sel1 field-sel) class)
-    (d/remove-class! (dm/sel1 field-sel) class)))
+    (dom/add-class! selector class)
+    (dom/remove-class! selector class)))
 
 (defn toggle-invalid-class [field-sel err?]
   (toggle-class field-sel err? field-invalid-class))
@@ -86,4 +87,4 @@
       render-new-password-tick!))
 
 (defn get-value [field-key]
-  (d/value (dm/sel1 (input-selector field-key))))
+  (dom/get-value (input-selector field-key)))
