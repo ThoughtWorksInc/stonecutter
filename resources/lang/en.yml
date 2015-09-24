@@ -30,8 +30,7 @@ change-password-form:
   title: Change your password
   page-header: Change your password
   current-password: Current password
-  new-password: New password
-  new-password-help: 8 or more characters
+  new-password: New password (8 or more characters)
   unknown-error: Whoops! Unknown error
   form-button: Save changes
   cancel-button: Cancel
