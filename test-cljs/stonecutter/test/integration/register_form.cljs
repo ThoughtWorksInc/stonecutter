@@ -18,15 +18,18 @@
 (defn setup-index-page! []
   (dommy/set-html! (sel1 :html) index-page-template))
 
+(defn string-of-length [n]
+  (apply str (repeat n "x")))
+
 (def blank-string "")
 (def valid-name "Frank")
-(def too-long-name (rfut/string-of-length 71))
+(def too-long-name (string-of-length 71))
 (def valid-email "frank@franky.fr")
 (def invalid-email "invalid-email")
 (def too-long-email rfut/email-of-length-255)
 (def valid-password "avalidpassword")
 (def too-short-password "short")
-(def too-long-password (rfut/string-of-length 255))
+(def too-long-password (string-of-length 255))
 
 (defn element-has-text [selector expected-text]
   (let [selected-element (sel1 selector)

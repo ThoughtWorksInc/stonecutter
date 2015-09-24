@@ -1,7 +1,7 @@
 (ns stonecutter.test.unit.change-password
   (:require [cemerick.cljs.test]
             [stonecutter.js.dom.common :as dom]
-            [stonecutter.js.renderer.change-password :as cpr]
+            [stonecutter.js.dom.change-password :as cpr]
             [stonecutter.js.controller.change-password :as cpc]
             [stonecutter.test.test-utils :as tu])
   (:require-macros [cemerick.cljs.test :refer [deftest is testing run-tests are]]))
@@ -29,21 +29,21 @@
                        (string-of-length 254)        nil
                        (string-of-length 255)        :too-long))
 
-         (testing "new-password error is set correctly based on the value"
-                  (are [input-value expected-output-error]
-                       (= {:new-password {:value input-value :error expected-output-error}}
-                          (cpc/update-new-password-blur {:new-password {:value input-value :error nil}}))
+         (testing "new-password error and tick are set correctly based on the value"
+                  (are [input-value expected-output-error tick]
+                       (= {:new-password {:value input-value :error expected-output-error :tick tick}}
+                          (cpc/update-new-password-blur {:new-password {:value input-value}}))
 
-                       ;input-value           expected-output-error
-                       "some-valid-password"         nil
-                       nil                           :blank
-                       ""                            :blank
-                       "                "            :blank
-                       "\t\t\t\t\t\t\t\t"            :blank
-                       (string-of-length 8)          nil
-                       (string-of-length 7)          :too-short
-                       (string-of-length 254)        nil
-                       (string-of-length 255)        :too-long))
+                       ;input-value                  expected-output-error  tick
+                       "some-valid-password"         nil                    true
+                       nil                           :blank                 false
+                       ""                            :blank                 false
+                       "                "            :blank                 false
+                       "\t\t\t\t\t\t\t\t"            :blank                 false
+                       (string-of-length 8)          nil                    true
+                       (string-of-length 7)          :too-short             false
+                       (string-of-length 254)        nil                    true
+                       (string-of-length 255)        :too-long              false))
 
          (testing "new-password vs current-password"
                   (testing "when they are the same, new-password error is set to :unchanged"
@@ -94,22 +94,22 @@
 
                       (testing "current-password error adds invalid class"
                                (tu/reset-mock-call-state!)
-                               (cpr/render! (assoc-in default-state [:current-password :error] :ANYTHING))
+                               (cpc/render! (assoc-in default-state [:current-password :error] :ANYTHING))
                                (tu/test-add-class-was-called-with (cpr/form-row-selector :current-password) cpr/field-invalid-class))
 
                       (testing "no current-password error removes invalid class"
                                (tu/reset-mock-call-state!)
-                               (cpr/render! (assoc-in default-state [:current-password :error] nil))
+                               (cpc/render! (assoc-in default-state [:current-password :error] nil))
                                (tu/test-remove-class-was-called-with (cpr/form-row-selector :current-password) cpr/field-invalid-class))
 
                       (testing "new-password error adds invalid class"
                                (tu/reset-mock-call-state!)
-                               (cpr/render! (assoc-in default-state [:new-password :error] :ANYTHING))
+                               (cpc/render! (assoc-in default-state [:new-password :error] :ANYTHING))
                                (tu/test-add-class-was-called-with (cpr/form-row-selector :new-password) cpr/field-invalid-class))
 
                       (testing "no new-password error removes invalid class"
                                (tu/reset-mock-call-state!)
-                               (cpr/render! (assoc-in default-state [:new-password :error] nil))
+                               (cpc/render! (assoc-in default-state [:new-password :error] nil))
                                (tu/test-remove-class-was-called-with (cpr/form-row-selector :new-password) cpr/field-invalid-class))
 
                       (testing "error messages"
@@ -117,7 +117,7 @@
                                     (testing "- current password gets the same error message for all errors"
                                              (let [error-message (get-in dom/translations [:change-password-form :current-password-invalid-validation-message])]
                                                (tu/reset-mock-call-state!)
-                                               (cpr/render! (assoc-in default-state [:current-password :error] ?error))
+                                               (cpc/render! (assoc-in default-state [:current-password :error] ?error))
                                                (tu/test-set-text-was-called-with (cpr/validation-selector :current-password) error-message)))
                                     ;?error
                                     :blank
@@ -127,14 +127,14 @@
 
                                (testing "- current password gets no error message when there is no error"
                                         (tu/reset-mock-call-state!)
-                                        (cpr/render! (assoc-in default-state [:current-password :error] nil))
+                                        (cpc/render! (assoc-in default-state [:current-password :error] nil))
                                         (tu/test-set-text-was-called-with (cpr/validation-selector :current-password) nil))
 
                                (are [?error ?translation-key]
                                     (testing "- new password gets the correct error message"
                                              (let [error-message (get-in dom/translations [:change-password-form ?translation-key])]
                                                (tu/reset-mock-call-state!)
-                                               (cpr/render! (assoc-in default-state [:new-password :error] ?error))
+                                               (cpc/render! (assoc-in default-state [:new-password :error] ?error))
                                                (tu/test-set-text-was-called-with (cpr/validation-selector :new-password) error-message)))
                                     ;?error     ?translation-key
                                     :blank      :new-password-blank-validation-message
@@ -144,10 +144,10 @@
 
                                (testing "- new password gets no error message when there is no error"
                                         (tu/reset-mock-call-state!)
-                                        (cpr/render! (assoc-in default-state [:new-password :error] nil))
+                                        (cpc/render! (assoc-in default-state [:new-password :error] nil))
                                         (tu/test-set-text-was-called-with (cpr/validation-selector :new-password) nil)))
 
                       (testing "new-password :tick set to true adds valid class"
                                (tu/reset-mock-call-state!)
-                               (cpr/render! (assoc-in default-state [:new-password :tick] true))
+                               (cpc/render! (assoc-in default-state [:new-password :tick] true))
                                (tu/test-add-class-was-called-with (cpr/form-row-selector :new-password) cpr/field-valid-class))))

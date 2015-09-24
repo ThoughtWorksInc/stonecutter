@@ -1,9 +1,8 @@
 (ns stonecutter.js.app
   (:require [dommy.core :as d]
-            [stonecutter.js.controller.change-password :as cpc]
-            [stonecutter.js.change-password :as cp]
-            [stonecutter.js.renderer.change-password :as cpd]
+            [stonecutter.js.dom.change-password :as cpd]
             [stonecutter.js.dom.register-form :as rfd]
+            [stonecutter.js.controller.change-password :as cpc]
             [stonecutter.js.controller.register-form :as rfc]
             [stonecutter.js.controller.user-list :as ul])
   (:require-macros [dommy.core :as dm]))
@@ -50,6 +49,6 @@
   (setup-change-password-form-listener :blur :current-password cpc/update-current-password-blur)
   (setup-change-password-form-listener :blur :new-password cpc/update-new-password-blur)
 
-  (setup-listener cp/change-password-form :submit cp/block-invalid-submit))
+  (setup-listener cpd/change-password-form-element-selector :submit (partial cpc/block-invalid-submit change-password-form-state)))
 
 (set! (.-onload js/window) start)
