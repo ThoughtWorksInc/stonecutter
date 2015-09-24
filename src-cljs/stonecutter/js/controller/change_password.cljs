@@ -39,7 +39,7 @@
 
 (defn render! [state-map]
   (doseq [renderer! [cpd/render-current-password-error!
-                     cpd/render-new-password-error!
+                     cpd/render-new-password-error-and-tick!
                      cpd/render-new-password-tick!]]
     (renderer! state-map)))
 

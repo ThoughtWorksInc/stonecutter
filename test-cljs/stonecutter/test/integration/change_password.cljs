@@ -49,7 +49,7 @@
   (tu/enter-text (cpd/input-selector :new-password) blank-string)
   (tu/lose-focus (cpd/input-selector :new-password)))
 
-(deftest on-input
+#_(deftest on-input
          (testing "inputing text in current-password field will cause field invalid class to disappear"
                   (clean-setup!)
                   (cpd/add-class! (cpd/form-row-selector :current-password) cpd/field-invalid-class)
@@ -92,7 +92,7 @@
                            (tu/enter-text (cpd/input-selector :current-password) valid-password)
                            (tu/test-field-doesnt-have-class (cpd/form-row-selector :new-password) cpd/field-valid-class))))
 
-(deftest losing-focus-on-input-fields
+#_(deftest losing-focus-on-input-fields
          (setup-change-password-page!)
          (app/start)
 
@@ -149,7 +149,7 @@
                            (tu/has-message-on-selector form-row-new-password-error-class (get-in cpd/error-to-message [:new-password :unchanged]))
                            (tu/test-field-has-class new-password-field field-invalid-class))))
 
-(deftest submitting-invalid-forms
+#_(deftest submitting-invalid-forms
          (setup-change-password-page!)
          (app/start)
 
@@ -162,7 +162,7 @@
                   (tu/press-submit change-password-form)
                   (tu/has-focus? new-password-input)))
 
-(deftest prevent-default-submit
+#_(deftest prevent-default-submit
          (setup-change-password-page!)
          (testing "prevents default when page has errors"
                   (let [submit-event (tu/create-event :submit)]

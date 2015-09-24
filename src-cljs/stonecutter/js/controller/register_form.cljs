@@ -70,7 +70,7 @@
         message (get-in error-to-message [field-key error-key])]
     (dom/set-text! validation-element-selector message)))
 
-(defn render-password-error! [state-map]
+(defn render-password-error-and-tick! [state-map]
   (set-invalid-class! state-map :registration-password (rfd/form-row-selector :registration-password))
   (set-valid-class! state-map :registration-password (rfd/form-row-selector :registration-password))
   (set-error-message! state-map :registration-password (rfd/validation-selector :registration-password)))
@@ -91,7 +91,7 @@
   (doseq [renderer! [render-first-name-error!
                      render-last-name-error!
                      render-email-address-error!
-                     render-password-error!]]
+                     render-password-error-and-tick!]]
     (renderer! state-map)))
 
 (defn update-state-with-value! [state field-key]
