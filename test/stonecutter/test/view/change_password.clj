@@ -25,10 +25,9 @@
       (let [page (-> (th/create-request) change-password-form)]
         (-> page (html/select [:.clj--change-password-cancel__link]) first :attrs :href) => (r/path :show-profile)))
 
-; RS 24/09/15 Removing javascript while the template and server-side validations are updated
-(future-fact "page has script link to javascript file"
-             (let [page (-> (th/create-request) change-password-form)]
-               (html/select page [[:script (html/attr= :src "js/main.js")]]) =not=> empty?))
+(fact "page has script link to javascript file"
+      (let [page (-> (th/create-request) change-password-form)]
+        (html/select page [[:script (html/attr= :src "js/main.js")]]) =not=> empty?))
 
 (facts "about removing elements when there are no errors"
        (let [page (-> (th/create-request) change-password-form)]

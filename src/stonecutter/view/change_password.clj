@@ -103,4 +103,4 @@
          (add-change-password-errors err)
          vh/add-anti-forgery
          vh/remove-work-in-progress
-         #_(vh/add-script "js/main.js"))))
+         (vh/add-script "js/main.js"))))
