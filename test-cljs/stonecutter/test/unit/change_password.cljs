@@ -9,9 +9,6 @@
 (def default-state {:current-password {:value "" :error nil}
                     :new-password     {:value "" :error nil :tick nil}})
 
-(defn string-of-length [n]
-  (apply str (repeat n "x")))
-
 (deftest update-model-on-blur
          (testing "current-password error is set correctly based on the value"
                   (are [input-value expected-output-error]
@@ -24,10 +21,10 @@
                        ""                            :blank
                        "                "            :blank
                        "\t\t\t\t\t\t\t\t"            :blank
-                       (string-of-length 8)          nil
-                       (string-of-length 7)          :too-short
-                       (string-of-length 254)        nil
-                       (string-of-length 255)        :too-long))
+                       (tu/string-of-length 8)       nil
+                       (tu/string-of-length 7)       :too-short
+                       (tu/string-of-length 254)     nil
+                       (tu/string-of-length 255)     :too-long))
 
          (testing "new-password error and tick are set correctly based on the value"
                   (are [input-value expected-output-error tick]
@@ -40,10 +37,10 @@
                        ""                            :blank                 false
                        "                "            :blank                 false
                        "\t\t\t\t\t\t\t\t"            :blank                 false
-                       (string-of-length 8)          nil                    true
-                       (string-of-length 7)          :too-short             false
-                       (string-of-length 254)        nil                    true
-                       (string-of-length 255)        :too-long              false))
+                       (tu/string-of-length 8)       nil                    true
+                       (tu/string-of-length 7)       :too-short             false
+                       (tu/string-of-length 254)     nil                    true
+                       (tu/string-of-length 255)     :too-long              false))
 
          (testing "new-password vs current-password"
                   (testing "when they are the same, new-password error is set to :unchanged"

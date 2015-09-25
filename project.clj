@@ -65,8 +65,8 @@
                                         "browser"         ["test-clj" "stonecutter.browser.*"]
                                         "auto-no-browser" ["test-clj" ":autotest" "src/" "src-cljc/"
                                                            "test/stonecutter/test/" "test/stonecutter/integration/"]
-                                        "test-cljs"       ["cljsbuild" "once" "test"]
-                                        "auto-cljs"       ["cljsbuild" "auto" "test"]
+                                        "test-cljs"       ["do" "clean," "cljsbuild" "once" "test"]
+                                        "auto-cljs"       ["do" "test-cljs," "cljsbuild" "auto" "test"]
                                         "gencred"         ["run" "-m" "stonecutter.util.gencred"]
                                         "gen-keypair"     ["run" "-m" "stonecutter.util.gen-key-pair"]
                                         "gen-config"      ["run" "-m" "stonecutter.config"]

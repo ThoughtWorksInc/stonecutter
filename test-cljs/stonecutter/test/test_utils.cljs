@@ -5,6 +5,18 @@
   (:require-macros [cemerick.cljs.test :refer [deftest is testing run-tests]]
                    [dommy.core :refer [sel1 sel]]))
 
+(defn print-element
+  ([message e]
+   (print (str message ": " (.-outerHTML e)))
+   e)
+  ([e] (print-element "" e)))
+
+(defn string-of-length [n]
+  (apply str (repeat n "x")))
+
+(defn set-html! [html-string]
+  (dommy/set-html! (sel1 :html) html-string))
+
 (defn create-event [event-type]
   (let [event (.createEvent js/document "Event")]
     (.initEvent event (name event-type) true true)
@@ -23,18 +35,15 @@
       (.fireEvent node (str "on" (name event-type))
                   (update-event! (.createEventObject js/document))))))
 
-(defn print-element
-  ([message e]
-   (print (str message ": " (.-outerHTML e)))
-   e)
-  ([e] (print-element "" e)))
-
 (defn set-value [sel text]
   (dommy/set-value! (sel1 sel) text))
 
 (defn enter-text [sel text]
   (set-value sel text)
   (fire! (sel1 sel) :input))
+
+(defn press-submit [form-sel]
+  (fire! (sel1 form-sel) :submit))
 
 (defn lose-focus [sel]
   (fire! (sel1 sel) :blur))
@@ -48,8 +57,17 @@
 (def test-field-doesnt-have-class (partial test-field-class-existance false))
 (def test-field-has-class (partial test-field-class-existance true))
 
-(defn press-submit [form-sel]
-  (fire! (sel1 form-sel) :submit))
+(defn element-has-text [selector expected-text]
+  (let [selected-element (sel1 selector)
+        text (dommy/text selected-element)]
+    (is (not (string/blank? text)) "Element has no text")
+    (is (= expected-text text)
+        (str "Expected element to have <" expected-text "> but actually found <" text ">"))))
+
+(defn element-has-no-text [selector]
+  (let [selected-element (sel1 selector)
+        text (dommy/text selected-element)]
+    (is (string/blank? text) "Element is not blank")))
 
 (defn has-focus? [sel]
   (is (= (sel1 sel) (.-activeElement js/document))
@@ -58,19 +76,6 @@
 (defn default-prevented? [event required]
   (is (= (.-defaultPrevented event) required)
       (str "Element " event " should have default prevented of " required)))
-
-(defn has-message-on-selector [selector message]
-  (let [selected-elements (sel selector)
-        err-messages (mapv (partial dommy/text) selected-elements)]
-    (is (not (string/blank? message)) "Error message key returns blank string")
-    (is (some #{message} err-messages)
-        (str "Missing error message " message " when error occurs"))))
-
-(defn has-no-message-on-selector [selector]
-  (let [error-message (dommy/text (sel1 selector))]
-    (is (= "" error-message)
-        (str "Expecting no error message but received: " error-message))))
-
 
 (def mock-call-state (atom {}))
 

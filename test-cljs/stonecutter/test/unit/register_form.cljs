@@ -1,7 +1,7 @@
 (ns stonecutter.test.unit.register-form
   (:require [cemerick.cljs.test]
-            [stonecutter.js.dom.register-form :as rfd]
             [stonecutter.js.dom.common :as dom]
+            [stonecutter.js.dom.register-form :as rfd]
             [stonecutter.js.controller.register-form :as rfc]
             [stonecutter.test.test-utils :as tu])
   (:require-macros [cemerick.cljs.test :refer [deftest is testing are]]))
@@ -11,14 +11,11 @@
                     :registration-email      {:value "" :error nil}
                     :registration-password   {:value "" :error nil :tick nil}})
 
-(defn string-of-length [n]
-  (apply str (repeat n "x")))
-
 (def email-of-length-254
-  (str (string-of-length 250) "@x.y"))
+  (str (tu/string-of-length 250) "@x.y"))
 
 (def email-of-length-255
-  (str (string-of-length 251) "@x.y"))
+  (str (tu/string-of-length 251) "@x.y"))
 
 (deftest update-model-on-blur
          (testing "first name error is set correctly based on the value"
@@ -26,26 +23,26 @@
                        (= {:registration-first-name {:value input-value :error expected-output-error}}
                           (rfc/update-first-name-blur {:registration-first-name {:value input-value :error nil}}))
 
-                       ;input-value           expected-output-error
-                       "something"            nil
-                       ""                     :blank
-                       "     "                :blank
-                       "\t\t\t"               :blank
-                       (string-of-length 70)  nil
-                       (string-of-length 71)  :too-long))
+                       ;input-value              expected-output-error
+                       "something"               nil
+                       ""                        :blank
+                       "     "                   :blank
+                       "\t\t\t"                  :blank
+                       (tu/string-of-length 70)  nil
+                       (tu/string-of-length 71)  :too-long))
 
          (testing "last name error is set correctly based on the value"
                   (are [input-value expected-output-error]
                        (= {:registration-last-name {:value input-value :error expected-output-error}}
                           (rfc/update-last-name-blur {:registration-last-name {:value input-value :error nil}}))
 
-                       ;input-value           expected-output-error
-                       "something"            nil
-                       ""                     :blank
-                       "     "                :blank
-                       "\t\t\t"               :blank
-                       (string-of-length 70)  nil
-                       (string-of-length 71)  :too-long))
+                       ;input-value              expected-output-error
+                       "something"               nil
+                       ""                        :blank
+                       "     "                   :blank
+                       "\t\t\t"                  :blank
+                       (tu/string-of-length 70)  nil
+                       (tu/string-of-length 71)  :too-long))
 
          (testing "email-address error is set correctly based on the value"
                   (are [input-value expected-output-error]
@@ -63,16 +60,16 @@
                        (= {:registration-password {:value input-value :error expected-output-error}}
                           (rfc/update-password-blur {:registration-password {:value input-value :error nil}}))
 
-                       ;input-value           expected-output-error
+                       ;input-value                  expected-output-error
                        "some-valid-password"         nil
                        nil                           :blank
                        ""                            :blank
                        "                "            :blank
                        "\t\t\t\t\t\t\t\t"            :blank
-                       (string-of-length 8)          nil
-                       (string-of-length 7)          :too-short
-                       (string-of-length 254)        nil
-                       (string-of-length 255)        :too-long)))
+                       (tu/string-of-length 8)       nil
+                       (tu/string-of-length 7)       :too-short
+                       (tu/string-of-length 254)     nil
+                       (tu/string-of-length 255)     :too-long)))
 
 
 

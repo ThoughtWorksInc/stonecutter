@@ -1,20 +1,14 @@
 (ns stonecutter.test.integration.change-password
   (:require [cemerick.cljs.test]
-            [dommy.core :as dommy]
-            [clojure.string :as string]
-            [stonecutter.js.dom.common :as dom]
             [stonecutter.js.app :as app]
+            [stonecutter.js.dom.common :as dom]
             [stonecutter.js.dom.change-password :as cpd]
             [stonecutter.js.controller.change-password :as cpc]
             [stonecutter.test.test-utils :as tu])
   (:require-macros [cemerick.cljs.test :refer [deftest is testing are]]
-                   [dommy.core :refer [sel1 sel]]
                    [stonecutter.test.macros :refer [load-template]]))
 
 (defonce change-password-template (load-template "public/change-password.html"))
-
-(defn string-of-length [n]
-  (apply str (repeat n "x")))
 
 (def blank-string "")
 (def invalid-password "blah")
@@ -24,20 +18,8 @@
 (defn reset-change-password-form-atom! []
   (reset! app/change-password-form-state cpc/default-state))
 
-(defn element-has-text [selector expected-text]
-  (let [selected-element (sel1 selector)
-        text (dommy/text selected-element)]
-    (is (not (string/blank? text)) "Element has no text")
-    (is (= expected-text text)
-        (str "Expected element to have <" expected-text "> but actually found <" text ">"))))
-
-(defn element-has-no-text [selector]
-  (let [selected-element (sel1 selector)
-        text (dommy/text selected-element)]
-    (is (string/blank? text) "Element is not blank")))
-
 (defn clean-setup! []
-  (dommy/set-html! (sel1 :html) change-password-template)
+  (tu/set-html! change-password-template)
   (app/start)
   (reset-change-password-form-atom!))
 
@@ -98,18 +80,18 @@
                                   (tu/set-value (cpd/input-selector :current-password) ?invalid-password)
                                   (tu/lose-focus (cpd/input-selector :current-password))
                                   (tu/test-field-has-class (cpd/form-row-selector :current-password) cpd/field-invalid-class)
-                                  (element-has-text (cpd/validation-selector :current-password) current-password-error-message))
+                                  (tu/element-has-text (cpd/validation-selector :current-password) current-password-error-message))
                          ;?invalid-password
                          blank-string
                          "2short"
-                         (string-of-length 255)))
+                         (tu/string-of-length 255)))
 
                   (testing "- losing focus when valid does not add invalid field class and there is no validation message"
                            (clean-setup!)
                            (tu/set-value (cpd/input-selector :current-password) valid-password)
                            (tu/lose-focus (cpd/input-selector :current-password))
                            (tu/test-field-doesnt-have-class (cpd/form-row-selector :current-password) cpd/field-invalid-class)
-                           (element-has-no-text (cpd/validation-selector :current-password))))
+                           (tu/element-has-no-text (cpd/validation-selector :current-password))))
 
          (testing "new password field"
                   (are [?invalid-password ?translation-key]
@@ -120,11 +102,11 @@
                                   (tu/lose-focus (cpd/input-selector :new-password))
                                   (tu/test-field-has-class (cpd/form-row-selector :new-password) cpd/field-invalid-class)
                                   (tu/test-field-doesnt-have-class (cpd/form-row-selector :new-password) cpd/field-valid-class)
-                                  (element-has-text (cpd/validation-selector :new-password) validation-message)))
+                                  (tu/element-has-text (cpd/validation-selector :new-password) validation-message)))
                        ;?invalid-password       ;?translation-key
                        blank-string             :new-password-blank-validation-message
                        "2short"                 :new-password-too-short-validation-message
-                       (string-of-length 255)   :new-password-too-long-validation-message)
+                       (tu/string-of-length 255)   :new-password-too-long-validation-message)
 
                   (testing "- losing focus when valid adds valid class, does not add invalid field class and there is no validation message"
                            (clean-setup!)
@@ -132,7 +114,7 @@
                            (tu/lose-focus (cpd/input-selector :new-password))
                            (tu/test-field-has-class (cpd/form-row-selector :new-password) cpd/field-valid-class)
                            (tu/test-field-doesnt-have-class (cpd/form-row-selector :new-password) cpd/field-invalid-class)
-                           (element-has-no-text (cpd/validation-selector :new-password)))
+                           (tu/element-has-no-text (cpd/validation-selector :new-password)))
 
                   (testing "- losing focus when new-password matches current-password adds invalid field class, removes valid class and adds validation message"
                            (clean-setup!)
@@ -142,7 +124,7 @@
                            (tu/lose-focus (cpd/input-selector :new-password))
                            (tu/test-field-has-class (cpd/form-row-selector :new-password) cpd/field-invalid-class)
                            (tu/test-field-doesnt-have-class (cpd/form-row-selector :new-password) cpd/field-valid-class)
-                           (element-has-text (cpd/validation-selector :new-password) (get-in dom/translations [:change-password-form :new-password-unchanged-validation-message])))
+                           (tu/element-has-text (cpd/validation-selector :new-password) (get-in dom/translations [:change-password-form :new-password-unchanged-validation-message])))
 
                   (testing "- losing focus when passwords are different adds valid class, does not add invalid class and there is no validation message"
                            (clean-setup!)
@@ -152,7 +134,7 @@
                            (tu/lose-focus (cpd/input-selector :new-password))
                            (tu/test-field-has-class (cpd/form-row-selector :new-password) cpd/field-valid-class)
                            (tu/test-field-doesnt-have-class (cpd/form-row-selector :new-password) cpd/field-invalid-class)
-                           (element-has-no-text (cpd/validation-selector :new-password)))))
+                           (tu/element-has-no-text (cpd/validation-selector :new-password)))))
 
 (deftest submitting-invalid-forms
          (testing "submitting empty form"
