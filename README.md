@@ -37,9 +37,10 @@ This will take a while (upwards of 10 minutes).
 [Ansible]: http://docs.ansible.com/ansible/intro_installation.html
 
 ## Running
-Before starting the server, build the views by running:
 
-    gulp build
+To start a web server with users persisted to mongodb, ensure you have mongo running locally and run:
+
+    lein start
 
 To start a web server for the application in development mode, run:
 
@@ -47,13 +48,54 @@ To start a web server for the application in development mode, run:
 
 NB: running the application like this will save users into an in memory cache that will be destroyed as soon as the app is shutdown.
 
-To start a web server with users persisted to mongodb, ensure you have mongo running locally and run:
+## Running test suite
 
-    lein run
+Run all tests:
+
+```
+lein test
+```
+
+#### Clojure
+Run all server (clojure) tests:
+
+```
+lein test-clj
+```
+
+Run just server unit tests:
+```
+lein unit
+```
+Run just server integration tests:
+```
+lein integration
+```
+
+Run just server browser tests:
+```
+lein browser
+```
+
+Autotest - Automatically run server tests on file changes (without browser tests):
+```
+lein auto-no-browser
+```
+
+#### Clojurescript
+Run clojurescript tests:
+```
+lein test-cljs
+```
+Autotest - Automatically run clojurescript tests on file changes:
+```
+lein auto-cljs
+```
+
 
 ## Running the static frontend
 
-### Getting started
+#### Getting started
 
 First install [brew](http://brew.sh/)
 
@@ -74,7 +116,7 @@ Depending on system privileges you may need to install it globally with sudo:
 sudo npm install -g gulp
 ```
 
-### Running the prototype
+#### Running the prototype
 
 Simply type:
 
@@ -82,19 +124,13 @@ Simply type:
 gulp server
 ```
 
-## Running test suite
 
-To run all tests, run this in your virtual machine
-
-```
-lein midje
-```
 
 ## Customising the app
 
 Optional environment variables can be set up to customise app name, colour scheme and logo.
 
-###App name
+#### App name
 
 App name is used anywhere where the application refers to itself, e.g. "Register with {App name}".
 To set the app name:
@@ -103,7 +139,7 @@ To set the app name:
 
 The content of any HTML elements with the class `.clj--app-name` will be replaced with the app name.
 
-### Logo
+#### Logo
 
 Logo is used in the header. Maximum dimensions (W x H) 110px x 50px.
 To set the logo:
@@ -112,7 +148,7 @@ To set the logo:
 * **NOTE: Anything inside this directory will be served as a static resource, including subdirectories.**
 * Set the environment variable `LOGO_FILE_NAME` to the logo file name including the extension, e.g. logo.png
 
-### Favicon
+#### Favicon
 
 Favicon should be an .ico file.
 To set the favicon:
@@ -122,7 +158,7 @@ if you haven't already done so for the logo.
 * **NOTE: Anything inside this directory will be served as a static resource, including subdirectories.**
 * Set the environment variable `FAVICON_FILE_NAME` to the favicon file name, e.g. my-favicon.ico
 
-### Colours
+#### Colours
 
 The header colours can be customised:
 
@@ -166,7 +202,7 @@ The Hosting Architecture is documented [here] (https://docs.google.com/a/thought
 
 ## Deployment
 
-### Adding public-private keypair for OpenID Connect
+#### Adding public-private keypair for OpenID Connect
 
 To generate a public-private keypair in Json Web-key (JWK) format, enter the following at the command line:
 
