@@ -57,37 +57,36 @@
                                         :init                  stonecutter.lein/lein-ring-init
                                         :stacktrace-middleware prone.middleware/wrap-exceptions}
                        :resource-paths ["resources" "test-resources"]
-                       :aliases        {"test"        ["do" "clean," "midje," "test-cljs"]
-                                        "midje"       ["do" "gulp," "cljs-build," "midje"]
-                                        "test-cljs"   ["cljsbuild" "test"]
-                                        "unit"        ["midje" "stonecutter.test.*"]
-                                        "integration" ["midje" "stonecutter.integration.*"]
-                                        "browser"     ["midje" "stonecutter.browser.*"]
-                                        "auto-unit"   ["midje" ":autotest" "test/stonecutter/test/" "src/"]
-                                        "gencred"     ["run" "-m" "stonecutter.util.gencred"]
-                                        "gen-keypair" ["run" "-m" "stonecutter.util.gen-key-pair"]
-                                        "lint"        ["eastwood" "{:namespaces [:source-paths]}"]
-                                        "gulp"        ["shell" "gulp" "build"]
-                                        "cljs-build"  ["cljsbuild" "once"]
-                                        "start"       ["do" "gulp," "cljs-build," "run"]
-                                        "gen-config"  ["run" "-m" "stonecutter.config"]}
+                       :aliases        {"cljs-build"      ["cljsbuild" "once" "prod"]
+                                        "test"            ["do" "clean," "midje," "test-cljs"]
+                                        "midje"           ["do" "gulp," "cljs-build," "midje"]
+                                        "unit"            ["midje" "stonecutter.test.*"]
+                                        "integration"     ["midje" "stonecutter.integration.*"]
+                                        "browser"         ["midje" "stonecutter.browser.*"]
+                                        "auto-no-browser" ["midje" ":autotest" "test/stonecutter/test/unit/" "test/stonecutter/test/integration/" "src/" "src-cljc/"]
+                                        "test-cljs"       ["cljsbuild" "once" "test"]
+                                        "auto-cljs"       ["cljsbuild" "auto" "test"]
+                                        "gencred"         ["run" "-m" "stonecutter.util.gencred"]
+                                        "gen-keypair"     ["run" "-m" "stonecutter.util.gen-key-pair"]
+                                        "gen-config"      ["run" "-m" "stonecutter.config"]
+                                        "lint"            ["eastwood" "{:namespaces [:source-paths]}"]
+                                        "gulp"            ["shell" "gulp" "build"]
+                                        "start"           ["do" "gulp," "cljs-build," "run"]}
                        :env            {:dev                   true
                                         :secure                "false"
                                         :rsa-keypair-file-path "test-resources/test-key.json"}
-                       :cljsbuild      {:builds        {:prod {:source-paths ["src-cljs" "src-cljc"]
-                                                               :compiler     {:output-to     "resources/public/js/main.js"
-                                                                              :asset-path    "js/out"
-                                                                              :optimizations :advanced
-                                                                              :pretty-print  false}}
-                                                        :test {:source-paths ["src-cljs" "src-cljc" "test-cljs"]
-                                                               :notify-command ["phantomjs" :cljs.test/runner "target/cljs/testable.js"]
-                                                               :compiler     {:output-to     "target/cljs/testable.js"
-                                                                              :optimizations :whitespace
-                                                                              :pretty-print  true}}}
-                                        :test-commands {"unit-tests" ["phantomjs" :runner
-                                                                      "target/cljs/testable.js"]}}}
-
-
+                       :cljsbuild      {:builds [{:id           "prod"
+                                                  :source-paths ["src-cljs" "src-cljc"]
+                                                  :compiler     {:output-to     "resources/public/js/main.js"
+                                                                 :asset-path    "js/out"
+                                                                 :optimizations :advanced
+                                                                 :pretty-print  false}}
+                                                 {:id             "test"
+                                                  :source-paths   ["src-cljs" "src-cljc" "test-cljs"]
+                                                  :notify-command ["phantomjs" :cljs.test/runner "target/cljs/testable.js"]
+                                                  :compiler       {:output-to     "target/cljs/testable.js"
+                                                                   :optimizations :whitespace
+                                                                   :pretty-print  true}}]}}
              :uberjar {:hooks       [leiningen.cljsbuild]
                        :env         {:production true}
                        :aot         :all
