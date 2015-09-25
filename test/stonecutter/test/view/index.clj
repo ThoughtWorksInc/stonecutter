@@ -119,7 +119,7 @@
        (let [page (-> (th/create-request)
                       index)]
          (fact "validation summary is removed"
-               (html/select page [:.clj--validation-summary]) => empty?)
+               (html/select page [:.clj--registration-validation-summary]) => empty?)
          (fact "no elements have class for styling and unhiding errors"
                (html/select page [:.form-row--invalid]) => empty?)
          (fact "first name validation element is not removed - it is hidden by not having the <form-row--invalid> in a parent"
@@ -131,6 +131,10 @@
          (fact "password validation element is not removed - it is hidden by not having the <form-row--invalid> in a parent"
                (html/select page [:.clj--registration-password__validation]) =not=> empty?)))
 
+(fact "Bugfix: registration validation summary is removed when errors are not registration errors"
+      (let [errors {:not-a-registration-error :some-error}
+            page (-> (th/create-request {} errors) index)]
+        (html/select page [:.clj--registration-validation-summary]) => empty?))
 
 (facts "about displaying registration errors"
        (facts "when first name is blank"
@@ -139,7 +143,7 @@
                     page (-> (th/create-request {} errors params) index)
                     error-translation "content:index/register-first-name-blank-validation-message"]
                 (fact "validation summary includes the error message"
-                      (html/select page [[:.clj--validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
+                      (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
                 (fact "the class for styling errors is added"
                       (html/select page [[:.clj--registration-first-name :.form-row--invalid]]) =not=> empty?)
                 (fact "email validation element is present"
@@ -156,7 +160,7 @@
                     page (-> (th/create-request {} errors params) index)
                     error-translation "content:index/register-first-name-too-long-validation-message"]
                 (fact "validation summary includes the error message"
-                      (html/select page [[:.clj--validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
+                      (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
                 (fact "the class for styling errors is added"
                       (html/select page [[:.clj--registration-first-name :.form-row--invalid]]) =not=> empty?)
                 (fact "email validation element is present"
@@ -174,7 +178,7 @@
                     page (-> (th/create-request {} errors params) index)
                     error-translation "content:index/register-last-name-blank-validation-message"]
                 (fact "validation summary includes the error message"
-                      (html/select page [[:.clj--validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
+                      (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
                 (fact "the class for styling errors is added"
                       (html/select page [[:.clj--registration-last-name :.form-row--invalid]]) =not=> empty?)
                 (fact "email validation element is present"
@@ -191,7 +195,7 @@
                     page (-> (th/create-request {} errors params) index)
                     error-translation "content:index/register-last-name-too-long-validation-message"]
                 (fact "validation summary includes the error message"
-                      (html/select page [[:.clj--validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
+                      (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
                 (fact "the class for styling errors is added"
                       (html/select page [[:.clj--registration-last-name :.form-row--invalid]]) =not=> empty?)
                 (fact "email validation element is present"
@@ -209,7 +213,7 @@
                     page (-> (th/create-request {} errors params) index)
                     error-translation "content:index/register-email-address-invalid-validation-message"]
                 (fact "validation summary includes the error message"
-                      (html/select page [[:.clj--validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
+                      (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
                 (fact "the class for styling errors is added"
                       (html/select page [[:.clj--registration-email :.form-row--invalid]]) =not=> empty?)
                 (fact "email validation element is present"
@@ -227,7 +231,7 @@
                     page (-> (th/create-request {} errors params) index)
                     error-translation "content:index/register-email-address-duplicate-validation-message"]
                 (fact "validation summary includes the error message"
-                      (html/select page [[:.clj--validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
+                      (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
                 (fact "the class for styling errors is added"
                       (html/select page [[:.clj--registration-email :.form-row--invalid]]) =not=> empty?)
                 (fact "email validation element is present"
@@ -246,7 +250,7 @@
                     page (-> (th/create-request {} errors params) index)
                     error-translation "content:index/register-email-address-too-long-validation-message"]
                 (fact "validation summary includes the error message"
-                      (html/select page [[:.clj--validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
+                      (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
                 (fact "the class for styling errors is added"
                       (html/select page [[:.clj--registration-email :.form-row--invalid]]) =not=> empty?)
                 (fact "email validation element is present"
@@ -262,7 +266,7 @@
                    page (-> (th/create-request {} errors params) index)
                    error-translation "content:index/register-password-blank-validation-message"]
                (fact "validation summary includes the error message"
-                     (html/select page [[:.clj--validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
+                     (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
                (fact "the class for styling errors is added"
                      (html/select page [[:.clj--registration-password :.form-row--invalid]]) =not=> empty?)
                (fact "password validation element is present"
@@ -278,7 +282,7 @@
                    page (-> (th/create-request {} errors params) index)
                    error-translation "content:index/register-password-too-short-validation-message"]
                (fact "validation summary includes the error message"
-                     (html/select page [[:.clj--validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
+                     (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
                (fact "the class for styling errors is added"
                      (html/select page [[:.clj--registration-password :.form-row--invalid]]) =not=> empty?)
                (fact "password validation element is present"
@@ -295,7 +299,7 @@
                    page (-> (th/create-request {} errors params) index)
                    error-translation "content:index/register-password-too-long-validation-message"]
                (fact "validation summary includes the error message"
-                     (html/select page [[:.clj--validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
+                     (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
                (fact "the class for styling errors is added"
                      (html/select page [[:.clj--registration-password :.form-row--invalid]]) =not=> empty?)
                (fact "password validation element is present"

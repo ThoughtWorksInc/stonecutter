@@ -99,7 +99,10 @@
           (html/at [:.clj--registration-password__validation] (html/set-attr :data-l8n (or error-translation "content:index/register-unknown-error")))))
     enlive-m))
 
-(def error-display-order [:registration-first-name :registration-last-name :registration-email :registration-password])
+(def registration-error-keys-ordered [:registration-first-name
+                                      :registration-last-name
+                                      :registration-email
+                                      :registration-password])
 
 (defn get-kv-for-key [a-map a-key]
   (when-let [v (a-key a-map)]
@@ -110,11 +113,11 @@
 
 
 (defn add-registration-validation-summary [enlive-m err]
-  (if (empty? err)
-    (vh/remove-element enlive-m [:.clj--validation-summary])
-    (let [ordered-error-key-pairs (kv-pairs-from-map-ordered-by err error-display-order)]
+  (if (empty? (select-keys err registration-error-keys-ordered))
+    (vh/remove-element enlive-m [:.clj--registration-validation-summary])
+    (let [ordered-error-key-pairs (kv-pairs-from-map-ordered-by err registration-error-keys-ordered)]
       (-> enlive-m
-          (html/at [:.clj--validation-summary__item]
+          (html/at [:.clj--registration-validation-summary__item]
                    (html/clone-for [error-key-pair ordered-error-key-pairs]
                                    (html/set-attr :data-l8n (or (get-in error-translations error-key-pair)
                                                                 unknown-error-translation-key))))))))
