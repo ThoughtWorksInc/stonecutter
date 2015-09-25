@@ -5,6 +5,8 @@
             [stonecutter.test.view.test-helpers :as th]
             [stonecutter.view.index :refer [index]]))
 
+(defn string-of-length [n]
+  (apply str (repeat n "x")))
 
 (facts "about index page"
        (let [page (-> (th/create-request) index)]
@@ -57,7 +59,7 @@
                       (th/test-translations "index page" (constantly page)))))
 
        (facts "when email is too long"
-              (let [long-email-address (apply str (repeat 255 "x"))
+              (let [long-email-address (string-of-length 255)
                     errors {:sign-in-email :too-long}
                     params {:sign-in-email long-email-address}
                     page (-> (th/create-request {} errors params) index)]
@@ -101,7 +103,7 @@
                       (th/test-translations "index page" (constantly page)))))
 
        (fact "when password is too long"
-             (let [long-password (apply str (repeat 255 "x"))
+             (let [long-password (string-of-length 255)
                    errors {:sign-in-password :too-long}
                    params {:sign-in-password long-password}
                    page (-> (th/create-request {} errors params) index)]
@@ -137,81 +139,56 @@
         (html/select page [:.clj--registration-validation-summary]) => empty?))
 
 (facts "about displaying registration errors"
-       (facts "when first name is blank"
-              (let [errors {:registration-first-name :blank}
-                    params {:registration-first-name ""}
-                    page (-> (th/create-request {} errors params) index)
-                    error-translation "content:index/register-first-name-blank-validation-message"]
-                (fact "validation summary includes the error message"
-                      (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
-                (fact "the class for styling errors is added"
-                      (html/select page [[:.clj--registration-first-name :.form-row--invalid]]) =not=> empty?)
-                (fact "email validation element is present"
-                      (html/select page [:.clj--registration-first-name__validation]) =not=> empty?)
-                (fact "correct error message is displayed"
-                      (html/select page [[:.clj--registration-first-name__validation (html/attr= :data-l8n error-translation)]]) =not=> empty?)
-                (fact "there are no missing translations"
-                      (th/test-translations "index page" (constantly page)))))
+       (tabular
+         (facts "first name validations"
+                (let [errors {:registration-first-name ?error}
+                      params {:registration-first-name ?input}
+                      page (-> (th/create-request {} errors params) index)
+                      error-translation (str "content:index/" ?translation-key)]
+                  (fact "validation summary includes the error message"
+                        (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
+                  (fact "the class for styling errors is added"
+                        (html/select page [[:.clj--registration-first-name :.form-row--invalid]]) =not=> empty?)
+                  (fact "email validation element is present"
+                        (html/select page [:.clj--registration-first-name__validation]) =not=> empty?)
+                  (fact "correct error message is displayed"
+                        (html/select page [[:.clj--registration-first-name__validation (html/attr= :data-l8n error-translation)]]) =not=> empty?)
+                  (fact "invalid value is preserved in input field"
+                        (-> page (html/select [:.clj--registration-first-name__input]) first :attrs :value) => ?input)
+                  (fact "there are no missing translations"
+                        (th/test-translations "index page" (constantly page)))))
+         ?error    ?input                ?translation-key
+         :blank    ""                    "register-first-name-blank-validation-message"
+         :too-long (string-of-length 71) "register-first-name-too-long-validation-message")
 
-       (facts "when first name is too long"
-              (let [errors {:registration-first-name :too-long}
-                    long-string "SOMETHING LONGER THAN 70 CHARACTERS --------------------------------------------------"
-                    params {:registration-first-name long-string}
-                    page (-> (th/create-request {} errors params) index)
-                    error-translation "content:index/register-first-name-too-long-validation-message"]
-                (fact "validation summary includes the error message"
-                      (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
-                (fact "the class for styling errors is added"
-                      (html/select page [[:.clj--registration-first-name :.form-row--invalid]]) =not=> empty?)
-                (fact "email validation element is present"
-                      (html/select page [:.clj--registration-first-name__validation]) =not=> empty?)
-                (fact "correct error message is displayed"
-                      (html/select page [[:.clj--registration-first-name__validation (html/attr= :data-l8n error-translation)]]) =not=> empty?)
-                (fact "invalid value is preserved in input field"
-                      (-> page (html/select [:.clj--registration-first-name__input]) first :attrs :value) => long-string)
-                (fact "there are no missing translations"
-                      (th/test-translations "index page" (constantly page)))))
+       (tabular
+         (facts "last name validations"
+                (let [errors {:registration-last-name ?error}
+                      params {:registration-last-name ?input}
+                      page (-> (th/create-request {} errors params) index)
+                      error-translation (str "content:index/" ?translation-key)]
+                  (fact "validation summary includes the error message"
+                        (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
+                  (fact "the class for styling errors is added"
+                        (html/select page [[:.clj--registration-last-name :.form-row--invalid]]) =not=> empty?)
+                  (fact "email validation element is present"
+                        (html/select page [:.clj--registration-last-name__validation]) =not=> empty?)
+                  (fact "correct error message is displayed"
+                        (html/select page [[:.clj--registration-last-name__validation (html/attr= :data-l8n error-translation)]]) =not=> empty?)
+                  (fact "invalid value is preserved in input field"
+                        (-> page (html/select [:.clj--registration-last-name__input]) first :attrs :value) => ?input)
+                  (fact "there are no missing translations"
+                        (th/test-translations "index page" (constantly page)))))
+         ?error    ?input                ?translation-key
+         :blank    ""                    "register-last-name-blank-validation-message"
+         :too-long (string-of-length 71) "register-last-name-too-long-validation-message")
 
-       (facts "when last name is blank"
-              (let [errors {:registration-last-name :blank}
-                    params {:registration-last-name ""}
+       (tabular
+         (facts "email validations"
+              (let [errors {:registration-email ?error}
+                    params {:registration-email ?input}
                     page (-> (th/create-request {} errors params) index)
-                    error-translation "content:index/register-last-name-blank-validation-message"]
-                (fact "validation summary includes the error message"
-                      (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
-                (fact "the class for styling errors is added"
-                      (html/select page [[:.clj--registration-last-name :.form-row--invalid]]) =not=> empty?)
-                (fact "email validation element is present"
-                      (html/select page [:.clj--registration-last-name__validation]) =not=> empty?)
-                (fact "correct error message is displayed"
-                      (html/select page [[:.clj--registration-last-name__validation (html/attr= :data-l8n error-translation)]]) =not=> empty?)
-                (fact "there are no missing translations"
-                      (th/test-translations "index page" (constantly page)))))
-
-       (facts "when last name is too long"
-              (let [errors {:registration-last-name :too-long}
-                    long-string "SOMETHING LONGER THAN 70 CHARACTERS --------------------------------------------------"
-                    params {:registration-last-name long-string}
-                    page (-> (th/create-request {} errors params) index)
-                    error-translation "content:index/register-last-name-too-long-validation-message"]
-                (fact "validation summary includes the error message"
-                      (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
-                (fact "the class for styling errors is added"
-                      (html/select page [[:.clj--registration-last-name :.form-row--invalid]]) =not=> empty?)
-                (fact "email validation element is present"
-                      (html/select page [:.clj--registration-last-name__validation]) =not=> empty?)
-                (fact "correct error message is displayed"
-                      (html/select page [[:.clj--registration-last-name__validation (html/attr= :data-l8n error-translation)]]) =not=> empty?)
-                (fact "invalid value is preserved in input field"
-                      (-> page (html/select [:.clj--registration-last-name__input]) first :attrs :value) => long-string)
-                (fact "there are no missing translations"
-                      (th/test-translations "index page" (constantly page)))))
-
-       (facts "when email is invalid"
-              (let [errors {:registration-email :invalid}
-                    params {:registration-email "invalidEmail"}
-                    page (-> (th/create-request {} errors params) index)
-                    error-translation "content:index/register-email-address-invalid-validation-message"]
+                    error-translation (str "content:index/" ?translation-key)]
                 (fact "validation summary includes the error message"
                       (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
                 (fact "the class for styling errors is added"
@@ -221,90 +198,34 @@
                 (fact "correct error message is displayed"
                       (html/select page [[:.clj--registration-email__validation (html/attr= :data-l8n error-translation)]]) =not=> empty?)
                 (fact "invalid value is preserved in input field"
-                      (-> page (html/select [:.clj--registration-email__input]) first :attrs :value) => "invalidEmail")
+                      (-> page (html/select [:.clj--registration-email__input]) first :attrs :value) => ?input)
                 (fact "there are no missing translations"
                       (th/test-translations "index page" (constantly page)))))
 
-       (facts "when email is a duplicate"
-              (let [errors {:registration-email :duplicate}
-                    params {:registration-email "valid@email.com"}
-                    page (-> (th/create-request {} errors params) index)
-                    error-translation "content:index/register-email-address-duplicate-validation-message"]
-                (fact "validation summary includes the error message"
-                      (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
-                (fact "the class for styling errors is added"
-                      (html/select page [[:.clj--registration-email :.form-row--invalid]]) =not=> empty?)
-                (fact "email validation element is present"
-                      (html/select page [:.clj--registration-email__validation]) =not=> empty?)
-                (fact "correct error message is displayed"
-                      (html/select page [[:.clj--registration-email__validation (html/attr= :data-l8n error-translation)]]) =not=> empty?)
-                (fact "duplicate email is preserved"
-                      (-> page (html/select [:.clj--registration-email__input]) first :attrs :value) => "valid@email.com")
-                (fact "there are no missing translations"
-                      (th/test-translations "index page" (constantly page)))))
+         ?error      ?input                 ?translation-key
+         :invalid    "invalidEmail"         "register-email-address-invalid-validation-message"
+         :duplicate  "valid@email.com"      "register-email-address-duplicate-validation-message"
+         :too-long   (string-of-length 255) "register-email-address-too-long-validation-message")
 
-       (facts "when email is too long"
-              (let [long-email-address (apply str (repeat 255 "x"))
-                    errors {:registration-email :too-long}
-                    params {:registration-email long-email-address}
-                    page (-> (th/create-request {} errors params) index)
-                    error-translation "content:index/register-email-address-too-long-validation-message"]
-                (fact "validation summary includes the error message"
-                      (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
-                (fact "the class for styling errors is added"
-                      (html/select page [[:.clj--registration-email :.form-row--invalid]]) =not=> empty?)
-                (fact "email validation element is present"
-                      (html/select page [:.clj--registration-email__validation]) =not=> empty?)
-                (fact "correct error message is displayed"
-                      (html/select page [[:.clj--registration-email__validation (html/attr= :data-l8n error-translation)]]) =not=> empty?)
-                (fact "there are no missing translations"
-                      (th/test-translations "index page" (constantly page)))))
-
-       (fact "when password is blank"
-             (let [errors {:registration-password :blank}
-                   params {:registration-password ""}
-                   page (-> (th/create-request {} errors params) index)
-                   error-translation "content:index/register-password-blank-validation-message"]
-               (fact "validation summary includes the error message"
-                     (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
-               (fact "the class for styling errors is added"
-                     (html/select page [[:.clj--registration-password :.form-row--invalid]]) =not=> empty?)
-               (fact "password validation element is present"
-                     (html/select page [:.clj--registration-password__validation]) =not=> empty?)
-               (fact "correct error message is displayed"
-                     (html/select page [[:.clj--registration-password__validation (html/attr= :data-l8n error-translation)]]) =not=> empty?)
-               (fact "there are no missing translations"
-                      (th/test-translations "index page" (constantly page)))))
-
-       (fact "when password is too short"
-             (let [errors {:registration-password :too-short}
-                   params {:registration-password "short"}
-                   page (-> (th/create-request {} errors params) index)
-                   error-translation "content:index/register-password-too-short-validation-message"]
-               (fact "validation summary includes the error message"
-                     (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
-               (fact "the class for styling errors is added"
-                     (html/select page [[:.clj--registration-password :.form-row--invalid]]) =not=> empty?)
-               (fact "password validation element is present"
-                     (html/select page [:.clj--registration-password__validation]) =not=> empty?)
-               (fact "correct error message is displayed"
-                     (html/select page [[:.clj--registration-password__validation (html/attr= :data-l8n error-translation)]]) =not=> empty?)
-               (fact "there are no missing translations"
-                     (th/test-translations "index page" (constantly page)))))
-
-       (fact "when password is too long"
-             (let [long-password (apply str (repeat 255 "x"))
-                   errors {:registration-password :too-long}
-                   params {:registration-password long-password}
-                   page (-> (th/create-request {} errors params) index)
-                   error-translation "content:index/register-password-too-long-validation-message"]
-               (fact "validation summary includes the error message"
-                     (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
-               (fact "the class for styling errors is added"
-                     (html/select page [[:.clj--registration-password :.form-row--invalid]]) =not=> empty?)
-               (fact "password validation element is present"
-                     (html/select page [:.clj--registration-password__validation]) =not=> empty?)
-               (fact "correct error message is displayed"
-                     (html/select page [[:.clj--registration-password__validation (html/attr= :data-l8n error-translation)]]) =not=> empty?)
-               (fact "there are no missing translations"
-                     (th/test-translations "index page" (constantly page))))))
+       (tabular
+         (facts "password validations"
+                (let [errors {:registration-password ?error}
+                      params {:registration-password ?input}
+                      page (-> (th/create-request {} errors params) index)
+                      error-translation (str "content:index/" ?translation-key)]
+                  (fact "validation summary includes the error message"
+                        (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
+                  (fact "the class for styling errors is added"
+                        (html/select page [[:.clj--registration-password :.form-row--invalid]]) =not=> empty?)
+                  (fact "password validation element is present"
+                        (html/select page [:.clj--registration-password__validation]) =not=> empty?)
+                  (fact "correct error message is displayed"
+                        (html/select page [[:.clj--registration-password__validation (html/attr= :data-l8n error-translation)]]) =not=> empty?)
+                  (fact "the input is not preserved"
+                        (-> page (html/select [:.clj--registration-password__input]) first :attrs :value) => nil)
+                  (fact "there are no missing translations"
+                        (th/test-translations "index page" (constantly page)))))
+         ?error     ?input                 ?translation-key
+         :blank     ""                     "register-password-blank-validation-message"
+         :too-short "2short"               "register-password-too-short-validation-message"
+         :too-long  (string-of-length 255) "register-password-too-long-validation-message"))
