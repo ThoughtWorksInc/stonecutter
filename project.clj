@@ -75,7 +75,11 @@
                                         "start"           ["do" "gulp," "cljs-build," "run"]}
                        :env            {:dev                   true
                                         :secure                "false"
-                                        :rsa-keypair-file-path "test-resources/test-key.json"}
+                                        :rsa-keypair-file-path "test-resources/test-key.json"
+                                        :admin-login           "dcent@thoughtworks.com"
+                                        :admin-password        "password"
+                                        :admin-first-name      "first"
+                                        :admin-last-name       "last"}
                        :cljsbuild      {:builds [{:id           "prod"
                                                   :source-paths ["src-cljs" "src-cljc"]
                                                   :compiler     {:output-to     "resources/public/js/main.js"
