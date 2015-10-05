@@ -24,9 +24,21 @@
            (k/visit "/admin/users")
            (kc/response-status-is 200)))
 
-(facts "Non-admin user cannot access the user-list page"
+(facts "Admin user can view the apps page"
+       (-> (k/session test-app)
+           (steps/sign-in "admin-user@user.com" "password")
+           (k/visit "/admin/apps")
+           (kc/response-status-is 200)))
+
+(facts "Non-admin user cannot view the apps page"
        (-> (k/session test-app)
            (steps/register "normal-user@user.com" "password")
+           (k/visit "/admin/apps")
+           (kc/response-status-is 404)))
+
+(facts "Non-admin user cannot access the user-list page"
+       (-> (k/session test-app)
+           (steps/sign-in "normal-user@user.com" "password")
            (k/visit "/admin/users")
            (kc/response-status-is 404)))
 
@@ -38,3 +50,5 @@
            (k/visit "/admin/users")
            (kc/check-and-press ks/user-trustworthiness-submit)
            (kc/response-status-is 302)))
+
+

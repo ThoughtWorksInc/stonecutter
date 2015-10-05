@@ -2,6 +2,7 @@
   (:require [ring.util.response :as r]
             [stonecutter.helper :as sh]
             [stonecutter.view.user-list :as user-list]
+            [stonecutter.view.apps-list :as apps-list]
             [stonecutter.db.user :as u]
             [stonecutter.routes :as routes]
             [stonecutter.config :as config]))
@@ -27,3 +28,6 @@
     (-> (r/redirect (routes/path :show-user-list))
         (assoc-in [:flash :translation-key] flash-key)
         (assoc-in [:flash :updated-account-email] email))))
+
+(defn show-apps-list [request]
+      (sh/enlive-response (apps-list/apps-list request) (:context request)))
