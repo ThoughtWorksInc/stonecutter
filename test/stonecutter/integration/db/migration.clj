@@ -1,7 +1,6 @@
 (ns stonecutter.integration.db.migration
   (:require [midje.sweet :refer :all]
             [monger.collection :as monger-c]
-            [clojure.string :as s]
             [stonecutter.integration.integration-helpers :as ith]
             [stonecutter.db.migration :as m]))
 

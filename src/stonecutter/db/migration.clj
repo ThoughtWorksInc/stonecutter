@@ -1,5 +1,5 @@
 (ns stonecutter.db.migration
-  (:require [monger.ragtime :as monger-ragtime]
+  (:require [monger.ragtime]                                ;; monger.ragtime required for ragtime migrations to work
             [monger.collection :as coll]
             [ragtime.core :as ragtime]
             [clojure.tools.logging :as log]
