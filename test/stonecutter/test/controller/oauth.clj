@@ -263,6 +263,7 @@
                         
                         (:status response) => 400
                         response-body =not=> (contains {:access_token anything})
+                        response-body =not=> (contains {:id_token anything})
                         response-body =not=> (contains {:user-info anything}))))
 
          (facts "about openid connect"
