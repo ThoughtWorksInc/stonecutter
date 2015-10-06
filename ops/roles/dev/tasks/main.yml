@@ -39,3 +39,6 @@
 
  - name: install xvfb
    apt: name=xvfb state=present
+
+ - name: install phantomjs
+   apt: name=phantomjs state=present
