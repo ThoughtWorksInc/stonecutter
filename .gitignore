@@ -22,3 +22,4 @@ ops/roles/nginx/files/secure**
 /test-tmp
 .dir-locals.el
 .cljs_rhino_repl
+/data
