@@ -36,20 +36,29 @@
       (let [page (-> (th/create-request) apps-list)]
         (-> page (html/select [:.clj--flash-message-text])) => empty?))
 
-(facts "about the apps list"
-       (fact "list of apps is displayed with each's details"
-             (let [page (-> (th/create-request)
-                            (assoc-in [:context :apps] [{:name          "name-1"
-                                                         :client-id     "client-id-1"
-                                                         :client-secret "client-secret-1"
-                                                         :url           "url-1"}
-                                                         {:name          "name-2"
-                                                          :client-id     "client-id-2"
-                                                          :client-secret "client-secret-2"
-                                                          :url           "url-2"}])
-                            apps-list)]
-               (-> page (html/select [:.clj--admin-app-item]))
-               => (just [(th/text-is? [:.clj--admin-app-item__title] "name-1")
-                         (th/text-is? [:.clj--admin-app-item__title] "name-2")]))))
+(tabular
+  (facts "about the apps list"
+         (fact "list of apps is displayed with each's details"
+               (let [page (-> (th/create-request)
+                              (assoc-in [:context :clients] [{:name          "name-1"
+                                                              :client-id     "client-id-1"
+                                                              :client-secret "client-secret-1"
+                                                              :url           "url-1"}
+                                                             {:name          "name-2"
+                                                              :client-id     "client-id-2"
+                                                              :client-secret "client-secret-2"
+                                                              :url           "url-2"}])
+                              apps-list)]
+
+                 (-> page (html/select [:.clj--admin-app-item]))
+                 => (just [(th/text-is? ?selector ?text-1)
+                           (th/text-is? ?selector ?text-2)]))))
+
+  ?selector                            ?text-1             ?text-2
+  [:.clj--admin-app-item__title]       "name-1"            "name-2"
+  [:.clj--client-id]                   "client-id-1"       "client-id-2"
+  [:.clj--client-secret]               "client-secret-1"   "client-secret-2"
+  [:.clj--client-url]                  "url-1"             "url-2"
+  )
 
 

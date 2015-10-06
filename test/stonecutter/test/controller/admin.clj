@@ -11,15 +11,14 @@
        (fact "response body displays the apps"
              (let [client-store (m/create-memory-store)
                    _admin (user/store-admin! client-store "first name" "last name" "admin@email.com" "password")
-                   _client1 (th/store-client! client-store "client-id-1")
-                   _client2 (th/store-client! client-store "client-id-2")
+                   _client1 (th/store-client! client-store "name-1" "client-id-1" "client-secret-1" "client-url-1")
+                   _client2 (th/store-client! client-store "name-2" "client-id-2" "client-secret-2" "client-url-2")
                    page (->> (th/create-request :get (routes/path :show-apps-list) nil)
                              (admin/show-apps-list client-store)
                              :body)]
-               page => (contains #"client-id-1")
-               page => (contains #"client-id-2")
 
-               )))
+               page => (contains #"name-1")
+               page => (contains #"name-2"))))
 
 (facts "about show-user-list"
        (fact "response body displays the users"

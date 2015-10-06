@@ -60,11 +60,11 @@
   ([user-store first-name last-name email password]
    (user/store-user! user-store first-name last-name email password)))
 
-(defn create-client [client-id]
-  {:name          "name"
+(defn create-client [name client-id client-secret client-url]
+  {:name          name
    :client-id     client-id
-   :client-secret "secret"
-   :url           "url"})
+   :client-secret client-secret
+   :url           client-url})
 
-(defn store-client! [client-store client-id]
-  (cl-client/store-client client-store (create-client client-id)))
+(defn store-client! [client-store name client-id client-secret client-url]
+  (cl-client/store-client client-store (create-client name client-id client-secret client-url)))

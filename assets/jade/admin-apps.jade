@@ -13,7 +13,7 @@ block headerContent
 block content
   .single-column
 
-    +flashMessageWithCljContainer('clj--flash-message-container','func--flash-message-container', 'success')
+    +flashMessageWithCljContainer('clj-wip','func--flash-message-container', 'success')
       p.flash-message__title
         span.clj-new-app-name !Wild_monkey_juice
         = " "
@@ -21,13 +21,13 @@ block content
 
     h1(data-l8n="content:admin-app-list/page-title") !Apps
 
-    p: a.link-button(href="#application-name", data-l8n="content:admin-app-list/link-to-add-more") !Add more apps
+    p: a.link-button.clj-wip(href="#application-name", data-l8n="content:admin-app-list/link-to-add-more") !Add more apps
 
-    ul.admin-app-list
+    ul.admin-app-list.clj--admin-apps-list
       +adminAppItem('Objective8', 'objective8.dcentproject.eu', 'WZAWAXAWADQE', '765456789ABB')
       +adminAppItem('Wild_monkey_juice', 'www.wild-monkey-jui.ce', 'AZAZAXACADQE', '123456789TTD')
 
-    form.admin-add-app-form(action="#", method="post")
+    form.admin-add-app-form.clj-wip(action="#", method="post")
       fieldset
         legend.visuallyhidden Add new App
         p.form-row.clj--application-name
