@@ -4,6 +4,7 @@
             [stonecutter.view.user-list :as user-list]
             [stonecutter.view.apps-list :as apps-list]
             [stonecutter.db.user :as u]
+            [stonecutter.db.client :as c]
             [stonecutter.routes :as routes]
             [stonecutter.config :as config]))
 
@@ -12,6 +13,13 @@
     (sh/enlive-response (-> request
                             (assoc-in [:context :users] users)
                             (user-list/user-list))
+                        (:context request))))
+
+(defn show-apps-list [client-store request]
+  (let [clients (c/retrieve-clients client-store)]
+    (sh/enlive-response (-> request
+                            (assoc-in [:context :clients] clients)
+                            (apps-list/apps-list))
                         (:context request))))
 
 (defn set-user-trustworthiness [user-store request]
@@ -29,5 +37,4 @@
         (assoc-in [:flash :translation-key] flash-key)
         (assoc-in [:flash :updated-account-email] email))))
 
-(defn show-apps-list [request]
-      (sh/enlive-response (apps-list/apps-list request) (:context request)))
+

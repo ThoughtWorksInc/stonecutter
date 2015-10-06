@@ -98,7 +98,7 @@
        :show-authorise-failure               (partial oauth/show-authorise-failure client-store)
        :show-user-list                       (partial admin/show-user-list user-store)
        :set-user-trustworthiness             (partial admin/set-user-trustworthiness user-store)
-       :show-apps-list                        admin/show-apps-list}
+       :show-apps-list                       (partial admin/show-apps-list client-store)}
       (m/wrap-handlers-except #(m/wrap-handle-403 % forbidden-err-handler) #{})
       (m/wrap-handlers-except m/wrap-disable-caching #{:theme-css :index :sign-in-or-register})
       (m/wrap-just-these-handlers #(m/wrap-authorised % (u/authorisation-checker user-store))

@@ -7,6 +7,20 @@
             [stonecutter.db.user :as user]
             [stonecutter.config :as config]))
 
+(facts "about apps list"
+       (fact "response body displays the apps"
+             (let [client-store (m/create-memory-store)
+                   _admin (user/store-admin! client-store "first name" "last name" "admin@email.com" "password")
+                   _client1 (th/store-client! client-store "client-id-1")
+                   _client2 (th/store-client! client-store "client-id-2")
+                   page (->> (th/create-request :get (routes/path :show-apps-list) nil)
+                             (admin/show-apps-list client-store)
+                             :body)]
+               page => (contains #"client-id-1")
+               page => (contains #"client-id-2")
+
+               )))
+
 (facts "about show-user-list"
        (fact "response body displays the users"
              (let [user-store (m/create-memory-store)

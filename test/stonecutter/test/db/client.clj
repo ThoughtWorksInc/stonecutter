@@ -3,7 +3,8 @@
             [clauth.client :as cl-client]
             [stonecutter.db.client :as c]
             [stonecutter.db.mongo :as m]
-            [clauth.store :as cl-store]))
+            [clauth.store :as cl-store]
+            [stonecutter.test.test-helpers :as th]))
 
 (def client-store (m/create-memory-store))
 
@@ -66,3 +67,11 @@
                                                                   :client-id "client-id"
                                                                   :url "url"}
         (c/retrieve-client client-store "non-existent-client-id") => nil))
+
+(facts "about retrieving all clients"
+       (fact "can retrieve all clients"
+             (let [client-store (m/create-memory-store)
+                   client-1 (th/store-client! client-store "client-id-1")
+                   client-2 (th/store-client! client-store "client-id-2")
+                   client-3 (th/store-client! client-store "client-id-3")]
+               (c/retrieve-clients client-store) => (contains [client-1 client-2 client-3] :in-any-order))))

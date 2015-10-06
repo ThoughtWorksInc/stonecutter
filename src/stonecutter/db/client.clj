@@ -1,5 +1,6 @@
 (ns stonecutter.db.client
-  (:require [clauth.client :as cl-client]
+  (:require [clauth.store :as cl-store]
+            [clauth.client :as cl-client]
             [schema.core :as schema]
             [clojure.string :as s]))
 
@@ -27,6 +28,9 @@
 
 (defn retrieve-client [client-store client-id]
   (dissoc (cl-client/fetch-client client-store client-id) :client-secret))
+
+(defn retrieve-clients [client-store]
+  (cl-store/entries client-store))
 
 (defn unique-client-id? [client-store client-id]
   (nil? (retrieve-client client-store client-id)))
