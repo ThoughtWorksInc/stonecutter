@@ -50,5 +50,3 @@
            (k/visit "/admin/users")
            (kc/check-and-press ks/user-trustworthiness-submit)
            (kc/response-status-is 302)))
-
-

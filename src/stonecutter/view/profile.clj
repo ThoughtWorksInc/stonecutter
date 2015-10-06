@@ -32,10 +32,6 @@
       (html/at enlive-m [:.clj--app__list] (html/content (application-list-items authorised-clients library-m)))
       (html/at enlive-m [:.clj--app__list] (html/content (empty-application-list-item library-m))))))
 
-(defn set-sign-out-link [enlive-m]
-  (html/at enlive-m
-           [:.clj--sign-out__link] (html/set-attr :href (r/path :sign-out))))
-
 (defn set-change-password-link [enlive-m]
   (html/at enlive-m
            [:.clj--change-password__link] (html/set-attr :href (r/path :show-change-password-form))))
@@ -70,7 +66,7 @@
         (diplay-email-unconfirmed-message request)
         (add-profile-card request)
         (add-application-list request library-m)
-        set-sign-out-link
+        vh/set-sign-out-link
         set-change-password-link
         set-delete-account-link
         (hide-admin-span request)

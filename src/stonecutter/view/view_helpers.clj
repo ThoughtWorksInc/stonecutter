@@ -2,7 +2,8 @@
   (:require [ring.util.anti-forgery :refer [anti-forgery-field]]
             [net.cgrand.enlive-html :as html]
             [clojure.tools.logging :as log]
-            [stonecutter.translation :as t]))
+            [stonecutter.translation :as t]
+            [stonecutter.routes :as r]))
 
 (defn anti-forgery-snippet []
   (html/html-snippet (anti-forgery-field)))
@@ -19,6 +20,18 @@
    (set-form-action [:form] path enlive-m))
   ([form-selector path enlive-m]
    (set-attribute form-selector :action path enlive-m)))
+
+(defn set-user-list-link [enlive-m]
+  (html/at enlive-m
+           [:.clj--user-list__link] (html/set-attr :href (r/path :show-user-list))))
+
+(defn set-apps-list-link [enlive-m]
+  (html/at enlive-m
+           [:.clj--apps-list__link] (html/set-attr :href (r/path :show-apps-list))))
+
+(defn set-sign-out-link [enlive-m]
+  (html/at enlive-m
+           [:.clj--sign-out__link] (html/set-attr :href (r/path :sign-out))))
 
 (defn remove-element [enlive-m selector]
   (html/at enlive-m selector nil))

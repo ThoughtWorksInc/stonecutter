@@ -242,6 +242,7 @@ admin-app-list:
   label-app-secret: Client Secret
 
 
+
 admin-invite-user:
   title: Invite a user
   page-title: Invite a user

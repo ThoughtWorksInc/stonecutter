@@ -7,6 +7,7 @@
             [stonecutter.translation :as t]
             [stonecutter.config :as config]))
 
+
 (fact "user-list should return some html"
       (let [page (-> (th/create-request) user-list)]
         (html/select page [:body]) =not=> empty?))
@@ -18,6 +19,14 @@
 (fact "sign out link should go to correct endpoint"
       (let [page (-> (th/create-request) user-list)]
         page => (th/has-attr? [:.clj--sign-out__link] :href (r/path :sign-out))))
+
+(fact "user list link should go to correct endpoint"
+      (let [page (-> (th/create-request) user-list)]
+        page => (th/has-attr? [:.clj--user-list__link] :href (r/path :show-user-list))))
+
+(fact "apps list link should go to correct endpoint"
+      (let [page (-> (th/create-request) user-list)]
+        page => (th/has-attr? [:.clj--apps-list__link] :href (r/path :show-apps-list))))
 
 (facts "about the list of users"
        (fact "users are displayed along with their email confirmation status"
