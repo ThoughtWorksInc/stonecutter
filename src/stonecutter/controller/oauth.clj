@@ -115,10 +115,12 @@
 (defn validate-token [config-m auth-code-store client-store user-store token-store id-token-generator request]
   (let [auth-code (get-in request [:params :code])
         auth-code-record (user/retrieve-auth-code auth-code-store auth-code)
-        clauth-response (token-handler auth-code-store client-store user-store token-store request)
-        user-info (generate-user-info (:subject auth-code-record)) 
-        body (token-response-body config-m id-token-generator (:body clauth-response) user-info auth-code-record)] 
-    (-> clauth-response (assoc :body body))))
+        clauth-response (token-handler auth-code-store client-store user-store token-store request)]
+    (if (= 200 (:status clauth-response))
+      (let [user-info (generate-user-info (:subject auth-code-record))
+            body (token-response-body config-m id-token-generator (:body clauth-response) user-info auth-code-record)] 
+        (-> clauth-response (assoc :body body)))
+      clauth-response)))
 
 (defn jwk-set [json-web-key-set request]
   (-> (r/response json-web-key-set)
