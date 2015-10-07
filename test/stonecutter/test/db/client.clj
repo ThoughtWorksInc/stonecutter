@@ -15,6 +15,12 @@
   '({:client-id "ABCDEFGHIJKLM", :name "Green Party", :client-secret "NOPQRSTUVWXYZ", :url "http://greenparty.org"}
      {:client-id "NOPQRSTUVWXYZ", :name "Red Party", :client-secret "ABCDEFGHIJKLM", :url "http://redparty.org"}))
 
+(fact "can store a client with generated client-id and client-secret"
+      (let [name "Red Party"
+            url "http://redparty.org"]
+        (c/store-client client-store name url)
+        (cl-client/clients client-store) => (just (just {:client-id anything :client-secret anything :name "Red Party" :url "http://redparty.org"}))))
+
 (fact "can store clients using credentials from the map"
       (c/store-clients-from-map client-store client-credentials)
       (cl-client/clients client-store) => (just [{:client-id "NOPQRSTUVWXYZ" :client-secret "ABCDEFGHIJKLM" :name "Red Party" :url "http://redparty.org"}

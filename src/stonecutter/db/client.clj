@@ -2,7 +2,8 @@
   (:require [clauth.store :as cl-store]
             [clauth.client :as cl-client]
             [schema.core :as schema]
-            [clojure.string :as s]))
+            [clojure.string :as s]
+            [crypto.random :as random]))
 
 (def not-blank? (complement s/blank?))
 
@@ -35,6 +36,15 @@
 (defn unique-client-id? [client-store client-id]
   (nil? (retrieve-client client-store client-id)))
 
+(defn store-client [client-store name url]
+  (let [client-id (random/base32 20)
+        client-secret (random/base32 20)]
+    (when (unique-client-id? client-store client-id)
+      (cl-client/store-client client-store {:name          name
+                                            :client-id     client-id
+                                            :client-secret client-secret
+                                            :url           url}))))
+
 (defn store-clients-from-map [client-store client-credentials-map]
   (let [client-credentials-seq (seq client-credentials-map)]
     (doseq [client-entry client-credentials-seq]
@@ -48,3 +58,5 @@
                                                 :client-id     client-id
                                                 :client-secret client-secret
                                                 :url           url}))))))
+
+
