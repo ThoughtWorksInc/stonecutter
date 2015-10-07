@@ -25,9 +25,17 @@
              (let [client-store (m/create-memory-store)
                    name "client-name"
                    url "client-url"
-                   request (th/create-request :post (routes/path :create-client) {:client-name name :client-url url})]
+                   request (th/create-request :post (routes/path :create-client) {:name name :url url})]
                (admin/create-client client-store request)
-               (client/retrieve-clients client-store) => (just (just {:client-id anything :client-secret anything :name name :url url})))))
+               (client/retrieve-clients client-store) => (just (just {:client-id anything :client-secret anything :name name :url url}))))
+
+       (fact "post to create-client redirects to show-apps-list"
+             (let [client-store (m/create-memory-store)
+                   name "client-name"
+                   url "client-url"
+                   request (th/create-request :post (routes/path :create-client) {:name name :url url})
+                   response (admin/create-client client-store request)]
+               response) => (th/check-redirects-to (routes/path :show-apps-list))))
 
 (facts "about show-user-list"
        (fact "response body displays the users"

@@ -32,7 +32,7 @@ mixin userItem(fullName, emailAddress, emailIsConfirmed, userIsTrusted)
 
 mixin adminAppItem(appName, appURL, clientID, clientSecret)
   li.admin-app-item.clj--admin-app-item
-    h2.admin-app-item__title.clj--admin-app-item__title #{appName}
+    h2.admin-app-item__title.clj--admin-app-item__title.func--admin-app-item__title #{appName}
     .admin-app-item__delete.clj-wip
       a.icon-button(href="#are-you-sure-page-like-delete-account")
         i.fa.fa-trash-o.icon-button__icon
@@ -42,7 +42,7 @@ mixin adminAppItem(appName, appURL, clientID, clientSecret)
 
     dl.def-list
       dt.def-list__title(data-l8n="content:admin-app-list/label-app-url") !App URL
-      dd.def-list__data.clj--client-url #{appURL}
+      dd.def-list__data.clj--client-url.func--client-url #{appURL}
       dt.def-list__title(data-l8n="content:admin-app-list/label-app-id") !Client ID
       dd.def-list__data.clj--client-id #{clientID}
       dt.def-list__title(data-l8n="content:admin-app-list/label-app-secret") !Client Secret

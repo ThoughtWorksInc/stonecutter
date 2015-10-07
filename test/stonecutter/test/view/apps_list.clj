@@ -5,7 +5,8 @@
             [stonecutter.routes :as r]
             [stonecutter.view.apps-list :refer [apps-list]]
             [stonecutter.translation :as t]
-            [stonecutter.config :as config]))
+            [stonecutter.config :as config]
+            [stonecutter.view.apps-list :as apps-list]))
 
 (fact "user-list should return some html"
       (let [page (-> (th/create-request) apps-list)]
@@ -58,7 +59,9 @@
   [:.clj--admin-app-item__title]       "name-1"            "name-2"
   [:.clj--client-id]                   "client-id-1"       "client-id-2"
   [:.clj--client-secret]               "client-secret-1"   "client-secret-2"
-  [:.clj--client-url]                  "url-1"             "url-2"
-  )
+  [:.clj--client-url]                  "url-1"             "url-2")
 
-
+(fact "form posts to correct endpoint"
+      (let [page (-> (th/create-request nil nil {}) apps-list/apps-list)]
+        page => (th/has-form-action? (r/path :create-client))
+        page => (th/has-form-method? "post")))

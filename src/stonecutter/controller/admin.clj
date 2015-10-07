@@ -39,8 +39,10 @@
                         (:context request))))
 
 (defn create-client [client-store request]
-  (let [client-name (get-in request [:params :client-name])
-        client-url (get-in request [:params :client-url])]
-    (c/store-client client-store client-name client-url)))
+  (let [client-name (get-in request [:params :name])
+        client-url (get-in request [:params :url])]
+    (when (and (not-empty client-name) (not-empty client-url))
+      (c/store-client client-store client-name client-url))
+    (r/redirect (routes/path :show-apps-list))))
 
 

@@ -37,6 +37,13 @@
 
 (def user-trustworthiness-submit :.func--user-item__trust-submit)
 
+(def create-app-form-name :.func--admin-add-app-form-name)
+(def create-app-form-url :.func--admin-add-app-form-url)
+(def create-app-form-submit :.func--create-add__button)
+
+(def apps-list-item-title :.func--admin-app-item__title)
+(def apps-list-item-url :.func--client-url)
+
 (def authorise-share-profile-button :.func--authorise-share-profile__button)
 (def authorise-cancel-link :.func--authorise-cancel__link)
 

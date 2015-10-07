@@ -1,6 +1,7 @@
 (ns stonecutter.view.apps-list
   (:require [stonecutter.view.view-helpers :as vh]
-            [net.cgrand.enlive-html :as html]))
+            [net.cgrand.enlive-html :as html]
+            [stonecutter.routes :as r]))
 
 (defn apps-list-items [clients enlive-m]
   (let [admin-app-item-snippet (first (html/select enlive-m [:.clj--admin-app-item]))]
@@ -16,6 +17,9 @@
     (html/at enlive-m [:.clj--admin-apps-list] (html/content (apps-list-items clients enlive-m)))
     (html/at enlive-m [:.clj--admin-apps-list] (html/content nil))))
 
+(defn set-form-action [enlive-m]
+  (html/at enlive-m [:form] (html/set-attr :action (r/path :create-client))))
+
 (defn apps-list [request]
   (let [clients (get-in request [:context :clients])]
     (->> (vh/load-template "public/admin-apps.html")
@@ -24,4 +28,6 @@
          vh/set-sign-out-link
          vh/set-apps-list-link
          vh/set-user-list-link
+         set-form-action
+         vh/add-anti-forgery
          (add-apps-list clients))))

@@ -24,21 +24,9 @@
            (k/visit "/admin/users")
            (kc/response-status-is 200)))
 
-(facts "Admin user can view the apps page"
-       (-> (k/session test-app)
-           (steps/sign-in "admin-user@user.com" "password")
-           (k/visit "/admin/apps")
-           (kc/response-status-is 200)))
-
-(facts "Non-admin user cannot view the apps page"
-       (-> (k/session test-app)
-           (steps/register "normal-user@user.com" "password")
-           (k/visit "/admin/apps")
-           (kc/response-status-is 404)))
-
 (facts "Non-admin user cannot access the user-list page"
        (-> (k/session test-app)
-           (steps/sign-in "normal-user@user.com" "password")
+           (steps/register "normal-user@user.com" "password")
            (k/visit "/admin/users")
            (kc/response-status-is 404)))
 
@@ -50,3 +38,26 @@
            (k/visit "/admin/users")
            (kc/check-and-press ks/user-trustworthiness-submit)
            (kc/response-status-is 302)))
+
+(facts "Admin user can view the apps page"
+       (-> (k/session test-app)
+           (steps/sign-in "admin-user@user.com" "password")
+           (k/visit "/admin/apps")
+           (kc/response-status-is 200)))
+
+(facts "Non-admin user cannot view the apps page"
+       (-> (k/session test-app)
+           (steps/sign-in "normal-user@user.com" "password")
+           (k/visit "/admin/apps")
+           (kc/response-status-is 404)))
+
+(facts "Admin can add an app to the app list"
+       (-> (k/session test-app)
+           (steps/sign-in "admin-user@user.com" "password")
+           (k/visit "/admin/apps")
+           (kc/check-and-fill-in ks/create-app-form-name "client-name")
+           (kc/check-and-fill-in ks/create-app-form-url "client-url")
+           (kc/check-and-press ks/create-app-form-submit)
+           (kc/check-and-follow-redirect)
+           (kc/selector-includes-content [ks/apps-list-item-title] "client-name")
+           (kc/selector-includes-content [ks/apps-list-item-url] "client-url")))

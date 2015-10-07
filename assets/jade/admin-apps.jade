@@ -21,13 +21,13 @@ block content
 
     h1(data-l8n="content:admin-app-list/page-title") !Apps
 
-    p: a.link-button.clj-wip(href="#application-name", data-l8n="content:admin-app-list/link-to-add-more") !Add more apps
+    p: a.link-button(href="#name", data-l8n="content:admin-app-list/link-to-add-more") !Add more apps
 
     ul.admin-app-list.clj--admin-apps-list
       +adminAppItem('Objective8', 'objective8.dcentproject.eu', 'WZAWAXAWADQE', '765456789ABB')
       +adminAppItem('Wild_monkey_juice', 'www.wild-monkey-jui.ce', 'AZAZAXACADQE', '123456789TTD')
 
-    form.admin-add-app-form.clj-wip(action="#", method="post")
+    form.admin-add-app-form(action="#", method="post")
       fieldset
         legend.visuallyhidden Add new App
         p.form-row.clj--application-name
@@ -37,7 +37,7 @@ block content
             = " "
             span.form-row__validation.clj--application-name__validation(data-l8n="content:admin-app-list/app-invalid-validation-message")
               | !Enter the application name
-          input.form-row__input(type="text", id="application-name", name="application-name", placeholder="Example")
+          input.form-row__input.func--admin-add-app-form-name(type="text", id="name", name="name", placeholder="Example")
 
         p.form-row.clj--application-url
           label.form-row__label(for="application-url")
@@ -46,7 +46,7 @@ block content
             = " "
             span.form-row__validation.clj--application-url__validation(data-l8n="content:admin-app-list/url-invalid-validation-message")
               | !Enter the application url
-          input.form-row__input(type="text", id="application-url", name="application-url", placeholder="www.example.com/")
+          input.form-row__input.func--admin-add-app-form-url(type="text", id="url", name="url", placeholder="www.example.com/")
 
         button.button.button--full-width-smallish-devices.func--create-add__button(type="submit" data-l8n="content:admin-app-list/add-app-button")
           | !Add app
