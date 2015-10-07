@@ -15,13 +15,6 @@
                             (user-list/user-list))
                         (:context request))))
 
-(defn show-apps-list [client-store request]
-  (let [clients (c/retrieve-clients client-store)]
-    (sh/enlive-response (-> request
-                            (assoc-in [:context :clients] clients)
-                            (apps-list/apps-list))
-                        (:context request))))
-
 (defn set-user-trustworthiness [user-store request]
   (let [email (get-in request [:params :login])
         trusted? (get-in request [:params :trust-toggle])
@@ -36,5 +29,18 @@
     (-> (r/redirect (routes/path :show-user-list))
         (assoc-in [:flash :translation-key] flash-key)
         (assoc-in [:flash :updated-account-email] email))))
+
+
+(defn show-apps-list [client-store request]
+  (let [clients (c/retrieve-clients client-store)]
+    (sh/enlive-response (-> request
+                            (assoc-in [:context :clients] clients)
+                            (apps-list/apps-list))
+                        (:context request))))
+
+(defn create-client [client-store request]
+  (let [client-name (get-in request [:params :client-name])
+        client-url (get-in request [:params :client-url])]
+    (c/store-client client-store client-name client-url)))
 
 

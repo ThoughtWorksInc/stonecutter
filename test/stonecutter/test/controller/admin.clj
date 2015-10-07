@@ -5,6 +5,7 @@
             [stonecutter.test.test-helpers :as th]
             [stonecutter.db.mongo :as m]
             [stonecutter.db.user :as user]
+            [stonecutter.db.client :as client]
             [stonecutter.config :as config]))
 
 (facts "about apps list"
@@ -18,7 +19,15 @@
                              :body)]
 
                page => (contains #"name-1")
-               page => (contains #"name-2"))))
+               page => (contains #"name-2")))
+
+       (fact "post to create-client with client name and client url creates a client"
+             (let [client-store (m/create-memory-store)
+                   name "client-name"
+                   url "client-url"
+                   request (th/create-request :post (routes/path :create-client) {:client-name name :client-url url})]
+               (admin/create-client client-store request)
+               (client/retrieve-clients client-store) => (just (just {:client-id anything :client-secret anything :name name :url url})))))
 
 (facts "about show-user-list"
        (fact "response body displays the users"

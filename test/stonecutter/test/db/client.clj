@@ -19,7 +19,7 @@
       (let [name "Red Party"
             url "http://redparty.org"]
         (c/store-client client-store name url)
-        (cl-client/clients client-store) => (just (just {:client-id anything :client-secret anything :name "Red Party" :url "http://redparty.org"}))))
+        (cl-client/clients client-store) => (just (just {:client-id anything :client-secret anything :name name :url url}))))
 
 (fact "can store clients using credentials from the map"
       (c/store-clients-from-map client-store client-credentials)

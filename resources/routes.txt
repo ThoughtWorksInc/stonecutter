@@ -29,6 +29,7 @@ POST    /unshare-profile-card                    unshare-profile-card
 GET     /admin/users                             show-user-list
 POST    /admin/set-user-trustworthiness          set-user-trustworthiness
 GET     /admin/apps                              show-apps-list
+POST    /admin/create-client                     create-client
 GET     /api/jwk-set                             jwk-set
 POST    /api/token                               validate-token
 GET     /stylesheets/theme.css                   theme-css
