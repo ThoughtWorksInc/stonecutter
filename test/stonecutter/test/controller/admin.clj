@@ -37,6 +37,17 @@
                    response (admin/create-client client-store request)]
                response) => (th/check-redirects-to (routes/path :show-apps-list))))
 
+(facts "post to create-client will respond with flash message"
+       (fact "adding app sends confirmation flash message"
+             (let [client-store (m/create-memory-store)
+                   name "client-name"
+                   url "client-url"
+                   request (th/create-request :post (routes/path :create-client) {:name name :url url})
+                   response (admin/create-client client-store request)]
+
+               (:flash response) => (contains {:name name})))
+       )
+
 (facts "about show-user-list"
        (fact "response body displays the users"
              (let [user-store (m/create-memory-store)
@@ -74,7 +85,7 @@
                (-> (user/retrieve-user user-store user-email)
                    :role) => (:untrusted config/roles))))
 
-(facts "post will respond with flash message"
+(facts "post to set-user-trustworthiness will respond with flash message"
        (fact "trusting user sends user-trusted flash message"
              (let [user-store (m/create-memory-store)
                    user-email "user3#email.com"

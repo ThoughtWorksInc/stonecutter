@@ -20,14 +20,20 @@
 (defn set-form-action [enlive-m]
   (html/at enlive-m [:form] (html/set-attr :action (r/path :create-client))))
 
+
+(defn set-flash-message [request enlive-m]
+  (if-let [new-client-name (get-in request [:flash :name])]
+    (html/at enlive-m [:.clj--new-app-name] (html/content new-client-name))
+    (vh/remove-element enlive-m [:.clj--flash-message-container])))
+
 (defn apps-list [request]
   (let [clients (get-in request [:context :clients])]
     (->> (vh/load-template "public/admin-apps.html")
-         (vh/add-script "js/main.js")
          vh/remove-work-in-progress
          vh/set-sign-out-link
          vh/set-apps-list-link
          vh/set-user-list-link
          set-form-action
          vh/add-anti-forgery
+         (set-flash-message request)
          (add-apps-list clients))))

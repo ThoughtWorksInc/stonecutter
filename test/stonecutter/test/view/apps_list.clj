@@ -65,3 +65,15 @@
       (let [page (-> (th/create-request nil nil {}) apps-list/apps-list)]
         page => (th/has-form-action? (r/path :create-client))
         page => (th/has-form-method? "post")))
+
+(facts "about flash messages"
+       (fact "no flash messages are displayed by default"
+             (let [page (-> (th/create-request) apps-list)]
+               (-> page (html/select [:.clj--flash-message-container])) => empty?))
+
+       (fact "appropriate flash message is displayed on page when a flash key is included in the request"
+             (let [page (-> (th/create-request)
+                            (assoc-in [:flash :name] "new-client-name")
+                            apps-list)]
+               (-> page (html/select [:.clj--flash-message-container])) =not=> empty?
+               (-> page (html/select [:.clj--new-app-name]) first html/text) => (contains "new-client-name"))))

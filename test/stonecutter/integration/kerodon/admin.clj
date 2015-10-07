@@ -37,7 +37,8 @@
            (steps/sign-in "admin-user@user.com" "password")
            (k/visit "/admin/users")
            (kc/check-and-press ks/user-trustworthiness-submit)
-           (kc/response-status-is 302)))
+           (kc/check-and-follow-redirect)
+           (kc/selector-exists ks/user-trustworthiness-flash-message)))
 
 (facts "Admin user can view the apps page"
        (-> (k/session test-app)
@@ -59,5 +60,6 @@
            (kc/check-and-fill-in ks/create-app-form-url "client-url")
            (kc/check-and-press ks/create-app-form-submit)
            (kc/check-and-follow-redirect)
+           (kc/selector-includes-content [ks/create-app-form-flash-message-name] "client-name")
            (kc/selector-includes-content [ks/apps-list-item-title] "client-name")
            (kc/selector-includes-content [ks/apps-list-item-url] "client-url")))

@@ -36,10 +36,13 @@
 (def sign-out-link :.func--sign-out__link)
 
 (def user-trustworthiness-submit :.func--user-item__trust-submit)
+(def user-trustworthiness-flash-message :.func--flash-message-container)
 
 (def create-app-form-name :.func--admin-add-app-form-name)
 (def create-app-form-url :.func--admin-add-app-form-url)
 (def create-app-form-submit :.func--create-add__button)
+(def create-app-form-flash-message :.func--flash-message-container)
+(def create-app-form-flash-message-name :.func--new-app-name)
 
 (def apps-list-item-title :.func--admin-app-item__title)
 (def apps-list-item-url :.func--client-url)
