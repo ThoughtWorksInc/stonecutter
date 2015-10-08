@@ -96,10 +96,12 @@
   (html/at enlive-m [:.clj--change-password__form] (html/set-attr :action (r/path :change-password))))
 
 (defn change-password-form [request]
-  (let [err (get-in request [:context :errors])]
+  (let [err (get-in request [:context :errors])
+        library-m (vh/load-template "public/library.html")]
     (->> (vh/load-template "public/change-password.html")
          set-form-action
          set-cancel-link
+         (#(vh/display-admin-navigation-links % request library-m))
          (add-change-password-errors err)
          vh/add-anti-forgery
          vh/remove-work-in-progress

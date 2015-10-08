@@ -20,6 +20,10 @@
       (let [page (-> (th/create-request) user-list)]
         page => (th/has-attr? [:.clj--sign-out__link] :href (r/path :sign-out))))
 
+(fact "profile link should go to correct endpoint"
+      (let [page (-> (th/create-request) user-list)]
+        page => (th/has-attr? [:.clj--profile__link] :href (r/path :show-profile))))
+
 (fact "user list link should go to correct endpoint"
       (let [page (-> (th/create-request) user-list)]
         page => (th/has-attr? [:.clj--user-list__link] :href (r/path :show-user-list))))

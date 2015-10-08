@@ -5,7 +5,8 @@
             [stonecutter.test.view.test-helpers :as th]
             [stonecutter.translation :as t]
             [stonecutter.view.profile :refer [profile]]
-            [stonecutter.helper :as helper]))
+            [stonecutter.helper :as helper]
+            [stonecutter.config :as config]))
 
 (fact "profile should return some html"
       (let [page (-> (th/create-request) profile)]
@@ -18,6 +19,10 @@
 (fact "sign out link should go to correct endpoint"
       (let [page (-> (th/create-request) profile)]
         page => (th/has-attr? [:.clj--sign-out__link] :href (r/path :sign-out))))
+
+(fact "profile link should go to correct endpoint"
+      (let [page (-> (th/create-request) profile)]
+        page => (th/has-attr? [:.clj--profile__link] :href (r/path :show-profile))))
 
 (fact "change password link should go to correct endpoint"
       (let [page (-> (th/create-request) profile)]
@@ -37,9 +42,26 @@
       (let [page (-> (th/create-request) (assoc-in [:context :confirmed?] false) profile)]
         page => (th/element-exists? [:input#__anti-forgery-token])))
 
+(facts "about displaying navigation bar"
+       (fact "apps and users links are not displayed if the user role is not admin"
+             (let [page (-> (th/create-request)
+                            profile)]
+               (-> page (html/select [:.clj--apps-list__link])) => empty?
+               (-> page (html/select [:.clj--users-list__link])) => empty?))
+
+       (fact "apps and users links are displayed and go to the correct endpoint if the user role is admin"
+             (let [page (-> (th/create-request)
+                            (assoc-in [:context :role] (:admin config/roles))
+                            profile)]
+               (-> page (html/select [:.clj--apps-list__link])) =not=> empty?
+               (-> page (html/select [:.clj--user-list__link])) =not=> empty?
+               page => (th/has-attr? [:.clj--apps-list__link] :href (r/path :show-apps-list))
+               page => (th/has-attr? [:.clj--user-list__link] :href (r/path :show-user-list)))))
+
 (facts "about flash messages"
        (fact "no flash messages are displayed by default"
-             (let [page (-> (th/create-request) profile)]
+             (let [page (-> (th/create-request)
+                            profile)]
                (-> page (html/select [:.clj--flash-message-container])) => empty?))
 
        (tabular

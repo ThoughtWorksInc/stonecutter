@@ -30,9 +30,7 @@
   (let [clients (get-in request [:context :clients])]
     (->> (vh/load-template "public/admin-apps.html")
          vh/remove-work-in-progress
-         vh/set-sign-out-link
-         vh/set-apps-list-link
-         vh/set-user-list-link
+         vh/set-admin-links
          set-form-action
          vh/add-anti-forgery
          (set-flash-message request)

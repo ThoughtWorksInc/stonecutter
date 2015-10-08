@@ -203,6 +203,7 @@ admin:
   nav-users: Users
   nav-invite-user: Invite
   nav-apps: Apps
+  nav-profile: Profile
 
 admin-sign-in-form:
   title: Sign in

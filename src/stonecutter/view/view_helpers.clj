@@ -3,7 +3,8 @@
             [net.cgrand.enlive-html :as html]
             [clojure.tools.logging :as log]
             [stonecutter.translation :as t]
-            [stonecutter.routes :as r]))
+            [stonecutter.routes :as r]
+            [stonecutter.config :as config]))
 
 (defn anti-forgery-snippet []
   (html/html-snippet (anti-forgery-field)))
@@ -87,3 +88,38 @@
   (->> nodes
        html/emit*
        (apply str)))
+
+(defn set-profile-link [enlive-m]
+  (html/at enlive-m
+           [:.clj--profile__link] (html/set-attr :href (r/path :show-profile))))
+
+(defn set-user-list-link [enlive-m]
+  (html/at enlive-m
+           [:.clj--user-list__link] (html/set-attr :href (r/path :show-user-list))))
+
+(defn set-apps-list-link [enlive-m]
+  (html/at enlive-m
+           [:.clj--apps-list__link] (html/set-attr :href (r/path :show-apps-list))))
+
+(defn set-admin-links [enlive-m]
+  (-> enlive-m
+      set-user-list-link
+      set-apps-list-link
+      set-profile-link
+      set-sign-out-link))
+
+(defn set-user-links [enlive-m]
+  (-> enlive-m
+      set-profile-link
+      set-sign-out-link))
+
+(defn display-admin-navigation-links [enlive-m request library-m]
+  (let [role (get-in request [:context :role])
+        admin-navigation-links-snippet (first (html/select library-m [:.clj--admin-navigation-links]))
+        user-navigation-links-snippet (first (html/select library-m [:.clj--user-navigation-links]))]
+    (html/at enlive-m [:.clj--header-nav]
+             (if (= role (:admin config/roles))
+               (html/content (-> admin-navigation-links-snippet
+                                 set-admin-links))
+               (html/content (-> user-navigation-links-snippet
+                                 set-user-links))))))

@@ -4,7 +4,8 @@
             [stonecutter.test.view.test-helpers :as th]
             [stonecutter.routes :as r]
             [stonecutter.view.change-password :refer [change-password-form
-                                                      current-password-error-translation-key]]))
+                                                      current-password-error-translation-key]]
+            [stonecutter.config :as c]))
 
 (fact "should return some html"
       (let [page (-> (th/create-request)
@@ -28,6 +29,26 @@
 (fact "page has script link to javascript file"
       (let [page (-> (th/create-request) change-password-form)]
         (html/select page [[:script (html/attr= :src "js/main.js")]]) =not=> empty?))
+
+(facts "about displaying navigation bar"
+       (fact "profile link should go to the correct end point"
+             (let [page (-> (th/create-request) change-password-form)]
+               page => (th/has-attr? [:.clj--profile__link] :href (r/path :show-profile))))
+
+       (fact "apps and users links are not displayed if the user role is not admin"
+             (let [page (-> (th/create-request)
+                            change-password-form)]
+               (-> page (html/select [:.clj--apps-list__link])) => empty?
+               (-> page (html/select [:.clj--users-list__link])) => empty?))
+
+       (fact "apps and users links are displayed and go to the correct endpoint if the user role is admin"
+             (let [page (-> (th/create-request)
+                            (assoc-in [:context :role] (:admin c/roles))
+                            change-password-form)]
+               (-> page (html/select [:.clj--apps-list__link])) =not=> empty?
+               (-> page (html/select [:.clj--user-list__link])) =not=> empty?
+               page => (th/has-attr? [:.clj--apps-list__link] :href (r/path :show-apps-list))
+               page => (th/has-attr? [:.clj--user-list__link] :href (r/path :show-user-list)))))
 
 (facts "about removing elements when there are no errors"
        (let [page (-> (th/create-request) change-password-form)]

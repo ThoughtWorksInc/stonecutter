@@ -66,7 +66,7 @@
         (diplay-email-unconfirmed-message request)
         (add-profile-card request)
         (add-application-list request library-m)
-        vh/set-sign-out-link
+        (vh/display-admin-navigation-links request library-m)
         set-change-password-link
         set-delete-account-link
         (hide-admin-span request)

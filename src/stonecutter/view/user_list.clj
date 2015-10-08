@@ -49,16 +49,13 @@
       :user-untrusted (html/at enlive-m-with-user-login [:.clj--flash-message-text] (html/set-attr :data-l8n "content:flash/user-untrusted"))
       (vh/remove-element enlive-m [:.clj--flash-message-container]))))
 
-
 (defn user-list [request]
   (let [users (get-in request [:context :users])
         non-admin-users (filterv not-an-admin? users)]
     (-> (vh/load-template "public/user-list.html")
+        vh/remove-work-in-progress
+        vh/set-admin-links
         (add-user-list non-admin-users)
-        (set-flash-message request)
-        vh/set-sign-out-link
-        vh/set-apps-list-link
-        vh/set-user-list-link
         vh/add-anti-forgery
-        (#(vh/add-script "../js/main.js" %))
-        vh/remove-work-in-progress)))
+        (set-flash-message request)
+        (#(vh/add-script "../js/main.js" %)))))

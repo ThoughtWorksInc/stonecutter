@@ -88,3 +88,22 @@ block content
               = " "
               span.clj--email-address !email@example.com
             p.flash-message__title.flash-message__title--not-bold(data-l8n="content:flash/confirm-email-sent-post-email-address") !Please follow the instructions to confirm your email address.
+
+
+    .section
+      h2.section-title Admin navigation
+
+      .library-item
+        h3.library-title Using admin navigation mixin
+        .library__demo
+          span.clj--admin-navigation-links
+            include _admin_navigation
+
+    .section
+      h2.section-title User navigation
+
+      .library-item
+        h3.library-title Using user navigation mixin
+        .library__demo
+          span.clj--user-navigation-links
+            include _user_navigation
