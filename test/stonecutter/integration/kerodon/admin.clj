@@ -64,6 +64,21 @@
            (kc/selector-includes-content [ks/apps-list-item-title] "client-name")
            (kc/selector-includes-content [ks/apps-list-item-url] "client-url")))
 
+(facts "Admin cannot add apps with blank or empty fields"
+       (-> (k/session test-app)
+           (steps/sign-in "admin-user@user.com" "password")
+           (k/visit "/admin/apps")
+           (kc/check-and-fill-in ks/create-app-form-name "   ")
+           (kc/check-and-fill-in ks/create-app-form-url "   ")
+           (kc/check-and-press ks/create-app-form-submit)
+           (kc/check-and-follow-redirect)
+           (kc/selector-does-not-include-content [ks/create-app-form-flash-message-name] "   ")
+           (kc/selector-does-not-include-content [ks/apps-list-item-title] "   ")
+           (kc/selector-does-not-include-content [ks/apps-list-item-url] "   ")
+           (kc/check-and-press ks/create-app-form-submit)
+           (kc/check-and-follow-redirect)
+           (kc/selector-not-present [ks/create-app-form-flash-message-name])))
+
 (facts "Admin can change password"
        (-> (k/session test-app)
            (steps/sign-in "admin-user@user.com" "password")

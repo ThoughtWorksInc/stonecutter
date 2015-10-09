@@ -6,7 +6,8 @@
             [stonecutter.db.user :as u]
             [stonecutter.db.client :as c]
             [stonecutter.routes :as routes]
-            [stonecutter.config :as config]))
+            [stonecutter.config :as config]
+            [clojure.string :as s]))
 
 (defn show-user-list [user-store request]
   (let [users (u/retrieve-users user-store)]
@@ -41,7 +42,7 @@
 (defn create-client [client-store request]
   (let [client-name (get-in request [:params :name])
         client-url (get-in request [:params :url])]
-    (if (and (not-empty client-name) (not-empty client-url))
+    (if (and (not (s/blank? client-name)) (not (s/blank? client-url)))
       (do (c/store-client client-store client-name client-url)
           (-> (r/redirect (routes/path :show-apps-list))
               (assoc-in [:flash :name] client-name)))
