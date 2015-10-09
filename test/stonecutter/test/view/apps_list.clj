@@ -32,7 +32,7 @@
       (let [page (-> (th/create-request) apps-list)]
         page => (th/has-attr? [:.clj--apps-list__link] :href (r/path :show-apps-list))))
 
-(future-fact
+(fact "there are no missing translations"
   (let [translator (t/translations-fn t/translation-map)
         request (th/create-request translator)]
     (th/test-translations "apps-list" apps-list request)))

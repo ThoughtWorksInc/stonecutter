@@ -190,9 +190,10 @@
                  (fact "the user is logged in and existing session values are not preserved"
                        (-> response :session :user-login) => email-address
                        (-> response :session :access_token) =not=> nil?
+                       (-> response :session :role) =not=> nil?
                        (-> response :session :access_token) => (-> (cl-store/entries token-store) first :token)
                        (-> (cl-store/entries token-store) first :subject) => (user/retrieve-user user-store email-address)
-                       (-> response :session count) => 2)
+                       (-> response :session count) => 3)
                  (fact "the response has a flash message indicating that the user's password has been changed"
                        (-> response :flash) => :password-changed)
                  (fact "the user is redirected to the profile page"

@@ -104,8 +104,8 @@
                   (ec/confirmation-sign-in ...user-store... ...token-store... ...confirmation-store...))
              => (contains {:status  302
                            :headers {"Location" confirm-email-path}
-                           :session {:user-login   ...user-login...
-                                     :access_token ...token...}})
+                           :session (contains {:user-login   ...user-login...
+                                               :access_token ...token...})})
              (provided
                (user/authenticate-and-retrieve-user ...user-store... email password) => {:login ...user-login...}
                (conf/fetch ...confirmation-store... confirmation-id) => {:login email :confirmation-id confirmation-id}

@@ -167,8 +167,8 @@
       (->> (th/create-request :post (routes/path :sign-in-or-register) sign-in-user-params)
            (u/sign-in-or-register ...user-store... ...token-store... ...confirmation-store... ...email-sender...))
       => (contains {:status  302 :headers {"Location" (routes/path :show-profile)}
-                    :session {:user-login   ...user-login...
-                              :access_token ...token...}})
+                    :session (contains {:user-login   ...user-login...
+                                        :access_token ...token...})})
       (provided
         (user/authenticate-and-retrieve-user ...user-store... default-email default-password) => {:login ...user-login...}
         (cl-token/create-token ...token-store... nil {:login ...user-login...}) => {:token ...token...}))
@@ -177,7 +177,7 @@
       (->> (th/create-request :post (routes/path :sign-in-or-register) sign-in-user-params {:return-to ...return-to-url...})
            (u/sign-in-or-register ...user-store... ...token-store... ...confirmation-store... ...email-sender...))
       => (contains {:status  302 :headers {"Location" ...return-to-url...}
-                    :session {:access_token ...token... :user-login ...user-login...}})
+                    :session (contains {:access_token ...token... :user-login ...user-login...})})
       (provided
         (user/authenticate-and-retrieve-user ...user-store... default-email default-password) => {:login ...user-login...}
         (cl-token/create-token ...token-store... nil {:login ...user-login...}) => {:token ...token...}))
@@ -376,16 +376,17 @@
                                                                        :role  ?role})
                (let [enlive-snippet
                      (->> (th/create-request :get (routes/path :show-profile) nil {:user-login ...email...})
+                          (#(assoc-in % [:session :role] ?role))
                           (u/show-profile (m/create-memory-store) ...user-store...)
                           :body
                           html/html-snippet)]
 
                  (html/select enlive-snippet [:.clj--admin__span]) => ?result))
 
-         ?role ?result
-         (:admin config/roles) (one-of anything)
-         "nobody" empty?
-         nil empty?))
+         ?role                  ?result
+         (:admin config/roles)  (one-of anything)
+         "nobody"               empty?
+         nil                    empty?))
 
 (facts "about resending confirmation emails"
        (facts "when the user's email address has not yet been confirmed"

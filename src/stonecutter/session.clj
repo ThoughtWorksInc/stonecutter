@@ -12,6 +12,9 @@
 (defn set-user-login [response user-login]
   (assoc-in response [:session :user-login] user-login))
 
+(defn set-user-role [response user-role]
+  (assoc-in response [:session :role] user-role))
+
 (defn set-access-token [response access-token]
   (assoc-in response [:session :access_token] access-token))
 

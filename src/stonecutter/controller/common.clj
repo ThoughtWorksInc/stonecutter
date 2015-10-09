@@ -11,6 +11,7 @@
    (-> response
        (session/replace-session-with existing-session)
        (session/set-user-login (:login user))
+       (session/set-user-role (:role user))
        (session/set-access-token (token/generate-login-access-token token-store user)))))
 
 (defn sign-in-to-index

@@ -43,7 +43,7 @@
 
        (fact "apps and users links are displayed and go to the correct endpoint if the user role is admin"
              (let [page (-> (th/create-request)
-                            (assoc-in [:context :role] (:admin c/roles))
+                            (assoc-in [:session :role] (:admin c/roles))
                             change-password-form)]
                (-> page (html/select [:.clj--apps-list__link])) =not=> empty?
                (-> page (html/select [:.clj--user-list__link])) =not=> empty?

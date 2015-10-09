@@ -114,7 +114,7 @@
       set-sign-out-link))
 
 (defn display-admin-navigation-links [enlive-m request library-m]
-  (let [role (get-in request [:context :role])
+  (let [role (get-in request [:session :role])
         admin-navigation-links-snippet (first (html/select library-m [:.clj--admin-navigation-links]))
         user-navigation-links-snippet (first (html/select library-m [:.clj--user-navigation-links]))]
     (html/at enlive-m [:.clj--header-nav]

@@ -7,7 +7,6 @@
             [stonecutter.translation :as t]
             [stonecutter.config :as config]))
 
-
 (fact "user-list should return some html"
       (let [page (-> (th/create-request) user-list)]
         (html/select page [:body]) =not=> empty?))

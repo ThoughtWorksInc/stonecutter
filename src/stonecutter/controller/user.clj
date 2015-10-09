@@ -125,7 +125,6 @@
     (-> request
         (assoc-in [:context :authorised-clients] authorised-clients)
         (assoc-in [:context :confirmed?] confirmed?)
-        (assoc-in [:context :role] role)
         (assoc-in [:context :user-login] (:login user))
         (assoc-in [:context :user-first-name] (:first-name user))
         (assoc-in [:context :user-last-name] (:last-name user))

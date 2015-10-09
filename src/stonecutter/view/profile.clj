@@ -41,7 +41,7 @@
            [:.clj--delete-account__link] (html/set-attr :href (r/path :show-delete-account-confirmation))))
 
 (defn hide-admin-span [enlive-m request]
-  (let [role (get-in request [:context :role])]
+  (let [role (get-in request [:session :role])]
     (html/at enlive-m [:.clj--admin__span]
              (when (= role (:admin config/roles)) identity))))
 

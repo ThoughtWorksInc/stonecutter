@@ -34,6 +34,8 @@
 (def confirmation-sign-in-password-input :.func--password__input)
 
 (def sign-out-link :.func--sign-out__link)
+(def apps-list-link :.func--show-apps__link)
+(def user-list-link :.func--show-users__link)
 
 (def user-trustworthiness-submit :.func--user-item__trust-submit)
 (def user-trustworthiness-flash-message :.func--flash-message-container)

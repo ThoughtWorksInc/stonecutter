@@ -106,3 +106,4 @@
          vh/add-anti-forgery
          vh/remove-work-in-progress
          (vh/add-script "js/main.js"))))
+
