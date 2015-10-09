@@ -3,6 +3,9 @@
             [net.cgrand.enlive-html :as html]
             [stonecutter.routes :as r]))
 
+(defn delete-app-route [client]
+  (r/path :delete-app-confirmation :app-id (or (:client-id client) "unknown")))
+
 (defn apps-list-items [clients enlive-m]
   (let [admin-app-item-snippet (first (html/select enlive-m [:.clj--admin-app-item]))]
     (html/at admin-app-item-snippet [html/root]
@@ -10,7 +13,8 @@
                              [:.clj--admin-app-item__title] (html/content (:name client))
                              [:.clj--client-id] (html/content (:client-id client))
                              [:.clj--client-secret] (html/content (:client-secret client))
-                             [:.clj--client-url] (html/content (:url client))))))
+                             [:.clj--client-url] (html/content (:url client))
+                             [:.clj--delete-app__link] (html/set-attr :href (delete-app-route client))))))
 
 (defn add-apps-list [clients enlive-m]
   (if-not (empty? clients)

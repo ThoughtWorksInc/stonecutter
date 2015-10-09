@@ -55,15 +55,20 @@
                                                               :url           "url-2"}])
                               apps-list)]
 
-                 (-> page (html/select [:.clj--admin-app-item]))
-                 => (just [(th/text-is? ?selector ?text-1)
-                           (th/text-is? ?selector ?text-2)]))))
+                 (-> page (html/select [:.clj--admin-app-item])
+                     (nth ?position))
+                 => (every-checker
+                          (th/text-is? [:.clj--admin-app-item__title] ?item-title)
+                          (th/text-is? [:.clj--client-id] ?client-id)
+                          (th/text-is? [:.clj--client-secret] ?client-secret)
+                          (th/text-is? [:.clj--client-url] ?client-url)
+                          (th/has-attr? [:.clj--delete-app__link] :href (r/path :delete-app-confirmation :app-id ?client-id))
+                          ))))
 
-  ?selector                            ?text-1             ?text-2
-  [:.clj--admin-app-item__title]       "name-1"            "name-2"
-  [:.clj--client-id]                   "client-id-1"       "client-id-2"
-  [:.clj--client-secret]               "client-secret-1"   "client-secret-2"
-  [:.clj--client-url]                  "url-1"             "url-2")
+  ?position                            ?item-title    ?client-id      ?client-secret      ?client-url
+  0                                    "name-1"       "client-id-1"   "client-secret-1"   "url-1"
+  1                                    "name-2"       "client-id-2"   "client-secret-2"   "url-2"
+  )
 
 (fact "form posts to correct endpoint"
       (let [page (-> (th/create-request nil nil {}) apps-list/apps-list)]

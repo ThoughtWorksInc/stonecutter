@@ -120,6 +120,13 @@ delete-account:
   modal-delete-ok-button: Delete account
   modal-delete-cancel-button: Cancel
 
+delete-app:
+  title: Delete
+  modal-delete-title: 'Are you sure you want to delete this app?'
+  modal-delete-lede: 'If you delete an app users will no longer be able to log in.'
+  modal-delete-ok-button: Delete app
+  modal-delete-cancel-button: Cancel
+
 profile-created:
   title: Your Profile Card has been created
   page-header: Your Profile Card has been created
@@ -241,7 +248,7 @@ admin-app-list:
   add-app-button: Add app
   label-app-id: Client ID
   label-app-secret: Client Secret
-
+  delete-app-button: Delete
 
 
 admin-invite-user:

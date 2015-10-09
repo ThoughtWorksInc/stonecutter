@@ -7,6 +7,7 @@
             [stonecutter.db.client :as c]
             [stonecutter.routes :as routes]
             [stonecutter.config :as config]
+            [stonecutter.view.delete-app :as delete-app]
             [clojure.string :as s]))
 
 (defn show-user-list [user-store request]
@@ -31,7 +32,6 @@
         (assoc-in [:flash :translation-key] flash-key)
         (assoc-in [:flash :updated-account-email] email))))
 
-
 (defn show-apps-list [client-store request]
   (let [clients (c/retrieve-clients client-store)]
     (sh/enlive-response (-> request
@@ -48,4 +48,6 @@
               (assoc-in [:flash :name] client-name)))
       (r/redirect (routes/path :show-apps-list)))))
 
-
+(defn show-delete-app-form [request]
+  (sh/enlive-response (delete-app/delete-app-confirmation request)
+                      (:context request)))

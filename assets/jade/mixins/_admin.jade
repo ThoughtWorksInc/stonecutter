@@ -33,8 +33,8 @@ mixin userItem(fullName, emailAddress, emailIsConfirmed, userIsTrusted)
 mixin adminAppItem(appName, appURL, clientID, clientSecret)
   li.admin-app-item.clj--admin-app-item
     h2.admin-app-item__title.clj--admin-app-item__title.func--admin-app-item__title #{appName}
-    .admin-app-item__delete.clj-wip
-      a.icon-button(href="#are-you-sure-page-like-delete-account")
+    .admin-app-item__delete
+      a.icon-button.clj--delete-app__link(href="#are-you-sure-page-like-delete-account")
         i.fa.fa-trash-o.icon-button__icon
         span.visuallyhidden(data-l8n="content:admin-app-list/delete-app-button") !Delete
         = " "

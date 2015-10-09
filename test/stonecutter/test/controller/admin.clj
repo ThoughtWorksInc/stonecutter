@@ -35,7 +35,7 @@
                    url "client-url"
                    request (th/create-request :post (routes/path :create-client) {:name name :url url})
                    response (admin/create-client client-store request)]
-               response) => (th/check-redirects-to (routes/path :show-apps-list))))
+                   response) => (th/check-redirects-to (routes/path :show-apps-list))))
 
 (facts "post to create-client will respond with flash message"
        (fact "adding app sends confirmation flash message"

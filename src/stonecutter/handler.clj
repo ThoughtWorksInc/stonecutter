@@ -99,7 +99,8 @@
        :show-user-list                       (partial admin/show-user-list user-store)
        :set-user-trustworthiness             (partial admin/set-user-trustworthiness user-store)
        :show-apps-list                       (partial admin/show-apps-list client-store)
-       :create-client                        (partial admin/create-client client-store)}
+       :create-client                        (partial admin/create-client client-store)
+       :delete-app-confirmation              admin/show-delete-app-form}
       (m/wrap-handlers-except #(m/wrap-handle-403 % forbidden-err-handler) #{})
       (m/wrap-handlers-except m/wrap-disable-caching #{:theme-css :index :sign-in-or-register})
       (m/wrap-just-these-handlers #(m/wrap-authorised % (u/authorisation-checker user-store))

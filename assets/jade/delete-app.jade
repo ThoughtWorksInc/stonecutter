@@ -1,0 +1,32 @@
+extends layout/layout
+
+block vars
+  - bodyClass = "func--delete-client-page"
+  - pageTitle = "!Delete your app"
+  - pageTitleDataL8n = "content:delete-app/title"
+
+block content
+  .single-column
+    .modal__content.clj-modal-contents.js-modal
+      .modal__header
+        h2.modal__title(data-l8n="content:delete-app/modal-delete-title")
+          | !Are you sure you want to delete your app?
+      .modal__body
+        p(data-l8n="content:delete-app/modal-delete-lede")
+          | !If you delete your app all your data will be removed.
+      .modal-buttons
+        .modal-buttons__primary
+          form.delete-app.clj--delete-app__form(action="./profile-deleted",method="post")
+            button.button.button--full-width.func--delete-app__button(type="submit", data-l8n="content:delete-app/modal-delete-ok-button") !Delete app
+        .modal-buttons__secondary
+          a.button.button--full-width.button--link.clj--delete-app-cancel__link(href="./profile", data-l8n="content:delete-app/modal-delete-cancel-button") !Cancel
+
+block footerScripts
+  if staticMode
+    script.
+      var form = document.getElementsByClassName('delete-app')[0];
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var formAction = form.getAttribute('action') + "?";
+        window.location = formAction;
+      });

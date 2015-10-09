@@ -33,3 +33,5 @@ POST    /admin/create-client                     create-client
 GET     /api/jwk-set                             jwk-set
 POST    /api/token                               validate-token
 GET     /stylesheets/theme.css                   theme-css
+GET     /admin/apps/:app-id/delete               delete-app-confirmation
+POST    /admin/apps/:app-id/delete               delete-app
