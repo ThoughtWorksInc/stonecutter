@@ -48,6 +48,11 @@
 
 (def apps-list-item-title :.func--admin-app-item__title)
 (def apps-list-item-url :.func--client-url)
+(def apps-list-page :.func--admin-app-list-page)
+(def apps-list-delete-app-link :.func--delete-app__link)
+(def delete-app-page-body :.func--delete-client-page)
+(def delete-app-button :.func--delete-app__button)
+(def cancel-delete-app-link :.func--delete-app-cancel__link)
 
 (def authorise-share-profile-button :.func--authorise-share-profile__button)
 (def authorise-cancel-link :.func--authorise-cancel__link)
@@ -72,3 +77,5 @@
 (def error-500-page-body :.func--error-500-page)
 
 (def css-link [:link (html/attr= :type "text/css")])
+
+

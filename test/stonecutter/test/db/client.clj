@@ -4,7 +4,8 @@
             [stonecutter.db.client :as c]
             [stonecutter.db.mongo :as m]
             [clauth.store :as cl-store]
-            [stonecutter.test.test-helpers :as th]))
+            [stonecutter.test.test-helpers :as th]
+            [stonecutter.db.client :as client]))
 
 (def client-store (m/create-memory-store))
 
@@ -81,3 +82,13 @@
                    client-2 (th/store-client! client-store "name-2" "client-id-2" "client-secret-2" "client-url-2")
                    client-3 (th/store-client! client-store "name-3" "client-id-3" "client-secret-3" "client-url-3")]
                (c/retrieve-clients client-store) => (contains [client-1 client-2 client-3] :in-any-order))))
+
+(fact "can delete a client"
+      (c/store-clients-from-map client-store client-credentials)
+      (c/retrieve-client client-store "ABCDEFGHIJKLM") =not=> nil
+      (c/retrieve-client client-store "NOPQRSTUVWXYZ") =not=> nil
+      (count (c/delete-client! client-store "ABCDEFGHIJKLM")) => 1
+      (c/retrieve-client client-store "ABCDEFGHIJKLM") => nil
+      (c/retrieve-client client-store "NOPQRSTUVWXYZ") =not=> nil
+      (count (c/delete-client! client-store "NOPQRSTUVWXYZ")) => 0
+      (c/retrieve-client client-store "NOPQRSTUVWXYZ") => nil)

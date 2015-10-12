@@ -52,7 +52,7 @@
            (k/visit "/admin/apps")
            (kc/response-status-is 404)))
 
-(facts "Admin can add an app to the app list"
+(facts "Admin can add and delete an app while on the app list"
        (-> (k/session test-app)
            (steps/sign-in "admin-user@user.com" "password")
            (k/visit "/admin/apps")
@@ -62,7 +62,24 @@
            (kc/check-and-follow-redirect)
            (kc/selector-includes-content [ks/create-app-form-flash-message-name] "client-name")
            (kc/selector-includes-content [ks/apps-list-item-title] "client-name")
-           (kc/selector-includes-content [ks/apps-list-item-url] "client-url")))
+           (kc/selector-includes-content [ks/apps-list-item-url] "client-url")
+
+           (k/follow ks/apps-list-delete-app-link)
+           (kc/selector-exists [ks/delete-app-page-body])
+           (k/follow ks/cancel-delete-app-link)
+           (kc/check-page-is :show-apps-list [ks/apps-list-page])
+           (kc/selector-not-present [ks/create-app-form-flash-message-name])
+           (kc/selector-includes-content [ks/apps-list-item-title] "client-name")
+           (kc/selector-includes-content [ks/apps-list-item-url] "client-url")
+
+           (k/follow ks/apps-list-delete-app-link)
+           (kc/selector-exists [ks/delete-app-page-body])
+           (kc/check-and-press ks/delete-app-button)
+           (kc/check-and-follow-redirect)
+           (kc/check-page-is :show-apps-list [ks/apps-list-page])
+           (kc/selector-not-present [ks/apps-list-item-title])
+           (kc/selector-not-present [ks/apps-list-item-url])))
+
 
 (facts "Admin cannot add apps with blank or empty fields"
        (-> (k/session test-app)

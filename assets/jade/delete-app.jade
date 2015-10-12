@@ -16,10 +16,10 @@ block content
           | !If you delete your app all your data will be removed.
       .modal-buttons
         .modal-buttons__primary
-          form.delete-app.clj--delete-app__form(action="./profile-deleted",method="post")
+          form.delete-app.clj--delete-app__form.func--delete-app__form(action="./profile-deleted",method="post")
             button.button.button--full-width.func--delete-app__button(type="submit", data-l8n="content:delete-app/modal-delete-ok-button") !Delete app
         .modal-buttons__secondary
-          a.button.button--full-width.button--link.clj--delete-app-cancel__link(href="./profile", data-l8n="content:delete-app/modal-delete-cancel-button") !Cancel
+          a.button.button--full-width.button--link.clj--delete-app-cancel__link.func--delete-app-cancel__link(href="./profile", data-l8n="content:delete-app/modal-delete-cancel-button") !Cancel
 
 block footerScripts
   if staticMode

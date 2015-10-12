@@ -8,7 +8,8 @@
             [stonecutter.routes :as routes]
             [stonecutter.config :as config]
             [stonecutter.view.delete-app :as delete-app]
-            [clojure.string :as s]))
+            [clojure.string :as s]
+            [stonecutter.session :as session]))
 
 (defn show-user-list [user-store request]
   (let [users (u/retrieve-users user-store)]
@@ -38,6 +39,12 @@
                             (assoc-in [:context :clients] clients)
                             (apps-list/apps-list))
                         (:context request))))
+
+(defn delete-app [client-store request]
+  (let [app-id (get-in request [:params :app-id])]
+    (c/delete-client! client-store app-id)
+    (r/redirect (routes/path :show-apps-list))))
+
 
 (defn create-client [client-store request]
   (let [client-name (get-in request [:params :name])

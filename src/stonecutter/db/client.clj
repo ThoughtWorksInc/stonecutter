@@ -27,6 +27,9 @@
 (defn delete-clients! [client-store]
   (cl-client/reset-client-store! client-store))
 
+(defn delete-client! [client-store client-id]
+  (cl-store/revoke! client-store client-id))
+
 (defn retrieve-client [client-store client-id]
   (dissoc (cl-client/fetch-client client-store client-id) :client-secret))
 

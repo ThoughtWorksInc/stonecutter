@@ -36,8 +36,7 @@
        (fact "form posts to correct endpoint"
              (let [page (-> (th/create-request)
                             (assoc-app-id "blah")
-                            delete-app-confirmation
-                            )]
+                            delete-app-confirmation)]
                (-> page (html/select [:form]) first :attrs :action) => (r/path :delete-app :app-id "blah")))
 
        (fact "cancel link should go to correct endpoint"
