@@ -97,3 +97,27 @@
                (-> page (html/select [:.clj--flash-message-delete-container])) =not=> empty?
                (-> page (html/select [:.clj--flash-message-add-container])) => empty?
                (-> page (html/select [:.clj--deleted-app-name]) first html/text) => (contains "client-name"))))
+
+(facts "about validation messages"
+       (fact "no validation is displayed by default"
+             (let [page (-> (th/create-request)
+                            apps-list)]
+               (fact "no elements have class for styling and unhiding errors"
+                     (html/select page [:.form-row--invalid]) => empty?)
+               (fact "app name validation element is not removed - it is hidden by not having the <form-row--invalid> in a parent"
+                     (html/select page [:.clj--application-name__validation]) =not=> empty?)
+               (fact "app url validation element is not removed - it is hidden by not having the <form-row--invalid> in a parent"
+                     (html/select page [:.clj--application-url__validation]) =not=> empty?)))
+       (fact "validation message is displayed when input is empty"
+             (let [errors {:app-name :blank}
+                   params {:app-name " "}
+                   page (-> (th/create-request {} errors params) apps-list)
+                   error-translation "content:admin-app-list/app-name-blank-error"]
+               (fact "the class for styling errors is added"
+                     (html/select page [:.form-row--invalid]) =not=> empty?)
+               (fact "application name validation element is present"
+                     (html/select page [:.clj--application-name__validation]) =not=> empty?)
+               (fact "correct error message is displayed"
+                     (html/select page [[:.clj--application-name__validation (html/attr= :data-l8n error-translation)]]) =not=> empty?)
+               (fact "there are no missing translations"
+                     (th/test-translations "apps list page" (constantly page))))))

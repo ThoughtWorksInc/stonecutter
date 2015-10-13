@@ -250,6 +250,9 @@ admin-app-list:
   label-app-id: Client ID
   label-app-secret: Client Secret
   delete-app-button: Delete
+  app-name-blank-error: This cannot be blank
+  app-url-blank-error: This cannot be blank
+  unknown-error: something went wrong
 
 
 admin-invite-user:

@@ -4,9 +4,6 @@
             [stonecutter.routes :as r]
             [stonecutter.view.view-helpers :as vh]))
 
-(defn add-error-class [enlive-m field-row-selector]
-  (html/at enlive-m field-row-selector (html/add-class "form-row--invalid")))
-
 (def unknown-error-translation-key "content:index/register-unknown-error")
 
 (def error-translations
@@ -31,7 +28,7 @@
   (if-let [sign-in-email-error (:sign-in-email err)]
     (let [error-translation (get-in error-translations [:sign-in-email sign-in-email-error])]
       (-> enlive-m
-          (add-error-class [:.clj--sign-in-email])
+          (vh/add-error-class [:.clj--sign-in-email])
           (html/at [:.clj--sign-in-email__validation] (html/set-attr :data-l8n (or error-translation "content:index/sign-in-unknown-error")))))
     (vh/remove-element enlive-m [:.clj--sign-in-email__validation])))
 
@@ -39,7 +36,7 @@
   (if-let [sign-in-password-error (:sign-in-password err)]
     (let [error-translation (get-in error-translations [:sign-in-password sign-in-password-error])]
       (-> enlive-m
-          (add-error-class [:.clj--sign-in-password])
+          (vh/add-error-class [:.clj--sign-in-password])
           (html/at [:.clj--sign-in-password__validation] (html/set-attr :data-l8n (or error-translation "content:index/sign-in-unknown-error")))))
     (vh/remove-element enlive-m [:.clj--sign-in-password__validation])))
 
@@ -71,7 +68,7 @@
   (if-let [registration-first-name-error (:registration-first-name err)]
     (let [error-translation (get-in error-translations [:registration-first-name registration-first-name-error])]
       (-> enlive-m
-          (add-error-class [:.clj--registration-first-name])
+          (vh/add-error-class [:.clj--registration-first-name])
           (html/at [:.clj--registration-first-name__validation] (html/set-attr :data-l8n (or error-translation "content:index/register-unknown-error")))))
     enlive-m))
 
@@ -79,7 +76,7 @@
   (if-let [registration-last-name-error (:registration-last-name err)]
     (let [error-translation (get-in error-translations [:registration-last-name registration-last-name-error])]
       (-> enlive-m
-          (add-error-class [:.clj--registration-last-name])
+          (vh/add-error-class [:.clj--registration-last-name])
           (html/at [:.clj--registration-last-name__validation] (html/set-attr :data-l8n (or error-translation "content:index/register-unknown-error")))))
     enlive-m))
 
@@ -87,7 +84,7 @@
   (if-let [registration-email-error (:registration-email err)]
     (let [error-translation (get-in error-translations [:registration-email registration-email-error])]
       (-> enlive-m
-          (add-error-class [:.clj--registration-email])
+          (vh/add-error-class [:.clj--registration-email])
           (html/at [:.clj--registration-email__validation] (html/set-attr :data-l8n (or error-translation "content:index/register-unknown-error")))))
     enlive-m))
 
@@ -95,7 +92,7 @@
   (if-let [registration-password-error (:registration-password err)]
     (let [error-translation (get-in error-translations [:registration-password registration-password-error])]
       (-> enlive-m
-          (add-error-class [:.clj--registration-password])
+          (vh/add-error-class [:.clj--registration-password])
           (html/at [:.clj--registration-password__validation] (html/set-attr :data-l8n (or error-translation "content:index/register-unknown-error")))))
     enlive-m))
 

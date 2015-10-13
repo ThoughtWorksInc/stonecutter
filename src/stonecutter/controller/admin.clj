@@ -47,15 +47,23 @@
     (-> (r/redirect (routes/path :show-apps-list))
         (assoc-in [:flash :deleted-app-name] (:name client)))))
 
+(defn validate-client-create-form [request]
+  (let [params (:params request)
+        client-name (:name params)
+        client-url (:url params)]
+    (cond-> {}
+            (s/blank? client-name) (assoc :app-name :blank)
+            (s/blank? client-url) (assoc :app-url :blank))))
 
 (defn create-client [client-store request]
   (let [client-name (get-in request [:params :name])
-        client-url (get-in request [:params :url])]
-    (if (and (not (s/blank? client-name)) (not (s/blank? client-url)))
+        client-url (get-in request [:params :url])
+        err (validate-client-create-form request)]
+    (if (empty? err)
       (do (c/store-client client-store client-name client-url)
           (-> (r/redirect (routes/path :show-apps-list))
               (assoc-in [:flash :added-app-name] client-name)))
-      (r/redirect (routes/path :show-apps-list)))))
+      (show-apps-list client-store (assoc-in request [:context :errors] err)))))
 
 (defn show-delete-app-form [request]
   (sh/enlive-response (delete-app/delete-app-confirmation request)

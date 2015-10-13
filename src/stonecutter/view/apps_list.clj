@@ -3,6 +3,10 @@
             [net.cgrand.enlive-html :as html]
             [stonecutter.routes :as r]))
 
+(def error-translations
+  {:app-name {:blank "content:admin-app-list/app-name-blank-error"}
+   :app-url  {:blank "content:admin-app-list/app-url-blank-error"}})
+
 (defn delete-app-route [client]
   (r/path :delete-app-confirmation :app-id (or (:client-id client) "unknown")))
 
@@ -41,11 +45,30 @@
         (set-deleted-app-message deleted-app-name)
         (set-add-app-message new-client-name))))
 
+(defn add-app-name-blank-error [err enlive-m]
+  (if-let [app-name-error (:app-name err)]
+    (let [error-translation (get-in error-translations [:app-name app-name-error])]
+      (-> enlive-m
+          (vh/add-error-class [:.clj--application-name])
+          (html/at [:.clj--application-name__validation] (html/set-attr :data-l8n (or error-translation "content:admin-app-list/unknown-error")))))
+    enlive-m))
+
+(defn add-app-url-blank-error [err enlive-m]
+  (if-let [app-url-error (:app-url err)]
+    (let [error-translation (get-in error-translations [:app-url app-url-error])]
+      (-> enlive-m
+          (vh/add-error-class [:.clj--application-url])
+          (html/at [:.clj--application-url__validation] (html/set-attr :data-l8n (or error-translation "content:admin-app-list/unknown-error")))))
+    enlive-m))
+
 (defn apps-list [request]
-  (let [clients (get-in request [:context :clients])]
+  (let [clients (get-in request [:context :clients])
+        error   (get-in request [:context :errors])]
     (->> (vh/load-template "public/admin-apps.html")
          vh/remove-work-in-progress
          vh/set-admin-links
+         (add-app-name-blank-error error)
+         (add-app-url-blank-error error)
          set-form-action
          vh/add-anti-forgery
          (set-flash-message request)

@@ -6,7 +6,8 @@
             [stonecutter.db.mongo :as m]
             [stonecutter.db.user :as user]
             [stonecutter.db.client :as client]
-            [stonecutter.config :as config]))
+            [stonecutter.config :as config]
+            [net.cgrand.enlive-html :as html]))
 
 (facts "about apps list"
        (fact "response body displays the apps"
@@ -35,7 +36,26 @@
                    url "client-url"
                    request (th/create-request :post (routes/path :create-client) {:name name :url url})
                    response (admin/create-client client-store request)]
-                   response) => (th/check-redirects-to (routes/path :show-apps-list))))
+               response) => (th/check-redirects-to (routes/path :show-apps-list)))
+
+       (tabular
+         (facts "apps page is rendered with errors"
+                (let [client-store (m/create-memory-store)
+                      html-response (->> (th/create-request :post (routes/path :create-client) {:app-name ""
+                                                                                                :app-url  ""})
+                                         (admin/create-client client-store)
+                                         :body
+                                         html/html-snippet)]
+                  (fact "app name and url fields should have validation error class"
+                        (-> html-response
+                            (html/select [?selector])
+                            first
+                            :attrs
+                            :class) => (contains "form-row--invalid"))))
+
+         ?selector
+         :.clj--application-name
+         :.clj--application-url))
 
 (facts "post to create-client will respond with flash message"
        (fact "adding app sends confirmation flash message"

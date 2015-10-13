@@ -108,6 +108,9 @@
       set-profile-link
       set-sign-out-link))
 
+(defn add-error-class [enlive-m field-row-selector]
+  (html/at enlive-m field-row-selector (html/add-class "form-row--invalid")))
+
 (defn set-user-links [enlive-m]
   (-> enlive-m
       set-profile-link
