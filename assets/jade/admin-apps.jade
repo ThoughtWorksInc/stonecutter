@@ -27,12 +27,6 @@ block content
 
     h1(data-l8n="content:admin-app-list/page-title") !Apps
 
-    p: a.link-button(href="#name", data-l8n="content:admin-app-list/link-to-add-more") !Add more apps
-
-    ul.admin-app-list.clj--admin-apps-list
-      +adminAppItem('Objective8', 'objective8.dcentproject.eu', 'WZAWAXAWADQE', '765456789ABB')
-      +adminAppItem('Wild_monkey_juice', 'www.wild-monkey-jui.ce', 'AZAZAXACADQE', '123456789TTD')
-
     form.admin-add-app-form(action="#", method="post")
       fieldset
         legend.visuallyhidden Add new App
@@ -56,4 +50,8 @@ block content
 
         button.button.button--full-width-smallish-devices.func--create-add__button(type="submit" data-l8n="content:admin-app-list/add-app-button")
           | !Add app
+
+    ul.admin-app-list.clj--admin-apps-list
+      +adminAppItem('Objective8', 'objective8.dcentproject.eu', 'WZAWAXAWADQE', '765456789ABB')
+      +adminAppItem('Wild_monkey_juice', 'www.wild-monkey-jui.ce', 'AZAZAXACADQE', '123456789TTD')
 
