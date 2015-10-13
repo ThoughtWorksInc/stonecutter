@@ -41,8 +41,8 @@
        (tabular
          (facts "apps page is rendered with errors"
                 (let [client-store (m/create-memory-store)
-                      html-response (->> (th/create-request :post (routes/path :create-client) {:app-name ""
-                                                                                                :app-url  ""})
+                      html-response (->> (th/create-request :post (routes/path :create-client) {:name ?name
+                                                                                                :url  ?url})
                                          (admin/create-client client-store)
                                          :body
                                          html/html-snippet)]
@@ -51,11 +51,18 @@
                             (html/select [?selector])
                             first
                             :attrs
-                            :class) => (contains "form-row--invalid"))))
+                            :class) => (contains "form-row--invalid"))
 
-         ?selector
-         :.clj--application-name
-         :.clj--application-url))
+                  (fact "values are kept when there is an error"
+                        (-> html-response
+                            (html/select [?second-selector])
+                            first
+                            :attrs
+                            :value) => (contains ?value))))
+
+         ?name         ?url          ?selector                 ?second-selector                 ?value
+         ""            "test url"    :.clj--application-name   :.clj--admin-add-app-form-url    "test url"
+         "test name"   ""            :.clj--application-url    :.clj--admin-add-app-form-name   "test name"))
 
 (facts "post to create-client will respond with flash message"
        (fact "adding app sends confirmation flash message"

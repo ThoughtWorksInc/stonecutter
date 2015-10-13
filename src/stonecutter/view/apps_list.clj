@@ -61,12 +61,20 @@
           (html/at [:.clj--application-url__validation] (html/set-attr :data-l8n (or error-translation "content:admin-app-list/unknown-error")))))
     enlive-m))
 
+(defn keep-submitted-form-input [params enlive-m]
+  (let [name (:name params)
+        url (:url params)]
+    (-> enlive-m
+        (html/at [:.clj--admin-add-app-form-name] (html/set-attr :value name))
+        (html/at [:.clj--admin-add-app-form-url] (html/set-attr :value url)))))
+
 (defn apps-list [request]
   (let [clients (get-in request [:context :clients])
         error   (get-in request [:context :errors])]
     (->> (vh/load-template "public/admin-apps.html")
          vh/remove-work-in-progress
          vh/set-admin-links
+         (keep-submitted-form-input (:params request))
          (add-app-name-blank-error error)
          (add-app-url-blank-error error)
          set-form-action
