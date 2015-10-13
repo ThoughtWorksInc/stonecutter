@@ -45,8 +45,7 @@
                    request (th/create-request :post (routes/path :create-client) {:name name :url url})
                    response (admin/create-client client-store request)]
 
-               (:flash response) => (contains {:name name})))
-       )
+               (:flash response) => (contains {:added-app-name name}))))
 
 (facts "about show-user-list"
        (fact "response body displays the users"

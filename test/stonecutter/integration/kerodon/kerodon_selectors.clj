@@ -45,6 +45,7 @@
 (def create-app-form-submit :.func--create-add__button)
 (def create-app-form-flash-message :.func--flash-message-container)
 (def create-app-form-flash-message-name :.func--new-app-name)
+(def deleted-app-form-flash-message-name :.func--deleted-app-name)
 
 (def apps-list-item-title :.func--admin-app-item__title)
 (def apps-list-item-url :.func--client-url)

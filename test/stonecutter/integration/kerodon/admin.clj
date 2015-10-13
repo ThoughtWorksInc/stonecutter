@@ -78,8 +78,8 @@
            (kc/check-and-follow-redirect)
            (kc/check-page-is :show-apps-list [ks/apps-list-page])
            (kc/selector-not-present [ks/apps-list-item-title])
-           (kc/selector-not-present [ks/apps-list-item-url])))
-
+           (kc/selector-not-present [ks/apps-list-item-url])
+           (kc/selector-includes-content [ks/deleted-app-form-flash-message-name] "client-name")))
 
 (facts "Admin cannot add apps with blank or empty fields"
        (-> (k/session test-app)

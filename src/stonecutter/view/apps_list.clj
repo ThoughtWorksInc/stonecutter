@@ -24,11 +24,22 @@
 (defn set-form-action [enlive-m]
   (html/at enlive-m [:form] (html/set-attr :action (r/path :create-client))))
 
+(defn set-add-app-message [enlive-m new-client-name]
+  (if new-client-name
+    (html/at enlive-m [:.clj--new-app-name] (html/content new-client-name))
+    (vh/remove-element enlive-m [:.func--flash-message-add-container])))
+
+(defn set-deleted-app-message [enlive-m deleted-app-name]
+  (if deleted-app-name
+    (html/at enlive-m [:.clj--deleted-app-name] (html/content deleted-app-name))
+    (vh/remove-element enlive-m [:.func--flash-message-delete-container])))
 
 (defn set-flash-message [request enlive-m]
-  (if-let [new-client-name (get-in request [:flash :name])]
-    (html/at enlive-m [:.clj--new-app-name] (html/content new-client-name))
-    (vh/remove-element enlive-m [:.clj--flash-message-container])))
+  (let [new-client-name (get-in request [:flash :added-app-name])
+        deleted-app-name (get-in request [:flash :deleted-app-name])]
+    (-> enlive-m
+        (set-deleted-app-message deleted-app-name)
+        (set-add-app-message new-client-name))))
 
 (defn apps-list [request]
   (let [clients (get-in request [:context :clients])]

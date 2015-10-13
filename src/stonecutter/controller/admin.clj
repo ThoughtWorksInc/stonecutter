@@ -41,9 +41,11 @@
                         (:context request))))
 
 (defn delete-app [client-store request]
-  (let [app-id (get-in request [:params :app-id])]
+  (let [app-id (get-in request [:params :app-id])
+        client (c/retrieve-client client-store app-id)]
     (c/delete-client! client-store app-id)
-    (r/redirect (routes/path :show-apps-list))))
+    (-> (r/redirect (routes/path :show-apps-list))
+        (assoc-in [:flash :deleted-app-name] (:name client)))))
 
 
 (defn create-client [client-store request]
@@ -52,7 +54,7 @@
     (if (and (not (s/blank? client-name)) (not (s/blank? client-url)))
       (do (c/store-client client-store client-name client-url)
           (-> (r/redirect (routes/path :show-apps-list))
-              (assoc-in [:flash :name] client-name)))
+              (assoc-in [:flash :added-app-name] client-name)))
       (r/redirect (routes/path :show-apps-list)))))
 
 (defn show-delete-app-form [request]

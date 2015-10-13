@@ -240,6 +240,7 @@ admin-app-list:
   title: Apps
   page-title: Apps
   added-flash-success: was successfully added
+  deleted-flash-success: was successfully deleted
   link-to-add-more: Add more apps
   label-app: App name
   app-invalid-validation-message: Enter the application name

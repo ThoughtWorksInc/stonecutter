@@ -13,11 +13,17 @@ block headerContent
 block content
   .single-column
 
-    +flashMessageWithCljContainer('clj--flash-message-container','func--flash-message-container', 'success')
+    +flashMessageWithCljContainer('clj--flash-message-add-container','func--flash-message-add-container', 'success')
       p.flash-message__title
         span.clj--new-app-name.func--new-app-name !Wild_monkey_juice
         = " "
         span.flash-message-text(data-l8n="content:admin-app-list/added-flash-success") !was successfully added
+
+    +flashMessageWithCljContainer('clj--flash-message-delete-container','func--flash-message-delete-container', 'success')
+      p.flash-message__title
+        span.clj--deleted-app-name.func--deleted-app-name !Wild_monkey_juice
+        = " "
+        span.flash-message-text(data-l8n="content:admin-app-list/deleted-flash-success") !was successfully deleted
 
     h1(data-l8n="content:admin-app-list/page-title") !Apps
 
