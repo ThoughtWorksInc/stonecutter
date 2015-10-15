@@ -6,7 +6,7 @@
             [stonecutter.config :as config]))
 
 (defn update-app-name [enlive-m request]
-  (let [app-name (config/app-name (get request :config-m))]
+  (let [app-name (config/app-name (get-in request [:context :config-m]))]
     (-> enlive-m
         (html/at [:.clj--app-name] (html/content app-name)))))
 

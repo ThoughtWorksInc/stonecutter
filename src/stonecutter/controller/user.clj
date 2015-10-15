@@ -24,7 +24,7 @@
 (defn index [request]
   (if (common/signed-in? request)
     (r/redirect (routes/path :show-profile))
-    (sh/enlive-response (index/index request) (:context request))))
+    (sh/enlive-response (index/index request) request)))
 
 (defn send-confirmation-email! [email-sender user email confirmation-id config-m]
   (let [app-name (config/app-name config-m)
@@ -56,7 +56,7 @@
       (index request-with-validation-errors))))
 
 (defn show-change-password-form [request]
-  (sh/enlive-response (change-password/change-password-form request) (:context request)))
+  (sh/enlive-response (change-password/change-password-form request) request))
 
 (defn change-password [user-store request]
   (let [email (session/request->user-login request)
@@ -99,7 +99,7 @@
       cl-ep/logout-handler))
 
 (defn show-delete-account-confirmation [request]
-  (sh/enlive-response (delete-account/delete-account-confirmation request) (:context request)))
+  (sh/enlive-response (delete-account/delete-account-confirmation request) request))
 
 (defn redirect-to-profile-deleted []
   (-> (routes/path :show-profile-deleted)
@@ -129,19 +129,19 @@
         (assoc-in [:context :user-first-name] (:first-name user))
         (assoc-in [:context :user-last-name] (:last-name user))
         profile/profile
-        (sh/enlive-response (:context request)))))
+        (sh/enlive-response request))))
 
 (defn from-app? [request]
   (session/request->return-to request))
 
 (defn show-profile-created [request]
   (let [request (assoc request :params {:from-app (from-app? request)})]
-    (-> (sh/enlive-response (profile-created/profile-created request) (:context request))
+    (-> (sh/enlive-response (profile-created/profile-created request) request)
         (ring-util/preserve-session request)
         (update-in [:session] #(dissoc % :return-to)))))
 
 (defn show-profile-deleted [request]
-  (sh/enlive-response (delete-account/profile-deleted request) (:context request)))
+  (sh/enlive-response (delete-account/profile-deleted request) request))
 
 (defn show-unshare-profile-card [client-store user-store request]
   (when-let [client-id (get-in request [:params :client_id])]
@@ -149,7 +149,7 @@
       (let [client (c/retrieve-client client-store client-id)]
         (-> (assoc-in request [:context :client] client)
             unshare-profile-card/unshare-profile-card
-            (sh/enlive-response (:context request))))
+            (sh/enlive-response request)))
       (r/redirect (routes/path :show-profile)))))
 
 (defn unshare-profile-card [user-store request]

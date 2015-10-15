@@ -24,7 +24,7 @@
   (get-in request [:params :new-password]))
 
 (defn show-forgotten-password-form [request]
-  (sh/enlive-response (forgotten-password-view/forgotten-password-form request) (:context request)))
+  (sh/enlive-response (forgotten-password-view/forgotten-password-form request) request))
 
 (defn create-or-retrieve-id [forgotten-password-store clock email-address expiry-hours]
   (if-let [existing-id (:forgotten-password-id (db/forgotten-password-doc-by-login forgotten-password-store clock email-address))]
@@ -49,7 +49,7 @@
       (show-forgotten-password-form request-with-validation-errors))))
 
 (defn show-forgotten-password-confirmation [request]
-  (sh/enlive-response (forgotten-password-confirmation-view/forgotten-password-confirmation request) (:context request)))
+  (sh/enlive-response (forgotten-password-confirmation-view/forgotten-password-confirmation request) request))
 
 
 (defn redirect-to-forgotten-password-form []
@@ -61,7 +61,7 @@
     (let [forgotten-password-record (e/fetch-with-expiry forgotten-password-store clock forgotten-password-id)]
       (if forgotten-password-record
         (if (user/retrieve-user user-store (:login forgotten-password-record))
-          (sh/enlive-response (reset-password/reset-password-form request) (:context request))
+          (sh/enlive-response (reset-password/reset-password-form request) request)
           (do (cl-store/revoke! forgotten-password-store forgotten-password-id) nil))
         (redirect-to-forgotten-password-form)))))
 

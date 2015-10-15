@@ -16,7 +16,7 @@
     (sh/enlive-response (-> request
                             (assoc-in [:context :users] users)
                             (user-list/user-list))
-                        (:context request))))
+                        request)))
 
 (defn set-user-trustworthiness [user-store request]
   (let [email (get-in request [:params :login])
@@ -38,7 +38,7 @@
     (sh/enlive-response (-> request
                             (assoc-in [:context :clients] clients)
                             (apps-list/apps-list))
-                        (:context request))))
+                        request)))
 
 (defn delete-app [client-store request]
   (let [app-id (get-in request [:params :app-id])
@@ -67,4 +67,4 @@
 
 (defn show-delete-app-form [request]
   (sh/enlive-response (delete-app/delete-app-confirmation request)
-                      (:context request)))
+                      request))

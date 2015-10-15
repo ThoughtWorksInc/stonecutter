@@ -57,6 +57,7 @@
   (prn state)
   state)
 
+
 (facts "User can access index page"
        (-> (k/session test-app)
            (k/visit "/")

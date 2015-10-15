@@ -15,10 +15,10 @@
             [stonecutter.session :as session]))
 
 (defn show-confirm-sign-in-form [request]
-  (sh/enlive-response (sign-in/confirmation-sign-in-form request) (:context request)))
+  (sh/enlive-response (sign-in/confirmation-sign-in-form request) request))
 
 (defn show-error-account-nonexistent [request]
-  (sh/enlive-response (error/account-nonexistent) (:context request)))
+  (sh/enlive-response (error/account-nonexistent) request))
 
 (defn confirm-users-email! [user-store confirmation-store user confirmation-id]
   (log/debug (format "confirmation-ids match. Confirming user's email."))
@@ -85,6 +85,6 @@
 (defn show-confirmation-delete [user-store confirmation-store request]
   (wrap-validate-confirmation
     user-store confirmation-store request
-    #(sh/enlive-response (delete-account/email-confirmation-delete-account request) (:context request))))
+    #(sh/enlive-response (delete-account/email-confirmation-delete-account request) request)))
 
 

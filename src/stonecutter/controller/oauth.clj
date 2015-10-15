@@ -19,7 +19,7 @@
       (let [context (assoc (:context request) :client client)]
         (-> (assoc request :context context)
             authorise/authorise-form
-            (sh/enlive-response context))))))
+            (sh/enlive-response request))))))
 
 (defn add-error-to-uri [uri]
   (str uri "?error=access_denied"))
@@ -34,7 +34,7 @@
                     (assoc-in [:context :client-name] client-name)
                     (assoc-in [:params :callback-uri-with-error] callback-uri-with-error))]
 
-    (sh/enlive-response (authorise-failure/show-authorise-failure request) (:context request))))
+    (sh/enlive-response (authorise-failure/show-authorise-failure request) request)))
 
 (defn auto-approver [user-store request]
   (let [client-id (get-in request [:params :client_id])
