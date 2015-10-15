@@ -35,3 +35,4 @@ POST    /api/token                               validate-token
 GET     /stylesheets/theme.css                   theme-css
 GET     /admin/apps/:app-id/delete               delete-app-confirmation
 POST    /admin/apps/:app-id/delete               delete-app
+GET     /invite                                  show-invite

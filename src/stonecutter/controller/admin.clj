@@ -9,7 +9,8 @@
             [stonecutter.config :as config]
             [stonecutter.view.delete-app :as delete-app]
             [clojure.string :as s]
-            [stonecutter.session :as session]))
+            [stonecutter.session :as session]
+            [stonecutter.view.invite-user :as invite-user]))
 
 (defn show-user-list [user-store request]
   (let [users (u/retrieve-users user-store)]
@@ -39,6 +40,10 @@
                             (assoc-in [:context :clients] clients)
                             (apps-list/apps-list))
                         request)))
+
+(defn show-invite-user-form [request]
+  (sh/enlive-response (invite-user/invite-user request)
+                      request))
 
 (defn delete-app [client-store request]
   (let [app-id (get-in request [:params :app-id])

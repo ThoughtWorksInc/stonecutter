@@ -101,12 +101,17 @@
   (html/at enlive-m
            [:.clj--apps-list__link] (html/set-attr :href (r/path :show-apps-list))))
 
+(defn set-invite-user-link [enlive-m]
+  (html/at enlive-m
+           [:.clj--invite__link] (html/set-attr :href (r/path :show-invite))))
+
 (defn set-admin-links [enlive-m]
   (-> enlive-m
       set-user-list-link
       set-apps-list-link
       set-profile-link
-      set-sign-out-link))
+      set-sign-out-link
+      set-invite-user-link))
 
 (defn add-error-class [enlive-m field-row-selector]
   (html/at enlive-m field-row-selector (html/add-class "form-row--invalid")))
