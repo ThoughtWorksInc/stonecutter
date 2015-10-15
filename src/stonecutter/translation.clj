@@ -3,6 +3,7 @@
             [clojure.java.io :as io]
             [clojure.tools.logging :as log]
             [traduki.core :as t]
+            [taoensso.tower :as tower]
             [stonecutter.util.map :as map]))
 
 (defn load-translations-from-string [s]
@@ -14,11 +15,20 @@
       slurp
       load-translations-from-string))
 
-(def translation-map
-  (map/deep-merge
-    (load-translations-from-file "lang/en.yml")
-    (load-translations-from-file "lang/en-client.yml")))
 
+(defn translation-map [lang]
+  (map/deep-merge
+    (load-translations-from-file (str "lang/" lang ".yml"))
+    (load-translations-from-file (str "lang/" lang "-client.yml"))))
+
+(defn config-translation []
+  {:dictionary                 {:en (translation-map "en")
+                                :fi (translation-map "fi")}
+   :dev-mode?                  false
+   :fallback-locale            :en
+   :log-missing-translation-fn (fn [{:keys [locales ks ns] :as args}]
+                                 (log/warn (str "Missing translation! locales: " locales
+                                                ", keys: " ks ", namespace: " ns)))})
 
 (defmacro load-client-translations []
   (load-translations-from-file "lang/en-client.yml"))
@@ -31,5 +41,10 @@
       (when-not translation (log/warn (str "No translation found for " translation-key)))
       translation)))
 
-(defn context-translate [enlive-m context]
-  (t/translate (:translator context) enlive-m))
+(defn get-locale-from-request [request]
+  (if-let [session-locale (get-in request [:session :locale])]
+    session-locale
+    (get request :locale :en)))
+
+(defn context-translate [enlive-m request]
+  (t/translate (partial (tower/make-t (config-translation)) (get-locale-from-request request)) enlive-m))

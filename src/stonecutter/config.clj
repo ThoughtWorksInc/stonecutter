@@ -11,7 +11,7 @@
            :client-credentials-file-path "Location of file containing client registrations"
            :secure "If set to true will only allow traffic proxied through HTTPS"
            :email-script-path "Location of script used to send e-mails"
-           :app-name "Then name of the application"
+           :app-name "The name of the application"
            :header-bg-color "Background colour of top bar"
            :header-font-color "Colour of font in top bar"
            :header-font-color-hover "Hover colour of font in top bar"

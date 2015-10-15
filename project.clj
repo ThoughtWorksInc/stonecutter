@@ -12,6 +12,7 @@
                  [hickory "0.5.4"]
                  [com.cemerick/url "0.1.1"]
                  [johncowie/clauth "2.0.1"]
+                 [com.taoensso/tower "3.0.2"]
                  [traduki "0.1.3-SNAPSHOT"]
                  [clj-yaml "0.4.0"]
                  [environ "1.0.0"]

@@ -36,7 +36,8 @@
 (against-background
   [(before :contents (do (reset! server (start-server))
                          (start-browser)))
-   (after :contents (do (stop-browser)
+   (after :contents (do
+                      (stop-browser)
                         (stop-server @server)))]
 
   (try

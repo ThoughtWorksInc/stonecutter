@@ -29,6 +29,7 @@
             [stonecutter.admin :as ad]
             [stonecutter.db.storage :as storage]
             [stonecutter.jwt :as jwt]
+            [taoensso.tower.ring :as tower-ring]
             [stonecutter.util.time :as time])
   (:gen-class))
 
@@ -36,22 +37,22 @@
 
 (defn not-found [request]
   (-> (error/not-found-error)
-      (sh/enlive-response default-context)
+      (sh/enlive-response request)
       (r/status 404)))
 
 (defn err-handler [request]
   (-> (error/internal-server-error)
-      (sh/enlive-response default-context)
+      (sh/enlive-response request)
       (r/status 500)))
 
 (defn csrf-err-handler [req]
   (-> (error/csrf-error)
-      (sh/enlive-response default-context)
+      (sh/enlive-response req)
       (r/status 403)))
 
 (defn forbidden-err-handler [req]
   (-> (error/forbidden-error)
-      (sh/enlive-response default-context)
+      (sh/enlive-response req)
       (r/status 403)))
 
 (defn ping [request]
@@ -149,10 +150,10 @@
 (defn create-site-app [clock config-m stores-m email-sender dev-mode?]
   (-> (scenic/scenic-handler routes/routes (site-handlers clock stores-m email-sender) not-found)
       (ring-mw/wrap-defaults (wrap-defaults-config (s/get-session-store stores-m) (config/secure? config-m)))
-      m/wrap-translator
       (m/wrap-config config-m)
       (m/wrap-error-handling err-handler dev-mode?)
       (m/wrap-custom-static-resources config-m)
+      (tower-ring/wrap-tower (t/config-translation))
       (ring-json/wrap-json-params)
       ring-mct/wrap-content-type))
 

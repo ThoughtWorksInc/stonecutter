@@ -26,12 +26,6 @@
         (error-403-handler request)
         response))))
 
-(defn wrap-translator [handler]
-  (fn [request]
-    (-> request
-        (assoc-in [:context :translator] (translation/translations-fn translation/translation-map))
-        handler)))
-
 (defn wrap-config [handler config-m]
   (fn [request]
     (-> request
