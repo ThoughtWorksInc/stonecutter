@@ -9,7 +9,8 @@
    :token-store              (m/create-token-store db)
    :confirmation-store       (m/create-confirmation-store db)
    :session-store            (m/create-session-store db)
-   :forgotten-password-store (m/create-forgotten-password-store db)})
+   :forgotten-password-store (m/create-forgotten-password-store db)
+   :invitation-store         (m/create-invitation-store db)})
 
 (defn create-in-memory-stores []
   {:auth-code-store          (m/create-memory-store)
@@ -18,7 +19,8 @@
    :token-store              (m/create-memory-store)
    :confirmation-store       (m/create-memory-store)
    :forgotten-password-store (m/create-memory-store)
-   :session-store            (mem-session/memory-store)})
+   :session-store            (mem-session/memory-store)
+   :invitation-store         (m/create-memory-store)})
 
 (defn get-auth-code-store [store-m]
   (:auth-code-store store-m))
@@ -40,3 +42,6 @@
 
 (defn get-session-store [store-m]
   (:session-store store-m))
+
+(defn get-invitation-store [store-m]
+  (:invitation-store store-m))

@@ -47,8 +47,8 @@
   {:subject (format "Confirm your email for %s" (:app-name email-data))
    :body (confirmation-email-body (:base-url email-data) (:confirmation-id email-data))})
 
-(defn invite-email-body [base-url app-name]
-  (let [invite-url (str base-url)]
+(defn invite-email-body [base-url app-name invite-id]
+  (let [invite-url (str base-url "/?invite-id=" invite-id)]
     (str
       "Hi,\n"
       "Click this link to join "
@@ -60,7 +60,7 @@
 
 (defn invite-renderer [email-data]
   {:subject (format "You've been invited to join %s" (:app-name email-data))
-   :body (invite-email-body (:base-url email-data) (:app-name email-data))})
+   :body (invite-email-body (:base-url email-data) (:app-name email-data) (:invite-id email-data))})
 
 (defn forgotten-password-email-body [base-url forgotten-password-id]
   (let [reset-path (r/path :show-reset-password-form :forgotten-password-id forgotten-password-id)

@@ -10,6 +10,7 @@
             [stonecutter.controller.user :as u]
             [stonecutter.db.client :as c]
             [stonecutter.db.user :as user]
+            [stonecutter.db.invitations :as inv]
             [stonecutter.db.mongo :as m]
             [stonecutter.util.uuid :as uuid]
             [stonecutter.validation :as v]
@@ -54,10 +55,13 @@
              => (th/check-redirects-to (routes/path :show-profile))))
 
 (facts "about accept invite page"
-       (fact "when invite-id is in the request, the accept request page is rendered"
-             (u/index (th/create-request :get (routes/path :index) {:invite-id ...invite-id...}))
-             => (th/check-renders-page [:.func--accept-invite-page]))
-       (future-fact "when invite-id is in the request but not the database, the index page is rendered"))
+       (fact "when invite-id is in the request and the database, the accept request page is rendered"
+             (let [invite-db (m/create-memory-store)
+                   invite-id (inv/generate-invite-id! invite-db "user@email.somewhere")]
+               (u/index invite-db (th/create-request :get (routes/path :index) {:invite-id invite-id}))
+               => (th/check-renders-page [:.func--accept-invite-page])))
+       (future-fact "when invite-id is in the request but not the database, the index page is rendered"
+             ))
 
 (fact "posting to sign-in-or-register route with no valid action parameter"
       (u/sign-in-or-register ...user-store... ...token-store... ...confirmation-store... ...email-sender...

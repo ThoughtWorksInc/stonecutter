@@ -19,16 +19,23 @@
             [stonecutter.controller.common :as common]
             [ring.util.response :as response]
             [stonecutter.db.confirmation :as confirmation]
-            [stonecutter.session :as session]))
+            [stonecutter.session :as session]
+            [stonecutter.db.invitations :as invitations]))
 
-(defn has-valid-invite-id? [request]
-  (get-in request [:params :invite-id]))
+(defn has-valid-invite-id? [request invitation-store]
+  (let [invite-id (get-in request [:params :invite-id])]
+    (invitations/fetch-by-id invitation-store invite-id)))
 
-(defn index [request]
-  (if (common/signed-in? request)
-    (r/redirect (routes/path :show-profile))
-    (if (has-valid-invite-id? request)
-      (sh/enlive-response (index/accept-invite request) request)
+(defn index
+  ([invitation-store request]
+   (if (common/signed-in? request)
+     (r/redirect (routes/path :show-profile))
+     (if (has-valid-invite-id? request invitation-store)
+       (sh/enlive-response (index/accept-invite request) request)
+       (sh/enlive-response (index/index request) request))))
+  ([request]
+    (if (common/signed-in? request)
+      (r/redirect (routes/path :show-profile))
       (sh/enlive-response (index/index request) request))))
 
 (defn send-confirmation-email! [email-sender user email confirmation-id config-m]

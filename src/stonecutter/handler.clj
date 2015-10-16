@@ -63,12 +63,13 @@
 (defn site-handlers [clock stores-m email-sender]
   (let [user-store (storage/get-user-store stores-m)
         client-store (storage/get-client-store stores-m)
+        invitation-store (storage/get-invitation-store stores-m)
         token-store (storage/get-token-store stores-m)
         confirmation-store (storage/get-confirmation-store stores-m)
         auth-code-store (storage/get-auth-code-store stores-m)
         forgotten-password-store (storage/get-forgotten-password-store stores-m)]
     (->
-      {:index                                user/index
+      {:index                                (partial user/index invitation-store)
        :sign-in-or-register                  (partial user/sign-in-or-register user-store token-store confirmation-store email-sender)
        :ping                                 ping
        :theme-css                            stylesheets/theme-css
@@ -104,7 +105,7 @@
        :delete-app                           (partial admin/delete-app client-store)
        :delete-app-confirmation              admin/show-delete-app-form
        :show-invite                          admin/show-invite-user-form
-       :send-invite                          (partial admin/send-user-invite email-sender)}
+       :send-invite                          (partial admin/send-user-invite email-sender invitation-store)}
       (m/wrap-handlers-except #(m/wrap-handle-403 % forbidden-err-handler) #{})
       (m/wrap-handlers-except m/wrap-disable-caching #{:theme-css :index :sign-in-or-register})
       (m/wrap-just-these-handlers #(m/wrap-authorised % (u/authorisation-checker user-store))
@@ -128,8 +129,8 @@
         user-store (storage/get-user-store stores-m)
         client-store (storage/get-client-store stores-m)
         token-store (storage/get-token-store stores-m)]
-    {:validate-token                (partial oauth/validate-token config-m auth-code-store client-store user-store token-store id-token-generator)
-     :jwk-set                       (partial oauth/jwk-set json-web-key-set)}))
+    {:validate-token (partial oauth/validate-token config-m auth-code-store client-store user-store token-store id-token-generator)
+     :jwk-set        (partial oauth/jwk-set json-web-key-set)}))
 
 (defn splitter [site api]
   (fn [request]

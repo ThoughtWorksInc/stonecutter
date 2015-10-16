@@ -11,7 +11,8 @@
             [clojure.string :as s]
             [stonecutter.session :as session]
             [stonecutter.view.invite-user :as invite-user]
-            [stonecutter.email :as email]))
+            [stonecutter.email :as email]
+            [stonecutter.db.invitations :as invite-db]))
 
 (defn show-user-list [user-store request]
   (let [users (u/retrieve-users user-store)]
@@ -47,16 +48,17 @@
                       request))
 
 
-(defn send-invite-email! [email-sender email config-m]
+(defn send-invite-email! [email-sender email invitation-store config-m]
   (let [app-name (config/app-name config-m)
-        base-url (config/base-url config-m)]
-    (email/send! email-sender :invite email {
-                                                   :app-name        app-name
-                                                   :base-url        base-url})))
+        base-url (config/base-url config-m)
+        invite-id (invite-db/generate-invite-id! invitation-store email)]
+    (email/send! email-sender :invite email {:invite-id invite-id
+                                             :app-name  app-name
+                                             :base-url  base-url})))
 
-(defn send-user-invite [request email-sender]
+(defn send-user-invite [request email-sender invitation-store]
   (let [email-address (get-in request [:params :email-address])]
-    (send-invite-email! email-sender email-address (get-in request [:context :config-m])))
+    (send-invite-email! email-sender email-address invitation-store (get-in request [:context :config-m])))
   )
 
 (defn delete-app [client-store request]

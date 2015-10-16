@@ -12,6 +12,7 @@
 (def ^:private confirmation-collection "confirmations")
 (def ^:private forgotten-password-collection "forgotten-passwords")
 (def ^:private session-collection "sessions")
+(def ^:private invitation-collection "invitations")
 
 (defprotocol StonecutterStore
   (update! [e k update-fn]
@@ -103,3 +104,6 @@
 
 (defn create-session-store [db]
   (mongo-session/session-store db session-collection))
+
+(defn create-invitation-store [db]
+  (create-mongo-store db invitation-collection))
