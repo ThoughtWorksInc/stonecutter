@@ -141,3 +141,22 @@
          vh/add-anti-forgery
          (vh/add-script "js/main.js"))))
 
+(defn remove-sign-in-elements [enlive-m]
+  (vh/remove-element enlive-m [:.clj--sign-in__form]))
+
+(defn set-body-class-to-accept-invite [enlive-m]
+  (-> (html/at enlive-m [:.func--index-page] (html/add-class "func--accept-invite-page"))
+      (html/at [:.func--accept-invite-page] (html/remove-class "func--index-page"))))
+
+(defn accept-invite [request]
+  (let [error-m (get-in request [:context :errors])]
+    (->> (vh/load-template "public/index.html")
+         (vh/set-form-action [:.clj--register__form] (r/path :sign-in-or-register))
+         (add-registration-errors error-m)
+         (set-registration-inputs (:params request))
+         (remove-sign-in-elements)
+         set-body-class-to-accept-invite
+         vh/remove-work-in-progress
+         vh/add-anti-forgery
+         (vh/add-script "js/main.js")))
+  )

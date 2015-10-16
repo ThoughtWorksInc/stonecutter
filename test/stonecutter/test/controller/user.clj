@@ -53,6 +53,12 @@
              (u/index {:session {:user-login ...user-login... :access_token ...access-token...}})
              => (th/check-redirects-to (routes/path :show-profile))))
 
+(facts "about accept invite page"
+       (fact "when invite-id is in the request, the accept request page is rendered"
+             (u/index (th/create-request :get (routes/path :index) {:invite-id ...invite-id...}))
+             => (th/check-renders-page [:.func--accept-invite-page]))
+       (future-fact "when invite-id is in the request but not the database, the index page is rendered"))
+
 (fact "posting to sign-in-or-register route with no valid action parameter"
       (u/sign-in-or-register ...user-store... ...token-store... ...confirmation-store... ...email-sender...
                              {:action ...invalid...}) => nil)

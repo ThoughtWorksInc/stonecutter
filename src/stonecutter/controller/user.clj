@@ -21,10 +21,15 @@
             [stonecutter.db.confirmation :as confirmation]
             [stonecutter.session :as session]))
 
+(defn has-valid-invite-id? [request]
+  (get-in request [:params :invite-id]))
+
 (defn index [request]
   (if (common/signed-in? request)
     (r/redirect (routes/path :show-profile))
-    (sh/enlive-response (index/index request) request)))
+    (if (has-valid-invite-id? request)
+      (sh/enlive-response (index/accept-invite request) request)
+      (sh/enlive-response (index/index request) request))))
 
 (defn send-confirmation-email! [email-sender user email confirmation-id config-m]
   (let [app-name (config/app-name config-m)

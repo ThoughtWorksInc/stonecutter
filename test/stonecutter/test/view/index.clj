@@ -3,10 +3,10 @@
             [net.cgrand.enlive-html :as html]
             [stonecutter.routes :as r]
             [stonecutter.test.view.test-helpers :as th]
-            [stonecutter.view.index :refer [index]]))
+            [stonecutter.view.index :as i]))
 
 (facts "about index page"
-       (let [page (-> (th/create-request) index)]
+       (let [page (-> (th/create-request) i/index)]
          (fact "index page should return some html"
                (html/select page [:form]) =not=> empty?)
 
@@ -24,10 +24,25 @@
          (fact "page has script link to javascript file"
                (html/select page [[:script (html/attr= :src "js/main.js")]]) =not=> empty?)))
 
-(fact (th/test-translations "index page" index))
+(facts "about invited user index page"
+       (let [page (-> (th/create-request) i/accept-invite)]
+         (fact "accept invite page should return some html"
+               (html/select page [:form]) =not=> empty?)
+         (fact "work in progress should be removed from page"
+               page => th/work-in-progress-removed)
+         (fact "registration form posts to correct endpoint"
+               page => (th/has-form-action? [:.clj--register__form] (r/path :sign-in-or-register)))
+         (fact "there should be no sign in form"
+               page => (th/element-absent? [:.clj--sign-in__form]))
+         (fact "there should be no forgotten-password button"
+               page => (th/element-absent? [:.clj--forgot-password]))
+         (fact "page has script link to javascript file"
+               (html/select page [[:script (html/attr= :src "js/main.js")]]) =not=> empty?)))
+
+(fact (th/test-translations "index page" i/index))
 
 (facts "sign-in error classes are not present when there are no errors"
-       (let [page (-> (th/create-request) index)]
+       (let [page (-> (th/create-request) i/index)]
          (fact "no elements have class for styling errors"
                page => (th/element-absent? [:.form-row--invalid]))
          (fact "email validation element is removed"
@@ -42,7 +57,7 @@
          (facts "email validations"
               (let [errors {:sign-in-email ?error}
                     params {:sign-in-email "some-input-to-be-retained"}
-                    page (-> (th/create-request {} errors params) index)]
+                    page (-> (th/create-request {} errors params) i/index)]
                 (fact "the class for styling errors is added"
                       page => (th/element-exists? [[:.clj--sign-in-email :.form-row--invalid]]))
                 (fact "email validation element is present"
@@ -62,7 +77,7 @@
          (fact "when password is blank"
                (let [errors {:sign-in-password ?error}
                      params {:sign-in-password "some-input-to-not-be-retained"}
-                     page (-> (th/create-request {} errors params) index)]
+                     page (-> (th/create-request {} errors params) i/index)]
                  (fact "the class for styling errors is added"
                        page => (th/element-exists? [[:.clj--sign-in-password :.form-row--invalid]]))
                  (fact "password validation element is present"
@@ -81,7 +96,7 @@
 
 (facts "about removing elements when there are no registration errors"
        (let [page (-> (th/create-request)
-                      index)]
+                      i/index)]
          (fact "validation summary is removed"
                (html/select page [:.clj--registration-validation-summary]) => empty?)
          (fact "no elements have class for styling and unhiding errors"
@@ -97,7 +112,7 @@
 
 (fact "Bugfix: registration validation summary is removed when errors are not registration errors"
       (let [errors {:not-a-registration-error :some-error}
-            page (-> (th/create-request {} errors) index)]
+            page (-> (th/create-request {} errors) i/index)]
         (html/select page [:.clj--registration-validation-summary]) => empty?))
 
 (facts "about displaying registration errors"
@@ -105,7 +120,7 @@
          (facts "first name validations"
                 (let [errors {:registration-first-name ?error}
                       params {:registration-first-name "some-input-to-be-retained"}
-                      page (-> (th/create-request {} errors params) index)
+                      page (-> (th/create-request {} errors params) i/index)
                       error-translation (str "content:index/" ?translation-key)]
                   (fact "validation summary includes the error message"
                         (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
@@ -127,7 +142,7 @@
          (facts "last name validations"
                 (let [errors {:registration-last-name ?error}
                       params {:registration-last-name "some-input-to-be-retained"}
-                      page (-> (th/create-request {} errors params) index)
+                      page (-> (th/create-request {} errors params) i/index)
                       error-translation (str "content:index/" ?translation-key)]
                   (fact "validation summary includes the error message"
                         (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
@@ -149,7 +164,7 @@
          (facts "email validations"
               (let [errors {:registration-email ?error}
                     params {:registration-email "some-input-to-be-retained"}
-                    page (-> (th/create-request {} errors params) index)
+                    page (-> (th/create-request {} errors params) i/index)
                     error-translation (str "content:index/" ?translation-key)]
                 (fact "validation summary includes the error message"
                       (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
@@ -172,7 +187,7 @@
          (facts "password validations"
                 (let [errors {:registration-password ?error}
                       params {:registration-password "some-input-which-should-not-be-retained"}
-                      page (-> (th/create-request {} errors params) index)
+                      page (-> (th/create-request {} errors params) i/index)
                       error-translation (str "content:index/" ?translation-key)]
                   (fact "validation summary includes the error message"
                         (html/select page [[:.clj--registration-validation-summary__item (html/attr= :data-l8n error-translation)]]) =not=> empty?)
