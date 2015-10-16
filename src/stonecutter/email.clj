@@ -47,6 +47,21 @@
   {:subject (format "Confirm your email for %s" (:app-name email-data))
    :body (confirmation-email-body (:base-url email-data) (:confirmation-id email-data))})
 
+(defn invite-email-body [base-url app-name]
+  (let [invite-url (str base-url)]
+    (str
+      "Hi,\n"
+      "Click this link to join "
+      app-name
+      "\n"
+      invite-url
+      "\nCheers,"
+      "\nAdmin")))
+
+(defn invite-renderer [email-data]
+  {:subject (format "You've been invited to join %s" (:app-name email-data))
+   :body (invite-email-body (:base-url email-data) (:app-name email-data))})
+
 (defn forgotten-password-email-body [base-url forgotten-password-id]
   (let [reset-path (r/path :show-reset-password-form :forgotten-password-id forgotten-password-id)
         reset-url (str base-url reset-path)]
@@ -70,9 +85,13 @@
 (defn get-forgotten-password-renderer []
   forgotten-password-renderer)
 
+(defn get-invite-renderer []
+  invite-renderer)
+
 (defn renderer-retrievers []
   {:confirmation (get-confirmation-renderer)
-   :forgotten-password (get-forgotten-password-renderer)})
+   :forgotten-password (get-forgotten-password-renderer)
+   :invite (get-invite-renderer)})
 
 (defn send! [sender template email-address email-data]
   (log/debug (format "sending template '%s' to '%s'." template email-address))

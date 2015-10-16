@@ -7,7 +7,11 @@
             [stonecutter.db.user :as user]
             [stonecutter.db.client :as client]
             [stonecutter.config :as config]
-            [net.cgrand.enlive-html :as html]))
+            [net.cgrand.enlive-html :as html]
+            [stonecutter.util.uuid :as uuid]
+            [stonecutter.test.email :as test-email]
+            [stonecutter.controller.user :as u]
+            [stonecutter.view.invite-user :as invite-user]))
 
 (facts "about apps list"
        (fact "response body displays the apps"
@@ -131,3 +135,11 @@
 
                (:flash response) => (contains {:translation-key       :user-untrusted
                                                :updated-account-email user-email}))))
+
+(fact "post to send-invite will send email to specified email-id"
+      (let [test-email-sender (test-email/create-test-email-sender)
+            email-id "invalid@invalid"
+            request (th/create-request :post (routes/path :send-invite) {:email-address email-id})
+            response (admin/send-user-invite request test-email-sender)]
+        (:email (test-email/last-sent-email test-email-sender)) => email-id
+        (:body (test-email/last-sent-email test-email-sender)) => (contains "Click this link to join")))

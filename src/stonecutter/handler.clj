@@ -103,7 +103,8 @@
        :create-client                        (partial admin/create-client client-store)
        :delete-app                           (partial admin/delete-app client-store)
        :delete-app-confirmation              admin/show-delete-app-form
-       :show-invite                          admin/show-invite-user-form}
+       :show-invite                          admin/show-invite-user-form
+       :send-invite                          (partial admin/send-user-invite email-sender)}
       (m/wrap-handlers-except #(m/wrap-handle-403 % forbidden-err-handler) #{})
       (m/wrap-handlers-except m/wrap-disable-caching #{:theme-css :index :sign-in-or-register})
       (m/wrap-just-these-handlers #(m/wrap-authorised % (u/authorisation-checker user-store))

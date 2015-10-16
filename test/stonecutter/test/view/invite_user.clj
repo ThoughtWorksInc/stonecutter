@@ -32,7 +32,7 @@
       (let [page (-> (th/create-request) invite-user)]
         page => (th/has-attr? [:.clj--apps-list__link] :href (r/path :show-apps-list))))
 
-(future-fact "invite link should go to correct endpoint"
+(fact "invite link should go to correct endpoint"
       (let [page (-> (th/create-request) invite-user)]
         page => (th/has-attr? [:.clj--invite__link] :href (r/path :show-invite))))
 
@@ -45,9 +45,9 @@
       (let [page (-> (th/create-request) invite-user)]
         (-> page (html/select [:.clj--flash-message-text])) => empty?))
 
-(future-fact "form posts to correct endpoint"
+(fact "form posts to correct endpoint"
       (let [page (-> (th/create-request nil nil {}) invite-user/invite-user)]
-        page => (th/has-form-action? (r/path :create-client))
+        page => (th/has-form-action? (r/path :send-invite))
         page => (th/has-form-method? "post")))
 
 (future-facts "about flash messages"

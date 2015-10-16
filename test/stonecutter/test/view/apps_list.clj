@@ -32,7 +32,7 @@
       (let [page (-> (th/create-request) apps-list)]
         page => (th/has-attr? [:.clj--apps-list__link] :href (r/path :show-apps-list))))
 
-(future-fact "invite link should go to correct endpoint"
+(fact "invite link should go to correct endpoint"
       (let [page (-> (th/create-request) apps-list)]
         page => (th/has-attr? [:.clj--invite__link] :href (r/path :show-invite))))
 

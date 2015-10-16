@@ -10,7 +10,8 @@
             [stonecutter.view.delete-app :as delete-app]
             [clojure.string :as s]
             [stonecutter.session :as session]
-            [stonecutter.view.invite-user :as invite-user]))
+            [stonecutter.view.invite-user :as invite-user]
+            [stonecutter.email :as email]))
 
 (defn show-user-list [user-store request]
   (let [users (u/retrieve-users user-store)]
@@ -44,6 +45,19 @@
 (defn show-invite-user-form [request]
   (sh/enlive-response (invite-user/invite-user request)
                       request))
+
+
+(defn send-invite-email! [email-sender email config-m]
+  (let [app-name (config/app-name config-m)
+        base-url (config/base-url config-m)]
+    (email/send! email-sender :invite email {
+                                                   :app-name        app-name
+                                                   :base-url        base-url})))
+
+(defn send-user-invite [request email-sender]
+  (let [email-address (get-in request [:params :email-address])]
+    (send-invite-email! email-sender email-address (get-in request [:context :config-m])))
+  )
 
 (defn delete-app [client-store request]
   (let [app-id (get-in request [:params :app-id])
