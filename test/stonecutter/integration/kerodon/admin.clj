@@ -94,6 +94,17 @@
            (kc/check-and-press ks/create-app-form-submit)
            (kc/selector-not-present [ks/create-app-form-flash-message-name])))
 
+(facts "Admin can invite users"
+       (-> (k/session test-app)
+           (steps/sign-in "admin-user@user.com" "password")
+           (k/visit "/profile")
+           (k/follow ks/invite-user-link)
+           (kc/check-and-fill-in ks/invite-user-email-input "email@somewhere.com")
+           (kc/check-and-press ks/invite-user-submit)
+           (kc/check-and-follow-redirect)
+           (kc/check-page-is :show-invite [ks/invite-user-page-body])
+           (kc/selector-exists [ks/invite-user-flash-message])))
+
 (facts "Admin can change password"
        (-> (k/session test-app)
            (steps/sign-in "admin-user@user.com" "password")

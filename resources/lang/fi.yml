@@ -261,3 +261,4 @@ admin-invite-user:
   email-address: Email address in Finnish
   email-address-invalid-validation-message: Enter a valid email address in Finnish
   invite-button: Invite in Finnish
+  invited-flash-success: has been sent an invitation in Finnish.

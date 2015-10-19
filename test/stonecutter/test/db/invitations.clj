@@ -17,5 +17,9 @@
          (i/fetch-by-id invitation-store invite-id-1) => (just {:email email-1 :invite-id invite-id-1})
          invite-id-1 =not=> invite-id-2))
 
-(future-fact "can delete an invite"
-             )
+(fact "can delete an invite"
+             (let [email-1 "user@usersemail.co.uk"
+                   invite-id-1 (i/generate-invite-id! invitation-store email-1)]
+               (i/fetch-by-id invitation-store invite-id-1) => (just {:email email-1 :invite-id invite-id-1})
+               (i/remove-invite! invitation-store invite-id-1)
+               (i/fetch-by-id invitation-store invite-id-1) => nil))

@@ -56,10 +56,11 @@
                                              :app-name  app-name
                                              :base-url  base-url})))
 
-(defn send-user-invite [request email-sender invitation-store]
-  (let [email-address (get-in request [:params :email-address])]
-    (send-invite-email! email-sender email-address invitation-store (get-in request [:context :config-m])))
-  )
+(defn send-user-invite [email-sender invitation-store request]
+  (let [email-address (get-in request [:params :email])]
+    (send-invite-email! email-sender email-address invitation-store (get-in request [:context :config-m]))
+    (-> (r/redirect (routes/path :show-invite))
+        (assoc-in [:flash :email-address] email-address))))
 
 (defn delete-app [client-store request]
   (let [app-id (get-in request [:params :app-id])

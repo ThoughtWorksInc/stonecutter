@@ -50,25 +50,13 @@
         page => (th/has-form-action? (r/path :send-invite))
         page => (th/has-form-method? "post")))
 
-(future-facts "about flash messages"
+(facts "about flash messages"
        (fact "no flash messages are displayed by default"
              (let [page (-> (th/create-request) invite-user)]
-               (-> page (html/select [:.func--flash-message-add-container])) => empty?
-               (-> page (html/select [:.func--flash-message-delete-container])) => empty?))
+               (-> page (html/select [:.func--flash-message-container])) => empty?))
 
-       (fact "successful add flash message is displayed on page when a flash key is included in the request"
+       (fact "success flash message is displayed on page when a flash key is included in the request"
              (let [page (-> (th/create-request)
-                            (assoc-in [:flash :added-app-name] "new-client-name")
+                            (assoc-in [:flash :email-address] "user@email.com")
                             invite-user)]
-               (-> page (html/select [:.clj--flash-message-add-container])) =not=> empty?
-               (-> page (html/select [:.clj--flash-message-delete-container])) => empty?
-               (-> page (html/select [:.clj--new-app-name]) first html/text) => (contains "new-client-name")))
-
-       (fact "successful delete flash message is displayed on page when a flash key is included in the request"
-             (let [page (-> (th/create-request)
-                            (assoc-in [:flash :deleted-app-name] "client-name")
-                            invite-user)]
-
-               (-> page (html/select [:.clj--flash-message-delete-container])) =not=> empty?
-               (-> page (html/select [:.clj--flash-message-add-container])) => empty?
-               (-> page (html/select [:.clj--deleted-app-name]) first html/text) => (contains "client-name"))))
+               (-> page (html/select [:.clj--flash-message-container])) =not=> empty?)))

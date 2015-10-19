@@ -140,8 +140,8 @@
       (let [test-email-sender (test-email/create-test-email-sender)
             invitation-store (m/create-memory-store)
             email-id "user@email.com"
-            request (th/create-request :post (routes/path :send-invite) {:email-address email-id})
-            response (admin/send-user-invite request test-email-sender invitation-store)]
+            request (th/create-request :post (routes/path :send-invite) {:email email-id})
+            response (admin/send-user-invite test-email-sender invitation-store request)]
         (:email (test-email/last-sent-email test-email-sender)) => email-id
         (:body (test-email/last-sent-email test-email-sender)) => (contains "Click this link to join")
         (:body (test-email/last-sent-email test-email-sender)) => (contains #"/?invite-id=\w+")))

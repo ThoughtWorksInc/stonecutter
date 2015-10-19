@@ -13,6 +13,13 @@ block headerContent
 block content
 
   .single-column
+
+    +flashMessageWithCljContainer('clj--flash-message-container','func--flash-message-container', 'success')
+          p.flash-message__title
+            span.clj--invited-email.func--invited-email !someone@somewhere.com
+            = " "
+            span.flash-message-text(data-l8n="content:admin-invite-user/invited-flash-success") !was successfully added
+
     h1.page-title(data-l8n="content:admin-invite-user/page-title")
       | !Invite a user
     form.login-form(action="./invite-sent", method="post", role="form")

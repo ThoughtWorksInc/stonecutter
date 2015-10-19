@@ -261,3 +261,4 @@ admin-invite-user:
   email-address: Email address
   email-address-invalid-validation-message: Enter a valid email address
   invite-button: Invite
+  invited-flash-success: has been sent an invitation.

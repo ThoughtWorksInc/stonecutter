@@ -27,6 +27,12 @@
 
 (def unshare-profile-card-confirm-button :.func--unshare-profile-card__button)
 
+(def invite-user-link :.func--invite__link)
+(def invite-user-email-input :.func--email__input)
+(def invite-user-submit :.func--invite-user__button)
+(def invite-user-page-body :.func--admin-invite-user-page)
+(def invite-user-flash-message :.func--flash-message-container)
+
 (def sign-in-email-input :.func--sign-in-email__input)
 (def sign-in-password-input :.func--sign-in-password__input)
 (def sign-in-submit :.func--sign-in__button)
