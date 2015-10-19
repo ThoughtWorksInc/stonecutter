@@ -25,10 +25,13 @@
 (defn create-admin [id-gen first-name last-name email password]
   (create-user id-gen first-name last-name email password (:admin config/roles)))
 
-(defn store-user! [user-store first-name last-name email password]
-  (let [user (create-user uuid/uuid first-name last-name email password)]
-    (-> (cl-user/store-user user-store user)
-        (dissoc :password))))
+(defn store-user!
+  ([user-store first-name last-name email password]
+   (store-user! user-store first-name last-name email password (:untrusted config/roles)))
+  ([user-store first-name last-name email password role]
+   (let [user (create-user uuid/uuid first-name last-name email password role)]
+     (-> (cl-user/store-user user-store user)
+         (dissoc :password)))))
 
 (defn store-admin! [user-store first-name last-name email password]
   (let [user (create-admin uuid/uuid first-name last-name email password)]

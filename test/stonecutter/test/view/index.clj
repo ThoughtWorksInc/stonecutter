@@ -25,14 +25,16 @@
                (html/select page [[:script (html/attr= :src "js/main.js")]]) =not=> empty?)))
 
 (facts "about invited user index page"
-       (let [params {:registration-email "someone@somewhere.com"}
+       (let [invite-id "2984GHFUR9238"
+             params {:registration-email "someone@somewhere.com"
+                     :invite-id invite-id}
              page (-> (th/create-request {} {} params) i/accept-invite)]
          (fact "accept invite page should return some html"
                (html/select page [:form]) =not=> empty?)
          (fact "work in progress should be removed from page"
                page => th/work-in-progress-removed)
          (fact "registration form posts to correct endpoint"
-               page => (th/has-form-action? [:.clj--register__form] (r/path :sign-in-or-register)))
+               page => (th/has-form-action? [:.clj--register__form] (r/path :register-using-invitation :invite-id invite-id)))
          (fact "there should be no sign in form"
                page => (th/element-absent? [:.clj--sign-in__form]))
          (fact "there should be no forgotten-password button"

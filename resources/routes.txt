@@ -38,3 +38,4 @@ POST    /admin/apps/:app-id/delete               delete-app
 GET     /invite                                  show-invite
 POST    /invite                                  send-invite
 GET     /accept-invite/:invite-id                accept-invite
+POST    /accept-invite/:invite-id                register-using-invitation

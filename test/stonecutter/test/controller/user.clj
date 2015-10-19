@@ -15,7 +15,8 @@
             [stonecutter.util.uuid :as uuid]
             [stonecutter.validation :as v]
             [stonecutter.test.email :as test-email]
-            [stonecutter.db.confirmation :as confirmation]))
+            [stonecutter.db.confirmation :as confirmation]
+            [stonecutter.db.invitations :as i]))
 
 (def check-body-not-blank
   (checker [response] (not (empty? (:body response)))))
@@ -65,11 +66,47 @@
                    first
                    :attrs
                    :value) => "user@email.somewhere"))
+
        (fact "when invite-id is in the request but not the database, the index page is rendered"
              (let [invite-db (m/create-memory-store)
                    invite-id "weiurht84567yoerghb"]
                (u/accept-invite invite-db (th/create-request :get (routes/path :accept-invite :invite-id invite-id) {:invite-id invite-id}))
-               => (th/check-renders-page [:.func--index-page]))))
+               => (th/check-renders-page [:.func--index-page])))
+
+       (fact "when registering using an invite, user data is saved"
+             (let [invite-id "84927492GFJSIUD"
+                   user-store (m/create-memory-store)
+                   token-store (m/create-memory-store)
+                   confirmation-store (m/create-memory-store)
+                   test-email-sender (test-email/create-test-email-sender)]
+               (->> (th/create-request :post (routes/path :register-using-invitation :invite-id invite-id) default-register-user-params)
+                    (u/register-using-invitation user-store token-store confirmation-store test-email-sender ...invitation-store...))) => anything
+             (provided
+               (user/store-user! anything "Frank" "Lasty" "valid@email.com" "password") => ...user...
+               (user/update-user-role! anything default-email "trusted") => anything
+               (i/remove-invite! ...invitation-store... anything) => nil))
+
+       (fact "when registering using an invite, the invite data is removed from the database"
+             (let [invitation-store (m/create-memory-store)
+                   invite-id (inv/generate-invite-id! invitation-store default-email)
+                   request (th/create-request :post (routes/path :register-using-invitation :invite-id invite-id) (assoc default-register-user-params :invite-id invite-id))]
+               (u/register-using-invitation ...user-store... ...token-store... ...confirmation-store... ...email-sender... invitation-store request)
+               (i/fetch-by-id invitation-store invite-id)) => nil
+             (provided
+              (u/register-user ...user-store... ...token-store... ...confirmation-store... ...email-sender... anything) => anything
+              (user/update-user-role! anything default-email "trusted") => anything
+              (user/user-exists? ...user-store... default-email) => false))
+
+       (fact "when there are errors in registering with an invite, the invite data is not removed from the database"
+             (let [invitation-store (m/create-memory-store)
+                   invite-id (inv/generate-invite-id! invitation-store "user@email.somewhere")
+                   user-store (m/create-memory-store)
+                   token-store (m/create-memory-store)
+                   confirmation-store (m/create-memory-store)
+                   test-email-sender (test-email/create-test-email-sender)]
+               (->> (th/create-request :post (routes/path :register-using-invitation :invite-id invite-id) {:invite-id invite-id :registration-email "invalid"})
+                    (u/register-using-invitation user-store token-store confirmation-store test-email-sender invitation-store))
+               (i/fetch-by-id invitation-store invite-id)) =not=> nil))
 
 (fact "posting to sign-in-or-register route with no valid action parameter"
       (u/sign-in-or-register ...user-store... ...token-store... ...confirmation-store... ...email-sender...

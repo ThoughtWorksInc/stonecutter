@@ -6,7 +6,6 @@
             [ring.middleware.json :as ring-json]
             [scenic.routes :as scenic]
             [clojure.tools.logging :as log]
-            [stonecutter.session :as session]
             [stonecutter.view.error :as error]
             [stonecutter.view.view-helpers :as vh]
             [stonecutter.helper :as sh]
@@ -32,8 +31,6 @@
             [taoensso.tower.ring :as tower-ring]
             [stonecutter.util.time :as time])
   (:gen-class))
-
-(def default-context {:translator (t/translations-fn t/translation-map)})
 
 (defn not-found [request]
   (-> (error/not-found-error)
@@ -106,7 +103,8 @@
        :delete-app-confirmation              admin/show-delete-app-form
        :show-invite                          admin/show-invite-user-form
        :send-invite                          (partial admin/send-user-invite email-sender invitation-store)
-       :accept-invite                        (partial user/accept-invite invitation-store)}
+       :accept-invite                        (partial user/accept-invite invitation-store)
+       :register-using-invitation            (partial user/register-using-invitation user-store token-store confirmation-store email-sender invitation-store)}
       (m/wrap-handlers-except #(m/wrap-handle-403 % forbidden-err-handler) #{})
       (m/wrap-handlers-except m/wrap-disable-caching #{:theme-css :index :sign-in-or-register})
       (m/wrap-just-these-handlers #(m/wrap-authorised % (u/authorisation-checker user-store))

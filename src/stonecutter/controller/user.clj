@@ -52,10 +52,8 @@
         email (:registration-email params)
         password (:registration-password params)
         confirmation-id (uuid/uuid)
-        config-m (get-in request [:context :config-m])
-        err (v/validate-registration params (partial user/user-exists? user-store))
-        request-with-validation-errors (assoc-in request [:context :errors] err)]
-    (if (empty? err)
+        config-m (get-in request [:context :config-m])]
+    (if (empty? (get-in request [:context :errors]))
       (do (confirmation/store! confirmation-store email confirmation-id)
           (let [user (user/store-user! user-store first-name last-name email password)]
             (send-confirmation-email! email-sender user email confirmation-id config-m)
@@ -64,7 +62,12 @@
                 (assoc :flash {:flash-type    :confirm-email-sent
                                :email-address (:login user)}))))
 
-      (index request-with-validation-errors))))
+      (index request))))
+
+(defn request-with-validation-errors [user-store request]
+  (let [params (:params request)
+        err (v/validate-registration params (partial user/user-exists? user-store))]
+    (assoc-in request [:context :errors] err)))
 
 (defn show-change-password-form [request]
   (sh/enlive-response (change-password/change-password-form request) request))
@@ -100,7 +103,7 @@
 (defn sign-in-or-register [user-store token-store confirmation-store email-sender request]
   (let [form-action-type (get-in request [:params :action])]
     (case form-action-type
-      "register" (register-user user-store token-store confirmation-store email-sender request)
+      "register" (register-user user-store token-store confirmation-store email-sender (request-with-validation-errors user-store request))
       "sign-in" (sign-in user-store token-store request)
       nil)))
 
@@ -178,3 +181,12 @@
       (let [confirmation (confirmation/retrieve-by-user-email confirmation-store email)]
         (send-confirmation-email! email-sender user email (:confirmation-id confirmation) config-m)
         (-> (r/redirect (routes/path :show-profile)) (assoc :flash :confirmation-email-sent))))))
+
+(defn register-using-invitation [user-store token-store confirmation-store email-sender invitation-store request]
+  (let [request-with-errors (request-with-validation-errors user-store request)
+        errors (get-in request-with-errors [:context :errors])
+        response (register-user user-store token-store confirmation-store email-sender request-with-errors)]
+    (when (empty? errors)
+      (invitations/remove-invite! invitation-store (get-in request [:params :invite-id]))
+      (user/update-user-role! user-store (get-in request-with-errors [:params :registration-email]) (:trusted config/roles)))
+    response))

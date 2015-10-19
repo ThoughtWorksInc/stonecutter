@@ -149,9 +149,10 @@
       (html/at [:.func--accept-invite-page] (html/remove-class "func--index-page"))))
 
 (defn accept-invite [request]
-  (let [error-m (get-in request [:context :errors])]
+  (let [error-m (get-in request [:context :errors])
+        invite-id (get-in request [:params :invite-id])]
     (->> (vh/load-template "public/index.html")
-         (vh/set-form-action [:.clj--register__form] (r/path :sign-in-or-register))
+         (vh/set-form-action [:.clj--register__form] (r/path :register-using-invitation :invite-id invite-id))
          (add-registration-errors error-m)
          (set-registration-inputs (:params request))
          (remove-sign-in-elements)
