@@ -26,17 +26,15 @@
   (let [invite-id (get-in request [:params :invite-id])]
     (invitations/fetch-by-id invitation-store invite-id)))
 
-(defn index
-  ([invitation-store request]
-   (if (common/signed-in? request)
-     (r/redirect (routes/path :show-profile))
-     (if (has-valid-invite-id? request invitation-store)
-       (sh/enlive-response (index/accept-invite request) request)
-       (sh/enlive-response (index/index request) request))))
-  ([request]
-    (if (common/signed-in? request)
-      (r/redirect (routes/path :show-profile))
-      (sh/enlive-response (index/index request) request))))
+(defn index [request]
+  (if (common/signed-in? request)
+    (r/redirect (routes/path :show-profile))
+    (sh/enlive-response (index/index request) request)))
+
+(defn accept-invite [invitation-store request]
+  (if (has-valid-invite-id? request invitation-store)
+    (sh/enlive-response (index/accept-invite request) request)
+    (sh/enlive-response (index/index request) request)))
 
 (defn send-confirmation-email! [email-sender user email confirmation-id config-m]
   (let [app-name (config/app-name config-m)

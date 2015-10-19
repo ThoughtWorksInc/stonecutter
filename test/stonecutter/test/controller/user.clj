@@ -31,11 +31,11 @@
    :action           "sign-in"})
 
 (defn register-user-params [first-name last-name email password]
-  {:registration-first-name       first-name
-   :registration-last-name        last-name
-   :registration-email            email
-   :registration-password         password
-   :action                        "register"})
+  {:registration-first-name first-name
+   :registration-last-name  last-name
+   :registration-email      email
+   :registration-password   password
+   :action                  "register"})
 
 (def default-register-user-params (register-user-params default-first-name default-last-name
                                                         default-email default-password))
@@ -58,10 +58,13 @@
        (fact "when invite-id is in the request and the database, the accept request page is rendered"
              (let [invite-db (m/create-memory-store)
                    invite-id (inv/generate-invite-id! invite-db "user@email.somewhere")]
-               (u/index invite-db (th/create-request :get (routes/path :index) {:invite-id invite-id}))
+               (u/accept-invite invite-db (th/create-request :get (routes/path :accept-invite :invite-id invite-id) {:invite-id invite-id}))
                => (th/check-renders-page [:.func--accept-invite-page])))
-       (future-fact "when invite-id is in the request but not the database, the index page is rendered"
-             ))
+       (fact "when invite-id is in the request but not the database, the index page is rendered"
+                    (let [invite-db (m/create-memory-store)
+                          invite-id "weiurht84567yoerghb"]
+                      (u/accept-invite invite-db (th/create-request :get (routes/path :accept-invite :invite-id invite-id) {:invite-id invite-id}))
+                      => (th/check-renders-page [:.func--index-page]))))
 
 (fact "posting to sign-in-or-register route with no valid action parameter"
       (u/sign-in-or-register ...user-store... ...token-store... ...confirmation-store... ...email-sender...
@@ -393,10 +396,10 @@
 
                  (html/select enlive-snippet [:.clj--admin__span]) => ?result))
 
-         ?role                  ?result
-         (:admin config/roles)  (one-of anything)
-         "nobody"               empty?
-         nil                    empty?))
+         ?role ?result
+         (:admin config/roles) (one-of anything)
+         "nobody" empty?
+         nil empty?))
 
 (facts "about resending confirmation emails"
        (facts "when the user's email address has not yet been confirmed"
