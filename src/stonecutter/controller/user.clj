@@ -32,8 +32,9 @@
     (sh/enlive-response (index/index request) request)))
 
 (defn accept-invite [invitation-store request]
-  (if (has-valid-invite-id? request invitation-store)
-    (sh/enlive-response (index/accept-invite request) request)
+  (if-let [invite-map (has-valid-invite-id? request invitation-store)]
+    (let [request-with-email (assoc-in request [:params :registration-email] (:email invite-map))]
+        (sh/enlive-response (index/accept-invite request-with-email) request-with-email))
     (sh/enlive-response (index/index request) request)))
 
 (defn send-confirmation-email! [email-sender user email confirmation-id config-m]

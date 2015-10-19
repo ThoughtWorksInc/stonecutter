@@ -25,7 +25,8 @@
                (html/select page [[:script (html/attr= :src "js/main.js")]]) =not=> empty?)))
 
 (facts "about invited user index page"
-       (let [page (-> (th/create-request) i/accept-invite)]
+       (let [params {:registration-email "someone@somewhere.com"}
+             page (-> (th/create-request {} {} params) i/accept-invite)]
          (fact "accept invite page should return some html"
                (html/select page [:form]) =not=> empty?)
          (fact "work in progress should be removed from page"
@@ -37,7 +38,9 @@
          (fact "there should be no forgotten-password button"
                page => (th/element-absent? [:.clj--forgot-password]))
          (fact "page has script link to javascript file"
-               (html/select page [[:script (html/attr= :src "js/main.js")]]) =not=> empty?)))
+               (html/select page [[:script (html/attr= :src "js/main.js")]]) =not=> empty?)
+         (fact "email is auto-filled in registration form"
+               page => (th/has-attr? [:.clj--registration-email__input] :value "someone@somewhere.com"))))
 
 (fact (th/test-translations "index page" i/index))
 

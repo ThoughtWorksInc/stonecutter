@@ -57,14 +57,19 @@
 (facts "about accept invite page"
        (fact "when invite-id is in the request and the database, the accept request page is rendered"
              (let [invite-db (m/create-memory-store)
-                   invite-id (inv/generate-invite-id! invite-db "user@email.somewhere")]
-               (u/accept-invite invite-db (th/create-request :get (routes/path :accept-invite :invite-id invite-id) {:invite-id invite-id}))
-               => (th/check-renders-page [:.func--accept-invite-page])))
+                   invite-id (inv/generate-invite-id! invite-db "user@email.somewhere")
+                   response (u/accept-invite invite-db (th/create-request :get (routes/path :accept-invite :invite-id invite-id) {:invite-id invite-id}))
+                   html-response (html/html-snippet (:body response))]
+               response => (th/check-renders-page [:.func--accept-invite-page])
+               (-> (html/select html-response [:.clj--registration-email__input])
+                   first
+                   :attrs
+                   :value) => "user@email.somewhere"))
        (fact "when invite-id is in the request but not the database, the index page is rendered"
-                    (let [invite-db (m/create-memory-store)
-                          invite-id "weiurht84567yoerghb"]
-                      (u/accept-invite invite-db (th/create-request :get (routes/path :accept-invite :invite-id invite-id) {:invite-id invite-id}))
-                      => (th/check-renders-page [:.func--index-page]))))
+             (let [invite-db (m/create-memory-store)
+                   invite-id "weiurht84567yoerghb"]
+               (u/accept-invite invite-db (th/create-request :get (routes/path :accept-invite :invite-id invite-id) {:invite-id invite-id}))
+               => (th/check-renders-page [:.func--index-page]))))
 
 (fact "posting to sign-in-or-register route with no valid action parameter"
       (u/sign-in-or-register ...user-store... ...token-store... ...confirmation-store... ...email-sender...
