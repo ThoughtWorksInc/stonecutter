@@ -24,6 +24,7 @@
            :admin-password "Password of admin user"
            :password-reset-expiry "Time (in hours) before password-reset email expires"
            :open-id-connect-id-token-lifetime-minutes "Time (in minutes) before Open ID Connect token expires"
+           :invite-expiry "Time (in days) before invite email expires"
            :rsa-keypair-file-path "Location of json file containing RSA keypair (for Open ID Connect)"])
 
 (def env-var-set (->> vars (partition 2) (map first) set))
@@ -115,6 +116,9 @@
 
 (defn password-reset-expiry [config-m]
   (Integer. (get-env config-m :password-reset-expiry "24")))
+
+(defn invite-expiry [config-m]
+  (Integer. (get-env config-m :invite-expiry "7")))
 
 (defn open-id-connect-id-token-lifetime-minutes [config-m]
   (Integer. (get-env config-m :open-id-connect-id-token-lifetime-minutes "10")))

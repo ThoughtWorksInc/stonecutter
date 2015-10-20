@@ -70,5 +70,5 @@
 (defn store-client! [client-store name client-id client-secret client-url]
   (cl-client/store-client client-store (create-client name client-id client-secret client-url)))
 
-(defn store-invite! [invite-store email]
-  (invitations/generate-invite-id! invite-store email))
+(defn store-invite! [invite-store email clock]
+  (invitations/generate-invite-id! invite-store email clock 7))

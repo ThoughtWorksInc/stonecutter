@@ -1,11 +1,14 @@
 (ns stonecutter.db.invitations
   (:require [clauth.store :as cl-store]
             [stonecutter.db.mongo :as sm]
-            [stonecutter.util.uuid :as uuid]))
+            [stonecutter.util.uuid :as uuid]
+            [stonecutter.db.expiry :as e]
+            [stonecutter.util.time :as time]))
 
-(defn generate-invite-id! [invite-store email]
-  (let [invite-id (uuid/uuid)]
-    (cl-store/store! invite-store :invite-id {:email email :invite-id invite-id})
+(defn generate-invite-id! [invite-store email clock expiry-days]
+  (let [invite-id (uuid/uuid)
+        expiry (* expiry-days time/day)]
+    (e/store-with-expiry! invite-store clock :invite-id {:email email :invite-id invite-id} expiry)
     invite-id)
   )
 

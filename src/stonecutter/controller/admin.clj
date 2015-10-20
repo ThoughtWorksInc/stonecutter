@@ -48,10 +48,11 @@
   (sh/enlive-response (invite-user/invite-user request)
                       request))
 
-(defn send-invite-email! [email-sender email invitation-store config-m]
+(defn send-invite-email! [email-sender email invitation-store clock config-m]
   (let [app-name (config/app-name config-m)
         base-url (config/base-url config-m)
-        invite-id (i/generate-invite-id! invitation-store email)]
+        invite-expiry (config/invite-expiry config-m)
+        invite-id (i/generate-invite-id! invitation-store email clock invite-expiry)]
     (email/send! email-sender :invite email {:invite-id invite-id
                                              :app-name  app-name
                                              :base-url  base-url})))
@@ -66,11 +67,11 @@
             already-registered? (assoc :invitation-email :duplicate)
             invalid? (assoc :invitation-email :invalid))))
 
-(defn send-user-invite [email-sender user-store invitation-store request]
+(defn send-user-invite [email-sender user-store invitation-store clock request]
   (let [email-address (get-in request [:params :email])
         err (validate-invite-email user-store invitation-store email-address)]
     (if (empty? err)
-      (do (send-invite-email! email-sender email-address invitation-store (get-in request [:context :config-m]))
+      (do (send-invite-email! email-sender email-address invitation-store clock (get-in request [:context :config-m]))
           (-> (r/redirect (routes/path :show-invite))
               (assoc-in [:flash :email-address] email-address)))
       (show-invite-user-form (assoc-in request [:context :errors] err)))))

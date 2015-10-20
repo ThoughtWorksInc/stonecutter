@@ -16,7 +16,8 @@
             [stonecutter.validation :as v]
             [stonecutter.test.email :as test-email]
             [stonecutter.db.confirmation :as confirmation]
-            [stonecutter.db.invitations :as i]))
+            [stonecutter.db.invitations :as i]
+            [stonecutter.test.util.time :as test-time]))
 
 (def check-body-not-blank
   (checker [response] (not (empty? (:body response)))))
@@ -41,6 +42,8 @@
 (def default-register-user-params (register-user-params default-first-name default-last-name
                                                         default-email default-password))
 
+(def test-clock (test-time/new-stub-clock 0))
+
 (defn test-email-renderer [email-data]
   {:subject "confirmation"
    :body    email-data})
@@ -58,7 +61,7 @@
 (facts "about accept invite page"
        (fact "when invite-id is in the request and the database, the accept request page is rendered"
              (let [invite-db (m/create-memory-store)
-                   invite-id (inv/generate-invite-id! invite-db "user@email.somewhere")
+                   invite-id (inv/generate-invite-id! invite-db "user@email.somewhere" test-clock 7)
                    response (u/accept-invite invite-db (th/create-request :get (routes/path :accept-invite :invite-id invite-id) {:invite-id invite-id}))
                    html-response (html/html-snippet (:body response))]
                response => (th/check-renders-page [:.func--accept-invite-page])
@@ -88,7 +91,7 @@
 
        (fact "when registering using an invite, the invite data is removed from the database"
              (let [invitation-store (m/create-memory-store)
-                   invite-id (inv/generate-invite-id! invitation-store default-email)
+                   invite-id (inv/generate-invite-id! invitation-store default-email test-clock 7)
                    request (th/create-request :post (routes/path :register-using-invitation :invite-id invite-id) (assoc default-register-user-params :invite-id invite-id))]
                (u/register-using-invitation ...user-store... ...token-store... ...confirmation-store... ...email-sender... invitation-store request)
                (i/fetch-by-id invitation-store invite-id)) => nil
@@ -99,7 +102,7 @@
 
        (fact "when there are errors in registering with an invite, the invite data is not removed from the database"
              (let [invitation-store (m/create-memory-store)
-                   invite-id (inv/generate-invite-id! invitation-store "user@email.somewhere")
+                   invite-id (inv/generate-invite-id! invitation-store "user@email.somewhere" test-clock 7)
                    user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)

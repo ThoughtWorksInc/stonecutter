@@ -12,9 +12,11 @@
             [stonecutter.test.email :as test-email]
             [stonecutter.controller.user :as u]
             [stonecutter.view.invite-user :as invite-user]
-            [clauth.store :as cl-store]))
+            [clauth.store :as cl-store]
+            [stonecutter.test.util.time :as test-time]))
 
 (def default-email "user@somewhere.com")
+(def test-clock (test-time/new-stub-clock 0))
 
 (facts "about apps list"
        (fact "response body displays the apps"
@@ -144,7 +146,7 @@
             invitation-store (m/create-memory-store)
             user-store (m/create-memory-store)
             request (th/create-request :post (routes/path :send-invite) {:email default-email})
-            response (admin/send-user-invite test-email-sender user-store invitation-store request)]
+            response (admin/send-user-invite test-email-sender user-store invitation-store test-clock request)]
         (:email (test-email/last-sent-email test-email-sender)) => default-email
         (:body (test-email/last-sent-email test-email-sender)) => (contains "Click this link to join")
         (:body (test-email/last-sent-email test-email-sender)) => (contains #"/accept-invite/\w+")))
@@ -156,7 +158,7 @@
                    user-store (m/create-memory-store)
                    user (th/store-user! user-store default-email "passw0rd!")
                    html-response (->> (th/create-request :post (routes/path :send-invite) {:email default-email})
-                                      (admin/send-user-invite test-email-sender user-store invitation-store)
+                                      (admin/send-user-invite test-email-sender user-store invitation-store test-clock)
                                       :body
                                       html/html-snippet)]
                (-> (html/select html-response [:.form-row--invalid])
@@ -170,9 +172,9 @@
              (let [test-email-sender (test-email/create-test-email-sender)
                    invitation-store (m/create-memory-store)
                    user-store (m/create-memory-store)
-                   invite-id (th/store-invite! invitation-store default-email)
+                   invite-id (th/store-invite! invitation-store default-email test-clock)
                    html-response (->> (th/create-request :post (routes/path :send-invite) {:email default-email})
-                                      (admin/send-user-invite test-email-sender user-store invitation-store)
+                                      (admin/send-user-invite test-email-sender user-store invitation-store test-clock)
                                       :body
                                       html/html-snippet)]
                (-> (html/select html-response [:.form-row--invalid])
@@ -187,7 +189,7 @@
                    invitation-store (m/create-memory-store)
                    test-email-sender (test-email/create-test-email-sender)
                    html-response (->> (th/create-request :post (routes/path :send-invite) {:email "invalid"})
-                                      (admin/send-user-invite test-email-sender user-store invitation-store)
+                                      (admin/send-user-invite test-email-sender user-store invitation-store test-clock)
                                       :body
                                       html/html-snippet)]
                (-> (html/select html-response [:.form-row--invalid])
@@ -202,7 +204,7 @@
                    invitation-store (m/create-memory-store)
                    test-email-sender (test-email/create-test-email-sender)
                    html-response (->> (th/create-request :post (routes/path :send-invite) {:email ""})
-                                      (admin/send-user-invite test-email-sender user-store invitation-store)
+                                      (admin/send-user-invite test-email-sender user-store invitation-store test-clock)
                                       :body
                                       html/html-snippet)]
                (-> (html/select html-response [:.form-row--invalid])
@@ -217,7 +219,7 @@
                     invitation-store (m/create-memory-store)
                     test-email-sender (test-email/create-test-email-sender)
                     html-response (->> (th/create-request :post (routes/path :send-invite) {:email "invalid"})
-                                       (admin/send-user-invite test-email-sender user-store invitation-store)
+                                       (admin/send-user-invite test-email-sender user-store invitation-store test-clock)
                                        :body
                                        html/html-snippet)]
                 (fact "email field should have validation error class"
