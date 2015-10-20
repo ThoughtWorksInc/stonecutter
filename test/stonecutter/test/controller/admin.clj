@@ -144,4 +144,4 @@
             response (admin/send-user-invite test-email-sender invitation-store request)]
         (:email (test-email/last-sent-email test-email-sender)) => email-id
         (:body (test-email/last-sent-email test-email-sender)) => (contains "Click this link to join")
-        (:body (test-email/last-sent-email test-email-sender)) => (contains #"/?invite-id=\w+")))
+        (:body (test-email/last-sent-email test-email-sender)) => (contains #"/accept-invite/\w+")))

@@ -48,7 +48,7 @@
    :body (confirmation-email-body (:base-url email-data) (:confirmation-id email-data))})
 
 (defn invite-email-body [base-url app-name invite-id]
-  (let [invite-url (str base-url "/?invite-id=" invite-id)]
+  (let [invite-url (str base-url "/accept-invite/" invite-id)]
     (str
       "Hi,\n"
       "Click this link to join "
