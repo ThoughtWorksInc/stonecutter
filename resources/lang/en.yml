@@ -259,6 +259,11 @@ admin-invite-user:
   title: Invite a user
   page-title: Invite a user
   email-address: Email address
-  email-address-invalid-validation-message: Enter a valid email address
+  invite-email-address-invalid-validation-message: Enter a valid email address
+  invite-email-address-duplicate-validation-message: Email address already registered
+  invite-email-address-invited-validation-message: Email address already invited
+  invite-email-address-too-long-validation-message: Email address is too long
+  invite-unknown-error: Whoops! Unknown error
   invite-button: Invite
   invited-flash-success: has been sent an invitation.
+  invite-email-address-blank-validation-message: Enter an email address

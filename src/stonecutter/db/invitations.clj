@@ -12,6 +12,9 @@
 (defn fetch-by-id [invite-store id]
   (first (sm/query invite-store {:invite-id id})))
 
+(defn fetch-by-email [invite-store email]
+  (first (sm/query invite-store {:email email})))
+
 (defn remove-invite! [invite-store invite-id]
   (cl-store/revoke! invite-store invite-id))
 

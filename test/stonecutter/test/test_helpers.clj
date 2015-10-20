@@ -5,7 +5,8 @@
             [stonecutter.db.user :as user]
             [stonecutter.session :as session]
             [stonecutter.db.client :as client]
-            [clauth.client :as cl-client]))
+            [clauth.client :as cl-client]
+            [stonecutter.db.invitations :as invitations]))
 
 (defn create-request
   ([method url params]
@@ -68,3 +69,6 @@
 
 (defn store-client! [client-store name client-id client-secret client-url]
   (cl-client/store-client client-store (create-client name client-id client-secret client-url)))
+
+(defn store-invite! [invite-store email]
+  (invitations/generate-invite-id! invite-store email))

@@ -11,7 +11,10 @@
             [stonecutter.util.uuid :as uuid]
             [stonecutter.test.email :as test-email]
             [stonecutter.controller.user :as u]
-            [stonecutter.view.invite-user :as invite-user]))
+            [stonecutter.view.invite-user :as invite-user]
+            [clauth.store :as cl-store]))
+
+(def default-email "user@somewhere.com")
 
 (facts "about apps list"
        (fact "response body displays the apps"
@@ -139,9 +142,88 @@
 (fact "post to send-invite will send email to specified email-id"
       (let [test-email-sender (test-email/create-test-email-sender)
             invitation-store (m/create-memory-store)
-            email-id "user@email.com"
-            request (th/create-request :post (routes/path :send-invite) {:email email-id})
-            response (admin/send-user-invite test-email-sender invitation-store request)]
-        (:email (test-email/last-sent-email test-email-sender)) => email-id
+            user-store (m/create-memory-store)
+            request (th/create-request :post (routes/path :send-invite) {:email default-email})
+            response (admin/send-user-invite test-email-sender user-store invitation-store request)]
+        (:email (test-email/last-sent-email test-email-sender)) => default-email
         (:body (test-email/last-sent-email test-email-sender)) => (contains "Click this link to join")
         (:body (test-email/last-sent-email test-email-sender)) => (contains #"/accept-invite/\w+")))
+
+(facts "about send invite validation errors - error displayed and invite not stored"
+       (fact "email must not already be signed up"
+             (let [test-email-sender (test-email/create-test-email-sender)
+                   invitation-store (m/create-memory-store)
+                   user-store (m/create-memory-store)
+                   user (th/store-user! user-store default-email "passw0rd!")
+                   html-response (->> (th/create-request :post (routes/path :send-invite) {:email default-email})
+                                      (admin/send-user-invite test-email-sender user-store invitation-store)
+                                      :body
+                                      html/html-snippet)]
+               (-> (html/select html-response [:.form-row--invalid])
+                   first
+                   :attrs
+                   :class)) => (contains "clj--invite-user-email")
+             (provided
+               (cl-store/store! anything anything anything) => anything :times 0))
+
+       (fact "email must not already be invited"
+             (let [test-email-sender (test-email/create-test-email-sender)
+                   invitation-store (m/create-memory-store)
+                   user-store (m/create-memory-store)
+                   invite-id (th/store-invite! invitation-store default-email)
+                   html-response (->> (th/create-request :post (routes/path :send-invite) {:email default-email})
+                                      (admin/send-user-invite test-email-sender user-store invitation-store)
+                                      :body
+                                      html/html-snippet)]
+               (-> (html/select html-response [:.form-row--invalid])
+                   first
+                   :attrs
+                   :class)) => (contains "clj--invite-user-email")
+             (provided
+               (cl-store/store! anything anything anything) => anything :times 0))
+
+       (fact "email must be valid"
+             (let [user-store (m/create-memory-store)
+                   invitation-store (m/create-memory-store)
+                   test-email-sender (test-email/create-test-email-sender)
+                   html-response (->> (th/create-request :post (routes/path :send-invite) {:email "invalid"})
+                                      (admin/send-user-invite test-email-sender user-store invitation-store)
+                                      :body
+                                      html/html-snippet)]
+               (-> (html/select html-response [:.form-row--invalid])
+                   first
+                   :attrs
+                   :class)) => (contains "clj--invite-user-email")
+             (provided
+               (cl-store/store! anything anything anything) => anything :times 0))
+
+       (fact "email must not be blank"
+             (let [user-store (m/create-memory-store)
+                   invitation-store (m/create-memory-store)
+                   test-email-sender (test-email/create-test-email-sender)
+                   html-response (->> (th/create-request :post (routes/path :send-invite) {:email ""})
+                                      (admin/send-user-invite test-email-sender user-store invitation-store)
+                                      :body
+                                      html/html-snippet)]
+               (-> (html/select html-response [:.form-row--invalid])
+                   first
+                   :attrs
+                   :class)) => (contains "clj--invite-user-email")
+             (provided
+               (cl-store/store! anything anything anything) => anything :times 0))
+
+       (facts "invite page is rendered with errors"
+              (let [user-store (m/create-memory-store)
+                    invitation-store (m/create-memory-store)
+                    test-email-sender (test-email/create-test-email-sender)
+                    html-response (->> (th/create-request :post (routes/path :send-invite) {:email "invalid"})
+                                       (admin/send-user-invite test-email-sender user-store invitation-store)
+                                       :body
+                                       html/html-snippet)]
+                (fact "email field should have validation error class"
+                      (html/select html-response [:.form-row--invalid]) =not=> empty?)
+                (fact "invalid email value should be preserved"
+                      (-> (html/select html-response [:.clj--email__input])
+                          first
+                          :attrs
+                          :value) => "invalid"))))

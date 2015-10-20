@@ -12,7 +12,8 @@
             [stonecutter.session :as session]
             [stonecutter.view.invite-user :as invite-user]
             [stonecutter.email :as email]
-            [stonecutter.db.invitations :as invite-db]))
+            [stonecutter.db.invitations :as i]
+            [stonecutter.validation :as validation]))
 
 (defn show-user-list [user-store request]
   (let [users (u/retrieve-users user-store)]
@@ -47,20 +48,32 @@
   (sh/enlive-response (invite-user/invite-user request)
                       request))
 
-
 (defn send-invite-email! [email-sender email invitation-store config-m]
   (let [app-name (config/app-name config-m)
         base-url (config/base-url config-m)
-        invite-id (invite-db/generate-invite-id! invitation-store email)]
+        invite-id (i/generate-invite-id! invitation-store email)]
     (email/send! email-sender :invite email {:invite-id invite-id
                                              :app-name  app-name
                                              :base-url  base-url})))
 
-(defn send-user-invite [email-sender invitation-store request]
-  (let [email-address (get-in request [:params :email])]
-    (send-invite-email! email-sender email-address invitation-store (get-in request [:context :config-m]))
-    (-> (r/redirect (routes/path :show-invite))
-        (assoc-in [:flash :email-address] email-address))))
+(defn validate-invite-email [user-store invitation-store email-address]
+  (let [already-invited? (i/fetch-by-email invitation-store email-address)
+        already-registered? (u/retrieve-user user-store email-address)
+        invalid? (not (validation/is-email-valid? email-address))]
+    (cond-> {}
+            (s/blank? email-address) (assoc :invitation-email :blank)
+            already-invited? (assoc :invitation-email :invited)
+            already-registered? (assoc :invitation-email :duplicate)
+            invalid? (assoc :invitation-email :invalid))))
+
+(defn send-user-invite [email-sender user-store invitation-store request]
+  (let [email-address (get-in request [:params :email])
+        err (validate-invite-email user-store invitation-store email-address)]
+    (if (empty? err)
+      (do (send-invite-email! email-sender email-address invitation-store (get-in request [:context :config-m]))
+          (-> (r/redirect (routes/path :show-invite))
+              (assoc-in [:flash :email-address] email-address)))
+      (show-invite-user-form (assoc-in request [:context :errors] err)))))
 
 (defn delete-app [client-store request]
   (let [app-id (get-in request [:params :app-id])
