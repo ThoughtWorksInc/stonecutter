@@ -111,6 +111,7 @@
                                   #{:show-user-list :set-user-trustworthiness :show-apps-list})
       (m/wrap-handlers-except m/wrap-signed-in #{:index :sign-in-or-register
                                                  :sign-out
+                                                 :accept-invite
                                                  :show-profile-deleted
                                                  :authorise
                                                  :ping

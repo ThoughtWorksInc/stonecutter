@@ -9,11 +9,11 @@
             [stonecutter.config :as config]
             [stonecutter.view.delete-app :as delete-app]
             [clojure.string :as s]
-            [stonecutter.session :as session]
             [stonecutter.view.invite-user :as invite-user]
             [stonecutter.email :as email]
             [stonecutter.db.invitations :as i]
-            [stonecutter.validation :as validation]))
+            [stonecutter.validation :as validation]
+            [stonecutter.util.uuid :as uuid]))
 
 (defn show-user-list [user-store request]
   (let [users (u/retrieve-users user-store)]
@@ -52,7 +52,7 @@
   (let [app-name (config/app-name config-m)
         base-url (config/base-url config-m)
         invite-expiry (config/invite-expiry config-m)
-        invite-id (i/generate-invite-id! invitation-store email clock invite-expiry)]
+        invite-id (i/generate-invite-id! invitation-store email clock invite-expiry uuid/uuid)]
     (email/send! email-sender :invite email {:invite-id invite-id
                                              :app-name  app-name
                                              :base-url  base-url})))

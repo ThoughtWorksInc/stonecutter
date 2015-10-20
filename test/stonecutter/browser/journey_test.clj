@@ -8,15 +8,22 @@
             [stonecutter.config :as config]
             [stonecutter.db.storage :as storage]
             [stonecutter.admin :as ad]
-            [stonecutter.browser.common :as c]))
+            [stonecutter.browser.common :as c]
+            [stonecutter.db.invitations :as i]
+            [stonecutter.test.util.time :as test-time]))
 
 (def test-port 5439)
+
+(def invited-email "somewhere@somewhere.com")
+(def invited-id "10")
+(def id-generation-fn (constantly invited-id))
 
 (defn start-server []
   (let [stores-m (storage/create-in-memory-stores)
         config-m (config/create-config)
         app-routes (h/create-app config-m {} stores-m {} {} {})
         _admin (ad/create-admin-user {:admin-login "test@test.com" :admin-password "password"} (storage/get-user-store stores-m))]
+    (i/generate-invite-id! (:invitation-store stores-m) invited-email (test-time/new-stub-clock 0) 7 id-generation-fn)
     (loop [server (run-jetty app-routes {:port test-port :host "localhost" :join? false})]
       (if (.isStarted server)
         server
@@ -38,23 +45,27 @@
                          (start-browser)))
    (after :contents (do
                       (stop-browser)
-                        (stop-server @server)))]
+                      (stop-server @server)))]
 
   (try
     (facts "admin journey on user-list page" :browser
-          (wd/to c/localhost)
-          (c/wait-for-selector c/stonecutter-index-page-body)
+           (wd/to c/localhost)
+           (c/wait-for-selector c/stonecutter-index-page-body)
+           (c/input-register-credentials-and-submit "stonecutter-journey-test@tw.com")
+           (wd/to (str c/localhost "/sign-out"))
 
-          (c/input-register-credentials-and-submit)
+           (wd/to (c/accept-invite invited-id))
+           (c/wait-for-selector c/stonecutter-accept-invite-page-body)
+           (c/input-register-credentials-and-submit "")
+           (wd/to (str c/localhost "/sign-out"))
 
-          (wd/to (str c/localhost "/sign-out"))
-          (c/wait-for-selector c/stonecutter-index-page-body)
-          (wd/current-url) => (contains (str c/localhost "/"))
+           (c/wait-for-selector c/stonecutter-index-page-body)
+           (wd/current-url) => (contains (str c/localhost "/"))
 
-          (wd/input-text c/stonecutter-sign-in-email-input "test@test.com")
-          (wd/input-text c/stonecutter-sign-in-password-input "password")
-          (wd/click c/stonecutter-sign-in-button)
-          (wd/current-url) => (contains "/profile")
+           (wd/input-text c/stonecutter-sign-in-email-input "test@test.com")
+           (wd/input-text c/stonecutter-sign-in-password-input "password")
+           (wd/click c/stonecutter-sign-in-button)
+           (wd/current-url) => (contains "/profile")
 
            (fact "admin can toggle users"
                  (wd/to c/user-list-page)

@@ -4,7 +4,8 @@
             [stonecutter.db.mongo :as m]
             [clauth.store :as cl-store]
             [stonecutter.util.time :as time]
-            [stonecutter.test.util.time :as test-time]))
+            [stonecutter.test.util.time :as test-time]
+            [stonecutter.util.uuid :as uuid]))
 
 (def invitation-store (m/create-memory-store))
 (def test-clock (test-time/new-stub-clock 0))
@@ -16,8 +17,8 @@
        (let [email-1 "user@usersemail.co.uk"
              email-2 "user2@usersemail.co.uk"
              expiry-days 7
-             invite-id-1 (i/generate-invite-id! invitation-store email-1 test-clock expiry-days)
-             invite-id-2 (i/generate-invite-id! invitation-store email-2 test-clock expiry-days)]
+             invite-id-1 (i/generate-invite-id! invitation-store email-1 test-clock expiry-days uuid/uuid)
+             invite-id-2 (i/generate-invite-id! invitation-store email-2 test-clock expiry-days uuid/uuid)]
          (i/fetch-by-id invitation-store invite-id-1) => (just {:email   email-1 :invite-id invite-id-1
                                                                 :_expiry (* expiry-days time/day)})
          invite-id-1 =not=> invite-id-2))
@@ -25,7 +26,7 @@
 (fact "can delete an invite"
              (let [email-1 "user@usersemail.co.uk"
                    expiry-days 7
-                   invite-id-1 (i/generate-invite-id! invitation-store email-1 test-clock expiry-days)]
+                   invite-id-1 (i/generate-invite-id! invitation-store email-1 test-clock expiry-days uuid/uuid)]
                (i/fetch-by-id invitation-store invite-id-1) => (just {:email email-1 :invite-id invite-id-1
                                                                       :_expiry (* expiry-days time/day)})
                (i/remove-invite! invitation-store invite-id-1)

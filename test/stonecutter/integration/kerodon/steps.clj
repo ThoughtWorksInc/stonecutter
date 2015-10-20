@@ -3,7 +3,7 @@
             [stonecutter.integration.kerodon.kerodon-selectors :as ks]
             [stonecutter.integration.kerodon.kerodon-checkers :as kc]
             [stonecutter.routes :as r]
-            [stonecutter.integration.kerodon.kerodon-helpers :as kh]))
+            [stonecutter.db.invitations :as i]))
 
 
 (defn register
@@ -17,6 +17,15 @@
        (kc/check-and-fill-in ks/registration-email-input email)
        (kc/check-and-fill-in ks/registration-password-input password)
        (kc/check-and-press ks/registration-submit))))
+
+(defn accept-invite [state first-name last-name password invite-store email clock expiry-days]
+  (let [invite-id (i/generate-invite-id! invite-store email clock expiry-days (constantly "asdf"))]
+    (-> state
+        (k/visit (r/path :accept-invite :invite-id invite-id))
+        (kc/check-and-fill-in ks/registration-first-name-input first-name)
+        (kc/check-and-fill-in ks/registration-last-name-input last-name)
+        (kc/check-and-fill-in ks/registration-password-input password)
+        (kc/check-and-press ks/registration-submit))))
 
 (defn sign-in [state email password]
   (-> state

@@ -11,6 +11,8 @@
 (def registration-submit :.func--create-profile__button)
 (def registration-email-validation-element :.clj--registration-email__validation)
 
+(def accept-invite-page-body :.func--accept-invite-page)
+
 (def profile-created-page-body :.func--profile-created-page)
 (def profile-created-flash :.func--flash-message-container)
 (def profile-page-body :.func--profile-page)

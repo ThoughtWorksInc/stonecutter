@@ -4,9 +4,9 @@
             [ring.mock.request :as mock]
             [stonecutter.db.user :as user]
             [stonecutter.session :as session]
-            [stonecutter.db.client :as client]
             [clauth.client :as cl-client]
-            [stonecutter.db.invitations :as invitations]))
+            [stonecutter.db.invitations :as invitations]
+            [stonecutter.util.uuid :as uuid]))
 
 (defn create-request
   ([method url params]
@@ -71,4 +71,4 @@
   (cl-client/store-client client-store (create-client name client-id client-secret client-url)))
 
 (defn store-invite! [invite-store email clock]
-  (invitations/generate-invite-id! invite-store email clock 7))
+  (invitations/generate-invite-id! invite-store email clock 7 uuid/uuid))

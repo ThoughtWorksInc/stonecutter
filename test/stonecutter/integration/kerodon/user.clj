@@ -11,7 +11,8 @@
             [stonecutter.integration.integration-helpers :as ih]
             [stonecutter.integration.kerodon.kerodon-selectors :as ks]
             [stonecutter.integration.kerodon.kerodon-checkers :as kc]
-            [stonecutter.integration.kerodon.steps :as steps]))
+            [stonecutter.integration.kerodon.steps :as steps]
+            [stonecutter.test.util.time :as test-time]))
 
 (l/init-logger!)
 (ih/setup-db)
@@ -92,6 +93,14 @@
            (kc/check-page-is :show-profile [ks/profile-page-body])
            (kc/selector-includes-content [ks/profile-page-profile-card-email] "email@server.com")
            (kc/selector-includes-content [ks/profile-page-profile-card-name] "Frank Lasty")))
+
+(future-facts "Accept invite page redirects to profile-created page"
+       (let [invitation-store (:invitation-store stores-m)]
+         (-> (k/session test-app)
+             (steps/accept-invite "Frank" "Lasty" "valid-password" invitation-store "email@server.com" (test-time/new-stub-clock 0) 7)
+             (kc/check-and-follow-redirect)
+             (kc/check-page-is :show-profile-created [ks/profile-created-page-body])
+             (kc/selector-includes-content [ks/profile-created-flash] "email@server.com"))))
 
 (facts "User is redirected to index page when accessing profile page not signed in"
        (-> (k/session test-app)
