@@ -310,16 +310,18 @@
        (fact "the user's password is updated if current password is correct and new password is valid"
              (let [request (th/create-request :post "/change-password" {:current-password "currentPassword"
                                                                         :new-password     "newPassword"}
-                                              {:user-login "user_who_is@changing_password.com"})]
-               (u/change-password ...user-store... request) => (every-checker (th/check-redirects-to "/profile")
+                                              {:user-login "user_who_is@changing_password.com"})
+                   test-email-sender (test-email/create-test-email-sender)]
+               (u/change-password ...user-store... test-email-sender request) => (every-checker (th/check-redirects-to "/profile")
                                                                               (contains {:flash :password-changed}))
                (provided
                  (user/authenticate-and-retrieve-user ...user-store... "user_who_is@changing_password.com" "currentPassword") => ...user...
                  (user/change-password! ...user-store... "user_who_is@changing_password.com" "newPassword") => ...updated-user...)))
 
        (fact "user is returned to change-password page and user's password is not changed if there are validation errors"
-             (->> (th/create-request :post "/change-password" ...invalid-params... {:user-login "user_who_is@changing_password.com"})
-                  (u/change-password ...user-store...)) => (every-checker (contains {:status 200})
+             (let [test-email-sender (test-email/create-test-email-sender)]
+               (->> (th/create-request :post "/change-password" ...invalid-params... {:user-login "user_who_is@changing_password.com"})
+                    (u/change-password ...user-store... test-email-sender))) => (every-checker (contains {:status 200})
                                                                           check-body-not-blank)
              (provided
                (v/validate-change-password ...invalid-params... anything) => {:some-validation-key "some-value"}
@@ -327,11 +329,12 @@
 
        (fact "user cannot change password if current-password is invalid"
              (let [user-store (m/create-memory-store)
-                   email "user_who_is@changing_password.com"]
+                   email "user_who_is@changing_password.com"
+                   test-email-sender (test-email/create-test-email-sender)]
                (th/store-user! user-store email "new-password")
                (let [original-encrypted-password (:password (user/retrieve-user user-store email))]
                  (->> (th/create-request :post "/change-password" {:current-password "wrong-password"} {:user-login email})
-                      (u/change-password user-store)) => (every-checker (contains {:status 200})
+                      (u/change-password user-store test-email-sender)) => (every-checker (contains {:status 200})
                                                                         check-body-not-blank)
                  (fact "password has not been changed"
                        original-encrypted-password => (:password (user/retrieve-user user-store email))))))
@@ -348,21 +351,38 @@
                         :class) =not=> (contains "validation-summary--show"))
 
               (fact "when validation fails"
-                    (-> (u/change-password ...user-store... (th/create-request :post "/change-password" ...invalid-params... {:user-login "user_who_is@changing_password.com"}))
-                        :body
-                        html/html-snippet
-                        (html/select [:.clj--validation-summary__item])) =not=> empty?
+                    (let [test-email-sender (test-email/create-test-email-sender)]
+                      (-> (u/change-password ...user-store... test-email-sender (th/create-request :post "/change-password" ...invalid-params... {:user-login "user_who_is@changing_password.com"}))
+                          :body
+                          html/html-snippet
+                          (html/select [:.clj--validation-summary__item]))) =not=> empty?
                     (provided
                       (v/validate-change-password ...invalid-params... anything) => {:new-password :too-short}))
 
               (fact "when authorisation fails"
                     (let [user-store (m/create-memory-store)
-                          email "user_who_is@changing_password.com"]
+                          email "user_who_is@changing_password.com"
+                          test-email-sender (test-email/create-test-email-sender)]
                       (th/store-user! user-store email "new-password")
-                      (-> (u/change-password user-store (th/create-request :post "/change-password" {:current-password "wrong-password"} {:user-login email}))
+                      (-> (u/change-password user-store test-email-sender (th/create-request :post "/change-password" {:current-password "wrong-password"} {:user-login email}))
                           :body
                           html/html-snippet
-                          (html/select [:.clj--validation-summary__item])) =not=> empty?))))
+                          (html/select [:.clj--validation-summary__item])) =not=> empty?)))
+
+       (facts "about confirmation email"
+              (fact "email is sent to user when password is changed"
+                    (let [test-email-sender (test-email/create-test-email-sender)
+                          request (th/create-request :post "/change-password" {:current-password "currentPassword"
+                                                                               :new-password     "newPassword"}
+                                                     {:user-login "user_who_is@changing_password.com"})]
+                      (u/change-password ...user-store... test-email-sender request) => (every-checker (th/check-redirects-to "/profile")
+                                                                                                       (contains {:flash :password-changed}))
+                      (:body (test-email/last-sent-email test-email-sender))) => (contains "admin@email.com")
+                    (provided
+                      (user/authenticate-and-retrieve-user ...user-store... "user_who_is@changing_password.com" "currentPassword") => ...user...
+                      (user/change-password! ...user-store... "user_who_is@changing_password.com" "newPassword") => ...updated-user...
+                      (config/admin-login anything) => "admin@email.com"
+                      (config/app-name anything) => ...app-name...))))
 
 (facts "about profile created"
        (fact "view defaults with link to view profile"

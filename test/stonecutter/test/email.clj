@@ -46,3 +46,12 @@
 
         (:subject email) => (str "Reset password for " app-name)
         (:body email) => (contains (str base-url "/reset-password/forgotten-password-id"))))
+
+(fact "testing the changed password confirmation renderer"
+      (let [app-name "MyTestApp"
+            admin-email "admin@email.com"
+            email-data {:app-name app-name :admin-email admin-email}
+            email (email/changed-password-renderer email-data)]
+
+        (:subject email) => (contains app-name)
+        (:body email) => (contains admin-email)))

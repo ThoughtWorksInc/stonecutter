@@ -72,14 +72,16 @@
 (defn show-change-password-form [request]
   (sh/enlive-response (change-password/change-password-form request) request))
 
-(defn change-password [user-store request]
+(defn change-password [user-store email-sender request]
   (let [email (session/request->user-login request)
         params (:params request)
         new-password (:new-password params)
         err (v/validate-change-password params (partial user/authenticate-and-retrieve-user user-store email))
-        request-with-validation-errors (assoc-in request [:context :errors] err)]
+        request-with-validation-errors (assoc-in request [:context :errors] err)
+        config-m (get-in request [:context :config-m])]
     (if (empty? err)
       (do (user/change-password! user-store email new-password) ;; FIXME CW & JC | 2015/9/4 pass user authentication function into validation?
+          (email/send! email-sender :change-password email {:admin-email (config/admin-login config-m) :app-name (config/app-name config-m)})
           (-> (r/redirect (routes/path :show-profile))
               (assoc :flash :password-changed)))
       (show-change-password-form request-with-validation-errors))))

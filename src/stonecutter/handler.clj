@@ -85,7 +85,7 @@
        :show-delete-account-confirmation     user/show-delete-account-confirmation
        :delete-account                       (partial user/delete-account user-store confirmation-store)
        :show-change-password-form            user/show-change-password-form
-       :change-password                      (partial user/change-password user-store)
+       :change-password                      (partial user/change-password user-store email-sender)
        :show-forgotten-password-form         forgotten-password/show-forgotten-password-form
        :send-forgotten-password-email        (partial forgotten-password/forgotten-password-form-post email-sender user-store forgotten-password-store clock)
        :show-forgotten-password-confirmation forgotten-password/show-forgotten-password-confirmation

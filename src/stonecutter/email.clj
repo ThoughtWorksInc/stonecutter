@@ -31,7 +31,7 @@
     (log/debug "email-address: " email-address "\nsubject: " subject "\nbody: " body)))
 
 (defn create-stdout-email-sender []
-  (StdoutSender. ))
+  (StdoutSender.))
 
 (defn confirmation-email-body [base-url confirmation-id]
   (str
@@ -45,7 +45,7 @@
 
 (defn confirmation-renderer [email-data]
   {:subject (format "Confirm your email for %s" (:app-name email-data))
-   :body (confirmation-email-body (:base-url email-data) (:confirmation-id email-data))})
+   :body    (confirmation-email-body (:base-url email-data) (:confirmation-id email-data))})
 
 (defn invite-email-body [base-url app-name invite-id]
   (let [invite-url (str base-url "/accept-invite/" invite-id)]
@@ -60,7 +60,7 @@
 
 (defn invite-renderer [email-data]
   {:subject (format "You've been invited to join %s" (:app-name email-data))
-   :body (invite-email-body (:base-url email-data) (:app-name email-data) (:invite-id email-data))})
+   :body    (invite-email-body (:base-url email-data) (:app-name email-data) (:invite-id email-data))})
 
 (defn forgotten-password-email-body [base-url forgotten-password-id]
   (let [reset-path (r/path :show-reset-password-form :forgotten-password-id forgotten-password-id)
@@ -79,6 +79,22 @@
     {:subject (format "Reset password for %s" app-name)
      :body    (forgotten-password-email-body base-url forgotten-password-id)}))
 
+(defn changed-password-email-body [admin-email]
+  (str
+    "Hi,\n"
+    "Your password has been changed.\n"
+    "If this was not done by you then\n"
+    "please contact the system administrator at\n"
+    admin-email
+    "\nCheers,"
+    "\nAdmin"))
+
+(defn changed-password-renderer [email-data]
+  (let [admin-email (:admin-email email-data)
+        app-name (:app-name email-data)]
+    {:subject (format "Your password has changed on %s" app-name)
+     :body    (changed-password-email-body admin-email)}))
+
 (defn get-confirmation-renderer []
   confirmation-renderer)
 
@@ -88,10 +104,14 @@
 (defn get-invite-renderer []
   invite-renderer)
 
+(defn get-changed-password-renderer []
+  changed-password-renderer)
+
 (defn renderer-retrievers []
-  {:confirmation (get-confirmation-renderer)
+  {:confirmation       (get-confirmation-renderer)
    :forgotten-password (get-forgotten-password-renderer)
-   :invite (get-invite-renderer)})
+   :invite             (get-invite-renderer)
+   :change-password    (get-changed-password-renderer)})
 
 (defn send! [sender template email-address email-data]
   (log/debug (format "sending template '%s' to '%s'." template email-address))
