@@ -23,7 +23,8 @@
 
 (defn config-translation []
   {:dictionary                 {:en (translation-map "en")
-                                :fi (translation-map "fi")}
+                                ;:fi (translation-map "fi") ;; FIXME JC 21/10/2015 removed until translations are correct
+                                }
    :dev-mode?                  false
    :fallback-locale            :en
    :log-missing-translation-fn (fn [{:keys [locales ks ns] :as args}]
