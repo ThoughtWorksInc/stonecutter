@@ -1,0 +1,270 @@
+index:
+  title: Welcome in Finnish
+  welcome-header-1: Welcome to  in Finnish
+  welcome-header-2: " in Finnish"
+  welcome-intro-1: Connect with all your D-Cent tools. Sign in securely to applications using your  in Finnish
+  welcome-intro-2: Profile Card. You have full control of the information you'd like to share.  in Finnish
+  register-intro-1: Register and sign in to supported applications using your in Finnish
+  register-intro-2: Profile Card. in Finnish
+  sign-in-header: Sign in in Finnish
+  sign-in-email-address: Email address  in Finnish
+  sign-in-invalid-credentials-validation-message: Invalid email address or password in Finnish
+  sign-in-email-address-invalid-validation-message: Enter a valid email address in Finnish
+  sign-in-email-address-too-long-validation-message: Email address is too long in Finnish
+  sign-in-password: Password in Finnish
+  sign-in-password-blank-validation-message: Password cannot be blank in Finnish
+  sign-in-password-too-long-validation-message: Password is too long in Finnish
+  sign-in-password-too-short-validation-message: Password should be at least 8 characters long in Finnish
+  sign-in-submit: Sign in in Finnish
+  sign-in-forgot-password: Forgot password? in Finnish
+  register-header: Create a Profile in Finnish
+  register-first-name: First name in Finnish
+  register-last-name: Last name in Finnish
+  register-email-address: Email address in Finnish
+  register-password: Password (8 or more characters) in Finnish
+  register-confirm-password: Confirm password in Finnish
+  register-unknown-error: Whoops! Unknown error in Finnish
+  register-create-account: Create Profile Card in Finnish
+
+change-password-form:
+  title: Change your password in Finnish
+  page-header: Change your password in Finnish
+  current-password: Current password in Finnish
+  new-password: New password (8 or more characters) in Finnish
+  unknown-error: Whoops! Unknown error in Finnish
+  form-button: Save changes in Finnish
+  cancel-button: Cancel in Finnish
+
+reset-password-form:
+  title: Reset your password in Finnish
+  page-header: Reset your password in Finnish
+  new-password: New password in Finnish
+  confirm-password-invalid-validation-message: Confirm new password must match new password in Finnish
+  form-button: Reset password in Finnish
+
+forgot-password:
+  title: Forgotten password in Finnish
+  email-label: Email address in Finnish
+  email-address-invalid-validation-message: Enter a valid email address in Finnish
+  email-address-too-long-validation-message: Email address is too long in Finnish
+  email-address-non-existent-validation-message: Account does not exist for this email address in Finnish
+  unknown-error: Whoops! Unknown error in Finnish
+  submit: Send link to change password in Finnish
+
+forgot-password-confirmation:
+  title: Forgotten password - email sent in Finnish
+  page-header: Email sent in Finnish
+  helper-text: You should shortly receive an email with a link to reset your password. in Finnish
+  home-link: Return home in Finnish
+
+confirm-email-resent:
+  title: Confirmation email resent in Finnish
+  page-header: Confirmation email resent in Finnish
+  action-link: View profile in Finnish
+
+confirm-email-expired:
+  title: Confirmation link expired in Finnish
+  page-header: Your confirmation email link has expired in Finnish
+  helper-text-1: It's been a while since you created your account. in Finnish
+  helper-text-2: "You need to resend the confirmation email to verify your address: in Finnish"
+  resend-action: Resend confirmation in Finnish
+
+change-email-form:
+  title: Change your email address in Finnish
+  page-header: Change your email address in Finnish
+  form-button: Save changes in Finnish
+  email-address-label: New email address in Finnish
+  cancel-button-1: Cancel in Finnish
+  cancel-button-2: changing my email address in Finnish
+
+confirmation-sign-in-form:
+  title: Sign in for Confirmation in Finnish
+  page-header: Sign in for Confirmation in Finnish
+  invalid-credentials-validation-message: Invalid password in Finnish
+  unknown-error: Invalid in Finnish
+  password: Password in Finnish
+  sign-in: Sign in to Confirm Email in Finnish
+  forgot-password: Forgot password? in Finnish
+
+profile:
+  title: Profile in Finnish
+  profile-link: Profile in Finnish
+  sign-out-link: Sign out in Finnish
+  settings-title: Settings in Finnish
+  change-password-button: Change password in Finnish
+  delete-button: Delete account in Finnish
+  email-not-confirmed: Your email address has not been confirmed. in Finnish
+  admin-span: ", Mighty Admin!  in Finnish"
+  verify-email-intro-1: If you have not received an email to in Finnish
+  verify-email-intro-2: you should resend the confirmation email. in Finnish
+  verify-button: Resend email confirmation in Finnish
+
+applications:
+  title: Applications in Finnish
+  intro: Manage the applications that you've shared your Profile Card with. in Finnish
+  list-empty: No applications use your Profile Card in Finnish
+  unshare-button: Unshare Profile Card in Finnish
+
+unshare:
+  title: Unshare your Profile Card in Finnish
+  modal-unshare-title: Are you sure you want to unshare your Profile Card with in Finnish
+  modal-unshare-lede-begin: If you unshare you will need to approve in Finnish
+  modal-unshare-lede-end: again to sign in. in Finnish
+  modal-unshare-ok-button: Unshare Profile Card in Finnish
+  modal-unshare-cancel-button: Cancel in Finnish
+
+delete-account:
+  title: Delete your account in Finnish
+  modal-delete-title: 'Are you sure you want to delete your account? in Finnish'
+  modal-delete-lede: 'If you delete your account all your data will be removed. in Finnish'
+  modal-delete-ok-button: Delete account in Finnish
+  modal-delete-cancel-button: Cancel in Finnish
+
+delete-app:
+  title: Delete in Finnish
+  modal-delete-title: 'Are you sure you want to delete this app? in Finnish'
+  modal-delete-lede: 'If you delete an app users will no longer be able to log in to it. in Finnish'
+  modal-delete-ok-button: Delete app in Finnish
+  modal-delete-cancel-button: Cancel in Finnish
+
+profile-created:
+  title: Your Profile Card has been created in Finnish
+  page-header: Your Profile Card has been created in Finnish
+  intro: Your Profile Card can be used to sign in to supported applications like in Finnish
+  action-button-default: View your profile in Finnish
+  action-button-from-app: Continue in Finnish
+
+profile-deleted:
+  title: Profile deleted in Finnish
+  page-header: Your Profile has been deleted in Finnish
+  intro: All your Profile Cards and data have been completely removed. in Finnish
+  action-button: Register  in Finnish
+
+authorise:
+  title: Authorise in Finnish
+  page-title: would like to use your Profile Card in Finnish
+  share-1: By sharing your Profile Card this application in Finnish
+  share-2: "will be able to: in Finnish"
+  item-sign-in: Sign you in in Finnish
+  item-view-profile: View your Profile Card in Finnish
+  not-intro-1: This application in Finnish
+  not-intro-2: "will not be able to: in Finnish"
+  item-update-profile: Update your Profile Card in Finnish
+  allow-action: Share Profile Card in Finnish
+  disallow-action-1: Cancel in Finnish
+  disallow-action-2: and do not share my Profile Card in Finnish
+  terms: You can unshare your Profile Card at anytime from your profile. in Finnish
+
+authorise-fail:
+  title: Authorise failure in Finnish
+  page-intro: You have not signed in to in Finnish
+  page-intro-ending: can not have access to your Profile Card and cannot sign in. in Finnish
+
+error-default:
+  return-to-link-header: What can I do now? in Finnish
+  return-to-link-before: Please return to the in Finnish
+  return-to-link: home page in Finnish
+  return-to-link-title-attr: Return to Home in Finnish
+  return-to-link-after: "in Finnish"
+
+error-csrf:
+  title: CSRF invalid in Finnish
+  page-header: "CSRF invalid in Finnish"
+  page-intro: "CSRF invalid response. in Finnish"
+
+error-forbidden:
+  title: Forbidden in Finnish
+  page-header: "Request forbidden in Finnish"
+  page-intro: "Request forbidden response. in Finnish"
+
+error-404:
+  title: Error-404 in Finnish
+  page-header: "Sorry the page you requested can't be found. in Finnish"
+  page-intro: "The page you were trying to reach at this address doesn't seem to exist. This is usually the result of a bad or outdated link. We apologise for any inconvenience. in Finnish"
+
+error-500:
+  title: "D'Oh! Something went wrong in Finnish"
+  page-header: "Sorry something went wrong in Finnish"
+  page-intro: "An unexpected error has occurred, please try again. We apologise for any inconvenience. in Finnish"
+
+error-account-nonexistent:
+  title: "Missing account in Finnish"
+  page-header: "This account does not exist in Finnish"
+  page-intro: "This account has been deleted or never existed. in Finnish"
+
+modal:
+  modal-dismiss: Close in Finnish
+
+flash:
+  password-changed: "Your password has been changed! in Finnish"
+  email-confirmed: "Your email address has been confirmed! in Finnish"
+  confirmation-email-sent: "Another confirmation email has been sent to your email address. in Finnish"
+  email-already-confirmed: "Your email address has already been confirmed. in Finnish"
+  confirm-email-sent-pre-email-address: "A confirmation email has been sent to: in Finnish"
+  confirm-email-sent-post-email-address: "Please follow the instructions to confirm your email address. in Finnish"
+  expired-password-reset: "This reset password link has already been used, or has expired -  please enter your e-mail below to receive a new email. in Finnish"
+  user-trusted: " is now set to trusted in Finnish"
+  user-untrusted: " is now set to untrusted in Finnish"
+
+admin:
+  nav-users: Users in Finnish
+  nav-invite-user: Invite in Finnish
+  nav-apps: Apps in Finnish
+  nav-profile: Profile in Finnish
+
+admin-sign-in-form:
+  title: Sign in in Finnish
+  page-header: Sign in in Finnish
+  invalid-credentials-validation-message: Invalid email address or password in Finnish
+  email-address: Email address in Finnish
+  email-address-invalid-validation-message: Enter a valid email address in Finnish
+  email-address-too-long-validation-message: Email address is too long in Finnish
+  password: Password in Finnish
+  password-blank-validation-message: Password cannot be blank in Finnish
+  password-too-long-validation-message: Password is too long in Finnish
+  password-too-short-validation-message: Password should be at least 8 characters long in Finnish
+  sign-in: Sign in in Finnish
+  forgot-password: Forgot password? in Finnish
+
+admin-user-list:
+  title: User list in Finnish
+  page-title: User list in Finnish
+  label-search: Search in Finnish
+  user-confirmed-email: Confirmed in Finnish
+  user-not-confirmed-email: Not confirmed in Finnish
+  trust-label: Toggle trust in Finnish
+  list-empty: There are no users. in Finnish
+  trust-form-button: Update in Finnish
+
+admin-app-list:
+  title: Apps in Finnish
+  page-title: Apps in Finnish
+  added-flash-success: was successfully added in Finnish
+  deleted-flash-success: was successfully deleted in Finnish
+  link-to-add-more: Add more apps in Finnish
+  label-app: App name in Finnish
+  app-invalid-validation-message: Enter the application name in Finnish
+  label-app-url: App url in Finnish
+  url-invalid-validation-message: Enter the application url in Finnish
+  add-app-button: Add app in Finnish
+  label-app-id: Client ID in Finnish
+  label-app-secret: Client Secret in Finnish
+  delete-app-button: Delete in Finnish
+  app-name-blank-error: This cannot be blank in Finnish
+  app-url-blank-error: This cannot be blank in Finnish
+  unknown-error: something went wrong in Finnish
+
+
+admin-invite-user:
+  title: Invite a user in Finnish
+  page-title: Invite a user in Finnish
+  email-address: Email address in Finnish
+  email-address-invalid-validation-message: Enter a valid email address in Finnish
+  invite-button: Invite in Finnish
+  invited-flash-success: has been sent an invitation in Finnish.
+  invite-email-address-invalid-validation-message: Enter a valid email address in Finnish
+  invite-email-address-duplicate-validation-message: Email address already registered in Finnish
+  invite-email-address-invited-validation-message: Email address already invited in Finnish
+  invite-email-address-too-long-validation-message: Email address is too long in Finnish
+  invite-unknown-error: Whoops! Unknown error in Finnish
+  invite-email-address-blank-validation-message: Enter an email address in Finnish
