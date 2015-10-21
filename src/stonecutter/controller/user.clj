@@ -188,5 +188,5 @@
         response (register-user user-store token-store confirmation-store email-sender request-with-errors)]
     (when (empty? errors)
       (invitations/remove-invite! invitation-store (get-in request [:params :invite-id]))
-      (user/update-user-role! user-store (get-in request-with-errors [:params :registration-email]) (:trusted config/roles)))
-    response))
+      (user/update-user-role! user-store (get-in request-with-errors [:params :registration-email]) (:trusted config/roles))
+      response)))

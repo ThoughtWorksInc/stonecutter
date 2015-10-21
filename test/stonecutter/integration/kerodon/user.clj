@@ -94,13 +94,13 @@
            (kc/selector-includes-content [ks/profile-page-profile-card-email] "email@server.com")
            (kc/selector-includes-content [ks/profile-page-profile-card-name] "Frank Lasty")))
 
-(future-facts "Accept invite page redirects to profile-created page"
+(facts "Accept invite page redirects to profile-created page"
        (let [invitation-store (:invitation-store stores-m)]
          (-> (k/session test-app)
-             (steps/accept-invite "Frank" "Lasty" "valid-password" invitation-store "email@server.com" (test-time/new-stub-clock 0) 7)
+             (steps/accept-invite "Bob" "Invitee" "valid-password" invitation-store "email-1@server.com" (test-time/new-stub-clock 0) 7)
              (kc/check-and-follow-redirect)
              (kc/check-page-is :show-profile-created [ks/profile-created-page-body])
-             (kc/selector-includes-content [ks/profile-created-flash] "email@server.com"))))
+             (kc/selector-includes-content [ks/profile-created-flash] "email-1@server.com"))))
 
 (facts "User is redirected to index page when accessing profile page not signed in"
        (-> (k/session test-app)

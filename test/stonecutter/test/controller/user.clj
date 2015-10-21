@@ -76,7 +76,7 @@
                (u/accept-invite invite-db (th/create-request :get (routes/path :accept-invite :invite-id invite-id) {:invite-id invite-id}))
                => (th/check-renders-page [:.func--index-page])))
 
-       (fact "when registering using an invite, user data is saved"
+       (fact "when registering using an invite, user data is saved and set to trusted"
              (let [invite-id "84927492GFJSIUD"
                    user-store (m/create-memory-store)
                    token-store (m/create-memory-store)
@@ -85,20 +85,21 @@
                (->> (th/create-request :post (routes/path :register-using-invitation :invite-id invite-id) default-register-user-params)
                     (u/register-using-invitation user-store token-store confirmation-store test-email-sender ...invitation-store...))) => anything
              (provided
-               (user/store-user! anything "Frank" "Lasty" "valid@email.com" "password") => ...user...
+               (user/store-user! anything "Frank" "Lasty" default-email "password") => anything :times 1
                (user/update-user-role! anything default-email "trusted") => anything
                (i/remove-invite! ...invitation-store... anything) => nil))
 
        (fact "when registering using an invite, the invite data is removed from the database"
              (let [invitation-store (m/create-memory-store)
+                   user-store (m/create-memory-store)
+                   token-store (m/create-memory-store)
+                   confirmation-store (m/create-memory-store)
+                   test-email-sender (test-email/create-test-email-sender)
                    invite-id (inv/generate-invite-id! invitation-store default-email test-clock 7 uuid/uuid)
                    request (th/create-request :post (routes/path :register-using-invitation :invite-id invite-id) (assoc default-register-user-params :invite-id invite-id))]
-               (u/register-using-invitation ...user-store... ...token-store... ...confirmation-store... ...email-sender... invitation-store request)
-               (i/fetch-by-id invitation-store invite-id)) => nil
-             (provided
-              (u/register-user ...user-store... ...token-store... ...confirmation-store... ...email-sender... anything) => anything
-              (user/update-user-role! anything default-email "trusted") => anything
-              (user/user-exists? ...user-store... default-email) => false))
+               (u/register-using-invitation user-store token-store confirmation-store test-email-sender invitation-store request)
+               (i/fetch-by-id invitation-store invite-id)
+               (:role (user/retrieve-user user-store default-email)) => "trusted"))
 
        (fact "when there are errors in registering with an invite, the invite data is not removed from the database"
              (let [invitation-store (m/create-memory-store)

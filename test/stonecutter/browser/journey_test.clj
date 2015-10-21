@@ -10,7 +10,8 @@
             [stonecutter.admin :as ad]
             [stonecutter.browser.common :as c]
             [stonecutter.db.invitations :as i]
-            [stonecutter.test.util.time :as test-time]))
+            [stonecutter.test.util.time :as test-time]
+            [stonecutter.email :as email]))
 
 (def test-port 5439)
 
@@ -21,7 +22,7 @@
 (defn start-server []
   (let [stores-m (storage/create-in-memory-stores)
         config-m (config/create-config)
-        app-routes (h/create-app config-m {} stores-m {} {} {})
+        app-routes (h/create-app config-m {} stores-m (email/create-stdout-email-sender) {} {})
         _admin (ad/create-admin-user {:admin-login "test@test.com" :admin-password "password"} (storage/get-user-store stores-m))]
     (i/generate-invite-id! (:invitation-store stores-m) invited-email (test-time/new-stub-clock 0) 7 id-generation-fn)
     (loop [server (run-jetty app-routes {:port test-port :host "localhost" :join? false})]
@@ -48,15 +49,10 @@
                       (stop-server @server)))]
 
   (try
-    (facts "admin journey on user-list page" :browser
-           (wd/to c/localhost)
-           (c/wait-for-selector c/stonecutter-index-page-body)
-           (c/input-register-credentials-and-submit "stonecutter-journey-test@tw.com")
-           (wd/to (str c/localhost "/sign-out"))
-
+    (facts "Invite registration and user list journey" :browser
            (wd/to (c/accept-invite invited-id))
            (c/wait-for-selector c/stonecutter-accept-invite-page-body)
-           (c/input-register-credentials-and-submit "")
+           (c/input-register-credentials-and-submit)
            (wd/to (str c/localhost "/sign-out"))
 
            (c/wait-for-selector c/stonecutter-index-page-body)
@@ -67,18 +63,25 @@
            (wd/click c/stonecutter-sign-in-button)
            (wd/current-url) => (contains "/profile")
 
+           (fact "invited user is automatically trusted"
+                 (wd/to c/user-list-page)
+                 (c/wait-for-selector c/stonecutter-user-list-page-body)
+                 (wd/attribute c/stonecutter-trust-toggle :checked) => "checked")
+
            (fact "admin can toggle users"
                  (wd/to c/user-list-page)
+                 (c/wait-for-selector c/stonecutter-user-list-page-body)
 
+                 (wd/attribute c/stonecutter-trust-toggle :checked) => "checked"
+                 (wd/toggle c/stonecutter-trust-toggle)
                  (wd/attribute c/stonecutter-trust-toggle :checked) => nil
-                 (wd/toggle c/stonecutter-trust-toggle)
-                 (wd/attribute c/stonecutter-trust-toggle :checked) => "checked"
 
                  (wd/to c/user-list-page)
-                 (wd/attribute c/stonecutter-trust-toggle :checked) => "checked"
+                 (wd/attribute c/stonecutter-trust-toggle :checked) => nil
 
                  (wd/toggle c/stonecutter-trust-toggle)
                  (wd/to c/user-list-page)
-                 (wd/attribute c/stonecutter-trust-toggle :checked) => nil))
+                 (wd/attribute c/stonecutter-trust-toggle :checked) => "checked"))
     (catch Exception e
       (throw e))))
+

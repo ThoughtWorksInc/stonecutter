@@ -112,6 +112,7 @@
       (m/wrap-handlers-except m/wrap-signed-in #{:index :sign-in-or-register
                                                  :sign-out
                                                  :accept-invite
+                                                 :register-using-invitation
                                                  :show-profile-deleted
                                                  :authorise
                                                  :ping

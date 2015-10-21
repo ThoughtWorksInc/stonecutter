@@ -4,6 +4,7 @@
 
 ;; COMMON
 (def stonecutter-index-page-body ".func--index-page")
+(def stonecutter-user-list-page-body ".func--admin-user-list-page")
 (def stonecutter-accept-invite-page-body ".func--accept-invite-page")
 (def stonecutter-sign-in-email-input ".func--sign-in-email__input")
 (def stonecutter-sign-in-password-input ".func--sign-in-password__input")
@@ -15,11 +16,10 @@
 (def stonecutter-register-create-profile-button ".func--create-profile__button")
 (def stonecutter-trust-toggle ".clj--user-item__toggle")
 
-(defn input-register-credentials-and-submit [email]
+(defn input-register-credentials-and-submit []
   (wd/input-text stonecutter-register-first-name-input "Journey")
   (wd/input-text stonecutter-register-last-name-input "Test")
-  (wd/input-text stonecutter-register-email-input email)
-  (wd/input-text stonecutter-register-password-input "password")
+  (wd/input-text stonecutter-register-password-input "password123!!!")
   (wd/click stonecutter-register-create-profile-button))
 
 (defn wait-for-selector [selector]
