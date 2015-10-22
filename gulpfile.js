@@ -25,7 +25,7 @@ var dev_path = {
   jade: ['assets/jade/**/*.jade', '!assets/jade/_*.jade', '!assets/jade/layout/*', '!assets/jade/mixins/*'],
   js: ['assets/javascripts/**/*.js'],
   images: ['assets/images/**/*', '!assets/images/dev-*'],
-  favicons: ['assets/icons/favicon.*'],
+  favicons: ['assets/icons/*favicon.*'],
   fonts: ['assets/stylesheets/fonts/*','node_modules/font-awesome/fonts/fontawesome-webfont.*'],
   port: 7777
 };
