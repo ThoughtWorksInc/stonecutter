@@ -20,7 +20,8 @@
             [ring.util.response :as response]
             [stonecutter.db.confirmation :as confirmation]
             [stonecutter.session :as session]
-            [stonecutter.db.invitations :as invitations]))
+            [stonecutter.db.invitations :as invitations]
+            [stonecutter.db.user :as u]))
 
 (defn has-valid-invite-id? [request invitation-store]
   (let [invite-id (get-in request [:params :invite-id])]
@@ -34,7 +35,7 @@
 (defn accept-invite [invitation-store request]
   (if-let [invite-map (has-valid-invite-id? request invitation-store)]
     (let [request-with-email (assoc-in request [:params :registration-email] (:email invite-map))]
-        (sh/enlive-response (index/accept-invite request-with-email) request-with-email))
+      (sh/enlive-response (index/accept-invite request-with-email) request-with-email))
     (sh/enlive-response (index/index request) request)))
 
 (defn send-confirmation-email! [email-sender user email confirmation-id config-m]
@@ -85,6 +86,21 @@
           (-> (r/redirect (routes/path :show-profile))
               (assoc :flash :password-changed)))
       (show-change-password-form request-with-validation-errors))))
+
+(defn update-user-email [user-store email-sender request]
+  (let [email (session/request->user-login request)
+        params (:params request)
+        new-email (:new-email params)
+        err (v/validate-registration-email new-email (partial u/user-exists? user-store))
+        request-with-validation-errors (assoc-in request [:context :errors] err)
+        config-m (get-in request [:context :config-m])]
+    (if (empty? err)
+      (do (user/update-user-email! user-store email new-email)
+          (email/send! email-sender :change-password email {:admin-email (config/admin-login config-m) :app-name (config/app-name config-m)})
+          (-> (r/redirect (routes/path :show-profile))
+              (assoc :flash :email-changed )))
+      (show-change-password-form request-with-validation-errors)))
+  )
 
 (defn sign-in [user-store token-store request]
   (let [params (:params request)

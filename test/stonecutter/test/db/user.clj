@@ -214,6 +214,25 @@
 
                (update-role-fn user) => {:login "email@email.com" :role "trusted"})))
 
+(facts "about updating user email"
+       (fact "update-user-email changes user email accordingly"
+             (let [user-store (m/create-memory-store)
+                   email "current-email@email.com"
+                   user (th/store-user! user-store email "password")
+                   new-email "new-email@email.com"
+                   new-user (assoc user :login "new-email@email.com")]
+               (user/update-user-email! user-store email new-email) => new-user))
+
+       (fact "when email is updated it is no longer confirmed"
+             (let [user-store (m/create-memory-store)
+                   email "current-email@email.com"
+                   user (th/store-user! user-store email "password")
+                   new-email "new-email@email.com"
+                   new-user (assoc user :login "new-email@email.com" :confirmed? false)]
+
+               (user/confirm-email! user-store user)
+               (user/update-user-email! user-store email new-email) => new-user)))
+
 (facts "about admins"
        (fact "creating an admin user includes the role admin"
              (let [email "email@admin.com"

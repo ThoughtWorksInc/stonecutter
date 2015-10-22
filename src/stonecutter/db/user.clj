@@ -108,3 +108,12 @@
 
 (defn update-user-role! [user-store email role]
   (m/update! user-store email (update-user-role role)))
+
+(defn update-user-email [email]
+  (fn [user]
+    (-> (assoc user :login email)
+        (assoc :confirmed? false))))
+
+(defn update-user-email! [user-store email new-email]
+  (-> (m/update! user-store email (update-user-email new-email))
+      (dissoc :password)))

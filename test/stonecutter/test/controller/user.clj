@@ -313,7 +313,7 @@
                                               {:user-login "user_who_is@changing_password.com"})
                    test-email-sender (test-email/create-test-email-sender)]
                (u/change-password ...user-store... test-email-sender request) => (every-checker (th/check-redirects-to "/profile")
-                                                                              (contains {:flash :password-changed}))
+                                                                                                (contains {:flash :password-changed}))
                (provided
                  (user/authenticate-and-retrieve-user ...user-store... "user_who_is@changing_password.com" "currentPassword") => ...user...
                  (user/change-password! ...user-store... "user_who_is@changing_password.com" "newPassword") => ...updated-user...)))
@@ -322,7 +322,7 @@
              (let [test-email-sender (test-email/create-test-email-sender)]
                (->> (th/create-request :post "/change-password" ...invalid-params... {:user-login "user_who_is@changing_password.com"})
                     (u/change-password ...user-store... test-email-sender))) => (every-checker (contains {:status 200})
-                                                                          check-body-not-blank)
+                                                                                               check-body-not-blank)
              (provided
                (v/validate-change-password ...invalid-params... anything) => {:some-validation-key "some-value"}
                (user/change-password! ...user-store... anything anything) => anything :times 0))
@@ -335,7 +335,7 @@
                (let [original-encrypted-password (:password (user/retrieve-user user-store email))]
                  (->> (th/create-request :post "/change-password" {:current-password "wrong-password"} {:user-login email})
                       (u/change-password user-store test-email-sender)) => (every-checker (contains {:status 200})
-                                                                        check-body-not-blank)
+                                                                                          check-body-not-blank)
                  (fact "password has not been changed"
                        original-encrypted-password => (:password (user/retrieve-user user-store email))))))
 
@@ -383,6 +383,17 @@
                       (user/change-password! ...user-store... "user_who_is@changing_password.com" "newPassword") => ...updated-user...
                       (config/admin-login anything) => "admin@email.com"
                       (config/app-name anything) => ...app-name...))))
+
+(facts "about changing email"
+       (fact "the user's email is updated if new email is valid"
+             (let [request (th/create-request :post "/update-user-email" {:new-email "new-email@email.com"}
+                                              {:user-login "user-who-is@changing-email.com"})
+                   test-email-sender (test-email/create-test-email-sender)]
+               (u/update-user-email ...user-store... test-email-sender request) => (every-checker (th/check-redirects-to "/profile")
+                                                                                                                  (contains {:flash :email-changed}))
+               (provided
+                 (user/user-exists? ...user-store... "new-email@email.com") => false
+                 (user/update-user-email! ...user-store... "user-who-is@changing-email.com" "new-email@email.com") => anything))))
 
 (facts "about profile created"
        (fact "view defaults with link to view profile"
