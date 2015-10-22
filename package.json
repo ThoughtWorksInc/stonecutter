@@ -4,7 +4,7 @@
   "description": "Build all the things",
   "main": "server.js",
   "engines": {
-    "node": "0.12.4"
+    "node": "0.12.7"
   },
   "dependencies": {
     "font-awesome": "latest",
@@ -33,8 +33,7 @@
   "author": "Chris Cheshire",
   "license": "MIT",
   "scripts": {
-    "postinstall": "gulp build",
-    "start": "",
-    "node": ""
+    "preinstall": "npm config set bin-links false",
+    "postinstall": "./npm-postinstall.sh"
   }
 }

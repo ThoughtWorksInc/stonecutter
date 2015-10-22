@@ -29,18 +29,18 @@ The source folder will be located at `/var/stonecutter`
 After initial setup you will need to run:
 
     cd /var/stonecutter
-    npm install
+    npm install --no-bin-links
 
-This will take a while (upwards of 10 minutes).
+This will take a while (upwards of 5 minutes).
 
 [Vagrant]: https://www.vagrantup.com
 [Ansible]: http://docs.ansible.com/ansible/intro_installation.html
 
 ## Running
 
-To start a web server with users persisted to mongodb, ensure you have mongo running locally and run:
+To start the app, run:
 
-    lein start
+    ./manual_test_vm.sh
 
 To start a web server for the application in development mode, run:
 

@@ -29,11 +29,6 @@
      - npm
      - gulp
 
- - name: Rebuild node-sass
-   args:
-     chdir: /var/stonecutter
-   command: npm rebuild node-sass
-
  - name: install firefox
    apt: name=firefox state=present
 
