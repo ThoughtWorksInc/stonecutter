@@ -89,8 +89,10 @@
       (show-change-password-form request-with-validation-errors))))
 
 (defn show-change-email-form [request]
-  (prn "Request --------------" request)
   (sh/enlive-response (change-email/change-email-form request) request))
+
+(defn change-email [request]
+  )
 
 (defn update-user-email [user-store email-sender request]
   (let [email (session/request->user-login request)

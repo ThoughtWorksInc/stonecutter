@@ -39,3 +39,5 @@ GET     /invite                                  show-invite
 POST    /invite                                  send-invite
 GET     /accept-invite/:invite-id                accept-invite
 POST    /accept-invite/:invite-id                register-using-invitation
+GET     /change-email                            show-change-email-form
+POST    /change-email                            change-email

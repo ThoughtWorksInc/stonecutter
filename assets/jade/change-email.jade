@@ -26,11 +26,13 @@ block content
         label.form-row__label(for="email-address")
           span.form-row__title(data-l8n="content:change-email-form/email-address-label")
             | !New email address
-        input.form-row__input(type="password", id="email-address", name="email-address", autofocus="autofocus")
+          span.form-row__validation.clj--new-email__validation(data-l8n="content:change-email-form/new-email-blank-validation-message")
+            | !Enter a new email address
+        input.form-row__input(type="text", id="email-address", name="email-address", autofocus="autofocus")
 
       .button-actions
         .button-actions__primary
-          button.button.button--full-width(type="submit" data-l8n="content:change-email-form/form-button")
+          button.button.button--full-width.clj--change-email__button(type="submit" data-l8n="content:change-email-form/form-button")
             | !Save changes
         .button-actions__secondary
           a.button.button--full-width.button--link.clj--change-email-cancel__link(href="./profile") 

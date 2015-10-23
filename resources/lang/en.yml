@@ -76,6 +76,10 @@ change-email-form:
   email-address-label: New email address
   cancel-button-1: Cancel
   cancel-button-2: changing my email address
+  new-email-blank-validation-message: Please enter a new email address
+  new-email-duplicate-validation-message: That email address is already registered to an acount
+  new-email-invalid-validation-message: Please enter a valid email address
+  new-email-unchanged-validation-message: Please enter a new email address
 
 confirmation-sign-in-form:
   title: Sign in for Confirmation
@@ -253,7 +257,6 @@ admin-app-list:
   app-name-blank-error: This cannot be blank
   app-url-blank-error: This cannot be blank
   unknown-error: something went wrong
-
 
 admin-invite-user:
   title: Invite a user
