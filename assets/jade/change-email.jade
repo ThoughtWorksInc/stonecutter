@@ -16,6 +16,11 @@ block content
     h1.page-title(data-l8n="content:change-email-form/page-header")
       | !Change your email address
     form.clj--change-email__form(action="#", method="post", role="form")
+      .validation-summary.validation-summary--show.clj--validation-summary
+        .validation-summary__title
+          ul.validation-summary__list
+            li.validation-summary__item.clj--validation-summary__item(data-l8n="content:change-password-form/current-password-invalid-validation-message")
+              | !New email is invalid
 
       p.form-row.clj--email-address
         label.form-row__label(for="email-address")

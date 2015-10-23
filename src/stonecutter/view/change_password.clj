@@ -3,7 +3,6 @@
             [stonecutter.routes :as r]
             [stonecutter.view.view-helpers :as vh]))
 
-
 (def current-password-error-translation-key
    "content:change-password-form/current-password-invalid-validation-message")
 
