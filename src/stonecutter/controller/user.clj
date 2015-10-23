@@ -12,6 +12,7 @@
             [stonecutter.view.delete-account :as delete-account]
             [stonecutter.view.change-password :as change-password]
             [stonecutter.view.unshare-profile-card :as unshare-profile-card]
+            [stonecutter.view.change-email :as change-email]
             [stonecutter.util.uuid :as uuid]
             [stonecutter.helper :as sh]
             [stonecutter.config :as config]
@@ -87,6 +88,10 @@
               (assoc :flash :password-changed)))
       (show-change-password-form request-with-validation-errors))))
 
+(defn show-change-email-form [request]
+  (prn "Request --------------" request)
+  (sh/enlive-response (change-email/change-email-form request) request))
+
 (defn update-user-email [user-store email-sender request]
   (let [email (session/request->user-login request)
         params (:params request)
@@ -98,9 +103,8 @@
       (do (user/update-user-email! user-store email new-email)
           (email/send! email-sender :change-password email {:admin-email (config/admin-login config-m) :app-name (config/app-name config-m)})
           (-> (r/redirect (routes/path :show-profile))
-              (assoc :flash :email-changed )))
-      (show-change-password-form request-with-validation-errors)))
-  )
+              (assoc :flash :email-changed)))
+      (show-change-email-form request-with-validation-errors))))
 
 (defn sign-in [user-store token-store request]
   (let [params (:params request)

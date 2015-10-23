@@ -128,7 +128,7 @@
                         (html/select page [[:.clj--current-password :.form-row--invalid]]) =not=> empty?
                         (html/select page [[:.clj--new-password :.form-row--invalid]]) =not=> empty?)
                   (fact "validation elements are present"
-                        (html/select page [:.clj--new-password__validation]) =not=> empty?
+                        (html/select page [:.clj--current-password__validation]) =not=> empty?
                         (html/select page [:.clj--new-password__validation]) =not=> empty?)
                   (fact "correct error messages are displayed"
                         (html/select page [[:.clj--current-password__validation (html/attr= :data-l8n error-translation-1)]]) =not=> empty?
