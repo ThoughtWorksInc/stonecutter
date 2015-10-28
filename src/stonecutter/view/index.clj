@@ -48,17 +48,17 @@
           (html/at [:.clj--sign-in-validation-summary__item] (html/set-attr :data-l8n (or error-translation "content:index/sign-in-unknown-error")))))
     (vh/remove-element enlive-m [:.clj--sign-in-validation-summary])))
 
-(defn add-sign-in-errors [err enlive-m]
+(defn add-sign-in-errors [enlive-m err]
   (->> enlive-m
        (add-sign-in-email-error err)
        (add-sign-in-password-error err)
        (add-invalid-credentials-error err)))
 
-(defn set-sign-in-email-input [params enlive-m]
+(defn set-sign-in-email-input [enlive-m params]
   (html/at enlive-m
            [:.clj--sign-in-email__input] (html/set-attr :value (:sign-in-email params))))
 
-(defn set-registration-inputs [params enlive-m]
+(defn set-registration-inputs [enlive-m params]
   (html/at enlive-m
            [:.clj--registration-email__input] (html/set-attr :value (:registration-email params))
            [:.clj--registration-first-name__input] (html/set-attr :value (:registration-first-name params))
@@ -119,7 +119,7 @@
                                    (html/set-attr :data-l8n (or (get-in error-translations error-key-pair)
                                                                 unknown-error-translation-key))))))))
 
-(defn add-registration-errors [err enlive-m]
+(defn add-registration-errors [enlive-m err]
   (-> enlive-m
       (add-registration-validation-summary err)
       (add-registration-first-name-error err)
@@ -129,7 +129,7 @@
 
 (defn index [request]
   (let [error-m (get-in request [:context :errors])]
-    (->> (vh/load-template "public/index.html")
+    (-> (vh/load-template "public/index.html")
          (vh/set-form-action [:.clj--register__form] (r/path :sign-in-or-register))
          (vh/set-form-action [:.clj--sign-in__form] (r/path :sign-in-or-register))
          (vh/set-attribute [:.clj--forgot-password] :href (r/path :show-forgotten-password-form))
@@ -151,11 +151,11 @@
 (defn accept-invite [request]
   (let [error-m (get-in request [:context :errors])
         invite-id (get-in request [:params :invite-id])]
-    (->> (vh/load-template "public/index.html")
+    (-> (vh/load-template "public/index.html")
          (vh/set-form-action [:.clj--register__form] (r/path :register-using-invitation :invite-id invite-id))
          (add-registration-errors error-m)
          (set-registration-inputs (:params request))
-         (remove-sign-in-elements)
+         remove-sign-in-elements
          set-body-class-to-accept-invite
          vh/remove-work-in-progress
          vh/add-anti-forgery

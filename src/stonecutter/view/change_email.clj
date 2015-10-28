@@ -42,6 +42,5 @@
         set-form-action
         set-cancel-link
         vh/add-anti-forgery
-        vh/remove-work-in-progress
-        #_(vh/add-script "js/main.js"))))
+        vh/remove-work-in-progress)))
 

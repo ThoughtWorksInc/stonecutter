@@ -81,7 +81,7 @@
                                    (html/set-attr :data-l8n (or (get-in error-translations error-key-pair)
                                                                 unknown-error-translation-key))))))))
 
-(defn add-change-password-errors [err enlive-m]
+(defn add-change-password-errors [enlive-m err]
   (-> enlive-m
       (add-validation-summary err)
       (add-current-password-error err)
@@ -97,10 +97,10 @@
 (defn change-password-form [request]
   (let [err (get-in request [:context :errors])
         library-m (vh/load-template "public/library.html")]
-    (->> (vh/load-template "public/change-password.html")
+    (-> (vh/load-template "public/change-password.html")
          set-form-action
          set-cancel-link
-         (#(vh/display-admin-navigation-links % request library-m))
+        (vh/display-admin-navigation-links request library-m)
          (add-change-password-errors err)
          vh/add-anti-forgery
          vh/remove-work-in-progress

@@ -58,4 +58,4 @@
         (add-user-list non-admin-users)
         vh/add-anti-forgery
         (set-flash-message request)
-        (#(vh/add-script "../js/main.js" %)))))
+        (vh/add-script "../js/main.js"))))

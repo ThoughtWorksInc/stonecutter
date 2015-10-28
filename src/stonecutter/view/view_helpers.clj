@@ -13,22 +13,14 @@
   (html/at enlive-m
            [:form] (html/prepend (anti-forgery-snippet))))
 
-(defn set-attribute [selector attr-key attr-value enlive-m]
+(defn set-attribute [enlive-m selector attr-key attr-value]
   (html/at enlive-m selector (html/set-attr attr-key attr-value)))
 
 (defn set-form-action
-  ([path enlive-m]
-   (set-form-action [:form] path enlive-m))
-  ([form-selector path enlive-m]
-   (set-attribute form-selector :action path enlive-m)))
-
-(defn set-user-list-link [enlive-m]
-  (html/at enlive-m
-           [:.clj--user-list__link] (html/set-attr :href (r/path :show-user-list))))
-
-(defn set-apps-list-link [enlive-m]
-  (html/at enlive-m
-           [:.clj--apps-list__link] (html/set-attr :href (r/path :show-apps-list))))
+  ([enlive-m path]
+   (set-form-action enlive-m [:form] path))
+  ([enlive-m form-selector path]
+   (set-attribute enlive-m form-selector :action path)))
 
 (defn set-sign-out-link [enlive-m]
   (html/at enlive-m
@@ -51,7 +43,7 @@
 (defn remove-work-in-progress [enlive-m]
   (remove-element enlive-m [:.clj-wip]))
 
-(defn add-script [script-path enlive-m]
+(defn add-script [enlive-m script-path]
   (let [script-tag (html/as-nodes {:tag :script :attrs {:src script-path}})]
     (html/at enlive-m [:body] (html/append script-tag))))
 

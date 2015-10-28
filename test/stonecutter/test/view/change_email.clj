@@ -26,10 +26,6 @@
       (let [page (-> (th/create-request) change-email/change-email-form)]
         (-> page (html/select [:.clj--change-email-cancel__link]) first :attrs :href) => (r/path :show-profile)))
 
-(future-fact "page has script link to javascript file"
-             (let [page (-> (th/create-request) change-email/change-email-form)]
-               (html/select page [[:script (html/attr= :src "js/main.js")]]) =not=> empty?))
-
 (facts "about displaying navigation bar"
        (fact "profile link should go to the correct end point"
              (let [page (-> (th/create-request) change-email/change-email-form)]

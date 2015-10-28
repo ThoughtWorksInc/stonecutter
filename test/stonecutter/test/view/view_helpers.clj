@@ -51,5 +51,5 @@
 
 (fact "can append script to page"
       (let [page-html "<html><body><h1>Hello</h1></body></html>"]
-        (->> page-html html/html-snippet (vh/add-script "js/blah.js") vh/enlive-to-str)
+        (-> page-html html/html-snippet (vh/add-script "js/blah.js") vh/enlive-to-str)
         => "<html><body><h1>Hello</h1><script src=\"js/blah.js\"></script></body></html>"))
