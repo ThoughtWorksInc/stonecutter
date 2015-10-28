@@ -386,23 +386,35 @@
 
 (facts "about changing email"
        (fact "the user's email is updated if new email is valid"
-             (let [request (th/create-request :post "/update-user-email" {:email-address "new-email@email.com"}
-                                              {:user-login "user-who-is@changing-email.com"})
+             (let [email "user-who-is@changing-email.com"
+                   new-email "new-email@email.com"
+                   request (th/create-request :post "/update-user-email" {:email-address new-email}
+                                              {:user-login email})
                    test-email-sender (test-email/create-test-email-sender)
-                   user-store (m/create-memory-store)]
-               (u/update-user-email user-store test-email-sender request) => (every-checker (th/check-redirects-to "/profile")
-                                                                                                  (contains {:flash :email-changed}))))
+                   user-store (m/create-memory-store)
+                   confirmation-store (m/create-memory-store)
+                   user (th/store-user! user-store email "password")
+                   ]
+               (u/update-user-email user-store confirmation-store test-email-sender request) => (every-checker (th/check-redirects-to "/profile")
+                                                                                                  (contains {:flash :email-changed}))
+               (user/retrieve-user user-store email) => nil
+               (user/retrieve-user user-store new-email) =not=> nil
+               (:email (test-email/last-sent-email test-email-sender)) => new-email
+               (let [new-confirmation-id (:confirmation-id (confirmation/retrieve-by-user-email confirmation-store new-email))]
+                 new-confirmation-id =not=> nil
+                 (:body (test-email/last-sent-email test-email-sender)) => (contains {:confirmation-id new-confirmation-id}))))
 
        (fact "The user's email is not updated if new email is already registered"
              (let [email "user_who_is@changing_email.com"
                    new-email "new-email@email.com"
                    test-email-sender (test-email/create-test-email-sender)
                    user-store (m/create-memory-store)
+                   confirmation-store (m/create-memory-store)
                    current-user (th/store-user! user-store email "password")
                    already-existing-email-user (th/store-user! user-store new-email "password2")
                    request (th/create-request :post "/update-user-email" {:email-address new-email}
                                               {:user-login email})]
-               (-> (u/update-user-email user-store test-email-sender request)
+               (-> (u/update-user-email user-store confirmation-store test-email-sender request)
                    :body
                    html/html-snippet
                    (html/select [:.clj--new-email__validation])) =not=> empty?
@@ -418,8 +430,9 @@
                         (html/select [:.form-row--invalid])) => empty?)
 
               (fact "there are validation messages if email is invalid"
-                    (let [test-email-sender (test-email/create-test-email-sender)]
-                      (-> (u/update-user-email ...user-store... test-email-sender
+                    (let [test-email-sender (test-email/create-test-email-sender)
+                          confirmation-store (m/create-memory-store)]
+                      (-> (u/update-user-email ...user-store... confirmation-store test-email-sender
                                                (th/create-request :post "/change-email" {:email-address "invalid-email-somewhere"}
                                                                   {:user-login "user_who_is@changing_email.com"}))
                           :body

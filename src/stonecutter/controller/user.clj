@@ -40,13 +40,17 @@
       (sh/enlive-response (index/accept-invite request-with-email) request-with-email))
     (sh/enlive-response (index/index request) request)))
 
-(defn send-confirmation-email! [email-sender user email confirmation-id config-m]
+(defn send-confirmation-email! [email-sender email confirmation-id config-m]
   (let [app-name (config/app-name config-m)
         base-url (config/base-url config-m)]
     (email/send! email-sender :confirmation email {:confirmation-id confirmation-id
                                                    :app-name        app-name
-                                                   :base-url        base-url}))
-  user)
+                                                   :base-url        base-url})))
+
+(defn send-confirmation-email-with-new-id! [confirmation-store email-sender email config-m]
+  (let [confirmation-id (uuid/uuid)]
+    (confirmation/store! confirmation-store email confirmation-id)
+    (send-confirmation-email! email-sender email confirmation-id config-m)))
 
 (defn register-user [user-store token-store confirmation-store email-sender request]
   (let [params (:params request)
@@ -54,17 +58,14 @@
         last-name (:registration-last-name params)
         email (:registration-email params)
         password (:registration-password params)
-        confirmation-id (uuid/uuid)
         config-m (get-in request [:context :config-m])]
     (if (empty? (get-in request [:context :errors]))
-      (do (confirmation/store! confirmation-store email confirmation-id)
-          (let [user (user/store-user! user-store first-name last-name email password)]
-            (send-confirmation-email! email-sender user email confirmation-id config-m)
-            (-> (response/redirect (routes/path :show-profile-created))
-                (common/sign-in-user token-store user (:session request))
-                (assoc :flash {:flash-type    :confirm-email-sent
-                               :email-address (:login user)}))))
-
+      (let [user (user/store-user! user-store first-name last-name email password)]
+        (send-confirmation-email-with-new-id! confirmation-store email-sender email config-m)
+        (-> (response/redirect (routes/path :show-profile-created))
+            (common/sign-in-user token-store user (:session request))
+            (assoc :flash {:flash-type    :confirm-email-sent
+                           :email-address (:login user)})))
       (index request))))
 
 (defn request-with-validation-errors [user-store request]
@@ -92,7 +93,7 @@
 (defn show-change-email-form [request]
   (sh/enlive-response (change-email/change-email-form request) request))
 
-(defn update-user-email [user-store email-sender request]
+(defn update-user-email [user-store confirmation-store email-sender request]
   (let [email (session/request->user-login request)
         params (:params request)
         new-email (:email-address params)
@@ -101,7 +102,7 @@
         config-m (get-in request [:context :config-m])]
     (if (empty? err)
       (do (user/update-user-email! user-store email new-email)
-          (email/send! email-sender :change-password email {:admin-email (config/admin-login config-m) :app-name (config/app-name config-m)})
+          (send-confirmation-email-with-new-id! confirmation-store email-sender  new-email config-m)
           (-> (r/redirect (routes/path :show-profile))
               (assoc :flash :email-changed)
               (assoc :session (:session request-with-validation-errors))
@@ -203,7 +204,7 @@
     (if (:confirmed? user)
       (-> (r/redirect (routes/path :show-profile)) (assoc :flash :email-already-confirmed))
       (let [confirmation (confirmation/retrieve-by-user-email confirmation-store email)]
-        (send-confirmation-email! email-sender user email (:confirmation-id confirmation) config-m)
+        (send-confirmation-email! email-sender email (:confirmation-id confirmation) config-m)
         (-> (r/redirect (routes/path :show-profile)) (assoc :flash :confirmation-email-sent))))))
 
 (defn register-using-invitation [user-store token-store confirmation-store email-sender invitation-store request]
