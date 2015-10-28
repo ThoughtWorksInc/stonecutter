@@ -67,7 +67,7 @@
                                         "browser"         ["test-clj" "stonecutter.browser.*"]
                                         "auto-no-browser" ["test-clj" ":autotest" "src/" "src-cljc/"
                                                            "test/stonecutter/test/" "test/stonecutter/integration/"]
-                                        "test-cljs"       ["do" "clean," "cljsbuild" "once" "test"]
+                                        "test-cljs"       ["do" "clean," "cljsbuild""test"]
                                         "auto-cljs"       ["do" "test-cljs," "cljsbuild" "auto" "test"]
                                         "gencred"         ["run" "-m" "stonecutter.util.gencred"]
                                         "gen-keypair"     ["run" "-m" "stonecutter.util.gen-key-pair"]
@@ -90,10 +90,10 @@
                                                                  :pretty-print  false}}
                                                  {:id             "test"
                                                   :source-paths   ["src-cljs" "src-cljc" "test-cljs"]
-                                                  :notify-command ["phantomjs" :cljs.test/runner "target/cljs/testable.js"]
                                                   :compiler       {:output-to     "target/cljs/testable.js"
                                                                    :optimizations :whitespace
-                                                                   :pretty-print  true}}]}}
+                                                                   :pretty-print  true}}]
+                                        :test-commands {"phantom" ["phantomjs" :runner "target/cljs/testable.js"]}}}}
              :uberjar {:hooks       [leiningen.cljsbuild]
                        :env         {:production true}
                        :aot         :all
@@ -102,7 +102,7 @@
                                      :builds [{:source-paths ["src-cljs" "src-cljc"]
                                                :compiler     {:output-to     "resources/public/js/main.js"
                                                               :optimizations :advanced
-                                                              :pretty-print  false}}]}}}
+                                                              :pretty-print  false}}]}}
   :clean-targets ^{:protect false} [:target-path
                                     [:cljsbuild :builds :app :compiler :output-dir]
                                     [:cljsbuild :builds :app :compiler :output-to]])
