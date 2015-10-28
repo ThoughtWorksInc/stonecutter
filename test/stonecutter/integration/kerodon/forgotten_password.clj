@@ -74,7 +74,8 @@
            ; If user tries to reuse reset link, they will be redirected to the forgotten password form
            (visit-email-link email-sender base-url)
            (kc/check-and-follow-redirect)
-           (kc/page-route-is :show-forgotten-password-form)))
+           (kc/page-route-is :show-forgotten-password-form)
+            ))
 
 (ih/teardown-db)
 

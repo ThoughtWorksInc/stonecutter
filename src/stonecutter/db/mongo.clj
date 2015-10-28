@@ -5,32 +5,41 @@
             [clojure.tools.logging :as log]
             [monger.ring.session-store :as mongo-session]))
 
-(def ^:private user-collection "users")
-(def ^:private token-collection "tokens")
-(def ^:private auth-code-collection "auth-codes")
-(def ^:private client-collection "clients")
-(def ^:private confirmation-collection "confirmations")
-(def ^:private forgotten-password-collection "forgotten-passwords")
-(def ^:private session-collection "sessions")
-(def ^:private invitation-collection "invitations")
+(def user-collection "users")
+(def token-collection "tokens")
+(def auth-code-collection "auth-codes")
+(def client-collection "clients")
+(def confirmation-collection "confirmations")
+(def forgotten-password-collection "forgotten-passwords")
+(def session-collection "sessions")
+(def invitation-collection "invitations")
+
+(def user-primary-key :login)
+(def token-primary-key :token)
+(def auth-code-primary-key :code)
+(def client-primary-key :client-id)
+(def confirmation-primary-key :confirmation-id)
+(def invite-primary-key :invite-id)
+(def forgotten-password-primary-key :forgotten-password-id)
 
 (defprotocol StonecutterStore
-  (update! [e k update-fn key]
+  (update! [e k update-fn]
     "Update the item found using key k by running the update-fn on it and storing it. It will update the _id using the key")
   (query [e query]
     "Items are returned using a query map"))
 
-(defrecord MongoStore [mongo-db coll k]
+(defrecord MongoStore [mongo-db coll primary-key]
   cl-s/Store
   (fetch [this t]
     (when t
-      (-> (mc/find-map-by-id mongo-db coll t)
+      (-> (mc/find-maps mongo-db coll {primary-key t})
+          first
           (dissoc :_id))))
   (revoke! [this t]
     (when t
-      (mc/remove-by-id mongo-db coll t)))
+      (mc/remove mongo-db coll {primary-key t})))
   (store! [this _ item]
-    (-> (mc/insert-and-return mongo-db coll (assoc item :_id (k item)))
+    (-> (mc/insert-and-return mongo-db coll item)
         (dissoc :_id)))
   (entries [this]
     (->> (mc/find-maps mongo-db coll)
@@ -38,35 +47,32 @@
   (reset-store! [this]
     (mc/remove mongo-db coll))
   StonecutterStore
-  (update! [this t update-fn key]
-    (when-let [item (mc/find-map-by-id mongo-db coll t)]
+  (update! [this t update-fn]
+    (when-let [item (first (mc/find-maps mongo-db coll {primary-key t}))]
       (let [updated-item (update-fn item)]
-        (if (= (key item) (key updated-item))
-          (-> (mc/save-and-return mongo-db coll updated-item)
-              (dissoc :_id))
-          (do (mc/remove-by-id mongo-db coll t)
-              (-> (mc/insert-and-return mongo-db coll (assoc updated-item :_id (key updated-item)))
-                  (dissoc :_id)))))))
+        (-> (mc/save-and-return mongo-db coll updated-item)
+            (dissoc :_id)))))
   (query [this query]
     (->> (mc/find-maps mongo-db coll query)
          (map #(dissoc % :_id)))))
 
-(defrecord MemoryStore [data]
+(defrecord MemoryStore [primary-key-atom data]
   cl-s/Store
   (fetch [this t] (@data t))
   (revoke! [this t] (swap! data dissoc t))
   (store! [this key_param item]
     (do
       (swap! data assoc (key_param item) item)
+      (reset! primary-key-atom key_param)
       item))
   (entries [this] (or (vals @data) []))
   (reset-store! [this] (reset! data {}))
   StonecutterStore
-  (update! [this t update-fn key]
+  (update! [this t update-fn]
     (when-let [item (@data t)]
       (let [updated-item (update-fn item)]
         (cl-s/revoke! this t)
-        (cl-s/store! this key updated-item))))
+        (cl-s/store! this @primary-key-atom updated-item))))
   (query [this query]
     (filter #(= query (select-keys % (keys query))) (vals @data))))
 
@@ -74,7 +80,7 @@
   "Create a memory token store"
   ([] (create-memory-store {}))
   ([data]
-   (MemoryStore. (atom data))))
+   (MemoryStore. (atom nil) (atom data))))
 
 (defn new-mongo-store [mongo-db coll k]
   (MongoStore. mongo-db coll k))
@@ -86,25 +92,25 @@
     db))
 
 (defn create-user-store [db]
-  (new-mongo-store db user-collection :login))
+  (new-mongo-store db user-collection user-primary-key))
 
 (defn create-token-store [db]
-  (new-mongo-store db token-collection :token))
+  (new-mongo-store db token-collection token-primary-key))
 
 (defn create-auth-code-store [db]
-  (new-mongo-store db auth-code-collection :code))
+  (new-mongo-store db auth-code-collection auth-code-primary-key))
 
 (defn create-client-store [db]
-  (new-mongo-store db client-collection :client-id))
+  (new-mongo-store db client-collection client-primary-key))
 
 (defn create-confirmation-store [db]
-  (new-mongo-store db confirmation-collection :confirmation-id))
+  (new-mongo-store db confirmation-collection confirmation-primary-key))
 
 (defn create-forgotten-password-store [db]
-  (new-mongo-store db forgotten-password-collection :forgotten-password-id))
+  (new-mongo-store db forgotten-password-collection forgotten-password-primary-key))
+
+(defn create-invitation-store [db]
+  (new-mongo-store db invitation-collection invite-primary-key))
 
 (defn create-session-store [db]
   (mongo-session/session-store db session-collection))
-
-(defn create-invitation-store [db]
-  (new-mongo-store db invitation-collection :invite-id))

@@ -83,17 +83,17 @@
       (let [store (create-clear-user-store @db)
             update-with-new-key (fn [user] (assoc user :new-key "new-value"))]
         (c/insert @db coll {:_id "userA" :login "userA" :password "passwordA"})
-        (mongo/update! store "userA" update-with-new-key :login) => {:login    "userA"
+        (mongo/update! store "userA" update-with-new-key) => {:login    "userA"
                                                               :password "passwordA"
                                                               :new-key  "new-value"}
-        (mongo/update! store "notUserA" update-with-new-key :login) => nil))
+        (mongo/update! store "notUserA" update-with-new-key) => nil))
 
 (fact "can update an email and automatically update the _id"
       (let [store (create-clear-user-store @db)
             update-with-new-login (fn [user] (assoc user :login "new-value"))]
         (c/insert @db coll {:_id "userA" :login "userA" :password "passwordA"})
-        (mongo/update! store "userA" update-with-new-login :login) => {:login    "new-value"
-                                                              :password "passwordA"}
+        (mongo/update! store "userA" update-with-new-login) => {:login    "new-value"
+                                                                :password "passwordA"}
         (cl-s/fetch store "userA") => nil
         (cl-s/fetch store "new-value") =not=> nil))
 
