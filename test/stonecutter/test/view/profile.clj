@@ -76,6 +76,7 @@
                  => ?translation-key))
 
          ?flash-key                 ?translation-key
+         :email-changed             "content:flash/email-changed"
          :password-changed          "content:flash/password-changed"
          :email-confirmed           "content:flash/email-confirmed"
          :confirmation-email-sent   "content:flash/confirmation-email-sent"

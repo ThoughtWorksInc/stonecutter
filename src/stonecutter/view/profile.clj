@@ -60,6 +60,7 @@
   (case (:flash request)
     :password-changed (html/at enlive-m [:.clj--flash-message-text] (html/set-attr :data-l8n "content:flash/password-changed"))
     :email-confirmed (html/at enlive-m [:.clj--flash-message-text] (html/set-attr :data-l8n "content:flash/email-confirmed"))
+    :email-changed (html/at enlive-m [:.clj--flash-message-text] (html/set-attr :data-l8n "content:flash/email-changed"))
     :confirmation-email-sent (html/at enlive-m [:.clj--flash-message-text] (html/set-attr :data-l8n "content:flash/confirmation-email-sent"))
     :email-already-confirmed (html/at enlive-m [:.clj--flash-message-text] (html/set-attr :data-l8n "content:flash/email-already-confirmed"))
     (vh/remove-element enlive-m [:.clj--flash-message-container])))

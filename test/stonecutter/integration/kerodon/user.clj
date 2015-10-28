@@ -182,10 +182,10 @@
            (kc/check-and-follow-redirect)
            (kc/selector-exists [ks/profile-page-body])
            (kc/selector-includes-content [ks/profile-unconfirmed-email-message] "new_email@somewhere.com")
-           ;(kc/selector-includes-content [ks/profile-flash-message] "new_email@somewhere.com") TODO flash messages after email change
+           (kc/selector-includes-content [ks/profile-flash-message] "email")
+           (kc/selector-includes-content [ks/profile-flash-message] "changed")
            (kc/selector-includes-content [ks/profile-page-profile-card-email] "new_email@somewhere.com")
            ))
-
 
 (facts "Not found page is shown for unknown url"
        (-> (k/session test-app)

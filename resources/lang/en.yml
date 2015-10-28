@@ -206,6 +206,7 @@ flash:
   email-confirmed: "Your email address has been confirmed!"
   confirmation-email-sent: "Another confirmation email has been sent to your email address."
   email-already-confirmed: "Your email address has already been confirmed."
+  email-changed: "Your email has been changed!"
   confirm-email-sent-pre-email-address: "A confirmation email has been sent to:"
   confirm-email-sent-post-email-address: "Please follow the instructions to confirm your email address."
   expired-password-reset: "This reset password link has already been used, or has expired -  please enter your e-mail below to receive a new email."

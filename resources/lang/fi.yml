@@ -77,6 +77,19 @@ change-email-form:
   cancel-button-1: Cancel in Finnish
   cancel-button-2: changing my email address in Finnish
 
+change-email-form:
+  title: Change your email address in Finnish
+  page-header: Change your email address in Finnish
+  form-button: Save changes in Finnish
+  email-address-label: New email address in Finnish
+  cancel-button-1: Cancel in Finnish
+  cancel-button-2: changing my email address in Finnish
+  new-email-blank-validation-message: Please enter a new email address in Finnish
+  new-email-duplicate-validation-message: That email address is already registered to an acount in Finnish
+  new-email-invalid-validation-message: Please enter a valid email address in Finnish
+  new-email-unchanged-validation-message: Please enter a new email address in Finnish
+  change-email-unknown-error: Please enter a new email address in Finnish
+
 confirmation-sign-in-form:
   title: Sign in for Confirmation in Finnish
   page-header: Sign in for Confirmation in Finnish
@@ -98,6 +111,7 @@ profile:
   verify-email-intro-1: If you have not received an email to in Finnish
   verify-email-intro-2: you should resend the confirmation email. in Finnish
   verify-button: Resend email confirmation in Finnish
+  change-email-button: Change email address in Finnish
 
 applications:
   title: Applications in Finnish
@@ -205,6 +219,7 @@ flash:
   expired-password-reset: "This reset password link has already been used, or has expired -  please enter your e-mail below to receive a new email. in Finnish"
   user-trusted: " is now set to trusted in Finnish"
   user-untrusted: " is now set to untrusted in Finnish"
+  email-changed: "Your email has been changed in Finnish!"
 
 admin:
   nav-users: Users in Finnish
