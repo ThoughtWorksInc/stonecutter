@@ -20,7 +20,7 @@
   (query [e query]
     "Items are returned using a query map"))
 
-(defrecord MongoStore [mongo-db coll]
+(defrecord MongoStore [mongo-db coll k]
   cl-s/Store
   (fetch [this t]
     (when t
@@ -29,7 +29,7 @@
   (revoke! [this t]
     (when t
       (mc/remove-by-id mongo-db coll t)))
-  (store! [this k item]
+  (store! [this _ item]
     (-> (mc/insert-and-return mongo-db coll (assoc item :_id (k item)))
         (dissoc :_id)))
   (entries [this]
@@ -76,8 +76,8 @@
   ([data]
    (MemoryStore. (atom data))))
 
-(defn new-mongo-store [mongo-db coll]
-  (MongoStore. mongo-db coll))
+(defn new-mongo-store [mongo-db coll k]
+  (MongoStore. mongo-db coll k))
 
 (defn get-mongo-db [mongo-uri]
   (log/debug "Connecting to mongo")
@@ -85,29 +85,26 @@
     (log/debug "Connected to mongo.")
     db))
 
-(defn- create-mongo-store [db collection]
-  (new-mongo-store db collection))
-
 (defn create-user-store [db]
-  (create-mongo-store db user-collection))
+  (new-mongo-store db user-collection :login))
 
 (defn create-token-store [db]
-  (create-mongo-store db token-collection))
+  (new-mongo-store db token-collection :token))
 
 (defn create-auth-code-store [db]
-  (create-mongo-store db auth-code-collection))
+  (new-mongo-store db auth-code-collection :code))
 
 (defn create-client-store [db]
-  (create-mongo-store db client-collection))
+  (new-mongo-store db client-collection :client-id))
 
 (defn create-confirmation-store [db]
-  (create-mongo-store db confirmation-collection))
+  (new-mongo-store db confirmation-collection :confirmation-id))
 
 (defn create-forgotten-password-store [db]
-  (create-mongo-store db forgotten-password-collection))
+  (new-mongo-store db forgotten-password-collection :forgotten-password-id))
 
 (defn create-session-store [db]
   (mongo-session/session-store db session-collection))
 
 (defn create-invitation-store [db]
-  (create-mongo-store db invitation-collection))
+  (new-mongo-store db invitation-collection :invite-id))
