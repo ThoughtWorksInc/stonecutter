@@ -64,7 +64,7 @@
                       page (-> (th/create-request {} errors params) change-email/change-email-form)
                       error-translation ?translation-key]
                   (fact "the class for styling errors is added"
-                        (html/select page [[:.clj--new-email__validation :.form-row--invalid]]) =not=> empty?)
+                        (html/select page [[:.clj--email-address :.form-row--invalid]]) =not=> empty?)
                   (fact "new-email validation element is present"
                         (html/select page [:.clj--new-email__validation]) =not=> empty?)
                   (fact "correct error message is displayed"

@@ -18,7 +18,7 @@
   (if-let [change-email-error (:new-email err)]
     (let [error-translation (get-in error-translations [:new-email change-email-error])]
       (-> enlive-m
-          (vh/add-error-class [:.clj--new-email__validation])
+          (vh/add-error-class [:.clj--email-address])
           (html/at [:.clj--new-email__validation] (html/set-attr :data-l8n (or error-translation "content:change-email-form/change-email-unknown-error")))))
     enlive-m))
 
@@ -37,10 +37,10 @@
   (let [err (get-in request [:context :errors])
         library-m (vh/load-template "public/library.html")]
     (-> (vh/load-template "public/change-email.html")
-        set-form-action
-        set-cancel-link
         (vh/display-admin-navigation-links request library-m)
         (add-change-email-errors err)
+        set-form-action
+        set-cancel-link
         vh/add-anti-forgery
         vh/remove-work-in-progress
         #_(vh/add-script "js/main.js"))))

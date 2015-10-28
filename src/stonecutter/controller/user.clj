@@ -92,7 +92,7 @@
 (defn show-change-email-form [request]
   (sh/enlive-response (change-email/change-email-form request) request))
 
-(defn update-user-email [user-store token-store email-sender request]
+(defn update-user-email [user-store email-sender request]
   (let [email (session/request->user-login request)
         params (:params request)
         new-email (:email-address params)

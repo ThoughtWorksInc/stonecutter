@@ -390,7 +390,7 @@
                                               {:user-login "user-who-is@changing-email.com"})
                    test-email-sender (test-email/create-test-email-sender)
                    user-store (m/create-memory-store)]
-               (u/update-user-email user-store ...token-store... test-email-sender request) => (every-checker (th/check-redirects-to "/profile")
+               (u/update-user-email user-store test-email-sender request) => (every-checker (th/check-redirects-to "/profile")
                                                                                                   (contains {:flash :email-changed}))))
 
        (fact "The user's email is not updated if new email is already registered"
@@ -402,7 +402,7 @@
                    already-existing-email-user (th/store-user! user-store new-email "password2")
                    request (th/create-request :post "/update-user-email" {:email-address new-email}
                                               {:user-login email})]
-               (-> (u/update-user-email user-store ...token-store... test-email-sender request)
+               (-> (u/update-user-email user-store test-email-sender request)
                    :body
                    html/html-snippet
                    (html/select [:.clj--new-email__validation])) =not=> empty?
@@ -419,7 +419,7 @@
 
               (fact "there are validation messages if email is invalid"
                     (let [test-email-sender (test-email/create-test-email-sender)]
-                      (-> (u/update-user-email ...user-store... ...token-store... test-email-sender
+                      (-> (u/update-user-email ...user-store... test-email-sender
                                                (th/create-request :post "/change-email" {:email-address "invalid-email-somewhere"}
                                                                   {:user-login "user_who_is@changing_email.com"}))
                           :body
