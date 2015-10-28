@@ -5,6 +5,7 @@ index:
   register-first-name-too-long-validation-message: First name must be shorter
   register-last-name-blank-validation-message: Last name cannot be blank
   register-last-name-too-long-validation-message: Last name must be shorter
+  register-email-address-blank-validation-message: Email address cannot be blank
   register-email-address-invalid-validation-message: Enter a valid email address
   register-email-address-duplicate-validation-message: User already exists
   register-email-address-too-long-validation-message: Email address is too long

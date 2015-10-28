@@ -88,6 +88,11 @@
   (tu/element-has-text (rfd/validation-selector :registration-last-name)
                          (get-in dom/translations [:index :register-last-name-blank-validation-message])))
 
+(defn check-email-address-has-blank-validation-errors []
+  (tu/test-field-has-class (rfd/form-row-selector :registration-email) rfd/field-invalid-class)
+  (tu/element-has-text (rfd/validation-selector :registration-email)
+                       (get-in dom/translations [:index :register-email-address-blank-validation-message])))
+
 (defn check-email-address-has-invalid-validation-errors []
   (tu/test-field-has-class (rfd/form-row-selector :registration-email) rfd/field-invalid-class)
   (tu/element-has-text (rfd/validation-selector :registration-email)
@@ -207,7 +212,7 @@
                   (tu/press-submit rfd/register-form-element-selector)
                   (check-first-name-has-blank-validation-errors)
                   (check-last-name-has-blank-validation-errors)
-                  (check-email-address-has-invalid-validation-errors)
+                  (check-email-address-has-blank-validation-errors)
                   (check-password-has-blank-validation-errors)
                   (tu/has-focus? (rfd/input-selector :registration-first-name)))
 
@@ -216,7 +221,7 @@
                   (tu/set-value (rfd/input-selector :registration-first-name) valid-name)
                   (tu/press-submit rfd/register-form-element-selector)
                   (check-last-name-has-blank-validation-errors)
-                  (check-email-address-has-invalid-validation-errors)
+                  (check-email-address-has-blank-validation-errors)
                   (check-password-has-blank-validation-errors)
                   (tu/has-focus? (rfd/input-selector :registration-last-name)))
 
@@ -225,7 +230,7 @@
                   (tu/set-value (rfd/input-selector :registration-first-name) valid-name)
                   (tu/set-value (rfd/input-selector :registration-last-name) valid-name)
                   (tu/press-submit rfd/register-form-element-selector)
-                  (check-email-address-has-invalid-validation-errors)
+                  (check-email-address-has-blank-validation-errors)
                   (check-password-has-blank-validation-errors)
                   (tu/has-focus? (rfd/input-selector :registration-email)))
 
@@ -236,7 +241,13 @@
                   (tu/set-value (rfd/input-selector :registration-email) valid-email)
                   (tu/press-submit rfd/register-form-element-selector)
                   (check-password-has-blank-validation-errors)
-                  (tu/has-focus? (rfd/input-selector :registration-password))))
+                  (tu/has-focus? (rfd/input-selector :registration-password)))
+
+         (testing "submitting form with invalid eamail address"
+                  (clean-setup!)
+                  (tu/set-value (rfd/input-selector :registration-email) "jibberish")
+                  (tu/press-submit rfd/register-form-element-selector)
+                  (check-email-address-has-invalid-validation-errors)))
 
 (deftest prevent-default-submit
          (testing "prevents default when page has errors"

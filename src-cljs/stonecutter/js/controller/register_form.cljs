@@ -13,7 +13,8 @@
                              :too-long (rfd/get-translated-message :register-first-name-too-long-validation-message)}
    :registration-last-name  {:blank    (rfd/get-translated-message :register-last-name-blank-validation-message)
                              :too-long (rfd/get-translated-message :register-last-name-too-long-validation-message)}
-   :registration-email      {:invalid  (rfd/get-translated-message :register-email-address-invalid-validation-message)
+   :registration-email      {:blank     (rfd/get-translated-message :register-email-address-blank-validation-message)
+                             :invalid  (rfd/get-translated-message :register-email-address-invalid-validation-message)
                              :too-long (rfd/get-translated-message :register-email-address-too-long-validation-message)}
    :registration-password   {:blank     (rfd/get-translated-message :register-password-blank-validation-message)
                              :too-short (rfd/get-translated-message :register-password-too-short-validation-message)

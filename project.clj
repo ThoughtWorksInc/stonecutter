@@ -92,7 +92,8 @@
                                                   :source-paths   ["src-cljs" "src-cljc" "test-cljs"]
                                                   :compiler       {:output-to     "target/cljs/testable.js"
                                                                    :optimizations :whitespace
-                                                                   :pretty-print  true}}]
+                                                                   :pretty-print  true}}
+                                                 ]
                                         :test-commands {"phantom" ["phantomjs" :runner "target/cljs/testable.js"]}}}}
              :uberjar {:hooks       [leiningen.cljsbuild]
                        :env         {:production true}
