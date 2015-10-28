@@ -15,8 +15,8 @@
 (def ^:private invitation-collection "invitations")
 
 (defprotocol StonecutterStore
-  (update! [e k update-fn]
-    "Update the item found using key k by running the update-fn on it and storing it")
+  (update! [e k update-fn key]
+    "Update the item found using key k by running the update-fn on it and storing it. It will update the _id using the key")
   (query [e query]
     "Items are returned using a query map"))
 
@@ -38,11 +38,15 @@
   (reset-store! [this]
     (mc/remove mongo-db coll))
   StonecutterStore
-  (update! [this t update-fn]
+  (update! [this t update-fn key]
     (when-let [item (mc/find-map-by-id mongo-db coll t)]
       (let [updated-item (update-fn item)]
-        (-> (mc/save-and-return mongo-db coll updated-item)
-            (dissoc :_id)))))
+        (if (= (key item) (key updated-item))
+          (-> (mc/save-and-return mongo-db coll updated-item)
+              (dissoc :_id))
+          (do (mc/remove-by-id mongo-db coll t)
+              (-> (mc/insert-and-return mongo-db coll (assoc updated-item :_id (key updated-item)))
+                  (dissoc :_id)))))))
   (query [this query]
     (->> (mc/find-maps mongo-db coll query)
          (map #(dissoc % :_id)))))
@@ -58,11 +62,11 @@
   (entries [this] (or (vals @data) []))
   (reset-store! [this] (reset! data {}))
   StonecutterStore
-  (update! [this t update-fn]
+  (update! [this t update-fn key]
     (when-let [item (@data t)]
       (let [updated-item (update-fn item)]
-        (swap! data assoc t updated-item)
-        updated-item)))
+        (cl-s/revoke! this t)
+        (cl-s/store! this key updated-item))))
   (query [this query]
     (filter #(= query (select-keys % (keys query))) (vals @data))))
 

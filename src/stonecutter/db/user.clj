@@ -61,7 +61,7 @@
 (defn confirm-email! [user-store user]
   (m/update! user-store (:login user)
              (fn [user] (-> user
-                            (assoc :confirmed? true)))))
+                            (assoc :confirmed? true))) :login))
 
 (defn unique-conj [things thing]
   (vec (conj (set things) thing)))
@@ -71,14 +71,14 @@
     (update-in user [:authorised-clients] unique-conj client-id)))
 
 (defn add-authorised-client-for-user! [user-store email client-id]
-  (m/update! user-store email (add-client-id client-id)))
+  (m/update! user-store email (add-client-id client-id) :login))
 
 (defn remove-client-id [client-id]
   (fn [user]
     (update-in user [:authorised-clients] (partial remove #(= % client-id)))))
 
 (defn remove-authorised-client-for-user! [user-store email client-id]
-  (m/update! user-store email (remove-client-id client-id)))
+  (m/update! user-store email (remove-client-id client-id) :login))
 
 (defn is-authorised-client-for-user? [user-store email client-id]
   (let [user (retrieve-user user-store email)
@@ -90,7 +90,7 @@
     (assoc user :password (cl-user/bcrypt password))))
 
 (defn change-password! [user-store email new-password]
-  (m/update! user-store email (update-password new-password)))
+  (m/update! user-store email (update-password new-password) :login))
 
 (defn has-admin-role? [user-m]
   (= (:role user-m) (:admin config/roles)))
@@ -107,7 +107,7 @@
     (assoc user :role role)))
 
 (defn update-user-role! [user-store email role]
-  (m/update! user-store email (update-user-role role)))
+  (m/update! user-store email (update-user-role role) :login))
 
 (defn update-user-email [email]
   (fn [user]
@@ -115,5 +115,5 @@
         (assoc :confirmed? false))))
 
 (defn update-user-email! [user-store email new-email]
-  (-> (m/update! user-store email (update-user-email new-email))
+  (-> (m/update! user-store email (update-user-email new-email) :login)
       (dissoc :password)))

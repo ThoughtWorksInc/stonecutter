@@ -386,27 +386,28 @@
 
 (facts "about changing email"
        (fact "the user's email is updated if new email is valid"
-             (let [request (th/create-request :post "/update-user-email" {:new-email "new-email@email.com"}
+             (let [request (th/create-request :post "/update-user-email" {:email-address "new-email@email.com"}
                                               {:user-login "user-who-is@changing-email.com"})
-                   test-email-sender (test-email/create-test-email-sender)]
-               (u/update-user-email ...user-store... test-email-sender request) => (every-checker (th/check-redirects-to "/profile")
-                                                                                                                  (contains {:flash :email-changed}))
-               (provided
-                 (user/user-exists? ...user-store... "new-email@email.com") => false
-                 (user/update-user-email! ...user-store... "user-who-is@changing-email.com" "new-email@email.com") => anything)))
+                   test-email-sender (test-email/create-test-email-sender)
+                   user-store (m/create-memory-store)]
+               (u/update-user-email user-store ...token-store... test-email-sender request) => (every-checker (th/check-redirects-to "/profile")
+                                                                                                  (contains {:flash :email-changed}))))
 
        (fact "The user's email is not updated if new email is already registered"
              (let [email "user_who_is@changing_email.com"
+                   new-email "new-email@email.com"
                    test-email-sender (test-email/create-test-email-sender)
-                   request (th/create-request :post "/update-user-email" {:new-email "new-email@email.com"}
+                   user-store (m/create-memory-store)
+                   current-user (th/store-user! user-store email "password")
+                   already-existing-email-user (th/store-user! user-store new-email "password2")
+                   request (th/create-request :post "/update-user-email" {:email-address new-email}
                                               {:user-login email})]
-               (-> (u/update-user-email ...user-store... test-email-sender request)
+               (-> (u/update-user-email user-store ...token-store... test-email-sender request)
                    :body
                    html/html-snippet
-                   (html/select [:.clj--validation-summary__item])) =not=> empty?
-               (provided
-                 (user/user-exists? ...user-store... "new-email@email.com") => true
-                 (user/update-user-email! ...user-store... email "new-email@email.com") => anything :times 0)))
+                   (html/select [:.clj--new-email__validation])) =not=> empty?
+               (dissoc (user/retrieve-user user-store email) :password) => current-user
+               (dissoc (user/retrieve-user user-store new-email) :password) => already-existing-email-user))
 
        (facts "about rendering change-email page with errors"
               (fact "there are no validation messages by default"
@@ -414,21 +415,16 @@
                         u/show-change-email-form
                         :body
                         html/html-snippet
-                        (html/select [:.clj--validation-summary])
-                        first
-                        :attrs
-                        :class) =not=> (contains "validation-summary--show"))
+                        (html/select [:.form-row--invalid])) => empty?)
 
-              (fact "when validation fails"
+              (fact "there are validation messages if email is invalid"
                     (let [test-email-sender (test-email/create-test-email-sender)]
-                      (-> (u/update-user-email ...user-store... test-email-sender
-                                               (th/create-request :post "/change-email" ...invalid-params...
+                      (-> (u/update-user-email ...user-store... ...token-store... test-email-sender
+                                               (th/create-request :post "/change-email" {:email-address "invalid-email-somewhere"}
                                                                   {:user-login "user_who_is@changing_email.com"}))
                           :body
                           html/html-snippet
-                          (html/select [:.clj--validation-summary__item]))) =not=> empty?
-                    (provided
-                      (v/validate-registration-email anything anything) => {:new-email :invalid}))))
+                          (html/select [:.form-row--invalid]))) =not=> empty?)))
 
 (facts "about profile created"
        (fact "view defaults with link to view profile"

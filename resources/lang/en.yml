@@ -80,6 +80,7 @@ change-email-form:
   new-email-duplicate-validation-message: That email address is already registered to an acount
   new-email-invalid-validation-message: Please enter a valid email address
   new-email-unchanged-validation-message: Please enter a new email address
+  change-email-unknown-error: Please enter a new email address
 
 confirmation-sign-in-form:
   title: Sign in for Confirmation
@@ -102,6 +103,7 @@ profile:
   verify-email-intro-1: If you have not received an email to
   verify-email-intro-2: you should resend the confirmation email.
   verify-button: Resend email confirmation
+  change-email-button: Change email address
 
 applications:
   title: Applications

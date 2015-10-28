@@ -220,15 +220,19 @@
                    email "current-email@email.com"
                    user (th/store-user! user-store email "password")
                    new-email "new-email@email.com"
-                   new-user (assoc user :login "new-email@email.com")]
-               (user/update-user-email! user-store email new-email) => new-user))
+                   new-user (assoc user :login new-email)]
+               (user/update-user-email! user-store email new-email) => new-user
+               (user/retrieve-user user-store email) => nil
+               (user/retrieve-user user-store new-email) =not=> nil
+               ))
+
 
        (fact "when email is updated it is no longer confirmed"
              (let [user-store (m/create-memory-store)
                    email "current-email@email.com"
                    user (th/store-user! user-store email "password")
                    new-email "new-email@email.com"
-                   new-user (assoc user :login "new-email@email.com" :confirmed? false)]
+                   new-user (assoc user :login new-email :confirmed? false)]
 
                (user/confirm-email! user-store user)
                (user/update-user-email! user-store email new-email) => new-user)))

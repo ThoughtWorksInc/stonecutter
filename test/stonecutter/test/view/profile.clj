@@ -28,6 +28,10 @@
       (let [page (-> (th/create-request) profile)]
         page => (th/has-attr? [:.clj--change-password__link] :href (r/path :show-change-password-form))))
 
+(fact "change email link should go to the correct endpoint"
+      (let [page (-> (th/create-request) profile)]
+        page => (th/has-attr? [:.clj--change-email__link] :href (r/path :show-change-email-form))))
+
 (fact "delete account link should go to correct endpoint"
       (let [page (-> (th/create-request) profile)]
         page => (th/has-attr? [:.clj--delete-account__link] :href (r/path :show-delete-account-confirmation))))

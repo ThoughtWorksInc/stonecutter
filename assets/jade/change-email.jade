@@ -16,11 +16,6 @@ block content
     h1.page-title(data-l8n="content:change-email-form/page-header")
       | !Change your email address
     form.clj--change-email__form(action="#", method="post", role="form")
-      .validation-summary.validation-summary--show.clj--validation-summary
-        .validation-summary__title
-          ul.validation-summary__list
-            li.validation-summary__item.clj--validation-summary__item(data-l8n="content:change-password-form/current-password-invalid-validation-message")
-              | !New email is invalid
 
       p.form-row.clj--email-address
         label.form-row__label(for="email-address")
@@ -28,14 +23,14 @@ block content
             | !New email address
           span.form-row__validation.clj--new-email__validation(data-l8n="content:change-email-form/new-email-blank-validation-message")
             | !Enter a new email address
-        input.form-row__input(type="text", id="email-address", name="email-address", autofocus="autofocus")
+        input.form-row__input.func--change-email__input(type="text", id="email-address", name="email-address", autofocus="autofocus")
 
       .button-actions
         .button-actions__primary
-          button.button.button--full-width.clj--change-email__button(type="submit" data-l8n="content:change-email-form/form-button")
+          button.button.button--full-width.clj--change-email__button.func--change-email__button(type="submit" data-l8n="content:change-email-form/form-button")
             | !Save changes
         .button-actions__secondary
-          a.button.button--full-width.button--link.clj--change-email-cancel__link(href="./profile") 
+          a.button.button--full-width.button--link.clj--change-email-cancel__link.func--change-email-cancel__link(href="./profile")
             span(data-l8n="content:change-email-form/cancel-button-1") !Cancel
             =" "
             span.visuallyhidden(data-l8n="content:change-email-form/cancel-button-2") !changing my email address

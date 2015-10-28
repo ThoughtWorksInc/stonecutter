@@ -19,8 +19,7 @@
       (th/test-translations "Change email" change-email/change-email-form))
 
 (fact "form posts to correct endpoint"
-      (let [page (-> (th/create-request) change-email/change-email-form)
-            _ (prn (r/path :change-email))]
+      (let [page (-> (th/create-request) change-email/change-email-form)]
         page => (th/has-form-action? (r/path :change-email))))
 
 (fact "cancel link should go to correct endpoint"
@@ -53,8 +52,8 @@
 
 (facts "about removing elements when there are no errors"
        (let [page (-> (th/create-request) change-email/change-email-form)]
-         (future-fact "validation summary is removed"
-               (html/select page [:.clj--validation-summary]) => empty?)))
+         (fact "there are no errors by default"
+               (html/select page [:.form-row--invalid]) => empty?)))
 
 (facts "about displaying errors"
 

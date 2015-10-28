@@ -40,10 +40,15 @@
   (html/at enlive-m
            [:.clj--delete-account__link] (html/set-attr :href (r/path :show-delete-account-confirmation))))
 
+(defn set-change-email-link [enlive-m]
+  (html/at enlive-m
+           [:.clj--change-email__link] (html/set-attr :href (r/path :show-change-email-form))))
+
 (defn hide-admin-span [enlive-m request]
   (let [role (get-in request [:session :role])]
     (html/at enlive-m [:.clj--admin__span]
              (when (= role (:admin config/roles)) identity))))
+
 
 (defn diplay-email-unconfirmed-message [enlive-m request]
   (if (= false (get-in request [:context :confirmed?]))
@@ -69,6 +74,7 @@
         (vh/display-admin-navigation-links request library-m)
         set-change-password-link
         set-delete-account-link
+        set-change-email-link
         (hide-admin-span request)
         vh/remove-work-in-progress
         vh/add-anti-forgery)))

@@ -3,9 +3,6 @@
             [stonecutter.routes :as r]
             [stonecutter.view.view-helpers :as vh]))
 
-(def unknown-error-translation-key
-  "content:change-password-form/unknown-error")
-
 (def form-row-error-css-class "form-row--invalid")
 
 (def error-translations
@@ -22,7 +19,7 @@
     (let [error-translation (get-in error-translations [:new-email change-email-error])]
       (-> enlive-m
           (vh/add-error-class [:.clj--new-email__validation])
-          (html/at [:.clj--new-email__validation] (html/set-attr :data-l8n (or error-translation "content:index/register-unknown-error")))))
+          (html/at [:.clj--new-email__validation] (html/set-attr :data-l8n (or error-translation "content:change-email-form/change-email-unknown-error")))))
     enlive-m))
 
 (defn set-cancel-link [enlive-m]
@@ -33,9 +30,8 @@
 
 (defn add-change-email-errors [enlive-m err]
   (if (empty? err)
-    (html/at enlive-m [:.clj--validation-summary] (html/remove-class "validation-summary--show"))
-    (do (add-change-email-error enlive-m err)
-        )))
+    enlive-m
+    (add-change-email-error enlive-m err)))
 
 (defn change-email-form [request]
   (let [err (get-in request [:context :errors])

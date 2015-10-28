@@ -26,6 +26,7 @@
 (def profile-flash-message :.func--flash-message-container)
 (def profile-unconfirmed-email-message :.func--unconfirmed-email-message-container)
 (def profile-resend-confirmation-email :.func--resend-confirmation-email__button)
+(def profile-change-email-link :.func--change-email__link)
 
 (def unshare-profile-card-confirm-button :.func--unshare-profile-card__button)
 
@@ -73,6 +74,11 @@
 (def change-password-new-password-input :.func--new-password__input)
 (def change-password-submit :.func--change-password__button)
 (def change-password-page-body :.func--change-password-page)
+
+(def change-email-page-body :.func--change-email-page)
+(def change-email-input :.func--change-email__input)
+(def change-email-button :.func--change-email__button)
+(def change-email-cancel-button :.func--change-email-cancel__link)
 
 (def forgotten-password-button :.func--forgot-password__button)
 (def forgotten-password-email :.func--email__input)

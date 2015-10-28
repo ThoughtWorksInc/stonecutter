@@ -24,32 +24,6 @@
         client-id (:client-id client)]
     (user/add-authorised-client-for-user! (s/get-user-store stores-m) email client-id)))
 
-(defn parse-test-email []
-  (read-string (slurp "test-tmp/test-email.txt")))
-
-(defn delete-directory [directory-path]
-  (->> (io/file directory-path)
-       file-seq
-       reverse
-       (map io/delete-file)
-       doall))
-
-(defn setup-test-directory [state]
-  (fact {:midje/name "setup test tmp directory"}
-        (io/make-parents "test-tmp/dummy.txt")
-        (.exists (io/file "test-tmp")) => true)
-  state)
-
-(defn teardown-test-directory [state]
-  (fact {:midje/name "teardown test tmp directory"}
-        (delete-directory "test-tmp")
-        (.exists (io/file "test-tmp")) => false)
-  state)
-
-(defn test-email-renderer [email-data]
-  {:subject ""
-   :body (str email-data)})
-
 (def email-sender (email/bash-sender-factory "test-resources/mail_stub.sh"))
 
 (def test-app (ih/build-app {:stores-m stores-m :email-sender email-sender}))
@@ -189,6 +163,29 @@
            (kc/check-and-press ks/delete-account-button)
            (kc/check-and-follow-redirect)
            (kc/check-page-is :show-profile-deleted [ks/profile-deleted-page-body])))
+
+(facts "User can change email address"
+       (-> (k/session test-app)
+           (steps/sign-in "user@withclient.com" "new-valid-password")
+           (k/visit "/profile")
+           (k/follow ks/profile-change-email-link)
+           (kc/check-page-is :show-change-email-form [ks/change-email-page-body])
+           (kc/check-and-fill-in ks/change-email-input "new_email@somewhere.com")
+           (k/follow ks/change-email-cancel-button)
+           (kc/check-page-is :show-profile [ks/profile-page-body])
+           (kc/selector-includes-content [ks/profile-page-profile-card-email] "user@withclient.com")
+           (kc/selector-does-not-include-content [ks/profile-page-profile-card-email] "new_email@somewhere.com")
+           (k/follow ks/profile-change-email-link)
+           (kc/check-page-is :show-change-email-form [ks/change-email-page-body])
+           (kc/check-and-fill-in ks/change-email-input "new_email@somewhere.com")
+           (kc/check-and-press ks/change-email-button)
+           (kc/check-and-follow-redirect)
+           (kc/selector-exists [ks/profile-page-body])
+           (kc/selector-includes-content [ks/profile-unconfirmed-email-message] "new_email@somewhere.com")
+           ;(kc/selector-includes-content [ks/profile-flash-message] "new_email@somewhere.com") TODO flash messages after email change
+           (kc/selector-includes-content [ks/profile-page-profile-card-email] "new_email@somewhere.com")
+           ))
+
 
 (facts "Not found page is shown for unknown url"
        (-> (k/session test-app)

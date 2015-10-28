@@ -22,7 +22,8 @@
             [stonecutter.db.confirmation :as confirmation]
             [stonecutter.session :as session]
             [stonecutter.db.invitations :as invitations]
-            [stonecutter.db.user :as u]))
+            [stonecutter.db.user :as u]
+            [stonecutter.db.token :as token]))
 
 (defn has-valid-invite-id? [request invitation-store]
   (let [invite-id (get-in request [:params :invite-id])]
@@ -91,21 +92,20 @@
 (defn show-change-email-form [request]
   (sh/enlive-response (change-email/change-email-form request) request))
 
-(defn change-email [request]
-  )
-
-(defn update-user-email [user-store email-sender request]
+(defn update-user-email [user-store token-store email-sender request]
   (let [email (session/request->user-login request)
         params (:params request)
-        new-email (:new-email params)
-        err (v/validate-registration-email new-email (partial u/user-exists? user-store))
+        new-email (:email-address params)
+        err (v/validate-email-change new-email (partial user/user-exists? user-store))
         request-with-validation-errors (assoc-in request [:context :errors] err)
         config-m (get-in request [:context :config-m])]
     (if (empty? err)
       (do (user/update-user-email! user-store email new-email)
           (email/send! email-sender :change-password email {:admin-email (config/admin-login config-m) :app-name (config/app-name config-m)})
           (-> (r/redirect (routes/path :show-profile))
-              (assoc :flash :email-changed)))
+              (assoc :flash :email-changed)
+              (assoc :session (:session request-with-validation-errors))
+              (assoc-in [:session :user-login] new-email)))
       (show-change-email-form request-with-validation-errors))))
 
 (defn sign-in [user-store token-store request]

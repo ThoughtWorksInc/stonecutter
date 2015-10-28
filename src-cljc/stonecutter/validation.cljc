@@ -30,7 +30,8 @@
         :default nil))
 
 (defn validate-registration-email [email user-exists?-fn]
-  (cond (is-too-long? email email-max-length) :too-long
+  (cond (s/blank? email) :blank
+        (is-too-long? email email-max-length) :too-long
         (not (is-email-valid? email)) :invalid
         (user-exists?-fn email) :duplicate
         :default nil))
@@ -51,13 +52,18 @@
     :unchanged
     nil))
 
+(defn validate-email-change [email user-exists?-fn]
+  (->
+    {:new-email      (validate-registration-email email user-exists?-fn)}
+    remove-nil-values))
+
 (defn validate-registration [params user-exists?-fn]
   (let [{:keys [registration-first-name registration-last-name registration-email registration-password]} params]
     (->
-      {:registration-first-name   (validate-registration-name registration-first-name)
-       :registration-last-name    (validate-registration-name registration-last-name)
-       :registration-email        (validate-registration-email registration-email user-exists?-fn)
-       :registration-password     (validate-password-format registration-password)}
+      {:registration-first-name (validate-registration-name registration-first-name)
+       :registration-last-name  (validate-registration-name registration-last-name)
+       :registration-email      (validate-registration-email registration-email user-exists?-fn)
+       :registration-password   (validate-password-format registration-password)}
       remove-nil-values)))
 
 (defn validate-user-exists [email user-exists?-fn]
@@ -76,10 +82,10 @@
 
 (defn validate-change-password [params check-password-fn]
   (let [{:keys [current-password new-password]} params]
-    (-> {:current-password     (or (validate-password-format current-password)
-                                   (validate-correct-password check-password-fn current-password))
-         :new-password         (or (validate-password-format new-password)
-                                   (validate-passwords-are-different current-password new-password))}
+    (-> {:current-password (or (validate-password-format current-password)
+                               (validate-correct-password check-password-fn current-password))
+         :new-password     (or (validate-password-format new-password)
+                               (validate-passwords-are-different current-password new-password))}
         remove-nil-values)))
 
 (defn validate-forgotten-password [params user-exists?-fn]
