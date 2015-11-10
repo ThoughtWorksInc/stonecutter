@@ -9,24 +9,25 @@ input {
 .validation-summary {
   display: none;
   margin-bottom: 2rem;
+  background-color: $error_color;
+  border: 1px solid darken($error_color,8%);
+  border-radius: 3px;
+  margin-left: -1rem;
+  margin-right: -1rem;
+  margin-bottom: 0;
+  padding: 1rem;
+  color: $error_color--dark;
+
   &--show {
     display: block;
   }
   &__list {
     @include reset-list;
-    background-color: $error_color;
-    margin-left: -1rem;
-    margin-right: -1rem;
-    margin-bottom: 0;
-    padding: 1rem;
-    border: 1px solid darken($error_color,8%);
-    border-radius: 3px;
   }
   &__item {
     position: relative;
     margin-bottom: 4px;
     padding-left: 30px;
-    color: $error_color--dark;
     &:last-child {
       margin-bottom: 0;
     }
@@ -38,6 +39,9 @@ input {
       left: 0;
       font-family: FontAwesome;
     }
+  }
+  &__title {
+    font-weight: bold;
   }
 }
 

@@ -25,6 +25,7 @@ index:
   register-confirm-password: Confirm password
   register-unknown-error: Whoops! Unknown error
   register-create-account: Create Profile Card
+  validation-summary-message: Registration failed
 
 change-password-form:
   title: Change your password

@@ -12,6 +12,13 @@ block headerContent
 block content
   .middle-container.middle-container--max-large
     .columns
+      .single-column
+        .validation-summary.validation-summary--show.clj--registration-validation-summary
+          .validation-summary__title(data-l8n="content:index/validation-summary-message") !Registration failed
+          ul.validation-summary__list
+            li.validation-summary__item.clj--registration-validation-summary__item(data-l8n="content:index/register-unknown-error")
+              | !Validation summary item
+
       .column.one-half
         .welcome
           h1.welcome__title
@@ -70,11 +77,6 @@ block content
               = " "
               span(data-l8n="content:index/register-intro-2") !Profile Card.
           form.register-form.clj--register__form(action="./profile-created", method="post", role="form")
-            .validation-summary.validation-summary--show.clj--registration-validation-summary
-              .validation-summary__title
-              ul.validation-summary__list
-                li.validation-summary__item.clj--registration-validation-summary__item(data-l8n="content:index/register-unknown-error")
-                  | !Validation summary item
             input(type="hidden", name="action", value="register")
             p.form-row.clj--registration-first-name
               label.form-row__label(for="reg-first-name")

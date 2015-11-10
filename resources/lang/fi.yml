@@ -25,6 +25,7 @@ index:
   register-confirm-password: Confirm password in Finnish
   register-unknown-error: Whoops! Unknown error in Finnish
   register-create-account: Create Profile Card in Finnish
+  validation-summary-message: Registration failed in Finnish
 
 change-password-form:
   title: Change your password in Finnish
