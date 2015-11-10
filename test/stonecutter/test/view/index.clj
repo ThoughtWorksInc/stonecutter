@@ -186,6 +186,7 @@
          ?error      ?translation-key
          :invalid    "register-email-address-invalid-validation-message"
          :duplicate  "register-email-address-duplicate-validation-message"
+         :blank      "register-email-address-blank-validation-message"
          :too-long   "register-email-address-too-long-validation-message")
 
        (tabular

@@ -19,6 +19,7 @@
                              :too-long "content:index/register-last-name-too-long-validation-message"}
    :registration-email      {:invalid   "content:index/register-email-address-invalid-validation-message"
                              :duplicate "content:index/register-email-address-duplicate-validation-message"
+                             :blank "content:index/register-email-address-blank-validation-message"
                              :too-long  "content:index/register-email-address-too-long-validation-message"}
    :registration-password   {:blank     "content:index/register-password-blank-validation-message"
                              :too-long  "content:index/register-password-too-long-validation-message"
