@@ -106,10 +106,7 @@
     }
   }
   &__details {
-    margin-left: 100px;
-    @include width-from($smallish_device) {
-      margin-left: 180px;
-    }
+      text-align: center;
   }
 
   // photo area
