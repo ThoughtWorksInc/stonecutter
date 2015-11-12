@@ -14,7 +14,7 @@ input {
   border-radius: 3px;
   margin-left: -1rem;
   margin-right: -1rem;
-  margin-bottom: 0;
+  margin-bottom: 20px;
   padding: 1rem;
   color: $error_color--dark;
 
@@ -23,6 +23,7 @@ input {
   }
   &__list {
     @include reset-list;
+    margin-top: 0;
   }
   &__item {
     position: relative;
@@ -41,6 +42,7 @@ input {
     }
   }
   &__title {
+    padding-bottom: 10px;
     font-weight: bold;
   }
 }
