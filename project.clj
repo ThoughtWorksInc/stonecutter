@@ -95,7 +95,7 @@
                                                                    :pretty-print  true}}
                                                  ]
                                         :test-commands {"phantom" ["phantomjs" :runner "target/cljs/testable.js"]}}}}
-             :uberjar {:hooks       [leiningen.cljsbuild]
+             :uberjar {:prep-tasks  ["compile" ["cljsbuild" "once"]]
                        :env         {:production true}
                        :aot         :all
                        :omit-source true
