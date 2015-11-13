@@ -42,8 +42,12 @@ input {
     }
   }
   &__title {
-    padding-bottom: 10px;
+    padding-bottom: 1rem;
     font-weight: bold;
+
+    &:empty {
+      display: none;
+    }
   }
 }
 
