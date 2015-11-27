@@ -4,7 +4,8 @@
             [clojure.tools.logging :as log]
             [stonecutter.translation :as t]
             [stonecutter.routes :as r]
-            [stonecutter.config :as config]))
+            [stonecutter.config :as config]
+            [stonecutter.translation :as translation]))
 
 (defn anti-forgery-snippet []
   (html/html-snippet (anti-forgery-field)))
@@ -67,6 +68,10 @@
   (log/debug (format "Loading template %s from file" path))
   (html/html-resource path))
 
+(defn update-lang [enlive-m lang]
+  (let [language-key (or (when (translation/has-locale lang) lang) :en)]
+    (html/at enlive-m [:html] (html/set-attr :lang (name language-key)))))
+
 (defn load-template [path]
   (if @template-caching?
     (if (contains? @template-cache path)
@@ -75,6 +80,10 @@
         (swap! template-cache #(assoc % path html))
         html))
     (html-resource-with-log path)))
+
+(defn load-template-with-lang [path request]
+  (-> (load-template path)
+      (update-lang (translation/get-locale-from-request request))))
 
 (defn enlive-to-str [nodes]
   (->> nodes

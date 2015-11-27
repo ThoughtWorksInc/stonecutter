@@ -23,7 +23,7 @@
 (defn unshare-profile-card [request]
   (let [client-id (get-in request [:context :client :client-id])
         client-name (get-in request [:context :client :name])]
-    (->> (vh/load-template "public/unshare-profile-card.html")
+    (->> (vh/load-template-with-lang "public/unshare-profile-card.html" request)
          (set-client-name client-name)
          set-form-action
          (set-client-id client-id)

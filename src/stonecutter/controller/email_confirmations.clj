@@ -18,7 +18,7 @@
   (sh/enlive-response (sign-in/confirmation-sign-in-form request) request))
 
 (defn show-error-account-nonexistent [request]
-  (sh/enlive-response (error/account-nonexistent) request))
+  (sh/enlive-response (error/account-nonexistent request) request))
 
 (defn confirm-users-email! [user-store confirmation-store user confirmation-id]
   (log/debug (format "confirmation-ids match. Confirming user's email."))

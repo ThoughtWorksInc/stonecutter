@@ -130,7 +130,7 @@
 
 (defn index [request]
   (let [error-m (get-in request [:context :errors])]
-    (-> (vh/load-template "public/index.html")
+    (-> (vh/load-template-with-lang "public/index.html" request)
          (vh/set-form-action [:.clj--register__form] (r/path :sign-in-or-register))
          (vh/set-form-action [:.clj--sign-in__form] (r/path :sign-in-or-register))
          (vh/set-attribute [:.clj--forgot-password] :href (r/path :show-forgotten-password-form))
@@ -152,7 +152,7 @@
 (defn accept-invite [request]
   (let [error-m (get-in request [:context :errors])
         invite-id (get-in request [:params :invite-id])]
-    (-> (vh/load-template "public/index.html")
+    (-> (vh/load-template-with-lang "public/index.html" request)
          (vh/set-form-action [:.clj--register__form] (r/path :register-using-invitation :invite-id invite-id))
          (add-registration-errors error-m)
          (set-registration-inputs (:params request))

@@ -52,7 +52,7 @@
 (defn user-list [request]
   (let [users (get-in request [:context :users])
         non-admin-users (filterv not-an-admin? users)]
-    (-> (vh/load-template "public/user-list.html")
+    (-> (vh/load-template-with-lang "public/user-list.html" request)
         vh/remove-work-in-progress
         vh/set-admin-links
         (add-user-list non-admin-users)

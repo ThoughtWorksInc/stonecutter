@@ -13,18 +13,18 @@
 (defn set-return-to-link [enlive-m path]
   (html/at enlive-m [:.clj--error-return-home__link] (html/set-attr :href path)))
 
-(defn internal-server-error []
-  (-> (vh/load-template "public/error-500.html")
+(defn internal-server-error [request]
+  (-> (vh/load-template-with-lang "public/error-500.html" request)
       (set-return-to-link (r/path :index))))
 
-(defn not-found-error []
-  (-> (internal-server-error) (modify-error-translation-keys "error-404")))
+(defn not-found-error [request]
+  (-> (internal-server-error request) (modify-error-translation-keys "error-404")))
 
-(defn csrf-error []
-  (-> (internal-server-error) (modify-error-translation-keys "error-csrf")))
+(defn csrf-error [request]
+  (-> (internal-server-error request) (modify-error-translation-keys "error-csrf")))
 
-(defn forbidden-error []
-  (-> (internal-server-error) (modify-error-translation-keys "error-forbidden")))
+(defn forbidden-error [request]
+  (-> (internal-server-error request) (modify-error-translation-keys "error-forbidden")))
 
-(defn account-nonexistent []
-  (-> (internal-server-error) (modify-error-translation-keys "error-account-nonexistent")))
+(defn account-nonexistent [request]
+  (-> (internal-server-error request) (modify-error-translation-keys "error-account-nonexistent")))

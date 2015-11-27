@@ -32,7 +32,7 @@
   (let [params (:params request)
         client-name (get-in request [:context :client :name])
         csrf-token (or (request :csrf-token) ((request :session {}) :csrf-token))]
-    (->> (vh/load-template "public/authorise.html")
+    (->> (vh/load-template-with-lang "public/authorise.html" request)
          set-form-action
          (set-cancel-link params)
          (set-client-name client-name)

@@ -96,8 +96,9 @@
 
 (defn change-password-form [request]
   (let [err (get-in request [:context :errors])
-        library-m (vh/load-template "public/library.html")]
-    (-> (vh/load-template "public/change-password.html")
+        library-m (vh/load-template-with-lang "public/library.html" request
+                    )]
+    (-> (vh/load-template-with-lang "public/change-password.html" request)
          set-form-action
          set-cancel-link
         (vh/display-admin-navigation-links request library-m)

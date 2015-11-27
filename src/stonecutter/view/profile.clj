@@ -67,7 +67,7 @@
 
 (defn profile [request]
   (let [library-m (vh/load-template "public/library.html")]
-    (-> (vh/load-template "public/profile.html")
+    (-> (vh/load-template-with-lang "public/profile.html" request)
         (set-flash-message request)
         (diplay-email-unconfirmed-message request)
         (add-profile-card request)

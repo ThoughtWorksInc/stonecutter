@@ -14,20 +14,20 @@
   (html/at enlive-m [:.clj--profile-deleted-next__button] (html/set-attr :href path)))
 
 (defn delete-account-confirmation [request]
-  (->> (vh/load-template "public/delete-account.html")
+  (->> (vh/load-template-with-lang "public/delete-account.html" request)
        (set-form-action (r/path :delete-account))
        (set-cancel-link (r/path :show-profile))
        vh/add-anti-forgery
        vh/remove-work-in-progress))
 
 (defn profile-deleted [request]
-  (->> (vh/load-template "public/profile-deleted.html")
+  (->> (vh/load-template-with-lang "public/profile-deleted.html" request)
        (set-register-link (r/path :index))
        vh/remove-work-in-progress))
 
 (defn email-confirmation-delete-account [request]
   (let [confirmation-id (get-in request [:params :confirmation-id] "missing-confirmation-id")]
-    (->> (vh/load-template "public/delete-account.html")
+    (->> (vh/load-template-with-lang "public/delete-account.html" request)
          (set-form-action (r/path :show-confirmation-delete
                                   :confirmation-id confirmation-id))
          (set-cancel-link (r/path :index))

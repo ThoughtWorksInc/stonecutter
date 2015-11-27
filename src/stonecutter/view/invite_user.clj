@@ -32,7 +32,7 @@
 
 (defn invite-user [request]
   (let [error-m (get-in request [:context :errors])]
-    (-> (vh/load-template "public/admin-invite-user.html")
+    (-> (vh/load-template-with-lang "public/admin-invite-user.html" request)
         vh/remove-work-in-progress
         vh/set-admin-links
         set-form-action

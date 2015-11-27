@@ -35,8 +35,8 @@
 
 (defn change-email-form [request]
   (let [err (get-in request [:context :errors])
-        library-m (vh/load-template "public/library.html")]
-    (-> (vh/load-template "public/change-email.html")
+        library-m (vh/load-template-with-lang "public/library.html" request)]
+    (-> (vh/load-template-with-lang "public/change-email.html" request)
         (vh/display-admin-navigation-links request library-m)
         (add-change-email-errors err)
         set-form-action

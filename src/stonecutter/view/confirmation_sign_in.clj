@@ -26,7 +26,7 @@
   (html/at enlive-m [:.clj--forgot-password] (html/set-attr :href (r/path :show-forgotten-password-form))))
 
 (defn confirmation-sign-in-form [request]
-  (->> (vh/load-template "public/confirmation-sign-in.html")
+  (->> (vh/load-template-with-lang "public/confirmation-sign-in.html" request)
        (set-form-action (r/path :confirmation-sign-in))
        set-forgotten-password-link
        (set-confirmation-id (:params request))

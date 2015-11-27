@@ -36,7 +36,7 @@
 (defn profile-created [request]
   (let [from-app (get-in request [:params :from-app])
         next-url (get-next-url from-app request)]
-    (->> (vh/load-template "public/profile-created.html")
+    (->> (vh/load-template-with-lang "public/profile-created.html" request)
          (set-next-link next-url)
          (set-flash-message request)
          (set-button-text from-app)

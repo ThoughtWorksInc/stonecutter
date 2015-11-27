@@ -26,6 +26,13 @@
    (-> (create-request-with-query-string method url params)
        (assoc :session session))))
 
+(defn enlive-m->attr [enlive-m selector attr]
+  (-> enlive-m (html/select selector) first :attrs attr))
+
+(defn has-attr? [selector attr attr-val]
+  (midje/chatty-checker [enlive-m]
+                        (= attr-val (enlive-m->attr enlive-m selector attr))))
+
 (defn check-redirects-to [path]
   (midje/checker [response] (and
                               (= (:status response) 302)

@@ -71,7 +71,7 @@
 (defn apps-list [request]
   (let [clients (get-in request [:context :clients])
         error   (get-in request [:context :errors])]
-    (->> (vh/load-template "public/admin-apps.html")
+    (->> (vh/load-template-with-lang "public/admin-apps.html" request)
          vh/remove-work-in-progress
          vh/set-admin-links
          (keep-submitted-form-input (:params request))

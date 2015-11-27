@@ -29,7 +29,7 @@
            [:.clj--forgotten-password-email__input] (html/set-attr :value email)))
 
 (defn forgotten-password-form [request]
-  (->> (vh/load-template "public/forgot-password.html")
+  (->> (vh/load-template-with-lang "public/forgot-password.html" request)
        set-form-action
        (add-email-error (get-in request [:context :errors]))
        (set-email-input (get-in request [:params :email]))

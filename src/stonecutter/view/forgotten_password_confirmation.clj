@@ -2,4 +2,4 @@
   (:require [stonecutter.view.view-helpers :as vh]))
 
 (defn forgotten-password-confirmation [request]
-  (vh/load-template "public/forgot-password-confirmation.html"))
+  (vh/load-template-with-lang "public/forgot-password-confirmation.html" request))

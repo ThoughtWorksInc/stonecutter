@@ -23,7 +23,7 @@
 
 (defn config-translation []
   {:dictionary                 {:en (translation-map "en")
-                                ;:fi (translation-map "fi") ;; FIXME JC 21/10/2015 removed until translations are correct
+                                :fi (translation-map "fi")
                                 }
    :dev-mode?                  false
    :fallback-locale            :en
@@ -49,3 +49,7 @@
 
 (defn context-translate [enlive-m request]
   (t/translate (partial (tower/make-t (config-translation)) (get-locale-from-request request)) enlive-m))
+
+(defn has-locale [locale]
+  ((keyword locale) (:dictionary (config-translation)))
+  )

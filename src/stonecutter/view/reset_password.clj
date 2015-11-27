@@ -11,7 +11,7 @@
   (let [err (get-in request [:context :errors])
         forgotten-password-id (get-in request [:params :forgotten-password-id] "no-id-provided")]
     (->
-     (vh/load-template "public/reset-password.html")
+     (vh/load-template-with-lang "public/reset-password.html" request)
      (set-form-action forgotten-password-id)
      vh/add-anti-forgery
      (cp/add-errors err))))

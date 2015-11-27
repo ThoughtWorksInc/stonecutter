@@ -33,22 +33,22 @@
   (:gen-class))
 
 (defn not-found [request]
-  (-> (error/not-found-error)
+  (-> (error/not-found-error request)
       (sh/enlive-response request)
       (r/status 404)))
 
 (defn err-handler [request]
-  (-> (error/internal-server-error)
+  (-> (error/internal-server-error request)
       (sh/enlive-response request)
       (r/status 500)))
 
 (defn csrf-err-handler [req]
-  (-> (error/csrf-error)
+  (-> (error/csrf-error req)
       (sh/enlive-response req)
       (r/status 403)))
 
 (defn forbidden-err-handler [req]
-  (-> (error/forbidden-error)
+  (-> (error/forbidden-error req)
       (sh/enlive-response req)
       (r/status 403)))
 
