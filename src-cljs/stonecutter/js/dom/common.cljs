@@ -5,6 +5,9 @@
 
 (def translations (t/load-client-translations))
 
+(defn get-lang []
+  (keyword (.getAttribute (dm/sel1 :html) "lang")))
+
 (defn add-class! [selector css-class]
   (d/add-class! (dm/sel1 selector) css-class))
 

@@ -5,6 +5,7 @@ index:
   register-first-name-too-long-validation-message: First name must be shorter in Finnish
   register-last-name-blank-validation-message: Last name cannot be blank in Finnish
   register-last-name-too-long-validation-message: Last name must be shorter in Finnish
+  register-email-address-blank-validation-message: Email address cannot be blank in Finnish
   register-email-address-invalid-validation-message: Enter a valid email address in Finnish
   register-email-address-duplicate-validation-message: User already exists in Finnish
   register-email-address-too-long-validation-message: Email address is too long in Finnish

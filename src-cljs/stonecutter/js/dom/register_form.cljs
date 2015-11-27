@@ -29,9 +29,6 @@
 (defn validation-selector [field-key]
   (get-in selectors [field-key :validation]))
 
-(defn get-translated-message [key]
-  (-> dom/translations :index key))
-
 (defn get-value [field-key]
   (dom/get-value (input-selector field-key)))
 

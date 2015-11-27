@@ -1,7 +1,8 @@
 (ns stonecutter.js.controller.register-form
   (:require [stonecutter.js.dom.register-form :as rfd]
             [stonecutter.js.dom.common :as dom]
-            [stonecutter.validation :as v]))
+            [stonecutter.validation :as v]
+            [stonecutter.js.controller.client_translations :as ct]))
 
 (def default-state {:registration-first-name {:value nil :error nil}
                     :registration-last-name  {:value nil :error nil}
@@ -9,16 +10,16 @@
                     :registration-password   {:value nil :error nil :tick false}})
 
 (def error-to-message
-  {:registration-first-name {:blank    (rfd/get-translated-message :register-first-name-blank-validation-message)
-                             :too-long (rfd/get-translated-message :register-first-name-too-long-validation-message)}
-   :registration-last-name  {:blank    (rfd/get-translated-message :register-last-name-blank-validation-message)
-                             :too-long (rfd/get-translated-message :register-last-name-too-long-validation-message)}
-   :registration-email      {:blank     (rfd/get-translated-message :register-email-address-blank-validation-message)
-                             :invalid  (rfd/get-translated-message :register-email-address-invalid-validation-message)
-                             :too-long (rfd/get-translated-message :register-email-address-too-long-validation-message)}
-   :registration-password   {:blank     (rfd/get-translated-message :register-password-blank-validation-message)
-                             :too-short (rfd/get-translated-message :register-password-too-short-validation-message)
-                             :too-long  (rfd/get-translated-message :register-password-too-long-validation-message)}})
+  {:registration-first-name {:blank    (ct/t (dom/get-lang) :index/register-first-name-blank-validation-message)
+                             :too-long (ct/t (dom/get-lang) :index/register-first-name-too-long-validation-message)}
+   :registration-last-name  {:blank    (ct/t (dom/get-lang) :index/register-last-name-blank-validation-message)
+                             :too-long (ct/t (dom/get-lang) :index/register-last-name-too-long-validation-message)}
+   :registration-email      {:blank    (ct/t (dom/get-lang) :index/register-email-address-blank-validation-message)
+                             :invalid  (ct/t (dom/get-lang) :index/register-email-address-invalid-validation-message)
+                             :too-long (ct/t (dom/get-lang) :index/register-email-address-too-long-validation-message)}
+   :registration-password   {:blank     (ct/t (dom/get-lang) :index/register-password-blank-validation-message)
+                             :too-short (ct/t (dom/get-lang) :index/register-password-too-short-validation-message)
+                             :too-long  (ct/t (dom/get-lang) :index/register-password-too-long-validation-message)}})
 
 (defn update-first-name-blur [state]
   (assoc-in state [:registration-first-name :error]

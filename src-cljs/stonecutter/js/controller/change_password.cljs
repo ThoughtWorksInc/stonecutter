@@ -1,20 +1,21 @@
 (ns stonecutter.js.controller.change-password
   (:require [stonecutter.validation :as v]
             [stonecutter.js.dom.common :as dom]
-            [stonecutter.js.dom.change-password :as cpd]))
+            [stonecutter.js.dom.change-password :as cpd]
+            [stonecutter.js.controller.client_translations :as ct]))
 
 (def default-state {:current-password {:value nil :error nil}
                     :new-password     {:value nil :error nil :tick false}})
 
 (def error-to-message
-  {:current-password {:blank     (cpd/get-translated-message :current-password-invalid-validation-message)
-                      :too-short (cpd/get-translated-message :current-password-invalid-validation-message)
-                      :too-long  (cpd/get-translated-message :current-password-invalid-validation-message)
-                      :invalid   (cpd/get-translated-message :current-password-invalid-validation-message)}
-   :new-password     {:blank     (cpd/get-translated-message :new-password-blank-validation-message)
-                      :unchanged (cpd/get-translated-message :new-password-unchanged-validation-message)
-                      :too-short (cpd/get-translated-message :new-password-too-short-validation-message)
-                      :too-long  (cpd/get-translated-message :new-password-too-long-validation-message)}})
+  {:current-password {:blank     (ct/t (dom/get-lang) :change-password-form/current-password-invalid-validation-message)
+                      :too-short (ct/t (dom/get-lang) :change-password-form/current-password-invalid-validation-message)
+                      :too-long  (ct/t (dom/get-lang) :change-password-form/current-password-invalid-validation-message)
+                      :invalid   (ct/t (dom/get-lang) :change-password-form/current-password-invalid-validation-message)}
+   :new-password     {:blank     (ct/t (dom/get-lang) :change-password-form/new-password-blank-validation-message)
+                      :unchanged (ct/t (dom/get-lang) :change-password-form/new-password-unchanged-validation-message)
+                      :too-short (ct/t (dom/get-lang) :change-password-form/new-password-too-short-validation-message)
+                      :too-long  (ct/t (dom/get-lang) :change-password-form/new-password-too-long-validation-message)}})
 
 (defn update-current-password-blur [state]
   (let [password (get-in state [:current-password :value])
