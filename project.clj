@@ -101,7 +101,11 @@
                        :cljsbuild   {:builds [{:source-paths ["src-cljs" "src-cljc"]
                                                :compiler     {:output-to     "resources/public/js/main.js"
                                                               :optimizations :advanced
-                                                                        :pretty-print  false}}]}}}
+                                                                        :pretty-print  false}}]}}
+             :docker  {:env {:host   "0.0.0.0"
+                             :port   "7000"
+                             :mongodb-port "27017"
+                             :mongodb-db   "coracle"}}}
   :clean-targets ^{:protect false} [:target-path
                                     [:cljsbuild :builds :app :compiler :output-dir]
                                     [:cljsbuild :builds :app :compiler :output-to]])

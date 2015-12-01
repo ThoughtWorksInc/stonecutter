@@ -6,7 +6,6 @@ WORKDIR /usr/src/app
 COPY project.clj /usr/src/app/
 RUN lein with-profile production deps
 COPY . /usr/src/app
-RUN yum install -y make gcc*
-RUN npm install
+RUN npm install --no-optional
 
-CMD ["lein", "with-profile", "production", "run"]
+CMD ["lein", "with-profile", "docker", "run"]
