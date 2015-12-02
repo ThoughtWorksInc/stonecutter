@@ -13,13 +13,14 @@
 (facts "about storage of users - user storage journey"
        (fact "can store a user"
              (user/store-user! user-store "Frank" "Lasty" "email@server.com" "password")
-             => (just {:login      "email@server.com"
-                       :first-name "Frank"
-                       :last-name  "Lasty"
-                       :url        nil
-                       :confirmed? false
-                       :uid        anything
-                       :role       (:untrusted config/roles)}))
+             => (just {:login           "email@server.com"
+                       :first-name      "Frank"
+                       :last-name       "Lasty"
+                       :url             nil
+                       :confirmed?      false
+                       :uid             anything
+                       :role            (:untrusted config/roles)
+                       :profile-picture config/default-profile-picture}))
 
        (fact "can authenticate a user"
              (user/authenticate-and-retrieve-user user-store "email@server.com" "password")
@@ -101,18 +102,8 @@
 
 (fact "about creating a user record"
       (let [id-gen (constantly "id")]
-        (fact "a uuid is added"
-              (user/create-user id-gen "first-name" "last-name" "email" "password") => {:login "email"
-                                                                                        :password "encrypted_password"
-                                                                                        :uid "id"
-                                                                                        :first-name "first-name"
-                                                                                        :last-name "last-name"
-                                                                                        :url nil
-                                                                                        :confirmed? false
-                                                                                        :role (:untrusted config/roles)}
-              (provided (cl-user/bcrypt "password") => "encrypted_password"))
         (fact "email is lower-cased"
-              (user/create-user id-gen "first-name" "last-name" "EMAIL" "password") => (contains {:login "email"}))))
+              (user/create-user id-gen "first-name" "last-name" "EMAIL" "password" (:untrusted config/roles) config/default-profile-picture) => (contains {:login "email"}))))
 
 (facts "about storing users"
        (let [user-store (m/create-memory-store)]
@@ -245,13 +236,14 @@
                    id "random-uuid-1234"
                    id-gen (constantly id)]
 
-               (user/create-admin id-gen "admin-first-name" "admin-last-name" email password) => {:first-name "admin-first-name"
-                                                                                                  :last-name  "admin-last-name"
-                                                                                                  :login      email
-                                                                                                  :password   hashed-password
-                                                                                                  :confirmed? false
-                                                                                                  :uid        id
-                                                                                                  :role       (:admin config/roles)}
+               (user/create-admin id-gen "admin-first-name" "admin-last-name" email password) => {:first-name      "admin-first-name"
+                                                                                                  :last-name       "admin-last-name"
+                                                                                                  :login           email
+                                                                                                  :password        hashed-password
+                                                                                                  :confirmed?      false
+                                                                                                  :uid             id
+                                                                                                  :role            (:admin config/roles)
+                                                                                                  :profile-picture config/default-profile-picture}
                (provided
                  (cl-user/new-user email password) => {:login email :password hashed-password})))
 

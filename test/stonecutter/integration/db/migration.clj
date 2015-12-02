@@ -76,6 +76,13 @@
            (-> (monger-c/find-map-by-id db "users" "email3") :role) => "admin"
            (-> (monger-c/find-map-by-id db "users" "email4") :role) => "untrusted")))
 
+(facts "about adding default user image"
+       (do-with-test-db
+         (fn [db]
+           (monger-c/insert db "users" {:_id "email1" :login "email1" :password "q" :uid "a-uid" :role "default"})
+           (m/add-default-user-profile-picture-src db)
+           (-> (monger-c/find-map-by-id db "users" "email1") :profile-picture) => "/images/temp-avatar-300x300.png")))
+
 (tabular
   (fact "about updating records to use mongo generated ids"
         (do-with-test-db

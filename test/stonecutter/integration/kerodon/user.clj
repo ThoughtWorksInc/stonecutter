@@ -12,7 +12,8 @@
             [stonecutter.integration.kerodon.kerodon-selectors :as ks]
             [stonecutter.integration.kerodon.kerodon-checkers :as kc]
             [stonecutter.integration.kerodon.steps :as steps]
-            [stonecutter.test.util.time :as test-time]))
+            [stonecutter.test.util.time :as test-time]
+            [stonecutter.config :as config]))
 
 (l/init-logger!)
 (ih/setup-db)
@@ -66,7 +67,8 @@
            (k/visit "/profile")
            (kc/check-page-is :show-profile [ks/profile-page-body])
            (kc/selector-includes-content [ks/profile-page-profile-card-email] "email@server.com")
-           (kc/selector-includes-content [ks/profile-page-profile-card-name] "Frank Lasty")))
+           (kc/selector-includes-content [ks/profile-page-profile-card-name] "Frank Lasty")
+           (kc/selector-has-attribute-with-content [ks/profile-page-profile-card-image :img] :src config/default-profile-picture)))
 
 (facts "Accept invite page redirects to profile-created page"
        (let [invitation-store (:invitation-store stores-m)]

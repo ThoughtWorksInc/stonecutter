@@ -41,11 +41,10 @@ block content
       .wrapper__card
         .card
           .card__row.card__row--bottom-border
-            .card__photo.clj-wip
+            .card__photo
               //-a.button.button--full-width.card__photo-button(href="#") Update
-              .card__image
-                +imageIncludeTag("temp-avatar-300x300.jpg", "", {alt:"Your profile picture"})
-                //-img(src="http://placekitten.com/g/302/302")
+              .card__image.clj--card-image.func--card-image
+                +imageIncludeTag("", "", {alt:"Your profile picture"})
             .card__details
               .card__heading
                 .card__name.clj--card-name.func--card-name !Peter Thomas Cheshire

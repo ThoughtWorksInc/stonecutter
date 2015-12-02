@@ -18,6 +18,7 @@
 (def profile-page-body :.func--profile-page)
 (def profile-page-profile-card-email :.func--card-email)
 (def profile-page-profile-card-name :.func--card-name)
+(def profile-page-profile-card-image :.func--card-image)
 (def profile-deleted-page-body :.func--profile-deleted-page)
 (def profile-authorised-client-list :.func--app__list)
 (def profile-authorised-client-unshare-link :.func--app-item__unshare-link)

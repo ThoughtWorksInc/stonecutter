@@ -8,10 +8,12 @@
 (defn add-profile-card [enlive-m request]
   (let [email (get-in request [:context :user-login])
         first-name (get-in request [:context :user-first-name])
-        last-name (get-in request [:context :user-last-name])]
+        last-name (get-in request [:context :user-last-name])
+        profile-picture (get-in request [:context :user-profile-picture])]
     (html/at enlive-m
              [:.clj--card-name] (html/content (str first-name " " last-name))
-             [:.clj--card-email] (html/content email))))
+             [:.clj--card-email] (html/content email)
+             [:.clj--card-image :img] (html/set-attr :src profile-picture))))
 
 (defn application-list-item [library-m] (first (html/select library-m [:.clj--authorised-app__list-item])))
 

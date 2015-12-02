@@ -33,6 +33,8 @@
             :trusted   "trusted"
             :admin     "admin"})
 
+(def default-profile-picture "/images/temp-avatar-300x300.png")
+
 (defn create-config []
   (select-keys env/env env-var-set))
 
