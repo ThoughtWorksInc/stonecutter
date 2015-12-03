@@ -36,6 +36,10 @@
       (let [page (-> (th/create-request) profile)]
         page => (th/has-attr? [:.clj--delete-account__link] :href (r/path :show-delete-account-confirmation))))
 
+(fact "form posts to correct endpoint"
+      (let [page (-> (th/create-request) profile)]
+        page => (th/has-form-action? (r/path :update-profile-image))))
+
 (fact
   (let [translator (t/translations-fn t/translation-map)
         request (-> (th/create-request translator)

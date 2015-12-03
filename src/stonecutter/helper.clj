@@ -3,7 +3,13 @@
             [net.cgrand.enlive-html :as html]
             [stonecutter.translation :as t]
             [stonecutter.view.view-helpers :as vh]
-            [stonecutter.config :as config]))
+            [stonecutter.config :as config]
+            [clojure.java.io :as io]))
+
+(defn copy [uri file]
+  (with-open [in (io/input-stream uri)
+              out (io/output-stream file)]
+    (io/copy in out)))
 
 (defn update-app-name [enlive-m request]
   (let [app-name (config/app-name (get-in request [:context :config-m]))]

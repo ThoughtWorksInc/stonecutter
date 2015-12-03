@@ -105,6 +105,7 @@ profile:
   verify-email-intro-2: you should resend the confirmation email.
   verify-button: Resend email confirmation
   change-email-button: Change email address
+  update-profile-image-button: Update
 
 applications:
   title: Applications

@@ -4,7 +4,8 @@
             [stonecutter.js.dom.register-form :as rfd]
             [stonecutter.js.controller.change-password :as cpc]
             [stonecutter.js.controller.register-form :as rfc]
-            [stonecutter.js.controller.user-list :as ul])
+            [stonecutter.js.controller.user-list :as ul]
+            [stonecutter.js.dom.upload-photo :as ulp])
   (:require-macros [dommy.core :as dm]))
 
 (def registration-form-state (atom rfc/default-state))
@@ -42,6 +43,8 @@
   (setup-registration-form-listener :blur :registration-password rfc/update-password-blur)
 
   (setup-listener rfd/register-form-element-selector :submit (partial rfc/block-invalid-submit registration-form-state))
+
+  (setup-listener ulp/update-image-input-selector :change ulp/upload-image)
 
   (setup-change-password-form-listener :input :current-password cpc/update-current-password-input)
   (setup-change-password-form-listener :input :new-password cpc/update-new-password-input)

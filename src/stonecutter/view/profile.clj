@@ -80,4 +80,6 @@
         set-change-email-link
         (hide-admin-span request)
         vh/remove-work-in-progress
-        vh/add-anti-forgery)))
+        vh/add-anti-forgery
+        (vh/set-form-action [:.clj--card-photo-upload] (r/path :update-profile-image))
+        (vh/add-script "js/main.js"))))

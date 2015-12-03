@@ -25,9 +25,6 @@
 (defn set-cancel-link [enlive-m]
   (html/at enlive-m [:.clj--change-email-cancel__link] (html/set-attr :href (r/path :show-profile))))
 
-(defn set-form-action [enlive-m]
-  (html/at enlive-m [:.clj--change-email__form] (html/set-attr :action (r/path :change-email))))
-
 (defn add-change-email-errors [enlive-m err]
   (if (empty? err)
     enlive-m
@@ -39,7 +36,7 @@
     (-> (vh/load-template-with-lang "public/change-email.html" request)
         (vh/display-admin-navigation-links request library-m)
         (add-change-email-errors err)
-        set-form-action
+        (vh/set-form-action [:.clj--change-email__form] (r/path :change-email))
         set-cancel-link
         vh/add-anti-forgery
         vh/remove-work-in-progress)))

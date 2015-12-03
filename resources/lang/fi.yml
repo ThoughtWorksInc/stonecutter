@@ -113,6 +113,7 @@ profile:
   verify-email-intro-2: you should resend the confirmation email. in Finnish
   verify-button: Resend email confirmation in Finnish
   change-email-button: Change email address in Finnish
+  update-profile-image-button: Update in Finnish
 
 applications:
   title: Applications in Finnish

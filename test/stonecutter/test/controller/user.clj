@@ -17,7 +17,8 @@
             [stonecutter.test.email :as test-email]
             [stonecutter.db.confirmation :as confirmation]
             [stonecutter.db.invitations :as i]
-            [stonecutter.test.util.time :as test-time]))
+            [stonecutter.test.util.time :as test-time]
+            [clojure.java.io :as io]))
 
 (def check-body-not-blank
   (checker [response] (not (empty? (:body response)))))
@@ -393,8 +394,7 @@
                    test-email-sender (test-email/create-test-email-sender)
                    user-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
-                   user (th/store-user! user-store email "password")
-                   ]
+                   user (th/store-user! user-store email "password")]
                (u/update-user-email user-store confirmation-store test-email-sender request) => (every-checker (th/check-redirects-to "/profile")
                                                                                                   (contains {:flash :email-changed}))
                (user/retrieve-user user-store email) => nil
@@ -438,6 +438,20 @@
                           :body
                           html/html-snippet
                           (html/select [:.form-row--invalid]))) =not=> empty?)))
+
+(facts "about updating profile image"
+       (let [user-store (m/create-memory-store)
+             email "user@email.com"
+             user (th/store-user! user-store email "password")
+             request (th/create-request :post "/update-profile-image"
+                                        {:profile-photo {:content-type "image/jpeg" :tempfile (io/file "/images/cat.jpg")}}
+                                        {:user-login email})]
+         (spit "/images/cat.jpg" cat)
+         (u/update-profile-image user-store request) => (th/check-redirects-to "/profile")
+         (fact "image in request is saved to file system"
+               (.exists (io/file (str "/images/profile/" (:uid user) ".jpg"))) => true)
+         (fact "image path is saved to db"
+               (:profile-picture (user/retrieve-user user-store email)) => (str "/images/profile/" (:uid user) ".jpg"))))
 
 (facts "about profile created"
        (fact "view defaults with link to view profile"

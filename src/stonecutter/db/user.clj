@@ -115,3 +115,11 @@
 (defn update-user-email! [user-store email new-email]
   (-> (m/update! user-store email (update-user-email new-email))
       (dissoc :password)))
+
+(defn update-profile-picture [directory image-extension]
+  (fn [user]
+    (assoc user :profile-picture (str directory (:uid user) image-extension))))
+
+(defn update-profile-picture! [user-store email directory image-extension]
+  (-> (m/update! user-store email (update-profile-picture directory image-extension))
+      (dissoc :password)))

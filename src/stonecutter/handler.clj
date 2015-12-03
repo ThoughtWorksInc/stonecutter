@@ -4,6 +4,7 @@
             [ring.util.response :as r]
             [ring.adapter.jetty :as ring-jetty]
             [ring.middleware.json :as ring-json]
+            [ring.middleware.multipart-params :as ring-mw-mp]
             [scenic.routes :as scenic]
             [clojure.tools.logging :as log]
             [stonecutter.view.error :as error]
@@ -87,6 +88,7 @@
        :show-change-password-form            user/show-change-password-form
        :change-password                      (partial user/change-password user-store email-sender)
        :change-email                         (partial user/update-user-email user-store confirmation-store email-sender)
+       :update-profile-image                 (partial user/update-profile-image user-store)
        :show-change-email-form               user/show-change-email-form
        :show-forgotten-password-form         forgotten-password/show-forgotten-password-form
        :send-forgotten-password-email        (partial forgotten-password/forgotten-password-form-post email-sender user-store forgotten-password-store clock)
@@ -160,7 +162,8 @@
       (m/wrap-error-handling err-handler dev-mode?)
       (m/wrap-custom-static-resources config-m)
       (tower-ring/wrap-tower (t/config-translation))
-      (ring-json/wrap-json-params)
+      ring-json/wrap-json-params
+      ring-mw-mp/wrap-multipart-params
       ring-mct/wrap-content-type))
 
 (defn create-api-app [config-m stores-m id-token-generator json-web-key-set dev-mode?]

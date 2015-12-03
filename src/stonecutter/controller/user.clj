@@ -22,8 +22,9 @@
             [stonecutter.db.confirmation :as confirmation]
             [stonecutter.session :as session]
             [stonecutter.db.invitations :as invitations]
-            [stonecutter.db.user :as u]
-            [stonecutter.db.token :as token]))
+            [clojure.java.io :as io]
+            [clojure.string :as string]
+            [stonecutter.helper :as h]))
 
 (defn has-valid-invite-id? [request invitation-store]
   (let [invite-id (get-in request [:params :invite-id])]
@@ -173,6 +174,18 @@
 
 (defn from-app? [request]
   (session/request->return-to request))
+
+(defn update-profile-image [user-store request]
+  (let [uploaded-file-path (get-in request [:params :profile-photo :tempfile])
+        email (get-in request [:session :user-login])
+        content-type (get-in request [:params :profile-photo :content-type])
+        picture-directory config/profile-picture-directory
+        file-extension ((keyword (last (string/split content-type #"/"))) config/lookup-extension)
+        user (user/update-profile-picture! user-store email picture-directory file-extension)
+        new-file-path (:profile-picture user)]
+    (io/make-parents new-file-path)
+    (h/copy uploaded-file-path new-file-path))
+  (r/redirect (routes/path :show-profile)))
 
 (defn show-profile-created [request]
   (let [request (assoc request :params {:from-app (from-app? request)})]

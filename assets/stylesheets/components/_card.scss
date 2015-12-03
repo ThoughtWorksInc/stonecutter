@@ -114,14 +114,14 @@
   &__photo {
     position: relative;
     float: left;
+    @include size(75px);
+    @include width-from($smallish_device) {
+          @include size(150px);
+    }
   }
   &__image {
-    @include size(75px);
     background: lighten($light_grey, 5%);
     border: 1px solid $light_grey;
-    @include width-from($smallish_device) {
-      @include size(150px);
-    }
     img {
       display: block;
       width: 100%;
@@ -129,10 +129,18 @@
       border-radius: inherit;
     }
   }
-  &__photo-button {
+  &__photo-upload {
     position: absolute;
     left: 0;
     bottom: 0;
+    width: 100%;
+    label {
+      cursor: pointer;
+    }
+  }
+  &__photo-input {
+    display: none;
+    width: 100%
   }
 
   // Items for list values

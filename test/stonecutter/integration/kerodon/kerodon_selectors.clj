@@ -28,6 +28,8 @@
 (def profile-unconfirmed-email-message :.func--unconfirmed-email-message-container)
 (def profile-resend-confirmation-email :.func--resend-confirmation-email__button)
 (def profile-change-email-link :.func--change-email__link)
+(def profile-update-image-link :.func--update-image__link)
+(def photo-input-field :#profile-photo)
 
 (def unshare-profile-card-confirm-button :.func--unshare-profile-card__button)
 
