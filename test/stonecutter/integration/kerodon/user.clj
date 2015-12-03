@@ -188,14 +188,6 @@
            (kc/selector-includes-content [ks/profile-flash-message] "changed")
            (kc/selector-includes-content [ks/profile-page-profile-card-email] "new_email@somewhere.com")))
 
-(future-fact "User can change profile picture"
-       (-> (k/session test-app)
-           (steps/sign-in "new_email@somewhere.com" "new-valid-password")
-           (k/visit "/profile")
-           (kc/check-page-is :show-profile [ks/profile-page-body])
-           (k/attach-file [ks/photo-input-field] (io/file "/images/cat.jpg"))
-           (kc/selector-has-attribute-with-content [ks/profile-page-profile-card-image :img] :src "/images/profile/uuid.jpg")))
-
 (facts "Not found page is shown for unknown url"
        (-> (k/session test-app)
            (k/visit "/wrong-url")
