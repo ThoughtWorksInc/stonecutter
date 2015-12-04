@@ -451,7 +451,7 @@
                (io/resource (str "public/images/profile/" (:uid user) ".png")) =not=> nil)
          (fact "image path is saved to db"
                (:profile-picture (user/retrieve-user user-store email)) => (str config/profile-picture-directory (:uid user) ".png"))
-         (io/delete-file (str config/profile-picture-directory (:uid user) ".png"))))
+         (io/delete-file (str "resources/public/" config/profile-picture-directory (:uid user) ".png"))))
 
 (facts "about profile created"
        (fact "view defaults with link to view profile"

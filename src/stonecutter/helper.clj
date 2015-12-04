@@ -7,9 +7,11 @@
             [clojure.java.io :as io]))
 
 (defn copy [uri file]
-  (with-open [in (io/input-stream uri)
-              out (io/output-stream file)]
-    (io/copy in out)))
+  (let [new-file-path (str "resources/public/" file)]
+    (io/make-parents new-file-path)
+    (with-open [in (io/input-stream uri)
+                out (io/output-stream new-file-path)]
+      (io/copy in out))))
 
 (defn update-app-name [enlive-m request]
   (let [app-name (config/app-name (get-in request [:context :config-m]))]

@@ -179,12 +179,9 @@
   (let [uploaded-file-path (get-in request [:params :profile-photo :tempfile])
         email (get-in request [:session :user-login])
         content-type (get-in request [:params :profile-photo :content-type])
-        picture-directory config/profile-picture-directory
         file-extension ((keyword (last (string/split content-type #"/"))) config/lookup-extension)
-        user (user/update-profile-picture! user-store email picture-directory file-extension)
-        new-file-path (:profile-picture user)]
-    (io/make-parents new-file-path)
-    (h/copy uploaded-file-path new-file-path))
+        user (user/update-profile-picture! user-store email config/profile-picture-directory file-extension)]
+    (h/copy uploaded-file-path (:profile-picture user)))
   (r/redirect (routes/path :show-profile)))
 
 (defn show-profile-created [request]
