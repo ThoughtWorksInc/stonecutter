@@ -448,9 +448,10 @@
                                         {:user-login email})]
          (u/update-profile-image user-store request) => (th/check-redirects-to "/profile")
          (fact "image in request is saved to file system"
-               (.exists (io/file (str "/images/profile/" (:uid user) ".png"))) => true)
+               (io/resource (str "public/images/profile/" (:uid user) ".png")) =not=> nil)
          (fact "image path is saved to db"
-               (:profile-picture (user/retrieve-user user-store email)) => (str "/images/profile/" (:uid user) ".png"))))
+               (:profile-picture (user/retrieve-user user-store email)) => (str config/profile-picture-directory (:uid user) ".png"))
+         (io/delete-file (str config/profile-picture-directory (:uid user) ".png"))))
 
 (facts "about profile created"
        (fact "view defaults with link to view profile"
