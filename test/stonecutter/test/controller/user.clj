@@ -444,14 +444,13 @@
              email "user@email.com"
              user (th/store-user! user-store email "password")
              request (th/create-request :post "/update-profile-image"
-                                        {:profile-photo {:content-type "image/jpeg" :tempfile (io/file "/images/cat.jpg")}}
+                                        {:profile-photo {:content-type "image/png" :tempfile (io/resource "avatar.png")}}
                                         {:user-login email})]
-         (spit "/images/cat.jpg" cat)
          (u/update-profile-image user-store request) => (th/check-redirects-to "/profile")
          (fact "image in request is saved to file system"
-               (.exists (io/file (str "/images/profile/" (:uid user) ".jpg"))) => true)
+               (.exists (io/file (str "/images/profile/" (:uid user) ".png"))) => true)
          (fact "image path is saved to db"
-               (:profile-picture (user/retrieve-user user-store email)) => (str "/images/profile/" (:uid user) ".jpg"))))
+               (:profile-picture (user/retrieve-user user-store email)) => (str "/images/profile/" (:uid user) ".png"))))
 
 (facts "about profile created"
        (fact "view defaults with link to view profile"
