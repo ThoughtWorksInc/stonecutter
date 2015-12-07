@@ -18,7 +18,10 @@
             [stonecutter.db.confirmation :as confirmation]
             [stonecutter.db.invitations :as i]
             [stonecutter.test.util.time :as test-time]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [monger.gridfs :as grid-fs]
+            [monger.core :as monger]
+            [monger.operators :refer :all]))
 
 (def check-body-not-blank
   (checker [response] (not (empty? (:body response)))))
@@ -445,13 +448,14 @@
              user (th/store-user! user-store email "password")
              request (th/create-request :post "/update-profile-image"
                                         {:profile-photo {:content-type "image/png" :tempfile (io/resource "avatar.png")}}
-                                        {:user-login email})]
+                                        {:user-login email})
+             conn (monger/connect)
+             fs (monger/get-gridfs conn "profile-pictures")]
          (u/update-profile-image user-store request) => (th/check-redirects-to "/profile")
-         (fact "image in request is saved to file system"
-               (io/resource (str "public/images/profile/" (:uid user) ".png")) =not=> nil)
-         (fact "image path is saved to db"
-               (:profile-picture (user/retrieve-user user-store email)) => (str config/profile-picture-directory (:uid user) ".png"))
-         (io/delete-file (str "resources/public/" config/profile-picture-directory (:uid user) ".png"))))
+         (fact "image in request is saved to db"
+               (grid-fs/find-by-filename fs {$regex (str (:uid user) ".*")}) =not=> empty?)
+         (grid-fs/remove (monger/get-gridfs conn "profile-pictures") {:filename (str (:uid user) ".png")})
+         (monger/disconnect conn)))
 
 (facts "about profile created"
        (fact "view defaults with link to view profile"

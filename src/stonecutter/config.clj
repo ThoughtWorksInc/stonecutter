@@ -25,7 +25,8 @@
            :password-reset-expiry "Time (in hours) before password-reset email expires"
            :open-id-connect-id-token-lifetime-minutes "Time (in minutes) before Open ID Connect token expires"
            :invite-expiry "Time (in days) before invite email expires"
-           :rsa-keypair-file-path "Location of json file containing RSA keypair (for Open ID Connect)"])
+           :rsa-keypair-file-path "Location of json file containing RSA keypair (for Open ID Connect)"
+           :profile-image-path "The path where the profile images will be saved"])
 
 (def env-var-set (->> vars (partition 2) (map first) set))
 
@@ -39,7 +40,7 @@
 
 (def default-profile-picture "/images/temp-avatar-300x300.png")
 
-(def profile-picture-directory "images/profile/")
+(def profile-picture-directory "/images/profile/")
 
 (defn create-config []
   (select-keys env/env env-var-set))
@@ -52,6 +53,9 @@
    (when-not (env-var-set key)
      (throw (Exception. (format "Trying to get-env with key '%s' which is not in the env-vars set" key))))
    (get config-m (env-var-set key) default)))
+
+(defn profile-picture-path [config-m]
+  (get-env config-m :profile-image-path "public"))
 
 (defn port [config-m]
   (Integer. (get-env config-m :port "3000")))

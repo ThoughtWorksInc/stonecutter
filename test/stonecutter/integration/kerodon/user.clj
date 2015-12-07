@@ -2,7 +2,6 @@
   (:require [midje.sweet :refer :all]
             [kerodon.core :as k]
             [clauth.client :as cl-client]
-            [clojure.java.io :as io]
             [stonecutter.email :as email]
             [stonecutter.db.storage :as s]
             [stonecutter.logging :as l]
@@ -98,6 +97,17 @@
            (k/follow ks/sign-out-link)
            (kc/check-and-follow-redirect)
            (kc/check-page-is :index [ks/index-page-body])))
+
+(facts "User can see their profile picture"
+       (let [user-store (:user-store stores-m)
+             email "email@server.com"
+             uid (ih/get-uid user-store email)]
+         (-> (k/session test-app)
+             (steps/sign-in email "valid-password")
+             (ih/add-profile-image uid)
+             (k/visit "/profile")
+             (kc/selector-has-attribute-with-content [ks/profile-page-profile-card-image :img] :src (str config/profile-picture-directory uid ".png")))
+         (ih/remove-profile-image uid)))
 
 (facts "Index url redirects to profile page if user is signed in"
        (-> (k/session test-app)

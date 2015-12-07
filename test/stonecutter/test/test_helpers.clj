@@ -6,12 +6,14 @@
             [stonecutter.session :as session]
             [clauth.client :as cl-client]
             [stonecutter.db.invitations :as invitations]
-            [stonecutter.util.uuid :as uuid]))
+            [stonecutter.util.uuid :as uuid]
+            [stonecutter.config :as config]))
 
 (defn create-request
   ([method url params]
    (-> (mock/request method url)
        (assoc :params params)
+       (assoc-in [:context :config-m] (config/create-config))
        (assoc-in [:context :translator] {})))
   ([method url params session]
    (-> (create-request method url params)

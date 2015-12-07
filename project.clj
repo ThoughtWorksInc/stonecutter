@@ -81,7 +81,8 @@
                                         :admin-login           "dcent@thoughtworks.com"
                                         :admin-password        "password"
                                         :admin-first-name      "first"
-                                        :admin-last-name       "last"}
+                                        :admin-last-name       "last"
+                                        :profile-image-path    "resources/public"}
                        :cljsbuild      {:builds [{:id           "prod"
                                                   :source-paths ["src-cljs" "src-cljc"]
                                                   :compiler     {:output-to     "resources/public/js/main.js"

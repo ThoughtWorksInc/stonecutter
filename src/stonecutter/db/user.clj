@@ -6,7 +6,12 @@
             [stonecutter.config :as config]
             [stonecutter.db.mongo :as m]
             [stonecutter.util.uuid :as uuid]
-            [stonecutter.session :as session]))
+            [stonecutter.session :as session]
+            [monger.gridfs :as grid-fs]
+            [monger.core :as monger]
+            [clojure.string :as string]
+            [clojure.java.io :as io]
+            [monger.operators :refer :all]))
 
 (defn create-user [id-gen first-name last-name email password role]
   (let [lower-email (s/lower-case email)]
@@ -115,10 +120,28 @@
   (-> (m/update! user-store email (update-user-email new-email))
       (dissoc :password)))
 
-(defn update-profile-picture [directory image-extension]
-  (fn [user]
-    (assoc user :profile-picture (str directory (:uid user) image-extension))))
+(defn update-profile-picture! [request uid]
+  (let [conn (monger/connect)
+        fs (monger/get-gridfs conn "profile-pictures")
+        uploaded-file-path (get-in request [:params :profile-photo :tempfile])
+        content-type (get-in request [:params :profile-photo :content-type])
+        file-extension ((keyword (last (string/split content-type #"/"))) config/lookup-extension)]
+    (grid-fs/store-file (grid-fs/make-input-file fs (io/file uploaded-file-path))
+                        (grid-fs/filename (str uid file-extension))
+                        (grid-fs/content-type content-type))
+    (monger/disconnect conn)))
 
-(defn update-profile-picture! [user-store email directory image-extension]
-  (-> (m/update! user-store email (update-profile-picture directory image-extension))
-      (dissoc :password)))
+(defn retrieve-profile-picture [uid config-m]
+  (let [conn (monger/connect)
+        fs (monger/get-gridfs conn "profile-pictures")
+        uid-regex (str uid ".*")
+        file (first (grid-fs/find-by-filename fs {$regex uid-regex}))]
+    (if (not (nil? file))
+      (let [filename (str config/profile-picture-directory (.getFilename file))
+            file-path (str (config/profile-picture-path config-m) filename)]
+        (io/make-parents file-path)
+        (with-open [output (io/output-stream file-path)]
+          (.writeTo file output))
+        (monger/disconnect conn)
+        filename)
+      (monger/disconnect conn))))

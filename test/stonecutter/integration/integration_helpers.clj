@@ -1,15 +1,17 @@
 (ns stonecutter.integration.integration-helpers
   (:require [monger.core :as monger]
-            [monger.collection :as mc]
             [stonecutter.jwt :as jwt]
             [stonecutter.util.time :as t]
             [stonecutter.handler :as h]
             [stonecutter.db.storage :as s]
             [stonecutter.test.email :as e]
             [stonecutter.config :as c]
-            [stonecutter.db.mongo :as sc-m]
             [stonecutter.db.storage :as storage]
-            [stonecutter.admin :as admin]))
+            [stonecutter.admin :as admin]
+            [monger.gridfs :as grid-fs]
+            [clojure.java.io :as io]
+            [stonecutter.db.user :as user]
+            [stonecutter.config :as config]))
 
 (def test-db-name "stonecutter-test")
 (def test-db-uri (format "mongodb://localhost:27017/%s" test-db-name))
@@ -41,7 +43,7 @@
 (defn default-app-config-m []
   (let [json-web-key (jwt/load-key-pair "test-resources/test-key.json")]
     {:prone-stack-tracing? false
-     :config-m             {:secure "false"}
+     :config-m             {:secure "false" :profile-image-path "resources/public"}
      :stores-m             (s/create-in-memory-stores)
      :email-sender         (e/create-test-email-sender)
      :clock                (t/new-clock)
@@ -53,3 +55,20 @@
                 email-sender token-generator clock]} (merge (default-app-config-m) app-config-override-m)]
     (admin/create-admin-user config-m (storage/get-user-store stores-m))
     (h/create-app config-m clock stores-m email-sender token-generator json-web-key-set prone-stack-tracing?)))
+
+(defn get-uid [user-store email]
+  (:uid (user/retrieve-user user-store email)))
+
+(defn add-profile-image [state uid]
+  (let [conn (monger/connect)]
+    (grid-fs/store-file (grid-fs/make-input-file (monger/get-gridfs conn "profile-pictures") (io/file (io/resource "avatar.png")))
+                        (grid-fs/filename (str uid ".png"))
+                        (grid-fs/content-type "image/png"))
+    (monger/disconnect conn))
+  state)
+
+(defn remove-profile-image [uid]
+  (let [conn (monger/connect)]
+    (grid-fs/remove (monger/get-gridfs conn "profile-pictures") {:filename (str uid ".png")})
+    (monger/disconnect conn))
+  (io/delete-file (str "resources/public" config/profile-picture-directory uid ".png")))

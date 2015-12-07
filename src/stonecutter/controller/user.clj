@@ -21,10 +21,7 @@
             [ring.util.response :as response]
             [stonecutter.db.confirmation :as confirmation]
             [stonecutter.session :as session]
-            [stonecutter.db.invitations :as invitations]
-            [clojure.java.io :as io]
-            [clojure.string :as string]
-            [stonecutter.helper :as h]))
+            [stonecutter.db.invitations :as invitations]))
 
 (defn has-valid-invite-id? [request invitation-store]
   (let [invite-id (get-in request [:params :invite-id])]
@@ -153,6 +150,10 @@
     (user/delete-user! user-store email)
     (redirect-to-profile-deleted)))
 
+(defn get-profile-picture [uid config-m]
+  (if-let [profile-picture (user/retrieve-profile-picture uid config-m)]
+    profile-picture
+    config/default-profile-picture))
 
 (defn show-profile [client-store user-store request]
   (let [email (session/request->user-login request)
@@ -161,14 +162,16 @@
         role (:role user)
         authorised-client-ids (:authorised-clients user)
         authorised-clients (map #(c/retrieve-client client-store %)
-                                authorised-client-ids)]
+                                authorised-client-ids)
+        config-m (get-in request [:context :config-m])
+        profile-picture (get-profile-picture (:uid user) config-m)]
     (-> request
         (assoc-in [:context :authorised-clients] authorised-clients)
         (assoc-in [:context :confirmed?] confirmed?)
         (assoc-in [:context :user-login] (:login user))
         (assoc-in [:context :user-first-name] (:first-name user))
         (assoc-in [:context :user-last-name] (:last-name user))
-        (assoc-in [:context :user-profile-picture] config/default-profile-picture)
+        (assoc-in [:context :user-profile-picture] profile-picture)
         profile/profile
         (sh/enlive-response request))))
 
@@ -176,12 +179,9 @@
   (session/request->return-to request))
 
 (defn update-profile-image [user-store request]
-  (let [uploaded-file-path (get-in request [:params :profile-photo :tempfile])
-        email (get-in request [:session :user-login])
-        content-type (get-in request [:params :profile-photo :content-type])
-        file-extension ((keyword (last (string/split content-type #"/"))) config/lookup-extension)
-        user (user/update-profile-picture! user-store email config/profile-picture-directory file-extension)]
-    (h/copy uploaded-file-path (:profile-picture user)))
+  (let [email (get-in request [:session :user-login])
+        user (user/retrieve-user user-store email)]
+    (user/update-profile-picture! request (:uid user)))
   (r/redirect (routes/path :show-profile)))
 
 (defn show-profile-created [request]
