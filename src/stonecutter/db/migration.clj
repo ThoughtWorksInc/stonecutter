@@ -39,6 +39,11 @@
     record
     (assoc record :profile-picture config/default-profile-picture)))
 
+(defn remove-prof-pic [record]
+  (if (:profile-picture record)
+    (dissoc record :profile-picture)
+    record))
+
 (defn change-default-to-untrusted [record]
   (if (or (= (:role record) "default") (= (:role record) nil))
     (assoc record :role (:untrusted config/roles))
@@ -75,17 +80,22 @@
   (log/info "Running migration to add default profile pictures")
   (update-records db "users" add-prof-pic))
 
+(defn remove-default-user-profile-picture-src [db]
+  (log/info "Reversing migration to add default profile pictures")
+  (update-records db "users" remove-prof-pic))
+
 ;; IMPORTANT DO *NOT* MODIFY THE EXISTING MIGRATION IDS IN THIS LIST
 (def migrations
   [{:id "add-user-uid" :up add-user-uids}
    {:id "add-user-role" :up add-user-roles}
    {:id "replace-default-role-with-untrusted-role" :up change-default-roles-to-untrusted-roles}
    {:id "update-records-to-use-generated-ids" :up update-records-to-use-generated-ids}
-   {:id "add-default-user-profile-picture-src" :up add-default-user-profile-picture-src}])
+   {:id "add-default-user-profile-picture-src" :up add-default-user-profile-picture-src :down remove-default-user-profile-picture-src}])
 
 (defn run-migrations
   ([db]
-   (run-migrations db migrations))
+   (run-migrations db migrations)
+   (ragtime/rollback db (nth migrations 4)))
   ([db migrations]
    (let [index (ragtime/into-index migrations)]
      (ragtime/migrate-all db index migrations))))

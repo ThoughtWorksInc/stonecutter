@@ -83,6 +83,13 @@
            (m/add-default-user-profile-picture-src db)
            (-> (monger-c/find-map-by-id db "users" "email1") :profile-picture) => "/images/temp-avatar-300x300.png")))
 
+(facts "about removing default user image"
+       (do-with-test-db
+         (fn [db]
+           (monger-c/insert db "users" {:_id "email1" :login "email1" :password "q" :uid "a-uid" :role "default"})
+           (m/remove-default-user-profile-picture-src db)
+           (-> (monger-c/find-map-by-id db "users" "email1") :profile-picture) => nil)))
+
 (tabular
   (fact "about updating records to use mongo generated ids"
         (do-with-test-db
