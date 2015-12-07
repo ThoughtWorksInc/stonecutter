@@ -168,7 +168,7 @@
         (assoc-in [:context :user-login] (:login user))
         (assoc-in [:context :user-first-name] (:first-name user))
         (assoc-in [:context :user-last-name] (:last-name user))
-        (assoc-in [:context :user-profile-picture] (:profile-picture user))
+        (assoc-in [:context :user-profile-picture] config/default-profile-picture)
         profile/profile
         (sh/enlive-response request))))
 

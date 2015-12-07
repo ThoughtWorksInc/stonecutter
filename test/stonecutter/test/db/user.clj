@@ -19,8 +19,7 @@
                        :url             nil
                        :confirmed?      false
                        :uid             anything
-                       :role            (:untrusted config/roles)
-                       :profile-picture config/default-profile-picture}))
+                       :role            (:untrusted config/roles)}))
 
        (fact "can authenticate a user"
              (user/authenticate-and-retrieve-user user-store "email@server.com" "password")
@@ -103,7 +102,7 @@
 (fact "about creating a user record"
       (let [id-gen (constantly "id")]
         (fact "email is lower-cased"
-              (user/create-user id-gen "first-name" "last-name" "EMAIL" "password" (:untrusted config/roles) config/default-profile-picture) => (contains {:login "email"}))))
+              (user/create-user id-gen "first-name" "last-name" "EMAIL" "password" (:untrusted config/roles)) => (contains {:login "email"}))))
 
 (facts "about storing users"
        (let [user-store (m/create-memory-store)]
@@ -242,8 +241,7 @@
                                                                                                   :password        hashed-password
                                                                                                   :confirmed?      false
                                                                                                   :uid             id
-                                                                                                  :role            (:admin config/roles)
-                                                                                                  :profile-picture config/default-profile-picture}
+                                                                                                  :role            (:admin config/roles)}
                (provided
                  (cl-user/new-user email password) => {:login email :password hashed-password})))
 
