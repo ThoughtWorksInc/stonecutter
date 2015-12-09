@@ -449,12 +449,12 @@
              request (th/create-request :post "/update-profile-image"
                                         {:profile-photo {:content-type "image/png" :tempfile (io/resource "avatar.png")}}
                                         {:user-login email})
-             conn (monger/connect)
-             fs (monger/get-gridfs conn "profile-pictures")]
+             conn (monger/connect "mongodb://localhost:27017/stonecutter-test")
+             fs (monger/get-gridfs conn "stonecutter-test")]
          (u/update-profile-image user-store request) => (th/check-redirects-to "/profile")
          (fact "image in request is saved to db"
                (grid-fs/find-by-filename fs {$regex (str (:uid user) ".*")}) =not=> empty?)
-         (grid-fs/remove (monger/get-gridfs conn "profile-pictures") {:filename (str (:uid user) ".png")})
+         (grid-fs/remove (monger/get-gridfs conn "stonecutter-test") {:filename (str (:uid user) ".png")})
          (monger/disconnect conn)))
 
 (facts "about profile created"

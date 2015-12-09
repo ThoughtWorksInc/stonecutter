@@ -121,19 +121,22 @@
       (dissoc :password)))
 
 (defn update-profile-picture! [request uid]
-  (let [conn (monger/connect (config/mongo-uri (get-in request [:context :config-m])))
-        fs (monger/get-gridfs conn "profile-pictures")
+  (let [config-m (get-in request [:context :config-m])
+        conn (monger/connect (config/mongo-uri config-m))
+        fs (monger/get-gridfs conn (config/mongo-name config-m))
         uploaded-file-path (get-in request [:params :profile-photo :tempfile])
         content-type (get-in request [:params :profile-photo :content-type])
-        file-extension ((keyword (last (string/split content-type #"/"))) config/lookup-extension)]
+        file-extension ((keyword (last (string/split content-type #"/"))) config/lookup-extension)
+        filename (str uid file-extension)]
+    (grid-fs/remove fs {:filename filename})
     (grid-fs/store-file (grid-fs/make-input-file fs (io/file uploaded-file-path))
-                        (grid-fs/filename (str uid file-extension))
+                        (grid-fs/filename filename)
                         (grid-fs/content-type content-type))
     (monger/disconnect conn)))
 
 (defn retrieve-profile-picture [uid config-m]
   (let [conn (monger/connect (config/mongo-uri config-m))
-        fs (monger/get-gridfs conn "profile-pictures")
+        fs (monger/get-gridfs conn (config/mongo-name config-m))
         uid-regex (str uid ".*")
         file (first (grid-fs/find-by-filename fs {$regex uid-regex}))]
     (if (not (nil? file))

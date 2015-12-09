@@ -43,7 +43,10 @@
 (defn default-app-config-m []
   (let [json-web-key (jwt/load-key-pair "test-resources/test-key.json")]
     {:prone-stack-tracing? false
-     :config-m             {:secure "false" :profile-image-path "resources/public"}
+     :config-m             {:secure "false"
+                            :profile-image-path "resources/public"
+                            :mongo-uri "mongodb://localhost:27017/stonecutter-test"
+                            :mongo-name "stonecutter-test"}
      :stores-m             (s/create-in-memory-stores)
      :email-sender         (e/create-test-email-sender)
      :clock                (t/new-clock)
@@ -60,15 +63,15 @@
   (:uid (user/retrieve-user user-store email)))
 
 (defn add-profile-image [state uid]
-  (let [conn (monger/connect)]
-    (grid-fs/store-file (grid-fs/make-input-file (monger/get-gridfs conn "profile-pictures") (io/file (io/resource "avatar.png")))
+  (let [conn (monger/connect "mongodb://localhost:27017/stonecutter-test")]
+    (grid-fs/store-file (grid-fs/make-input-file (monger/get-gridfs conn "stonecutter-test") (io/file (io/resource "avatar.png")))
                         (grid-fs/filename (str uid ".png"))
                         (grid-fs/content-type "image/png"))
     (monger/disconnect conn))
   state)
 
 (defn remove-profile-image [uid]
-  (let [conn (monger/connect)]
-    (grid-fs/remove (monger/get-gridfs conn "profile-pictures") {:filename (str uid ".png")})
+  (let [conn (monger/connect "mongodb://localhost:27017/stonecutter-test")]
+    (grid-fs/remove (monger/get-gridfs conn "stonecutter-test") {:filename (str uid ".png")})
     (monger/disconnect conn))
   (io/delete-file (str "resources/public" config/profile-picture-directory uid ".png")))

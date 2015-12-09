@@ -14,6 +14,8 @@
    (-> (mock/request method url)
        (assoc :params params)
        (assoc-in [:context :config-m] (config/create-config))
+       (assoc-in [:context :config-m :mongo-uri] "mongodb://localhost:27017/stonecutter-test")
+       (assoc-in [:context :config-m :mongo-name] "stonecutter-test")
        (assoc-in [:context :translator] {})))
   ([method url params session]
    (-> (create-request method url params)
