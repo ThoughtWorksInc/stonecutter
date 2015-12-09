@@ -79,7 +79,7 @@
 
 (facts "user authorising client-apps using openid connect"
        (facts "user can sign in through client"
-              (let [stores (s/create-in-memory-stores)
+              (let [stores (s/create-in-memory-stores (ih/get-test-db-connection))
                     {:keys [client-id client-secret]} (setup stores)]
                 (-> (k/session (ih/build-app {:stores-m stores :token-generator stub-token-generator}))
                     (browser-sends-authorisation-request-from-client-redirect client-id)

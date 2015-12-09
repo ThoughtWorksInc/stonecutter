@@ -150,12 +150,12 @@
     (user/delete-user! user-store email)
     (redirect-to-profile-deleted)))
 
-(defn get-profile-picture [uid config-m]
-  (if-let [profile-picture (user/retrieve-profile-picture uid config-m)]
+(defn get-profile-picture [profile-picture-store uid config-m]
+  (if-let [profile-picture (user/retrieve-profile-picture profile-picture-store uid config-m)]
     profile-picture
     config/default-profile-picture))
 
-(defn show-profile [client-store user-store request]
+(defn show-profile [client-store user-store profile-picture-store request]
   (let [email (session/request->user-login request)
         user (user/retrieve-user user-store email)
         confirmed? (:confirmed? user)
@@ -164,7 +164,7 @@
         authorised-clients (map #(c/retrieve-client client-store %)
                                 authorised-client-ids)
         config-m (get-in request [:context :config-m])
-        profile-picture (get-profile-picture (:uid user) config-m)]
+        profile-picture (get-profile-picture profile-picture-store (:uid user) config-m)]
     (-> request
         (assoc-in [:context :authorised-clients] authorised-clients)
         (assoc-in [:context :confirmed?] confirmed?)
@@ -178,10 +178,10 @@
 (defn from-app? [request]
   (session/request->return-to request))
 
-(defn update-profile-image [user-store request]
+(defn update-profile-image [user-store profile-picture-store request]
   (let [email (get-in request [:session :user-login])
         user (user/retrieve-user user-store email)]
-    (user/update-profile-picture! request (:uid user)))
+    (user/update-profile-picture! request profile-picture-store (:uid user)))
   (r/redirect (routes/path :show-profile)))
 
 (defn show-profile-created [request]

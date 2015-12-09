@@ -450,10 +450,10 @@
                                         {:profile-photo {:content-type "image/png" :tempfile (io/resource "avatar.png")}}
                                         {:user-login email})
              conn (monger/connect "mongodb://localhost:27017/stonecutter-test")
-             fs (monger/get-gridfs conn "stonecutter-test")]
-         (u/update-profile-image user-store request) => (th/check-redirects-to "/profile")
+             profile-picture-store (monger/get-gridfs conn "stonecutter-test")]
+         (u/update-profile-image user-store profile-picture-store request) => (th/check-redirects-to "/profile")
          (fact "image in request is saved to db"
-               (grid-fs/find-by-filename fs {$regex (str (:uid user) ".*")}) =not=> empty?)
+               (grid-fs/find-by-filename profile-picture-store {$regex (str (:uid user) ".*")}) =not=> empty?)
          (grid-fs/remove (monger/get-gridfs conn "stonecutter-test") {:filename (str (:uid user) ".png")})
          (monger/disconnect conn)))
 
@@ -495,22 +495,24 @@
 (facts "about show-profile"
        (fact "user's authorised clients passed to html-response"
              (->> (th/create-request :get (routes/path :show-profile) nil {:user-login ...email...})
-                  (u/show-profile ...client-store... ...user-store...)
+                  (u/show-profile ...client-store... ...user-store... ...profile-picture-store...)
                   :body) => (contains #"CLIENT 1[\s\S]+CLIENT 2")
              (provided
                (user/retrieve-user ...user-store... ...email...) => {:login              ...email...
                                                                      :authorised-clients [...client-id-1... ...client-id-2...]}
                (c/retrieve-client ...client-store... ...client-id-1...) => {:name "CLIENT 1"}
-               (c/retrieve-client ...client-store... ...client-id-2...) => {:name "CLIENT 2"}))
+               (c/retrieve-client ...client-store... ...client-id-2...) => {:name "CLIENT 2"}
+               (grid-fs/find-by-filename ...profile-picture-store... anything) => nil))
 
        (tabular
          (fact "unconfirmed email message is displayed only when user :confirmed? is false"
                (against-background
                  (user/retrieve-user ...user-store... ...email...) => {:login      ...email...
-                                                                       :confirmed? ?confirmed})
+                                                                       :confirmed? ?confirmed}
+                 (grid-fs/find-by-filename ...profile-picture-store... anything) => nil)
                (let [enlive-snippet
                      (->> (th/create-request :get (routes/path :show-profile) nil {:user-login ...email...})
-                          (u/show-profile (m/create-memory-store) ...user-store...)
+                          (u/show-profile (m/create-memory-store) ...user-store... ...profile-picture-store...)
                           :body
                           html/html-snippet)]
                  (html/select enlive-snippet [:.clj--unconfirmed-email-message-container]) => ?check))
@@ -525,11 +527,12 @@
          (fact "admin status is displayed appropriately"
                (against-background
                  (user/retrieve-user ...user-store... ...email...) => {:login ...email...
-                                                                       :role  ?role})
+                                                                       :role  ?role}
+                 (grid-fs/find-by-filename ...profile-picture-store... anything) => nil)
                (let [enlive-snippet
                      (->> (th/create-request :get (routes/path :show-profile) nil {:user-login ...email...})
                           (#(assoc-in % [:session :role] ?role))
-                          (u/show-profile (m/create-memory-store) ...user-store...)
+                          (u/show-profile (m/create-memory-store) ...user-store... ...profile-picture-store...)
                           :body
                           html/html-snippet)]
 

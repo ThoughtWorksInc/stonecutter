@@ -11,7 +11,8 @@
             [stonecutter.browser.common :as c]
             [stonecutter.db.invitations :as i]
             [stonecutter.test.util.time :as test-time]
-            [stonecutter.email :as email]))
+            [stonecutter.email :as email]
+            [monger.core :as monger]))
 
 (def test-port 5439)
 
@@ -19,8 +20,11 @@
 (def invited-id "10")
 (def id-generation-fn (constantly invited-id))
 
+(def conn (atom nil))
+
 (defn start-server []
-  (let [stores-m (storage/create-in-memory-stores)
+  (reset! conn (monger/connect))
+  (let [stores-m (storage/create-in-memory-stores @conn)
         config-m (config/create-config)
         app-routes (h/create-app config-m {} stores-m (email/create-stdout-email-sender) {} {})
         _admin (ad/create-admin-user {:admin-login "test@test.com" :admin-password "password"} (storage/get-user-store stores-m))]
@@ -31,7 +35,8 @@
         (recur server)))))
 
 (defn stop-server [server]
-  (.stop server))
+  (.stop server)
+  (monger/disconnect @conn))
 
 (defn start-browser []
   (wd/set-driver! {:browser :firefox}))

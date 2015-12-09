@@ -93,7 +93,7 @@
 
 (facts "user authorising client-apps"
        (facts "user can sign in through client"
-              (let [stores (s/create-in-memory-stores)
+              (let [stores (s/create-in-memory-stores (ih/get-test-db-connection))
                     {:keys [client-id client-secret]} (setup stores)]
                 (-> (k/session (ih/build-app {:stores-m stores}))
                     (browser-sends-authorisation-request-from-client-redirect client-id)
@@ -112,7 +112,7 @@
                     (kc/response-has-user-info))))
 
        (facts "user who has already authorised client does not need to authorise client again"
-              (let [stores (s/create-in-memory-stores)
+              (let [stores (s/create-in-memory-stores (ih/get-test-db-connection))
                     {:keys [client-id client-secret client-name]} (setup stores)]
                 (-> (k/session (ih/build-app {:stores-m stores}))
                     ;; authorise client for the first time
@@ -131,7 +131,7 @@
                     (kc/response-has-user-info))))
 
        (facts "user is redirected to authorisation-failure page when cancelling authorisation"
-              (let [stores (s/create-in-memory-stores)
+              (let [stores (s/create-in-memory-stores (ih/get-test-db-connection))
                     {:keys [client-id client-secret]} (setup stores)]
                 (-> (k/session (ih/build-app {:stores-m stores}))
                     (browser-sends-authorisation-request-from-client-redirect client-id)
@@ -149,7 +149,7 @@
 
 (facts "no access token will be issued with invalid credentials"
        (facts "user cannot sign in with invalid client secret"
-              (let [stores (s/create-in-memory-stores)
+              (let [stores (s/create-in-memory-stores (ih/get-test-db-connection))
                     {:keys [client-id invalid-client-secret]} (setup stores)]
                 (-> (k/session (ih/build-app {:stores-m stores}))
                     (browser-sends-authorisation-request-from-client-redirect client-id)
@@ -167,7 +167,7 @@
                     :status)) => 400)
 
        (facts "user cannot sign in with invalid password"
-              (let [stores (s/create-in-memory-stores)
+              (let [stores (s/create-in-memory-stores (ih/get-test-db-connection))
                     {:keys [client-id]} (setup stores)]
                 (-> (k/session (ih/build-app {:stores-m stores}))
                     (browser-sends-authorisation-request-from-client-redirect client-id)

@@ -75,7 +75,7 @@
           (first records) => (contains {:login "userB" :password "passwordB"}))))
 
 (fact "about creating mongo store from mongo uri"
-      (let [store (-> "mongodb://localhost:27017/stonecutter-test" mongo/get-mongo-db create-clear-user-store)]
+      (let [store (-> "mongodb://localhost:27017/stonecutter-test" mongo/get-mongo-db :db create-clear-user-store)]
         (cl-s/store! store :login {:login "userA"})
         (cl-s/fetch store "userA") => {:login "userA"}))
 

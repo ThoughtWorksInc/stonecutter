@@ -47,7 +47,7 @@
                             :profile-image-path "resources/public"
                             :mongo-uri "mongodb://localhost:27017/stonecutter-test"
                             :mongo-name "stonecutter-test"}
-     :stores-m             (s/create-in-memory-stores)
+     :stores-m             (s/create-in-memory-stores (get-test-db-connection))
      :email-sender         (e/create-test-email-sender)
      :clock                (t/new-clock)
      :token-generator      (jwt/create-generator (t/new-clock) json-web-key (c/base-url {}))
@@ -62,16 +62,12 @@
 (defn get-uid [user-store email]
   (:uid (user/retrieve-user user-store email)))
 
-(defn add-profile-image [state uid]
-  (let [conn (monger/connect "mongodb://localhost:27017/stonecutter-test")]
-    (grid-fs/store-file (grid-fs/make-input-file (monger/get-gridfs conn "stonecutter-test") (io/file (io/resource "avatar.png")))
-                        (grid-fs/filename (str uid ".png"))
-                        (grid-fs/content-type "image/png"))
-    (monger/disconnect conn))
+(defn add-profile-image [state profile-picture-store uid]
+  (grid-fs/store-file (grid-fs/make-input-file profile-picture-store (io/file (io/resource "avatar.png")))
+                      (grid-fs/filename (str uid ".png"))
+                      (grid-fs/content-type "image/png"))
   state)
 
-(defn remove-profile-image [uid]
-  (let [conn (monger/connect "mongodb://localhost:27017/stonecutter-test")]
-    (grid-fs/remove (monger/get-gridfs conn "stonecutter-test") {:filename (str uid ".png")})
-    (monger/disconnect conn))
+(defn remove-profile-image [profile-picture-store uid]
+  (grid-fs/remove profile-picture-store {:filename (str uid ".png")})
   (io/delete-file (str "resources/public" config/profile-picture-directory uid ".png")))

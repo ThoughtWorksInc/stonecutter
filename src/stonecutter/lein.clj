@@ -16,7 +16,7 @@
   []
   (let [config-m (config/create-config)
         clock (time/new-clock)
-        stores-m (s/create-in-memory-stores)
+        stores-m (s/create-in-memory-stores nil)
         email-sender (email/bash-sender-factory nil)
         token-generator (jwt/create-generator clock (jwt/load-key-pair (config/rsa-keypair-file-path config-m))
                                               (config/base-url config-m))]

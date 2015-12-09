@@ -17,7 +17,7 @@
 (l/init-logger!)
 (ih/setup-db)
 
-(def stores-m (s/create-mongo-stores (ih/get-test-db)))
+(def stores-m (s/create-mongo-stores (ih/get-test-db) (ih/get-test-db-connection)))
 
 (defn setup-add-client-to-user! [email client-name]
   (let [client (cl-client/register-client (s/get-client-store stores-m) client-name "myclient.com")
@@ -100,14 +100,15 @@
 
 (facts "User can see their profile picture"
        (let [user-store (:user-store stores-m)
+             profile-picture-store (:profile-picture-store stores-m)
              email "email@server.com"
              uid (ih/get-uid user-store email)]
          (-> (k/session test-app)
              (steps/sign-in email "valid-password")
-             (ih/add-profile-image uid)
+             (ih/add-profile-image profile-picture-store uid)
              (k/visit "/profile")
              (kc/selector-has-attribute-with-content [ks/profile-page-profile-card-image :img] :src (str config/profile-picture-directory uid ".png")))
-         (ih/remove-profile-image uid)))
+         (ih/remove-profile-image profile-picture-store uid)))
 
 (facts "Index url redirects to profile page if user is signed in"
        (-> (k/session test-app)

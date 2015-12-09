@@ -59,7 +59,8 @@
       (r/content-type "text/plain")))
 
 (defn site-handlers [clock stores-m email-sender]
-  (let [user-store (storage/get-user-store stores-m)
+  (let [profile-picture-store (storage/get-profile-picture-store stores-m)
+        user-store (storage/get-user-store stores-m)
         client-store (storage/get-client-store stores-m)
         invitation-store (storage/get-invitation-store stores-m)
         token-store (storage/get-token-store stores-m)
@@ -78,7 +79,7 @@
        :show-confirmation-delete             (partial ec/show-confirmation-delete user-store confirmation-store)
        :confirmation-delete                  (partial ec/confirmation-delete user-store confirmation-store)
        :resend-confirmation-email            (partial user/resend-confirmation-email user-store confirmation-store email-sender)
-       :show-profile                         (partial user/show-profile client-store user-store)
+       :show-profile                         (partial user/show-profile client-store user-store profile-picture-store)
        :show-profile-created                 user/show-profile-created
        :show-profile-deleted                 user/show-profile-deleted
        :show-unshare-profile-card            (partial user/show-unshare-profile-card client-store user-store)
@@ -88,7 +89,7 @@
        :show-change-password-form            user/show-change-password-form
        :change-password                      (partial user/change-password user-store email-sender)
        :change-email                         (partial user/update-user-email user-store confirmation-store email-sender)
-       :update-profile-image                 (partial user/update-profile-image user-store)
+       :update-profile-image                 (partial user/update-profile-image user-store profile-picture-store)
        :show-change-email-form               user/show-change-email-form
        :show-forgotten-password-form         forgotten-password/show-forgotten-password-form
        :send-forgotten-password-email        (partial forgotten-password/forgotten-password-form-post email-sender user-store forgotten-password-store clock)
@@ -185,8 +186,10 @@
 (defn -main [& args]
   (let [config-m (config/create-config)]
     (vh/enable-template-caching!)
-    (let [db (mongo/get-mongo-db (config/mongo-uri config-m))
-          stores-m (storage/create-mongo-stores db)
+    (let [db-and-conn-map (mongo/get-mongo-db (config/mongo-uri config-m))
+          db (:db db-and-conn-map)
+          conn (:conn db-and-conn-map)
+          stores-m (storage/create-mongo-stores db conn)
           clock (time/new-clock)
           email-sender (email/bash-sender-factory (config/email-script-path config-m))
           json-web-key (jwt/load-key-pair (config/rsa-keypair-file-path config-m))

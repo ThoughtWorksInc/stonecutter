@@ -8,7 +8,6 @@
             [stonecutter.util.uuid :as uuid]
             [stonecutter.session :as session]
             [monger.gridfs :as grid-fs]
-            [monger.core :as monger]
             [clojure.string :as string]
             [clojure.java.io :as io]
             [monger.operators :refer :all]))
@@ -120,31 +119,23 @@
   (-> (m/update! user-store email (update-user-email new-email))
       (dissoc :password)))
 
-(defn update-profile-picture! [request uid]
-  (let [config-m (get-in request [:context :config-m])
-        conn (monger/connect (config/mongo-uri config-m))
-        fs (monger/get-gridfs conn (config/mongo-name config-m))
-        uploaded-file-path (get-in request [:params :profile-photo :tempfile])
+(defn update-profile-picture! [request profile-picture-store uid]
+  (let [uploaded-file-path (get-in request [:params :profile-photo :tempfile])
         content-type (get-in request [:params :profile-photo :content-type])
         file-extension ((keyword (last (string/split content-type #"/"))) config/lookup-extension)
         filename (str uid file-extension)]
-    (grid-fs/remove fs {:filename filename})
-    (grid-fs/store-file (grid-fs/make-input-file fs (io/file uploaded-file-path))
+    (grid-fs/remove profile-picture-store {:filename filename})
+    (grid-fs/store-file (grid-fs/make-input-file profile-picture-store (io/file uploaded-file-path))
                         (grid-fs/filename filename)
-                        (grid-fs/content-type content-type))
-    (monger/disconnect conn)))
+                        (grid-fs/content-type content-type))))
 
-(defn retrieve-profile-picture [uid config-m]
-  (let [conn (monger/connect (config/mongo-uri config-m))
-        fs (monger/get-gridfs conn (config/mongo-name config-m))
-        uid-regex (str uid ".*")
-        file (first (grid-fs/find-by-filename fs {$regex uid-regex}))]
-    (if (not (nil? file))
+(defn retrieve-profile-picture [profile-picture-store uid config-m]
+  (let [uid-regex (str uid ".*")
+        file (first (grid-fs/find-by-filename profile-picture-store {$regex uid-regex}))]
+    (when (not (nil? file))
       (let [filename (str config/profile-picture-directory (.getFilename file))
             file-path (str (config/profile-picture-path config-m) filename)]
         (io/make-parents file-path)
         (with-open [output (io/output-stream file-path)]
           (.writeTo file output))
-        (monger/disconnect conn)
-        filename)
-      (monger/disconnect conn))))
+        filename))))

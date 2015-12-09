@@ -3,7 +3,8 @@
             [monger.collection :as mc]
             [monger.core :as mongo]
             [clojure.tools.logging :as log]
-            [monger.ring.session-store :as mongo-session]))
+            [monger.ring.session-store :as mongo-session]
+            [monger.core :as monger]))
 
 (def user-collection "users")
 (def token-collection "tokens")
@@ -13,6 +14,7 @@
 (def forgotten-password-collection "forgotten-passwords")
 (def session-collection "sessions")
 (def invitation-collection "invitations")
+(def db-name "stonecutter")
 
 (def user-primary-key :login)
 (def token-primary-key :token)
@@ -87,9 +89,9 @@
 
 (defn get-mongo-db [mongo-uri]
   (log/debug "Connecting to mongo")
-  (let [db (-> (mongo/connect-via-uri mongo-uri) :db)]
+  (let [db-and-conn-map (mongo/connect-via-uri mongo-uri)]
     (log/debug "Connected to mongo.")
-    db))
+    db-and-conn-map))
 
 (defn create-user-store [db]
   (new-mongo-store db user-collection user-primary-key))
@@ -114,3 +116,7 @@
 
 (defn create-session-store [db]
   (mongo-session/session-store db session-collection))
+
+(defn create-profile-picture-store [conn]
+  (when conn
+    (monger/get-gridfs conn db-name)))
