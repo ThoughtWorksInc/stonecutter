@@ -41,6 +41,7 @@
   (reset! db-and-conn nil))
 
 (defn default-app-config-m []
+  (setup-db)
   (let [json-web-key (jwt/load-key-pair "test-resources/test-key.json")]
     {:prone-stack-tracing? false
      :config-m             {:secure "false"
