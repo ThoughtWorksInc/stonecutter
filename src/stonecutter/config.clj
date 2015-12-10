@@ -31,10 +31,6 @@
 
 (def env-var-set (->> vars (partition 2) (map first) set))
 
-(def lookup-extension {:jpeg ".jpg"
-                       :gif  ".gif"
-                       :png  ".png"})
-
 (def roles {:untrusted "untrusted"
             :trusted   "trusted"
             :admin     "admin"})

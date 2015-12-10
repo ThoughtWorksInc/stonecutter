@@ -123,16 +123,14 @@
 
 (defn update-profile-picture! [request profile-picture-store uid]
   (let [uploaded-file-path (get-in request [:params :profile-photo :tempfile])
-        content-type (get-in request [:params :profile-photo :content-type])
-        file-extension ((keyword (last (string/split content-type #"/"))) config/lookup-extension)
-        filename (str uid file-extension)]
-    (grid-fs/remove profile-picture-store {:filename {$regex (str uid ".*")}})
+        content-type (get-in request [:params :profile-photo :content-type])]
+    (grid-fs/remove profile-picture-store {:filename uid})
     (grid-fs/store-file (grid-fs/make-input-file profile-picture-store (io/file uploaded-file-path))
-                        (grid-fs/filename filename)
+                        (grid-fs/filename uid)
                         (grid-fs/content-type content-type))))
 
 (defn retrieve-profile-picture [profile-picture-store uid]
-  (when-let [file (first (grid-fs/find-by-filename profile-picture-store {$regex (str uid ".*")}))]
+  (when-let [file (first (grid-fs/find-by-filename profile-picture-store uid))]
     (->> file
          .getInputStream
          IOUtils/toByteArray

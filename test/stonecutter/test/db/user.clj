@@ -283,12 +283,16 @@
          (facts "about updating"
                 (user/update-profile-picture! jpg-request profile-picture-store uid)
                 (fact "image in request is saved to db"
-                      (grid-fs/find-by-filename profile-picture-store (str uid ".jpg")) =not=> empty?)
+                      (grid-fs/find-by-filename profile-picture-store uid) =not=> empty?
+                      (-> (grid-fs/find-by-filename profile-picture-store uid)
+                          first
+                          .getContentType) => "image/jpeg")
 
                 (user/update-profile-picture! png-request profile-picture-store uid)
-                (fact "previous image in db is removed"
-                      (grid-fs/find-by-filename profile-picture-store (str uid ".png")) =not=> empty?
-                      (grid-fs/find-by-filename profile-picture-store (str uid ".jpg")) => empty?))
+                (fact "previous image in db is overwritten"
+                      (-> (grid-fs/find-by-filename profile-picture-store uid)
+                          first
+                          .getContentType) => "image/png"))
 
          (facts "about retrieving"
                 (fact "if image exists in db, the base-64 encoding is returned"
@@ -299,7 +303,7 @@
                                                                                         (map char)
                                                                                         (apply str "data:image/png;base64,")))
 
-                (grid-fs/remove (monger/get-gridfs conn "stonecutter-test") {:filename (str (:uid user) ".png")})
+                (grid-fs/remove (monger/get-gridfs conn "stonecutter-test") {:filename uid})
                 (fact "if image doesn't exist in db, nil is returned"
                       (user/retrieve-profile-picture profile-picture-store uid) => nil))
 

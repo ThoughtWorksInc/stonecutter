@@ -66,12 +66,12 @@
 
 (defn add-profile-image [state profile-picture-store uid]
   (grid-fs/store-file (grid-fs/make-input-file profile-picture-store (io/file (io/resource "avatar.png")))
-                      (grid-fs/filename (str uid ".png"))
+                      (grid-fs/filename uid)
                       (grid-fs/content-type "image/png"))
   state)
 
 (defn remove-profile-image [profile-picture-store uid]
-  (grid-fs/remove profile-picture-store {:filename (str uid ".png")}))
+  (grid-fs/remove profile-picture-store {:filename uid}))
 
 (defn get-encoded-image []
   (->> "avatar.png"
