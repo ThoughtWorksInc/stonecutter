@@ -45,6 +45,8 @@
   (setup-listener rfd/register-form-element-selector :submit (partial rfc/block-invalid-submit registration-form-state))
 
   (setup-listener ulp/update-image-input-selector :change ulp/upload-image)
+  (setup-listener ulp/profile-card-image-selector :mouseenter ulp/show-button)
+  (setup-listener ulp/profile-card-image-selector :mouseleave ulp/hide-button)
 
   (setup-change-password-form-listener :input :current-password cpc/update-current-password-input)
   (setup-change-password-form-listener :input :new-password cpc/update-new-password-input)
