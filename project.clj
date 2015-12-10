@@ -29,7 +29,9 @@
                  [org.clojure/clojurescript "0.0-3308" :scope "provided"]
                  [prismatic/dommy "1.1.0"]
                  [cljs-ajax "0.3.14"]
-                 [ring/ring-json "0.4.0"]]
+                 [ring/ring-json "0.4.0"]
+                 [commons-codec/commons-codec "1.10"]
+                 [commons-io/commons-io "2.4"]]
   :main stonecutter.handler
   :jvm-opts ["-Dlog4j.configuration=log4j.dev"]
   :aot :all

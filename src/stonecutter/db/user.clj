@@ -10,7 +10,9 @@
             [monger.gridfs :as grid-fs]
             [clojure.string :as string]
             [clojure.java.io :as io]
-            [monger.operators :refer :all]))
+            [monger.operators :refer :all])
+  (:import [org.apache.commons.io IOUtils]
+           [org.apache.commons.codec.binary Base64]))
 
 (defn create-user [id-gen first-name last-name email password role]
   (let [lower-email (s/lower-case email)]
@@ -129,13 +131,11 @@
                         (grid-fs/filename filename)
                         (grid-fs/content-type content-type))))
 
-(defn retrieve-profile-picture [profile-picture-store uid config-m]
-  (let [uid-regex (str uid ".*")
-        file (first (grid-fs/find-by-filename profile-picture-store {$regex uid-regex}))]
-    (when (not (nil? file))
-      (let [filename (str config/profile-picture-directory (.getFilename file))
-            file-path (str (config/profile-picture-path config-m) filename)]
-        (io/make-parents file-path)
-        (with-open [output (io/output-stream file-path)]
-          (.writeTo file output))
-        filename))))
+(defn retrieve-profile-picture [profile-picture-store uid]
+  (when-let [file (first (grid-fs/find-by-filename profile-picture-store {$regex (str uid ".*")}))]
+    (->> file
+         .getInputStream
+         IOUtils/toByteArray
+         Base64/encodeBase64
+         (map char)
+         (apply str "data:" (.getContentType file) ";base64,"))))

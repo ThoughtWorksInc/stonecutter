@@ -9,7 +9,9 @@
             [monger.core :as monger]
             [monger.gridfs :as grid-fs]
             [clojure.java.io :as io]
-            [monger.operators :refer :all]))
+            [monger.operators :refer :all])
+  (:import [org.apache.commons.io IOUtils]
+           [org.apache.commons.codec.binary Base64]))
 
 (def user-store (m/create-memory-store))
 
@@ -276,27 +278,29 @@
              user (th/store-user! user-store "user@email.com" "password")
              uid (:uid user)
              png-request (create-update-profile-image-request "image/png")
-             jpg-request (create-update-profile-image-request "image/jpeg")
-             config-m (get-in png-request [:context :config-m])]
+             jpg-request (create-update-profile-image-request "image/jpeg")]
 
          (facts "about updating"
-                (user/update-profile-picture! png-request profile-picture-store uid)
-                (fact "image in request is saved to db"
-                      (grid-fs/find-by-filename profile-picture-store (str uid ".png")) =not=> empty?)
-
                 (user/update-profile-picture! jpg-request profile-picture-store uid)
+                (fact "image in request is saved to db"
+                      (grid-fs/find-by-filename profile-picture-store (str uid ".jpg")) =not=> empty?)
+
+                (user/update-profile-picture! png-request profile-picture-store uid)
                 (fact "previous image in db is removed"
-                      (grid-fs/find-by-filename profile-picture-store (str uid ".jpg")) =not=> empty?
-                      (grid-fs/find-by-filename profile-picture-store (str uid ".png")) => empty?))
+                      (grid-fs/find-by-filename profile-picture-store (str uid ".png")) =not=> empty?
+                      (grid-fs/find-by-filename profile-picture-store (str uid ".jpg")) => empty?))
 
          (facts "about retrieving"
-                (fact "if image exists in db, the relative path is returned and the file is saved"
-                      (user/retrieve-profile-picture profile-picture-store uid config-m) => (str "/images/profile/" uid ".jpg")
-                      (io/resource (str "public/images/profile/" uid ".jpg")) =not=> nil)
+                (fact "if image exists in db, the base-64 encoding is returned"
+                      (user/retrieve-profile-picture profile-picture-store uid) => (->> "avatar.png"
+                                                                                        io/resource
+                                                                                        IOUtils/toByteArray
+                                                                                        Base64/encodeBase64
+                                                                                        (map char)
+                                                                                        (apply str "data:image/png;base64,")))
 
-                (grid-fs/remove (monger/get-gridfs conn "stonecutter-test") {:filename (str (:uid user) ".jpg")})
+                (grid-fs/remove (monger/get-gridfs conn "stonecutter-test") {:filename (str (:uid user) ".png")})
                 (fact "if image doesn't exist in db, nil is returned"
-                      (user/retrieve-profile-picture profile-picture-store uid config-m) => nil))
+                      (user/retrieve-profile-picture profile-picture-store uid) => nil))
 
-         (monger/disconnect conn)
-         (io/delete-file (io/resource (str "public/images/profile/" uid ".jpg")))))
+         (monger/disconnect conn)))

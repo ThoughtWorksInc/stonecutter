@@ -107,7 +107,7 @@
              (steps/sign-in email "valid-password")
              (ih/add-profile-image profile-picture-store uid)
              (k/visit "/profile")
-             (kc/selector-has-attribute-with-content [ks/profile-page-profile-card-image :img] :src (str config/profile-picture-directory uid ".png")))
+             (kc/selector-has-attribute-with-content [ks/profile-page-profile-card-image :img] :src (ih/get-encoded-image)))
          (ih/remove-profile-image profile-picture-store uid)))
 
 (facts "Index url redirects to profile page if user is signed in"

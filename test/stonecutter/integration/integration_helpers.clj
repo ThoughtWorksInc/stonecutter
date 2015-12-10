@@ -10,8 +10,9 @@
             [stonecutter.admin :as admin]
             [monger.gridfs :as grid-fs]
             [clojure.java.io :as io]
-            [stonecutter.db.user :as user]
-            [stonecutter.config :as config]))
+            [stonecutter.db.user :as user])
+  (:import (org.apache.commons.codec.binary Base64)
+           (org.apache.commons.io IOUtils)))
 
 (def test-db-name "stonecutter-test")
 (def test-db-uri (format "mongodb://localhost:27017/%s" test-db-name))
@@ -70,5 +71,12 @@
   state)
 
 (defn remove-profile-image [profile-picture-store uid]
-  (grid-fs/remove profile-picture-store {:filename (str uid ".png")})
-  (io/delete-file (str "resources/public" config/profile-picture-directory uid ".png")))
+  (grid-fs/remove profile-picture-store {:filename (str uid ".png")}))
+
+(defn get-encoded-image []
+  (->> "avatar.png"
+       io/resource
+       IOUtils/toByteArray
+       Base64/encodeBase64
+       (map char)
+       (apply str "data:image/png;base64,")))

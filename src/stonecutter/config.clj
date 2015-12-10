@@ -41,8 +41,6 @@
 
 (def default-profile-picture "/images/temp-avatar-300x300.png")
 
-(def profile-picture-directory "/images/profile/")
-
 (defn create-config []
   (select-keys env/env env-var-set))
 

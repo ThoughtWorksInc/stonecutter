@@ -150,8 +150,8 @@
     (user/delete-user! user-store email)
     (redirect-to-profile-deleted)))
 
-(defn get-profile-picture [profile-picture-store uid config-m]
-  (if-let [profile-picture (user/retrieve-profile-picture profile-picture-store uid config-m)]
+(defn get-profile-picture [profile-picture-store uid]
+  (if-let [profile-picture (user/retrieve-profile-picture profile-picture-store uid)]
     profile-picture
     config/default-profile-picture))
 
@@ -163,8 +163,7 @@
         authorised-client-ids (:authorised-clients user)
         authorised-clients (map #(c/retrieve-client client-store %)
                                 authorised-client-ids)
-        config-m (get-in request [:context :config-m])
-        profile-picture (get-profile-picture profile-picture-store (:uid user) config-m)]
+        profile-picture (get-profile-picture profile-picture-store (:uid user))]
     (-> request
         (assoc-in [:context :authorised-clients] authorised-clients)
         (assoc-in [:context :confirmed?] confirmed?)
