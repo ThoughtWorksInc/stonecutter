@@ -2,11 +2,14 @@
   (:require [midje.sweet :refer :all]
             [clauth.user :as cl-user]
             [clauth.auth-code :as cl-auth-code]
-            [stonecutter.util.uuid :as uuid]
             [stonecutter.config :as config]
             [stonecutter.test.test-helpers :as th]
             [stonecutter.db.mongo :as m]
-            [stonecutter.db.user :as user]))
+            [stonecutter.db.user :as user]
+            [monger.core :as monger]
+            [monger.gridfs :as grid-fs]
+            [clojure.java.io :as io]
+            [monger.operators :refer :all]))
 
 (def user-store (m/create-memory-store))
 
@@ -260,5 +263,40 @@
                                                                                                         :last-name  admin-last-name
                                                                                                         :login      admin-login
                                                                                                         :password   hashed-password
-                                                                                                        :role       (:admin config/roles)})
-               )))
+                                                                                                        :role       (:admin config/roles)}))))
+
+(defn create-update-profile-image-request [image-type]
+  (th/create-request :post "/update-profile-image"
+                     {:profile-photo {:content-type image-type :tempfile (io/resource "avatar.png")}}))
+
+(facts "about profile image"
+       (let [conn (monger/connect "mongodb://localhost:27017/stonecutter-test")
+             profile-picture-store (monger/get-gridfs conn "stonecutter-test")
+             user-store (m/create-memory-store)
+             user (th/store-user! user-store "user@email.com" "password")
+             uid (:uid user)
+             png-request (create-update-profile-image-request "image/png")
+             jpg-request (create-update-profile-image-request "image/jpeg")
+             config-m (get-in png-request [:context :config-m])]
+
+         (facts "about updating"
+                (user/update-profile-picture! png-request profile-picture-store uid)
+                (fact "image in request is saved to db"
+                      (grid-fs/find-by-filename profile-picture-store (str uid ".png")) =not=> empty?)
+
+                (user/update-profile-picture! jpg-request profile-picture-store uid)
+                (fact "previous image in db is removed"
+                      (grid-fs/find-by-filename profile-picture-store (str uid ".jpg")) =not=> empty?
+                      (grid-fs/find-by-filename profile-picture-store (str uid ".png")) => empty?))
+
+         (facts "about retrieving"
+                (fact "if image exists in db, the relative path is returned and the file is saved"
+                      (user/retrieve-profile-picture profile-picture-store uid config-m) => (str "/images/profile/" uid ".jpg")
+                      (io/resource (str "public/images/profile/" uid ".jpg")) =not=> nil)
+
+                (grid-fs/remove (monger/get-gridfs conn "stonecutter-test") {:filename (str (:uid user) ".jpg")})
+                (fact "if image doesn't exist in db, nil is returned"
+                      (user/retrieve-profile-picture profile-picture-store uid config-m) => nil))
+
+         (monger/disconnect conn)
+         (io/delete-file (io/resource (str "public/images/profile/" uid ".jpg")))))

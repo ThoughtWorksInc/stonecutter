@@ -18,10 +18,7 @@
             [stonecutter.db.confirmation :as confirmation]
             [stonecutter.db.invitations :as i]
             [stonecutter.test.util.time :as test-time]
-            [clojure.java.io :as io]
-            [monger.gridfs :as grid-fs]
-            [monger.core :as monger]
-            [monger.operators :refer :all]))
+            [monger.gridfs :as grid-fs]))
 
 (def check-body-not-blank
   (checker [response] (not (empty? (:body response)))))
@@ -442,20 +439,14 @@
                           html/html-snippet
                           (html/select [:.form-row--invalid]))) =not=> empty?)))
 
-(facts "about updating profile image"
-       (let [user-store (m/create-memory-store)
-             email "user@email.com"
-             user (th/store-user! user-store email "password")
-             request (th/create-request :post "/update-profile-image"
-                                        {:profile-photo {:content-type "image/png" :tempfile (io/resource "avatar.png")}}
-                                        {:user-login email})
-             conn (monger/connect "mongodb://localhost:27017/stonecutter-test")
-             profile-picture-store (monger/get-gridfs conn "stonecutter-test")]
-         (u/update-profile-image user-store profile-picture-store request) => (th/check-redirects-to "/profile")
-         (fact "image in request is saved to db"
-               (grid-fs/find-by-filename profile-picture-store {$regex (str (:uid user) ".*")}) =not=> empty?)
-         (grid-fs/remove (monger/get-gridfs conn "stonecutter-test") {:filename (str (:uid user) ".png")})
-         (monger/disconnect conn)))
+(facts "updating profile image redirects to profile page"
+       (let [request (th/create-request :post "/update-profile-image"
+                                        {}
+                                        {:user-login ...email...})]
+         (u/update-profile-image ...user-store... ...profile-picture-store... request) => (th/check-redirects-to "/profile")
+         (provided
+           (user/retrieve-user ...user-store... ...email...) => {:uid ...uid...}
+           (user/update-profile-picture! request ...profile-picture-store... ...uid...) => nil)))
 
 (facts "about profile created"
        (fact "view defaults with link to view profile"

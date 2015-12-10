@@ -124,7 +124,7 @@
         content-type (get-in request [:params :profile-photo :content-type])
         file-extension ((keyword (last (string/split content-type #"/"))) config/lookup-extension)
         filename (str uid file-extension)]
-    (grid-fs/remove profile-picture-store {:filename filename})
+    (grid-fs/remove profile-picture-store {:filename {$regex (str uid ".*")}})
     (grid-fs/store-file (grid-fs/make-input-file profile-picture-store (io/file uploaded-file-path))
                         (grid-fs/filename filename)
                         (grid-fs/content-type content-type))))
