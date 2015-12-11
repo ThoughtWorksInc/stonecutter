@@ -9,9 +9,8 @@
             [monger.core :as monger]
             [monger.gridfs :as grid-fs]
             [clojure.java.io :as io]
-            [monger.operators :refer :all])
-  (:import [org.apache.commons.io IOUtils]
-           [org.apache.commons.codec.binary Base64]))
+            [monger.operators :refer :all]
+            [image-resizer.util :as resizer]))
 
 (def user-store (m/create-memory-store))
 
@@ -282,11 +281,15 @@
 
          (facts "about updating"
                 (user/update-profile-picture! jpg-request profile-picture-store uid)
-                (fact "image in request is saved to db"
-                      (grid-fs/find-by-filename profile-picture-store uid) =not=> empty?
-                      (-> (grid-fs/find-by-filename profile-picture-store uid)
-                          first
-                          .getContentType) => "image/jpeg")
+                (let [image-in-db (first (grid-fs/find-by-filename profile-picture-store uid))]
+                  (fact "image in request is saved to db"
+                        image-in-db =not=> nil?
+                        (.getContentType image-in-db) => "image/jpeg")
+                  (fact "image is resized before it is saved to db"
+                        (-> image-in-db
+                            .getInputStream
+                            resizer/buffered-image
+                            resizer/dimensions) => [150 150]))
 
                 (user/update-profile-picture! png-request profile-picture-store uid)
                 (fact "previous image in db is overwritten"
@@ -296,12 +299,9 @@
 
          (facts "about retrieving"
                 (fact "if image exists in db, the base-64 encoding is returned"
-                      (user/retrieve-profile-picture profile-picture-store uid) => (->> "avatar.png"
-                                                                                        io/resource
-                                                                                        IOUtils/toByteArray
-                                                                                        Base64/encodeBase64
-                                                                                        (map char)
-                                                                                        (apply str "data:image/png;base64,")))
+                      (user/retrieve-profile-picture profile-picture-store uid) => (-> "avatar-encoding.txt"
+                                                                                       io/resource
+                                                                                       slurp))
 
                 (grid-fs/remove (monger/get-gridfs conn "stonecutter-test") {:filename uid})
                 (fact "if image doesn't exist in db, nil is returned"

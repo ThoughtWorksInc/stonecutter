@@ -6,13 +6,11 @@
             [stonecutter.config :as config]
             [stonecutter.db.mongo :as m]
             [stonecutter.util.uuid :as uuid]
+            [stonecutter.util.image :as image]
             [stonecutter.session :as session]
             [monger.gridfs :as grid-fs]
-            [clojure.string :as string]
             [clojure.java.io :as io]
-            [monger.operators :refer :all])
-  (:import [org.apache.commons.io IOUtils]
-           [org.apache.commons.codec.binary Base64]))
+            [monger.operators :refer :all]))
 
 (defn create-user [id-gen first-name last-name email password role]
   (let [lower-email (s/lower-case email)]
@@ -123,17 +121,13 @@
 
 (defn update-profile-picture! [request profile-picture-store uid]
   (let [uploaded-file-path (get-in request [:params :profile-photo :tempfile])
-        content-type (get-in request [:params :profile-photo :content-type])]
+        content-type (get-in request [:params :profile-photo :content-type])
+        uploaded-file (image/resize-and-crop-image (io/file uploaded-file-path))]
     (grid-fs/remove profile-picture-store {:filename uid})
-    (grid-fs/store-file (grid-fs/make-input-file profile-picture-store (io/file uploaded-file-path))
+    (grid-fs/store-file (grid-fs/make-input-file profile-picture-store (image/buffered-image->input-stream uploaded-file content-type))
                         (grid-fs/filename uid)
                         (grid-fs/content-type content-type))))
 
 (defn retrieve-profile-picture [profile-picture-store uid]
   (when-let [file (first (grid-fs/find-by-filename profile-picture-store uid))]
-    (->> file
-         .getInputStream
-         IOUtils/toByteArray
-         Base64/encodeBase64
-         (map char)
-         (apply str "data:" (.getContentType file) ";base64,"))))
+    (image/encode-base64 file)))
