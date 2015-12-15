@@ -86,6 +86,22 @@
          :confirmation-email-sent   "content:flash/confirmation-email-sent"
          :email-already-confirmed   "content:flash/email-already-confirmed"))
 
+(facts "about image upload errors"
+       (fact "no errors are displayed by default"
+             (let [page (-> (th/create-request)
+                            profile)]
+               page => (th/has-attr? [:.clj--profile-image-error-container] :hidden "hidden")))
+       (tabular
+         (fact "appropriate error message is displayed on page when an image error key is included in the request"
+               (let [page (-> (th/create-request) (assoc :flash ?error-key) profile)]
+                 (-> page (html/select [:.clj--profile-image-error-container])) =not=> empty?
+                 (-> page (html/select [:.clj--profile-image-error-text]) first :attrs :data-l8n)
+                 => ?translation-key))
+
+         ?error-key                 ?translation-key
+         :not-image                 "content:image-error/not-image"
+         :too-large                 "content:image-error/too-large"
+         :unsupported-extension     "content:image-error/unsupported-filetype"))
 
 (facts "about displaying email confirmation status"
        (fact "the unconfirmed email message is removed when :confirmed? context is not false"

@@ -58,19 +58,30 @@
       (html/at enlive-m [:.clj--unconfirmed-email] (html/content email)))
     (vh/remove-element enlive-m [:.clj--unconfirmed-email-message-container])))
 
+(defn set-translation [enlive-m text-class translation]
+  (html/at enlive-m [text-class] (html/set-attr :data-l8n translation)))
+
 (defn set-flash-message [enlive-m request]
   (case (:flash request)
-    :password-changed (html/at enlive-m [:.clj--flash-message-text] (html/set-attr :data-l8n "content:flash/password-changed"))
-    :email-confirmed (html/at enlive-m [:.clj--flash-message-text] (html/set-attr :data-l8n "content:flash/email-confirmed"))
-    :email-changed (html/at enlive-m [:.clj--flash-message-text] (html/set-attr :data-l8n "content:flash/email-changed"))
-    :confirmation-email-sent (html/at enlive-m [:.clj--flash-message-text] (html/set-attr :data-l8n "content:flash/confirmation-email-sent"))
-    :email-already-confirmed (html/at enlive-m [:.clj--flash-message-text] (html/set-attr :data-l8n "content:flash/email-already-confirmed"))
-    (vh/remove-element enlive-m [:.clj--flash-message-container])))
+       :password-changed        (set-translation enlive-m :.clj--flash-message-text "content:flash/password-changed")
+       :email-confirmed         (set-translation enlive-m :.clj--flash-message-text "content:flash/email-confirmed")
+       :email-changed           (set-translation enlive-m :.clj--flash-message-text "content:flash/email-changed")
+       :confirmation-email-sent (set-translation enlive-m :.clj--flash-message-text "content:flash/confirmation-email-sent")
+       :email-already-confirmed (set-translation enlive-m :.clj--flash-message-text "content:flash/email-already-confirmed")
+       (vh/remove-element enlive-m [:.clj--flash-message-container])))
+
+(defn set-image-error-message [enlive-m request]
+  (case (:flash request)
+       :not-image             (set-translation enlive-m :.clj--profile-image-error-text "content:image-error/not-image")
+       :too-large             (set-translation enlive-m :.clj--profile-image-error-text "content:image-error/too-large")
+       :unsupported-extension (set-translation enlive-m :.clj--profile-image-error-text "content:image-error/unsupported-filetype")
+       (html/at enlive-m [:.clj--profile-image-error-container] (html/set-attr :hidden "hidden"))))
 
 (defn profile [request]
   (let [library-m (vh/load-template "public/library.html")]
     (-> (vh/load-template-with-lang "public/profile.html" request)
         (set-flash-message request)
+        (set-image-error-message request)
         (diplay-email-unconfirmed-message request)
         (add-profile-card request)
         (add-application-list request library-m)

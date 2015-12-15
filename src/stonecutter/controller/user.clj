@@ -17,6 +17,7 @@
             [stonecutter.helper :as sh]
             [stonecutter.config :as config]
             [stonecutter.util.ring :as ring-util]
+            [stonecutter.util.image :as image-util]
             [stonecutter.controller.common :as common]
             [ring.util.response :as response]
             [stonecutter.db.confirmation :as confirmation]
@@ -177,11 +178,20 @@
 (defn from-app? [request]
   (session/request->return-to request))
 
+(defn get-image-error-key [request]
+  (or
+    (image-util/check-file-type request)
+    (image-util/check-file-extension request)
+    (image-util/check-file-size request)))
+
 (defn update-profile-image [user-store profile-picture-store request]
   (let [email (get-in request [:session :user-login])
-        user (user/retrieve-user user-store email)]
-    (user/update-profile-picture! request profile-picture-store (:uid user)))
-  (r/redirect (routes/path :show-profile)))
+        user (user/retrieve-user user-store email)
+        image-error (get-image-error-key request)]
+    (when (not image-error)
+      (user/update-profile-picture! request profile-picture-store (:uid user)))
+    (-> (r/redirect (routes/path :show-profile))
+        (assoc :flash image-error))))
 
 (defn show-profile-created [request]
   (let [request (assoc request :params {:from-app (from-app? request)})]

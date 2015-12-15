@@ -1,22 +1,33 @@
 (ns stonecutter.util.image
-  (:require [clojure.string :as string]
-            [image-resizer.util :as resizer-u]
-            [image-resizer.core :as resizer])
+  (:require [image-resizer.util :as resizer-u]
+            [image-resizer.core :as resizer]
+            [pantomime.media :as mt]
+            [pantomime.mime :as mime]
+            [stonecutter.config :as config]
+            [clojure.java.io :as io])
   (:import (java.io ByteArrayInputStream ByteArrayOutputStream)
            (javax.imageio ImageIO)
            (org.apache.commons.io IOUtils)
            (org.apache.commons.codec.binary Base64)))
 
-(defn content-type->file-extension [content-type]
-  (let [image-type (keyword (last (string/split content-type #"/")))]
-    (image-type {:jpeg "jpg"
-                 :gif  "gif"
-                 :png  "png"})))
+(defn check-file-type [request]
+  (when (not (mt/image? (get-in request [:params :profile-photo :content-type])))
+    :not-image))
+
+(defn check-file-extension [request]
+  (when (empty? (mime/extension-for-name (get-in request [:params :profile-photo :content-type])))
+    :unsupported-extension))
+
+(defn check-file-size [request]
+  (let [file (get-in request [:params :profile-photo :tempfile])
+        file-size (.length (io/file file))]
+    (when (> file-size (config/image-upload-size-limit))
+      :too-large)))
 
 (defn buffered-image->input-stream [buffered-image content-type]
   (let [os (ByteArrayOutputStream.)
-        file-extension (content-type->file-extension content-type)]
-    (ImageIO/write buffered-image file-extension os)
+        file-extension (mime/extension-for-name content-type)]
+    (ImageIO/write buffered-image (.substring file-extension 1) os)
     (ByteArrayInputStream. (.toByteArray os))))
 
 (defn resize-and-crop-image [file]

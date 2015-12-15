@@ -37,6 +37,8 @@
 
 (def default-profile-picture "/images/temp-avatar-300x300.png")
 
+(defmacro image-upload-size-limit [] 5242880)
+
 (defn create-config []
   (select-keys env/env env-var-set))
 

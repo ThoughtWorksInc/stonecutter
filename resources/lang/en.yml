@@ -107,6 +107,11 @@ profile:
   change-email-button: Change email address
   update-profile-image-button: Update
 
+image-error:
+  not-image: Please select an image file.
+  too-large: Please select an image with a size smaller than 5MB.
+  unsupported-filetype: We do not support this file type.
+
 applications:
   title: Applications
   intro: Manage the applications that you've shared your Profile Card with.

@@ -18,7 +18,8 @@
             [stonecutter.db.confirmation :as confirmation]
             [stonecutter.db.invitations :as i]
             [stonecutter.test.util.time :as test-time]
-            [monger.gridfs :as grid-fs]))
+            [monger.gridfs :as grid-fs]
+            [clojure.java.io :as io]))
 
 (def check-body-not-blank
   (checker [response] (not (empty? (:body response)))))
@@ -396,7 +397,7 @@
                    confirmation-store (m/create-memory-store)
                    user (th/store-user! user-store email "password")]
                (u/update-user-email user-store confirmation-store test-email-sender request) => (every-checker (th/check-redirects-to "/profile")
-                                                                                                  (contains {:flash :email-changed}))
+                                                                                                               (contains {:flash :email-changed}))
                (user/retrieve-user user-store email) => nil
                (user/retrieve-user user-store new-email) =not=> nil
                (:email (test-email/last-sent-email test-email-sender)) => new-email
@@ -439,14 +440,31 @@
                           html/html-snippet
                           (html/select [:.form-row--invalid]))) =not=> empty?)))
 
-(facts "updating profile image redirects to profile page"
-       (let [request (th/create-request :post "/update-profile-image"
-                                        {}
-                                        {:user-login ...email...})]
-         (u/update-profile-image ...user-store... ...profile-picture-store... request) => (th/check-redirects-to "/profile")
-         (provided
-           (user/retrieve-user ...user-store... ...email...) => {:uid ...uid...}
-           (user/update-profile-picture! request ...profile-picture-store... ...uid...) => nil)))
+(facts "about updating profile image"
+       (fact "when content-type is image, redirects to profile page"
+              (let [request (th/create-request :post "/update-profile-image"
+                                               {:profile-photo {:content-type "image/png"
+                                                                :tempfile (io/resource "avatar.png")}}
+                                               {:user-login ...email...})]
+                (u/update-profile-image ...user-store... ...profile-picture-store... request) => (th/check-redirects-to "/profile")
+                (provided
+                  (user/retrieve-user ...user-store... ...email...) => {:uid ...uid...}
+                  (user/update-profile-picture! request ...profile-picture-store... ...uid...) => nil)))
+       (tabular
+         (fact "when content-type is not image, error assoc-ed in request"
+             (let [request (th/create-request :post "/update-profile-image"
+                                              {:profile-photo {:content-type ?content-type
+                                                               :tempfile ?tempfile}}
+                                              {:user-login ...email...})]
+               (-> (u/update-profile-image ...user-store... ...profile-picture-store... request)
+                   :flash) => ?error
+               (provided
+                 (user/retrieve-user ...user-store... ...email...) => {:uid ...uid...})))
+
+         ?error                 ?content-type  ?tempfile
+         :not-image             "text/html"    (io/resource "avatar.png")
+         :too-large             "image/png"    (io/resource "avatar-large.png")
+         :unsupported-extension "image/amy"    (io/resource "avatar.png")))
 
 (facts "about profile created"
        (fact "view defaults with link to view profile"

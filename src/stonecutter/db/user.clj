@@ -120,11 +120,11 @@
       (dissoc :password)))
 
 (defn update-profile-picture! [request profile-picture-store uid]
-  (let [uploaded-file-path (get-in request [:params :profile-photo :tempfile])
+  (let [uploaded-file (get-in request [:params :profile-photo :tempfile])
         content-type (get-in request [:params :profile-photo :content-type])
-        uploaded-file (image/resize-and-crop-image (io/file uploaded-file-path))]
+        resized-file (image/resize-and-crop-image (io/file uploaded-file))]
     (grid-fs/remove profile-picture-store {:filename uid})
-    (grid-fs/store-file (grid-fs/make-input-file profile-picture-store (image/buffered-image->input-stream uploaded-file content-type))
+    (grid-fs/store-file (grid-fs/make-input-file profile-picture-store (image/buffered-image->input-stream resized-file content-type))
                         (grid-fs/filename uid)
                         (grid-fs/content-type content-type))))
 

@@ -115,6 +115,11 @@ profile:
   change-email-button: Change email address in Finnish
   update-profile-image-button: Update in Finnish
 
+image-error:
+  not-image: Please select an image file in Finnish.
+  too-large: Please select an image with a size smaller than 5MB in Finnish.
+  unsupported-filetype: We do not support this file type in Finnish.
+
 applications:
   title: Applications in Finnish
   intro: Manage the applications that you've shared your Profile Card with. in Finnish
