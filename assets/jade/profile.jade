@@ -80,4 +80,8 @@ block content
       ul.settings__list
         li.settings__item: a.button.button--full-width.button--link.settings__link.clj--change-email__link.func--change-email__link(href="./change-email", data-l8n="content:profile/change-email-button") !Change email address
         li.settings__item: a.button.button--full-width.button--link.settings__link.clj--change-password__link.func--change-password__link(href="./change-password", data-l8n="content:profile/change-password-button") !Change password
+        li.settings__item.settings__photo-upload: form.button--full-width(action="./update-profile-image", method="post", role="form" enctype="multipart/form-data" accept="image/*")
+          button.button.settings__link.button--link(type="submit" data-l8n="content:profile/update-profile-picture-button")
+            | !Update profile picture
+          input(type="file" name="profile-photo")
         li.settings__item: a.button.button--full-width.button--link.settings__link.clj--delete-account__link.func--delete-account__link(href="./delete-account", data-l8n="content:profile/delete-button") !Delete account

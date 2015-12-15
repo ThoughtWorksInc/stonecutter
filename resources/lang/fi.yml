@@ -114,6 +114,7 @@ profile:
   verify-button: Resend email confirmation in Finnish
   change-email-button: Change email address in Finnish
   update-profile-image-button: Update in Finnish
+  update-profile-picture-button: Update profile picture in Finnish
 
 image-error:
   not-image: Please select an image file in Finnish.

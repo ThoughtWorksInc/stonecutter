@@ -106,6 +106,7 @@ profile:
   verify-button: Resend email confirmation
   change-email-button: Change email address
   update-profile-image-button: Update
+  update-profile-picture-button: Update profile picture
 
 image-error:
   not-image: Please select an image file.

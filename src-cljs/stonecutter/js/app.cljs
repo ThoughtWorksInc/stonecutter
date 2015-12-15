@@ -11,6 +11,10 @@
 (def registration-form-state (atom rfc/default-state))
 (def change-password-form-state (atom cpc/default-state))
 
+(defn remove-elem [selector]
+  (when-let [elem (dm/sel1 selector)]
+    (d/remove! elem)))
+
 (defn setup-listener [selector event function]
   (when-let [e (dm/sel1 selector)]
     (d/listen! e event function)))
@@ -54,6 +58,8 @@
   (setup-change-password-form-listener :blur :current-password cpc/update-current-password-blur)
   (setup-change-password-form-listener :blur :new-password cpc/update-new-password-blur)
 
-  (setup-listener cpd/change-password-form-element-selector :submit (partial cpc/block-invalid-submit change-password-form-state)))
+  (setup-listener cpd/change-password-form-element-selector :submit (partial cpc/block-invalid-submit change-password-form-state))
+
+  (remove-elem :.settings__photo-upload))
 
 (set! (.-onload js/window) start)
