@@ -19,7 +19,9 @@
             [stonecutter.db.invitations :as i]
             [stonecutter.test.util.time :as test-time]
             [monger.gridfs :as grid-fs]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [clj-time.core :as time]
+            [clj-time.core :as t]))
 
 (def check-body-not-blank
   (checker [response] (not (empty? (:body response)))))
@@ -288,12 +290,26 @@
             :session)) => {:something-else ...something-else...})
 
 (facts "about downloading a vCard"
-       (fact "the response contains a vCard file"
-             (let [request (th/create-request :post "/download-vcard" nil)]
-               (-> request
-                   u/download-vcard
+       (let [user-store (m/create-memory-store)
+             _user (th/store-user! user-store default-first-name default-last-name default-email default-password)
+             request (th/create-request :post "/download-vcard" nil {:user-login default-email})
+             file-name (str default-first-name "_" default-last-name ".vcf")
+             response (u/download-vcard user-store request)]
+         (fact "the response contains a vCard file"
+               (-> response
                    :headers
-                   (get "Content-Type")) => "text/vcard")))
+                   (get "Content-Type")) => "text/vcard")
+         (fact "the vCard file is named after the user"
+               (-> response
+                   :body
+                   .getName) => file-name)
+         (fact "the vCard file contains the users information in vCard 4.0 format"
+               (-> (u/download-vcard user-store request)
+                   :body
+                   slurp) => (slurp (io/resource "test.vcf"))
+               (provided
+                 (time/now) => (t/date-time 2012 12 01 13 42 11)))
+         (io/delete-file file-name)))
 
 (facts "about deleting accounts"
        (let [user-store (m/create-memory-store)

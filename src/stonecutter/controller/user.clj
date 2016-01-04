@@ -22,7 +22,9 @@
             [ring.util.response :as response]
             [stonecutter.db.confirmation :as confirmation]
             [stonecutter.session :as session]
-            [stonecutter.db.invitations :as invitations]))
+            [stonecutter.db.invitations :as invitations]
+            [clj-time.core :as time]
+            [clj-time.format :as time-f]))
 
 (defn has-valid-invite-id? [request invitation-store]
   (let [invite-id (get-in request [:params :invite-id])]
@@ -101,7 +103,7 @@
         config-m (get-in request [:context :config-m])]
     (if (empty? err)
       (do (user/update-user-email! user-store email new-email)
-          (send-confirmation-email-with-new-id! confirmation-store email-sender  new-email config-m)
+          (send-confirmation-email-with-new-id! confirmation-store email-sender new-email config-m)
           (-> (r/redirect (routes/path :show-profile))
               (assoc :flash :email-changed)
               (assoc :session (:session request-with-validation-errors))
@@ -236,6 +238,19 @@
       (user/update-user-role! user-store (get-in request-with-errors [:params :registration-email]) (:trusted config/roles))
       response)))
 
-(defn download-vcard [request]
-  (-> (r/resource-response "test.vcf")
-      (r/content-type "text/vcard")))
+(defn generate-vcard [user]
+  (str "BEGIN:VCARD\n"
+       "VERSION:4.0\n"
+       "N:" (:last-name user) ";" (:first-name user) ";;;\n"
+       "FN:" (:first-name user) " " (:last-name user) "\n"
+       "EMAIL:" (:login user) "\n"
+       "REV:" (time-f/unparse (time-f/formatters :basic-date-time-no-ms) (time/now)) "\n"
+       "END:VCARD"))
+
+(defn download-vcard [user-store request]
+  (let [email (session/request->user-login request)
+        user (user/retrieve-user user-store email)
+        file-name (str (:first-name user) "_" (:last-name user) ".vcf")]
+    (spit file-name (generate-vcard user))
+    (-> (r/file-response file-name)
+        (r/content-type "text/vcard"))))
