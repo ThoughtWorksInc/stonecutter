@@ -99,6 +99,7 @@ profile:
   settings-title: Settings
   change-password-button: Change password
   delete-button: Delete account
+  download-vcard-button: Download profile card as vCard
   email-not-confirmed: Your email address has not been confirmed.
   admin-span: ", Mighty Admin!"
   verify-email-intro-1: If you have not received an email to

@@ -287,6 +287,14 @@
             u/sign-out
             :session)) => {:something-else ...something-else...})
 
+(facts "about downloading a vCard"
+       (fact "the response contains a vCard file"
+             (let [request (th/create-request :post "/download-vcard" nil)]
+               (-> request
+                   u/download-vcard
+                   :headers
+                   (get "Content-Type")) => "text/vcard")))
+
 (facts "about deleting accounts"
        (let [user-store (m/create-memory-store)
              confirmation-store (m/create-memory-store)

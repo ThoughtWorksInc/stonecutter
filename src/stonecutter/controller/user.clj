@@ -235,3 +235,7 @@
       (invitations/remove-invite! invitation-store (get-in request [:params :invite-id]))
       (user/update-user-role! user-store (get-in request-with-errors [:params :registration-email]) (:trusted config/roles))
       response)))
+
+(defn download-vcard [request]
+  (-> (r/resource-response "test.vcf")
+      (r/content-type "text/vcard")))

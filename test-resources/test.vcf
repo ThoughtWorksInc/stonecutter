@@ -1,0 +1,8 @@
+BEGIN:VCARD
+VERSION:4.0
+N:Smith;Jane;;;
+FN:Jane Smith
+PHOTO;MEDIATYPE=image/jpeg:http://placekitten.com/200/300
+EMAIL:jane_smith@example.com
+REV:20121201T134211Z
+END:VCARD
