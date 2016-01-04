@@ -7,5 +7,6 @@ COPY project.clj /usr/src/app/
 RUN lein with-profile production deps
 COPY . /usr/src/app
 RUN npm install --no-optional
+RUN npm update -g && npm install gulp-imagemin
 
 CMD ["lein", "with-profile", "docker", "run"]

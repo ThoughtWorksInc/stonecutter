@@ -99,6 +99,71 @@
                                                                    :optimizations :whitespace
                                                                    :pretty-print  true}}]
                                         :test-commands {"phantom" ["phantomjs" :runner "target/cljs/testable.js"]}}}
+             :vagrant {:dependencies   [[ring-mock "0.1.5"]
+                                        [midje "1.7.0"]
+                                        [prone "0.8.2"]
+                                        [clj-webdriver "0.6.1" :exclusions [org.seleniumhq.selenium/selenium-java
+                                                                            org.seleniumhq.selenium/selenium-server
+                                                                            org.seleniumhq.selenium/selenium-remote-driver
+                                                                            xml-apis]]
+                                        [xml-apis "1.4.01"]
+                                        [org.seleniumhq.selenium/selenium-server "2.45.0"]
+                                        [org.seleniumhq.selenium/selenium-java "2.45.0"]
+                                        [org.seleniumhq.selenium/selenium-remote-driver "2.45.0"]
+                                        [kerodon "0.6.1"]]
+                       :plugins        [[lein-ring "0.9.6"]
+                                        [lein-environ "1.0.0"]
+                                        [lein-midje "3.1.3"]
+                                        [lein-kibit "0.1.2"]
+                                        [lein-ancient "0.6.7"]
+                                        [lein-cljsbuild "1.0.6"]
+                                        [lein-shell "0.4.1"]
+                                        [com.cemerick/clojurescript.test "0.3.3"]]
+                       :ring           {:reload-paths          ["src" "src-cljc"]
+                                        :handler               stonecutter.lein/lein-app
+                                        :init                  stonecutter.lein/lein-ring-init
+                                        :stacktrace-middleware prone.middleware/wrap-exceptions}
+                       :resource-paths ["resources" "test-resources"]
+                       :aliases        {"cljs-build"      ["cljsbuild" "once" "prod"]
+                                        "test"            ["do" "clean," "test-clj," "test-cljs"]
+                                        "test-clj"        ["do" "gulp," "cljs-build," "midje"]
+                                        "unit"            ["test-clj" "stonecutter.test.*"]
+                                        "integration"     ["test-clj" "stonecutter.integration.*"]
+                                        "browser"         ["test-clj" "stonecutter.browser.*"]
+                                        "auto-no-browser" ["test-clj" ":autotest" "src/" "src-cljc/"
+                                                           "test/stonecutter/test/" "test/stonecutter/integration/"]
+                                        "test-cljs"       ["do" "clean," "cljsbuild" "test"]
+                                        "auto-cljs"       ["do" "test-cljs," "cljsbuild" "auto" "test"]
+                                        "gencred"         ["run" "-m" "stonecutter.util.gencred"]
+                                        "gen-keypair"     ["run" "-m" "stonecutter.util.gen-key-pair"]
+                                        "gen-config"      ["run" "-m" "stonecutter.config"]
+                                        "lint"            ["eastwood" "{:namespaces [:source-paths]}"]
+                                        "gulp"            ["shell" "gulp" "build"]
+                                        "start"           ["do" "gulp," "cljs-build," "run"]}
+                       :env            {:dev                   true
+                                        :secure                "false"
+                                        :rsa-keypair-file-path "test-resources/test-key.json"
+                                        :admin-login           "dcent@thoughtworks.com"
+                                        :admin-password        "password"
+                                        :admin-first-name      "first"
+                                        :admin-last-name       "last"
+                                        :profile-image-path    "resources/public"
+                                        :host   "0.0.0.0"
+                                        :port   "3000"
+                                        :mongodb-port "27017"
+                                        :mongodb-db   "coracle"}
+                       :cljsbuild      {:builds [{:id           "prod"
+                                                  :source-paths ["src-cljs" "src-cljc"]
+                                                  :compiler     {:output-to     "resources/public/js/main.js"
+                                                                 :asset-path    "js/out"
+                                                                 :optimizations :advanced
+                                                                 :pretty-print  false}}
+                                                 {:id             "test"
+                                                  :source-paths   ["src-cljs" "src-cljc" "test-cljs"]
+                                                  :compiler       {:output-to     "target/cljs/testable.js"
+                                                                   :optimizations :whitespace
+                                                                   :pretty-print  true}}]
+                                        :test-commands {"phantom" ["phantomjs" :runner "target/cljs/testable.js"]}}}
              :uberjar {:prep-tasks  ["compile" ["cljsbuild" "once"]]
                        :env         {:production true}
                        :aot         :all

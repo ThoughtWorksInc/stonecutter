@@ -37,3 +37,9 @@
 
  - name: install phantomjs
    apt: name=phantomjs state=present
+
+ - name: Install node dependencies
+   command: npm install --no-bin-links
+
+ - name: install gulp-imagemin
+   command: npm update -g && npm install gulp-imagemin
