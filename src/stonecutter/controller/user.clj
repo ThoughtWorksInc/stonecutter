@@ -240,11 +240,11 @@
 
 (defn generate-vcard [user picture]
   (str "BEGIN:VCARD\n"
-       "VERSION:4.0\n"
+       "VERSION:3.0\n"
        "N:" (:last-name user) ";" (:first-name user) ";;;\n"
        "FN:" (:first-name user) " " (:last-name user) "\n"
        (when picture
-         (str "PHOTO:" picture "\n"))
+         (str "PHOTO;TYPE=" (image-util/picture-type picture) ";ENCODING=B:" (image-util/picture-data picture) "\n"))
        "EMAIL:" (:login user) "\n"
        "REV:" (time-f/unparse (time-f/formatters :basic-date-time-no-ms) (time/now)) "\n"
        "END:VCARD"))

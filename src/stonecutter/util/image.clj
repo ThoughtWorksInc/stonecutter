@@ -4,7 +4,8 @@
             [pantomime.media :as mt]
             [pantomime.mime :as mime]
             [stonecutter.config :as config]
-            [clojure.java.io :as io])
+            [clojure.java.io :as io]
+            [clojure.string :as str])
   (:import (java.io ByteArrayInputStream ByteArrayOutputStream)
            (javax.imageio ImageIO)
            (org.apache.commons.io IOUtils)
@@ -50,3 +51,9 @@
        Base64/encodeBase64
        (map char)
        (apply str "data:" (.getContentType file) ";base64,")))
+
+(defn picture-data [picture]
+  (last (str/split picture #",")))
+
+(defn picture-type [picture]
+  (str/upper-case (last (re-find #"/(\w{3,});" picture))))
