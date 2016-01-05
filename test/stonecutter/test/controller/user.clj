@@ -304,10 +304,11 @@
                    (get "Content-Type")) => "text/vcard")
          (fact "the vCard file is named after the user"
                (-> response
-                   :body
-                   .getName) => file-name)
+                   :headers
+                   (get "Content-Disposition")
+                   (.contains file-name)) => true)
          (fact "the vCard file doesn't contain the photo property when the user hasn't uploaded a profile picture"
-               (-> (u/download-vcard user-store profile-picture-store request)
+               (-> response
                    :body
                    slurp
                    (.contains "PHOTO")) => false)

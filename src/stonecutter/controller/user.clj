@@ -256,4 +256,5 @@
         file-name (str (:first-name user) "_" (:last-name user) ".vcf")]
     (spit file-name (generate-vcard user picture))
     (-> (r/file-response file-name)
-        (r/content-type "text/vcard"))))
+        (r/content-type "text/vcard")
+        (r/header "Content-Disposition" (str "attachment; filename=\"" file-name "\"")))))
