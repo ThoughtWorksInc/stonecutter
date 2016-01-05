@@ -322,8 +322,7 @@
                  (time/now) => (t/date-time 2012 12 01 13 42 11)))
 
          (grid-fs/remove profile-picture-store {:filename (:uid user)})
-         (monger/disconnect conn)
-         (io/delete-file file-name)))
+         (monger/disconnect conn)))
 
 (facts "about deleting accounts"
        (let [user-store (m/create-memory-store)

@@ -24,7 +24,8 @@
             [stonecutter.session :as session]
             [stonecutter.db.invitations :as invitations]
             [clj-time.core :as time]
-            [clj-time.format :as time-f]))
+            [clj-time.format :as time-f])
+  (:import (java.io File)))
 
 (defn has-valid-invite-id? [request invitation-store]
   (let [invite-id (get-in request [:params :invite-id])]
@@ -253,8 +254,10 @@
   (let [email (session/request->user-login request)
         user (user/retrieve-user user-store email)
         picture (user/retrieve-profile-picture profile-picture-store (:uid user))
-        file-name (str (:first-name user) "_" (:last-name user) ".vcf")]
-    (spit file-name (generate-vcard user picture))
-    (-> (r/file-response file-name)
+        file-name (str (:first-name user) "_" (:last-name user))
+        temp-file (File/createTempFile file-name ".vcf")]
+    (spit temp-file (generate-vcard user picture))
+    (.deleteOnExit temp-file)
+    (-> (r/file-response (.getAbsolutePath temp-file))
         (r/content-type "text/vcard")
-        (r/header "Content-Disposition" (str "attachment; filename=\"" file-name "\"")))))
+        (r/header "Content-Disposition" (str "attachment; filename=\"" file-name ".vcf\"")))))
