@@ -266,18 +266,14 @@
                                                                                                         :password   hashed-password
                                                                                                         :role       (:admin config/roles)}))))
 
-(defn create-update-profile-image-request [image-type]
-  (th/create-request :post "/update-profile-image"
-                     {:profile-photo {:content-type image-type :tempfile (io/resource "avatar.png")}}))
-
 (facts "about profile image"
        (let [conn (monger/connect "mongodb://localhost:27017/stonecutter-test")
              profile-picture-store (monger/get-gridfs conn "stonecutter-test")
              user-store (m/create-memory-store)
              user (th/store-user! user-store "user@email.com" "password")
              uid (:uid user)
-             png-request (create-update-profile-image-request "image/png")
-             jpg-request (create-update-profile-image-request "image/jpeg")]
+             png-request (th/create-update-profile-image-request :image-type "image/png")
+             jpg-request (th/create-update-profile-image-request :image-type "image/jpeg")]
 
          (facts "about updating"
                 (user/update-profile-picture! jpg-request profile-picture-store uid)

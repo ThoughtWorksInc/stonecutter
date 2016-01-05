@@ -110,7 +110,7 @@
        :send-invite                          (partial admin/send-user-invite email-sender user-store invitation-store clock)
        :accept-invite                        (partial user/accept-invite invitation-store)
        :register-using-invitation            (partial user/register-using-invitation user-store token-store confirmation-store email-sender invitation-store)
-       :download-vcard                       (partial user/download-vcard user-store)}
+       :download-vcard                       (partial user/download-vcard user-store profile-picture-store)}
       (m/wrap-handlers-except #(m/wrap-handle-403 % forbidden-err-handler) #{})
       (m/wrap-handlers-except m/wrap-disable-caching #{:theme-css :index :sign-in-or-register})
       (m/wrap-just-these-handlers #(m/wrap-authorised % (u/authorisation-checker user-store))

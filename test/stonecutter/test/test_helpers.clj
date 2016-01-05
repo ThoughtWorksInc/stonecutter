@@ -7,7 +7,8 @@
             [clauth.client :as cl-client]
             [stonecutter.db.invitations :as invitations]
             [stonecutter.util.uuid :as uuid]
-            [stonecutter.config :as config]))
+            [stonecutter.config :as config]
+            [clojure.java.io :as io]))
 
 (defn create-request
   ([method url params]
@@ -83,3 +84,12 @@
 
 (defn store-invite! [invite-store email clock]
   (invitations/generate-invite-id! invite-store email clock 7 uuid/uuid))
+
+(defn create-update-profile-image-request [& {:keys [image-type tempfile session]
+                                              :or {image-type "image/jpeg"
+                                                   tempfile (io/resource "avatar.png")
+                                                   session {}}}]
+  (create-request :post "/update-profile-image"
+                  {:profile-photo {:content-type image-type
+                                   :tempfile     tempfile}}
+                  session))

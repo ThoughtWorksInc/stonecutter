@@ -238,19 +238,22 @@
       (user/update-user-role! user-store (get-in request-with-errors [:params :registration-email]) (:trusted config/roles))
       response)))
 
-(defn generate-vcard [user]
+(defn generate-vcard [user picture]
   (str "BEGIN:VCARD\n"
        "VERSION:4.0\n"
        "N:" (:last-name user) ";" (:first-name user) ";;;\n"
        "FN:" (:first-name user) " " (:last-name user) "\n"
+       (when picture
+         (str "PHOTO:" picture "\n"))
        "EMAIL:" (:login user) "\n"
        "REV:" (time-f/unparse (time-f/formatters :basic-date-time-no-ms) (time/now)) "\n"
        "END:VCARD"))
 
-(defn download-vcard [user-store request]
+(defn download-vcard [user-store profile-picture-store request]
   (let [email (session/request->user-login request)
         user (user/retrieve-user user-store email)
+        picture (user/retrieve-profile-picture profile-picture-store (:uid user))
         file-name (str (:first-name user) "_" (:last-name user) ".vcf")]
-    (spit file-name (generate-vcard user))
+    (spit file-name (generate-vcard user picture))
     (-> (r/file-response file-name)
         (r/content-type "text/vcard"))))

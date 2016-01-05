@@ -21,7 +21,8 @@
             [monger.gridfs :as grid-fs]
             [clojure.java.io :as io]
             [clj-time.core :as time]
-            [clj-time.core :as t]))
+            [clj-time.core :as t]
+            [monger.core :as monger]))
 
 (def check-body-not-blank
   (checker [response] (not (empty? (:body response)))))
@@ -290,11 +291,13 @@
             :session)) => {:something-else ...something-else...})
 
 (facts "about downloading a vCard"
-       (let [user-store (m/create-memory-store)
-             _user (th/store-user! user-store default-first-name default-last-name default-email default-password)
+       (let [conn (monger/connect "mongodb://localhost:27017/stonecutter-test")
+             profile-picture-store (monger/get-gridfs conn "stonecutter-test")
+             user-store (m/create-memory-store)
+             user (th/store-user! user-store default-first-name default-last-name default-email default-password)
              request (th/create-request :post "/download-vcard" nil {:user-login default-email})
              file-name (str default-first-name "_" default-last-name ".vcf")
-             response (u/download-vcard user-store request)]
+             response (u/download-vcard user-store profile-picture-store request)]
          (fact "the response contains a vCard file"
                (-> response
                    :headers
@@ -303,12 +306,22 @@
                (-> response
                    :body
                    .getName) => file-name)
+         (fact "the vCard file doesn't contain the photo property when the user hasn't uploaded a profile picture"
+               (-> (u/download-vcard user-store profile-picture-store request)
+                   :body
+                   slurp
+                   (.contains "PHOTO")) => false)
          (fact "the vCard file contains the users information in vCard 4.0 format"
-               (-> (u/download-vcard user-store request)
+               (user/update-profile-picture! (th/create-update-profile-image-request) profile-picture-store (:uid user))
+
+               (-> (u/download-vcard user-store profile-picture-store request)
                    :body
                    slurp) => (slurp (io/resource "test.vcf"))
                (provided
                  (time/now) => (t/date-time 2012 12 01 13 42 11)))
+
+         (grid-fs/remove profile-picture-store {:filename (:uid user)})
+         (monger/disconnect conn)
          (io/delete-file file-name)))
 
 (facts "about deleting accounts"
@@ -466,29 +479,25 @@
 
 (facts "about updating profile image"
        (fact "when content-type is image, redirects to profile page"
-              (let [request (th/create-request :post "/update-profile-image"
-                                               {:profile-photo {:content-type "image/png"
-                                                                :tempfile (io/resource "avatar.png")}}
-                                               {:user-login ...email...})]
-                (u/update-profile-image ...user-store... ...profile-picture-store... request) => (th/check-redirects-to "/profile")
-                (provided
-                  (user/retrieve-user ...user-store... ...email...) => {:uid ...uid...}
-                  (user/update-profile-picture! request ...profile-picture-store... ...uid...) => nil)))
+             (let [request (th/create-update-profile-image-request :image-type "image/png" :session {:user-login ...email...})]
+               (u/update-profile-image ...user-store... ...profile-picture-store... request) => (th/check-redirects-to "/profile")
+               (provided
+                 (user/retrieve-user ...user-store... ...email...) => {:uid ...uid...}
+                 (user/update-profile-picture! request ...profile-picture-store... ...uid...) => nil)))
        (tabular
          (fact "when content-type is not image, error assoc-ed in request"
-             (let [request (th/create-request :post "/update-profile-image"
-                                              {:profile-photo {:content-type ?content-type
-                                                               :tempfile ?tempfile}}
-                                              {:user-login ...email...})]
-               (-> (u/update-profile-image ...user-store... ...profile-picture-store... request)
-                   :flash) => ?error
-               (provided
-                 (user/retrieve-user ...user-store... ...email...) => {:uid ...uid...})))
+               (let [request (th/create-update-profile-image-request :image-type ?content-type
+                                                                     :tempfile ?tempfile
+                                                                     :session {:user-login ...email...})]
+                 (-> (u/update-profile-image ...user-store... ...profile-picture-store... request)
+                     :flash) => ?error
+                 (provided
+                   (user/retrieve-user ...user-store... ...email...) => {:uid ...uid...})))
 
-         ?error                 ?content-type  ?tempfile
-         :not-image             "text/html"    (io/resource "avatar.png")
-         :too-large             "image/png"    (io/resource "avatar-large.png")
-         :unsupported-extension "image/amy"    (io/resource "avatar.png")))
+         ?error                 ?content-type ?tempfile
+         :not-image             "text/html"   (io/resource "avatar.png")
+         :too-large             "image/png"   (io/resource "avatar-large.png")
+         :unsupported-extension "image/amy"   (io/resource "avatar.png")))
 
 (facts "about profile created"
        (fact "view defaults with link to view profile"
