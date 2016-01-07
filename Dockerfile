@@ -4,9 +4,8 @@ RUN mkdir /usr/src/app
 WORKDIR /usr/src/app
 
 COPY project.clj /usr/src/app/
-RUN lein with-profile production deps
-COPY . /usr/src/app
-RUN npm install --no-optional
-RUN npm update -g && npm install gulp-imagemin
+RUN lein uberjar
+COPY target/*standalone.jar /usr/src/app
 
-CMD ["lein", "with-profile", "docker", "run"]
+
+CMD ["java", "-jar", "stonecutter-0.1.0-SNAPSHOT-standalone.jar"]
