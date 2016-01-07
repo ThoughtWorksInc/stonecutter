@@ -5,8 +5,11 @@ WORKDIR /usr/src/app
 
 COPY project.clj /usr/src/app/
 RUN lein with-profile production deps
+COPY . /usr/src/app
+RUN apt-get -y install build-essential
+RUN npm install
+RUN npm install gulp-imagemin
 RUN lein uberjar
-COPY target/*standalone.jar /usr/src/app
-
+WORKDIR /usr/src/app/target
 
 CMD ["java", "-jar", "stonecutter-0.1.0-SNAPSHOT-standalone.jar"]
