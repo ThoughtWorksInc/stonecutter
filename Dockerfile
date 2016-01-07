@@ -4,6 +4,7 @@ RUN mkdir /usr/src/app
 WORKDIR /usr/src/app
 
 COPY project.clj /usr/src/app/
+RUN lein with-profile production deps
 RUN lein uberjar
 COPY target/*standalone.jar /usr/src/app
 
