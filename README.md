@@ -202,6 +202,40 @@ The Hosting Architecture is documented [here] (https://docs.google.com/a/thought
 
 ## Deployment
 
+#### Deploying the application using docker
+  
+You can deploy the application using Docker. To do so, use the following commands.
+
+First, you need to start a mongo container. 
+
+    docker run —name mongo mongo
+    
+Once that is done, navigate to the Stonecutter directory and run the following
+    
+    docker build -t stonecutter .
+    
+To run the application you'll need a few configuration files, notably a clients.yml file and an rsa-keypair.json, plus a stonecutter.env file.
+
+To generate the public-prvate keypair, see below. Save the second key in your stonecutter/config directory.
+
+Finally, run this command, replacing <config file path> with the directory storing your config files, and <env file path> with the path to wherever your environment variable file is stored
+
+    docker run -v <config file path>:/var/config --env-file=<env file path> -p 5000:5000 --link mongo:mongo --name stonecutter stonecutter
+
+The path for your env file may be relative, but the config file path must be absolute. This will likely produce a command looking like
+
+    docker run -v Users/<you>/stonecutter/config:/var/config --env-file=./config/stonecutter.env -p 5000:5000 --link mongo:mongo --name stonecutter stonecutter
+    
+To access the application you must add a reverse proxy that redirects to it, adding the following to the headers
+    
+    "X-Real-IP: <proxy ip>" 
+    "X-Forwarded-For: <proxy ip>"
+    "X-Forwarded-Proto: https"
+
+You can check the app is running using the following command, which should return some raw html.
+
+    curl -v --header "X-Real-IP: 192.168.0.1" -H "X-Forwarded-For: 192.168.0.1" -H "X-Forwarded-Proto: https" <docker ip address>:5000
+
 #### Adding public-private keypair for OpenID Connect
 
 To generate a public-private keypair in Json Web-key (JWK) format, enter the following at the command line:
