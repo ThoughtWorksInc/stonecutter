@@ -11,6 +11,9 @@ RUN npm install -g gulp
 RUN npm install
 RUN npm install gulp-imagemin
 RUN gulp build
+WORKDIR /usr/src/app/resources/public
+RUN ls
+WORKDIR /usr/src/app
 RUN lein uberjar
 WORKDIR /usr/src/app/target
 
