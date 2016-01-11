@@ -210,9 +210,9 @@ First, you need to start a mongo container.
 
     docker run —-name mongo mongo
         
-To run the application you'll need a few configuration files, notably a clients.yml file and an rsa-keypair.json, plus a stonecutter.env file. Place these files in a new directory to house your application.
+To run the application you'll need a few configuration files, notably a clients.yml file, an rsa-keypair.json and a stonecutter.env file.
 
-To generate the public-prvate keypair, see below. Save the second key in a stonecutter/config directory. Save the first key too. Add the stonecutter.env and clients.yml files to the same directory, copying those from this application.
+To generate the public-private keypair, see below. Save the second key in a stonecutter/config directory. Add the stonecutter.env and clients.yml files to the same directory, copying those from this application.
 
 Finally, run this command, replacing <config file path> with the directory storing your config files, and <env file path> with the path to wherever your environment variable file is stored
 
