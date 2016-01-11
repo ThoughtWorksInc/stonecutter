@@ -208,7 +208,7 @@ You can deploy the application using Docker. To do so, use the following command
 
 First, you need to start a mongo container. 
 
-    docker run —name mongo mongo
+    docker run —-name mongo mongo
         
 To run the application you'll need a few configuration files, notably a clients.yml file and an rsa-keypair.json, plus a stonecutter.env file. Place these files in a new directory to house your application.
 
