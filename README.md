@@ -209,14 +209,10 @@ You can deploy the application using Docker. To do so, use the following command
 First, you need to start a mongo container. 
 
     docker run —name mongo mongo
-    
-Once that is done, navigate to the Stonecutter directory and run the following
-    
-    docker build -t stonecutter .
-    
-To run the application you'll need a few configuration files, notably a clients.yml file and an rsa-keypair.json, plus a stonecutter.env file.
+        
+To run the application you'll need a few configuration files, notably a clients.yml file and an rsa-keypair.json, plus a stonecutter.env file. Place these files in a new directory to house your application.
 
-To generate the public-prvate keypair, see below. Save the second key in your stonecutter/config directory.
+To generate the public-prvate keypair, see below. Save the second key in a stonecutter/config directory. Save the first key too. Add the stonecutter.env and clients.yml files to the same directory, copying those from this application.
 
 Finally, run this command, replacing <config file path> with the directory storing your config files, and <env file path> with the path to wherever your environment variable file is stored
 
@@ -224,7 +220,7 @@ Finally, run this command, replacing <config file path> with the directory stori
 
 The path for your env file may be relative, but the config file path must be absolute. This will likely produce a command looking like
 
-    docker run -v Users/<you>/stonecutter/config:/var/config --env-file=./config/stonecutter.env -p 5000:5000 --link mongo:mongo --name stonecutter stonecutter
+    docker run -v /Users/<you>/stonecutter/config:/var/config --env-file=./config/stonecutter.env -p 5000:5000 --link mongo:mongo --name stonecutter stonecutter
     
 To access the application you must add a reverse proxy that redirects to it, adding the following to the headers
     
