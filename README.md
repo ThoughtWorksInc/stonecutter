@@ -229,22 +229,9 @@ To use Nginx for this you need
 
 You can acquire an SSL certificate and key online inexpensively. You should receive a pair of files, for instance stonecutter.crt and stonecutter.key. Store them in their own directory somewhere safe.
 
-You can generate a dhparam.pem file by running 
+You can generate a dhparam.pem file by running: 
     
-    openssl dhparam -rand – 2048
-
-In the terminal. After a while this will produce some text that looks like this:
-    
-    -----BEGIN DH PARAMETERS-----
-    MIIBCAKCAQEAq9IcgRxcJukySS6UYDpluiwXJAUhsMCpz3vSvCLT9lrouraVy3kx
-    ZJGRcLis2mxulTLOBNhhDuqISYNOjpec2Y70kPgY1R0Ydb4wANezcIK63bZi31ya
-    1Tnd3ocRxLTSh4876kahzU0k63RaPBMtmhamK6CZcvHSSdFGcreVCgQmRhIshj88
-    aHy9NDa6tHzCYBFj8AhI275cXOPGqE3pBFz+18A0Dc21xFJcHhM0a24cpyeMgY4h
-    8IhS80lSg+ZLOhXoUiEWXV7AyeDzvIRc+6nR7MKq+CAzFHh3clvf3G62gW0a4Bpn
-    sN/0EjRW0kjc2wF8bQ9933zv4P2Uoz0KewIBAg==
-    -----END DH PARAMETERS-----
-
-Create a new file dhparam.pem and paste this in.
+    openssl dhparam -rand – 2048 > dhparam.pem
  
 You can create an nginx.conf file by copying the following into a new file and replacing the <> appropriately:
 
@@ -294,7 +281,7 @@ To get an rsa keypair, see [below](#adding-public-private-keypair-for-openid-con
 
 Store both of these two files in their own directory.
 
-To get a stonecutter.env, copy the template that is aso found in the config folder.
+To get a stonecutter.env, copy the template that is found in the config folder.
  
 Finally, run this command, replacing <config file path> with the absolute path for the directory storing your config files, and <env file path> with the path to wherever your environment variable file is stored.  
 
