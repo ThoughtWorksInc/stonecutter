@@ -290,7 +290,7 @@ To run Stonecutter you need
 
 To make a clients.yml file, copy the default one in this project, under Stonecutter/config. It shows the format used by the application.
 
-To get an rsa keypair, see [below](#Adding public-private keypair for OpenID Connect).
+To get an rsa keypair, see [below](#adding-public-private-keypair-for-openid-connect).
 
 Store both of these two files in their own directory.
 
