@@ -202,37 +202,106 @@ The Hosting Architecture is documented [here] (https://docs.google.com/a/thought
 
 ## Deployment
 
-#### Deploying the application using docker
+### Deploying the application using docker
   
-You can deploy the application using Docker. To do so, use the following commands.
+You can deploy the application using Docker. To do so, you will need three containers:
+Mongo, Nginx and Stonecutter.
 
-First, you need to start a mongo container. 
+#### Starting a mongo container
 
-    docker run —-name mongo mongo
-        
-To run the application you'll need a few configuration files, notably a clients.yml file, an rsa-keypair.json and a stonecutter.env file.
+To start a mongo container, run 
 
-To generate the public-private keypair, see below. Save the second key in a stonecutter/config directory. Add the stonecutter.env and clients.yml files to the same directory, copying those from this application.
-
-Finally, run this command, replacing <config file path> with the directory storing your config files, and <env file path> with the path to wherever your environment variable file is stored
-
-    docker run -v <config file path>:/var/config --env-file=<env file path> -p 5000:5000 --link mongo:mongo --name stonecutter stonecutter
-
-The path for your env file may be relative, but the config file path must be absolute. This will likely produce a command looking like
-
-    docker run -v /Users/<you>/stonecutter/config:/var/config --env-file=./config/stonecutter.env -p 5000:5000 --link mongo:mongo --name stonecutter stonecutter
+    docker run --name mongo mongo
     
-To access the application you must add a reverse proxy that redirects to it, adding the following to the headers
+#### Starting an Nginx container
+
+To access the application you must run a reverse proxy, for example Nginx, that redirects to it, adding the following to the headers
     
     "X-Real-IP: <proxy ip>" 
     "X-Forwarded-For: <proxy ip>"
     "X-Forwarded-Proto: https"
 
-You can check the app is running using the following command, which should return some raw html.
+To use Nginx for this you need 
 
-    curl -v --header "X-Real-IP: 192.168.0.1" -H "X-Forwarded-For: 192.168.0.1" -H "X-Forwarded-Proto: https" <docker ip address>:5000
+* an SSL certificate and key
+* a dhparam.pem file
+* an nginx.conf file
 
-#### Adding public-private keypair for OpenID Connect
+You can acquire an SSL certificate and key online inexpensively. You should receive a pair of files, for instance stonecutter.crt and stonecutter.key. Store them in their own directory somewhere safe.
+
+You can generate a dhparam.pem file by running 
+    
+    openssl dhparam -rand – 2048
+
+In the terminal. After a while this will produce some text that looks like this:
+    
+    -----BEGIN DH PARAMETERS-----
+    MIIBCAKCAQEAq9IcgRxcJukySS6UYDpluiwXJAUhsMCpz3vSvCLT9lrouraVy3kx
+    ZJGRcLis2mxulTLOBNhhDuqISYNOjpec2Y70kPgY1R0Ydb4wANezcIK63bZi31ya
+    1Tnd3ocRxLTSh4876kahzU0k63RaPBMtmhamK6CZcvHSSdFGcreVCgQmRhIshj88
+    aHy9NDa6tHzCYBFj8AhI275cXOPGqE3pBFz+18A0Dc21xFJcHhM0a24cpyeMgY4h
+    8IhS80lSg+ZLOhXoUiEWXV7AyeDzvIRc+6nR7MKq+CAzFHh3clvf3G62gW0a4Bpn
+    sN/0EjRW0kjc2wF8bQ9933zv4P2Uoz0KewIBAg==
+    -----END DH PARAMETERS-----
+
+Create a new file dhparam.pem and paste this in.
+ 
+You can create an nginx.conf file by copying the following into a new file and replacing the <> appropriately:
+
+    events {
+    }
+    http {
+      server {
+        listen 80;
+        return 301 $request_uri;
+      }
+      server {
+        listen 443 ssl;
+        ssl_certificate /etc/nginx/ssl/<file name for SSL certificate>;
+        ssl_certificate_key /etc/nginx/ssl/<file name for SSL key>;
+    
+        ssl_session_cache shared:SSL:32m;
+        ssl_session_timeout 10m;
+    
+        ssl_dhparam /etc/nginx/cert/dhparam.pem;
+        ssl_protocols TLSv1.2 TLSv1.1 TLSv1;
+    
+        location / {
+          proxy_pass http://<docker ip>:5000;
+          proxy_set_header Host $host;
+          proxy_set_header X-Real-IP $remote_addr;
+          proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+          proxy_set_header X-Forwarded-Proto $scheme;
+        }
+      }
+    }
+
+Finally, run the following command:
+
+    docker run -v <path to SSL certificates and keys directory>:/etc/nginx/ssl -v <path to conf file>/nginx.conf:/etc/nginx/nginx.conf -v <path to dhparam file>>/dhparam.pem:/etc/nginx/cert/dhparam.pem -P -d --name nginx-conainer nginx
+        
+#### Starting a Stonecutter container
+
+To run Stonecutter you need 
+ 
+* a clients.yml file 
+* an rsa-keypair.json 
+* a stonecutter.env file
+
+To make a clients.yml file, copy the default one in this project, under Stonecutter/config. It shows the format used by the application.
+
+To get an rsa keypair, see [below](#Adding public-private keypair for OpenID Connect).
+
+Store both of these two files in their own directory.
+
+To get a stonecutter.env, copy the template that is aso found in the config folder.
+ 
+Finally, run this command, replacing <config file path> with the absolute path for the directory storing your config files, and <env file path> with the path to wherever your environment variable file is stored.  
+
+    docker run -v <config file path>:/var/config --env-file=<env file path> -p 5000:5000 --link mongo:mongo --name stonecutter dcent/stonecutter
+    
+Adding public-private keypair for OpenID Connect
+------------------------------------------------
 
 To generate a public-private keypair in Json Web-key (JWK) format, enter the following at the command line:
 
