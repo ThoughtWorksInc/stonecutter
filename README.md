@@ -265,7 +265,7 @@ You can create an nginx.conf file by copying the following into a new file and r
 
 Finally, run the following command:
 
-    docker run -v <path to SSL certificates and keys directory>:/etc/nginx/ssl -v <path to conf file>/nginx.conf:/etc/nginx/nginx.conf -v <path to dhparam file>>/dhparam.pem:/etc/nginx/cert/dhparam.pem -P -d --name nginx-conainer nginx
+    docker run -v <absolute path to SSL certificates and keys directory>:/etc/nginx/ssl -v <absolute path to conf file>/nginx.conf:/etc/nginx/nginx.conf -v <absolute path to dhparam file>/dhparam.pem:/etc/nginx/cert/dhparam.pem -P -d --name nginx-container nginx
         
 #### Starting a Stonecutter container
 
@@ -285,7 +285,7 @@ To get a stonecutter.env, copy the template that is found in the config folder.
  
 Finally, run this command, replacing <config file path> with the absolute path for the directory storing your config files, and <env file path> with the path to wherever your environment variable file is stored.  
 
-    docker run -v <config file path>:/var/config --env-file=<env file path> -p 5000:5000 --link mongo:mongo --name stonecutter dcent/stonecutter
+    docker run -v <config file path>:/var/config --env-file=<env file path> -p 5000:5000 --link mongo:mongo -d --name stonecutter dcent/stonecutter
     
 Adding public-private keypair for OpenID Connect
 ------------------------------------------------
