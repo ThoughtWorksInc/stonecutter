@@ -211,7 +211,7 @@ Mongo, Nginx and Stonecutter.
 
 To start a mongo container, run 
 
-    docker run --name mongo mongo
+    docker run -d --name mongo mongo
     
 #### Starting an Nginx container
 
