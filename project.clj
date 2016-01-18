@@ -41,7 +41,7 @@
   :profiles {:dev     {:dependencies   [[ring-mock "0.1.5"]
                                         [midje "1.7.0"]
                                         [prone "0.8.2"]
-                                        [clj-webdriver "0.6.1" :exclusions [org.seleniumhq.selenium/selenium-java
+                                        [clj-webdriver "0.7.2" :exclusions [org.seleniumhq.selenium/selenium-java
                                                                             org.seleniumhq.selenium/selenium-server
                                                                             org.seleniumhq.selenium/selenium-remote-driver
                                                                             xml-apis]]
@@ -64,11 +64,11 @@
                                         :stacktrace-middleware prone.middleware/wrap-exceptions}
                        :resource-paths ["resources" "test-resources"]
                        :aliases        {"cljs-build"      ["cljsbuild" "once" "prod"]
-                                        "test"            ["do" "clean," "test-clj," "test-cljs"]
-                                        "test-clj"        ["do" "gulp," "cljs-build," "midje"]
-                                        "unit"            ["test-clj" "stonecutter.test.*"]
-                                        "integration"     ["test-clj" "stonecutter.integration.*"]
-                                        "browser"         ["test-clj" "stonecutter.browser.*"]
+                                        "test"            ["do" "test-cljs," "test-clj"]
+                                        "test-clj"        ["do" "gulp," "cljs-build," "shell" "test/stonecutter/run_all_tests.sh"]
+                                        "unit"            ["midje" "stonecutter.test.*"]
+                                        "integration"     ["midje" "stonecutter.integration.*"]
+                                        "browser"         ["shell" "test/stonecutter/run_browser_tests.sh"]
                                         "auto-no-browser" ["test-clj" ":autotest" "src/" "src-cljc/"
                                                            "test/stonecutter/test/" "test/stonecutter/integration/"]
                                         "test-cljs"       ["do" "clean," "cljsbuild" "test"]
@@ -86,20 +86,20 @@
                                         :admin-password        "password"
                                         :admin-first-name      "first"
                                         :admin-last-name       "last"
-                                        :host   "0.0.0.0"
-                                        :port   "5000"
+                                        :host                  "0.0.0.0"
+                                        :port                  "5000"
                                         :profile-image-path    "resources/public"}
-                       :cljsbuild      {:builds [{:id           "prod"
-                                                  :source-paths ["src-cljs" "src-cljc"]
-                                                  :compiler     {:output-to     "resources/public/js/main.js"
-                                                                 :asset-path    "js/out"
-                                                                 :optimizations :advanced
-                                                                 :pretty-print  false}}
-                                                 {:id             "test"
-                                                  :source-paths   ["src-cljs" "src-cljc" "test-cljs"]
-                                                  :compiler       {:output-to     "target/cljs/testable.js"
-                                                                   :optimizations :whitespace
-                                                                   :pretty-print  true}}]
+                       :cljsbuild      {:builds        [{:id           "prod"
+                                                         :source-paths ["src-cljs" "src-cljc"]
+                                                         :compiler     {:output-to     "resources/public/js/main.js"
+                                                                        :asset-path    "js/out"
+                                                                        :optimizations :advanced
+                                                                        :pretty-print  false}}
+                                                        {:id           "test"
+                                                         :source-paths ["src-cljs" "src-cljc" "test-cljs"]
+                                                         :compiler     {:output-to     "target/cljs/testable.js"
+                                                                        :optimizations :whitespace
+                                                                        :pretty-print  true}}]
                                         :test-commands {"phantom" ["phantomjs" :runner "target/cljs/testable.js"]}}}
              :uberjar {:prep-tasks  ["compile" ["cljsbuild" "once"]]
                        :env         {:production true}
@@ -108,9 +108,9 @@
                        :cljsbuild   {:builds [{:source-paths ["src-cljs" "src-cljc"]
                                                :compiler     {:output-to     "resources/public/js/main.js"
                                                               :optimizations :advanced
-                                                                        :pretty-print  false}}]}}
-             :docker  {:env {:host   "0.0.0.0"
-                             :port   "5000"
+                                                              :pretty-print  false}}]}}
+             :docker  {:env {:host         "0.0.0.0"
+                             :port         "5000"
                              :mongodb-port "27017"
                              :mongodb-db   "coracle"}}}
   :clean-targets ^{:protect false} [:target-path
