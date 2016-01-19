@@ -77,7 +77,7 @@
                                         "gen-keypair"     ["run" "-m" "stonecutter.util.gen-key-pair"]
                                         "gen-config"      ["run" "-m" "stonecutter.config"]
                                         "lint"            ["eastwood" "{:namespaces [:source-paths]}"]
-                                        "gulp"            ["shell" "gulp" "build"]
+                                        "gulp"            ["shell" "npm" "run" "gulp" "--" "build"]
                                         "start"           ["do" "gulp," "cljs-build," "run"]}
                        :env            {:dev                   true
                                         :secure                "false"
