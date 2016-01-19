@@ -33,7 +33,6 @@
   "author": "Chris Cheshire",
   "license": "MIT",
   "scripts": {
-    "preinstall": "npm config set bin-links false",
     "postinstall": "./npm-postinstall.sh"
   }
 }
