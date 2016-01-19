@@ -47,8 +47,7 @@
     {:prone-stack-tracing? false
      :config-m             {:secure "false"
                             :profile-image-path "resources/public"
-                            :mongo-uri "mongodb://localhost:27017/stonecutter-test"
-                            :mongo-name "stonecutter-test"}
+                            :mongo-uri "mongodb://localhost:27017/stonecutter-test"}
      :stores-m             (s/create-in-memory-stores (get-test-db-connection))
      :email-sender         (e/create-test-email-sender)
      :clock                (t/new-clock)
