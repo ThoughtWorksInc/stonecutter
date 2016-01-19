@@ -64,8 +64,8 @@
                                         :stacktrace-middleware prone.middleware/wrap-exceptions}
                        :resource-paths ["resources" "test-resources"]
                        :aliases        {"cljs-build"      ["cljsbuild" "once" "prod"]
-                                        "test"            ["do" "test-cljs," "test-clj"]
-                                        "test-clj"        ["do" "gulp," "cljs-build," "shell" "test/stonecutter/run_all_tests.sh"]
+                                        "test"            ["do" "gulp," "test-cljs," "test-clj"]
+                                        "test-clj"        ["do" "cljs-build," "shell" "test/stonecutter/run_all_tests.sh"]
                                         "unit"            ["midje" "stonecutter.test.*"]
                                         "integration"     ["midje" "stonecutter.integration.*"]
                                         "browser"         ["shell" "test/stonecutter/run_browser_tests.sh"]
