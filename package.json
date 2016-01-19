@@ -33,6 +33,7 @@
   "author": "Chris Cheshire",
   "license": "MIT",
   "scripts": {
+    "gulp": "gulp",
     "postinstall": "./npm-postinstall.sh"
   }
 }
