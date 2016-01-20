@@ -7,11 +7,13 @@ A D-CENT project: an easily deployable oauth server for small organisations.
 ## Development VM
 
 You can develop and run the application in a VM to ensure that the correct versions of Stonecutter's dependencies
-are installed. You will need [VirtualBox][] [Vagrant][] and [Ansible][] installed.
+are installed. You will need [VirtualBox][], [Vagrant][] and [Ansible][] installed.
+
+First, clone the repository.
 
 Navigate to the ops/ directory of the project and run:
 
-    vagrant up
+    vagrant up development
 
 The first time this is run, it will provision and configure a new VM.
 
@@ -23,7 +25,7 @@ The source folder will be located at `/var/stonecutter`.
 
 After initial setup, navigate to the source directory with:
 
-    `cd /var/stonecutter`
+    cd /var/stonecutter
 
 [Vagrant]: https://www.vagrantup.com
 [Ansible]: http://docs.ansible.com/ansible/intro_installation.html
@@ -31,21 +33,13 @@ After initial setup, navigate to the source directory with:
 
 ### Running
 
-Install dependencies with:
-
-    `npm install`
-
-Run gulp with:
-
-    `npm run gulp -- build`
-
 To start the app, run:
 
-    `./start_app_vm.sh`
+    ./start_app_vm.sh
 
 To start a web server for the application in development mode, run:
 
-    `lein ring server-headless`
+    lein ring server-headless
 
 NB: running the application like this will save users into an in memory cache that will be destroyed as soon as the app is shutdown.
 

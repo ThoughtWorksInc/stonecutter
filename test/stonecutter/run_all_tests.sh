@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+npm run gulp -- build
+lein cljs-build
 if [ -z "$DISPLAY" ]
   then
     start-stop-daemon --start -b -x /usr/bin/Xvfb -- :1 -screen 0 1280x1024x16
