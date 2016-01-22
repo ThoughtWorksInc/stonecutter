@@ -1,4 +1,4 @@
-(defproject stonecutter "0.1.0-SNAPSHOT"
+(defproject stonecutter "0.1.0-SNAPSHOT" ;test for story #317
   :description "A D-CENT project: an easily deployable oauth server for small organisations."
   :url "https://stonecutter.herokuapp.com"
   :min-lein-version "2.0.0"
