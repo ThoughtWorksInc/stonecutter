@@ -14,6 +14,6 @@ ssh $REMOTE_USER@$SERVER_IP <<EOF
              --env-file=/var/stonecutter/config/stonecutter.env \
              -v /data/stonecutter/static:/data/stonecutter/static \
              -v /var/stonecutter/email_service:/var/stonecutter/email_service \
-             -p 127.0.0.1:5000:3000 \
+             -p 127.0.0.1:5000:5000 \
              --link mongo:mongo --name stonecutter dcent/stonecutter
 EOF

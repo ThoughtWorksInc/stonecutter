@@ -54,13 +54,13 @@
   (get-env config-m :profile-image-path "public"))
 
 (defn port [config-m]
-  (Integer. (get-env config-m :port "3000")))
+  (Integer. (get-env config-m :port "5000")))
 
 (defn host [config-m]
   (get-env config-m :host "127.0.0.1"))
 
 (defn base-url [config-m]
-  (get-env config-m :base-url "http://localhost:3000"))
+  (get-env config-m :base-url "http://localhost:5000"))
 
 (defn- get-docker-mongo-uri [config-m]
   (when-let [mongo-ip (get-env config-m :mongo-port-27017-tcp-addr)]
