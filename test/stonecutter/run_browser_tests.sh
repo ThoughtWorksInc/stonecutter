@@ -7,5 +7,5 @@ if [ -z "$DISPLAY" ]
     DISPLAY=:1 lein do clean, midje stonecutter.browser.* $*
     start-stop-daemon --stop -x /usr/bin/Xvfb
   else
-    lein do clean, midje $*
+    lein do clean, midje stonecutter.browser.* $*
 fi

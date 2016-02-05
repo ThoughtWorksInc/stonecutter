@@ -44,50 +44,14 @@ To start a web server for the application in development mode, run:
 NB: running the application like this will save users into an in memory cache that will be destroyed as soon as the app is shutdown.
 
 ### Running test suite
-The tests should be run from inside the development VM to ensure that the correct versions of
-dependencies are installed.
 
-Run all tests:
+To run all tests, use this command:
 
 ```
 lein test
 ```
 
-#### Clojure
-Run all server (clojure) tests:
-
-```
-lein test-clj
-```
-
-Run just server unit tests:
-```
-lein unit
-```
-Run just server integration tests:
-```
-lein integration
-```
-
-Run just server browser tests:
-```
-lein browser
-```
-
-Autotest - Automatically run server tests on file changes (without browser tests):
-```
-lein auto-no-browser
-```
-
-#### Clojurescript
-Run clojurescript tests:
-```
-lein test-cljs
-```
-Autotest - Automatically run clojurescript tests on file changes:
-```
-lein auto-cljs
-```
+Commands and aliases can be found in the project.clj file. 
 
 ### Running the prototype
 
