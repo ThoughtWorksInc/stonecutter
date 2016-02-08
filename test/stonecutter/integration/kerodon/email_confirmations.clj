@@ -120,3 +120,5 @@
            (kc/check-page-is :show-profile-deleted [ks/profile-deleted-page-body])
 
            (teardown-test-directory)))
+
+(ih/teardown-db)

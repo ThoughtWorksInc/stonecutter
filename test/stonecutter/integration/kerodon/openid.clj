@@ -110,3 +110,5 @@
           (k/visit "/api/jwk-set")
           (kh/page-uri-is "/api/jwk-set")
           check-response-is-jwk-set))
+
+(ih/teardown-db)

@@ -31,6 +31,13 @@
 (def profile-update-image-link :.func--update-image__link)
 (def photo-input-field :#profile-photo)
 
+(def change-profile-last-name-input :.func--change-last-name__input)
+(def change-profile-first-name-input :.func--change-first-name__input)
+(def change-name-button :.func--change-name__button)
+(def change-profile-page-body :.func--change-profile-details-page)
+(def change-profile-flash-message :.func--flash-message-container)
+(def change-profile-back-button :.func--change-profile-back__link)
+
 (def unshare-profile-card-confirm-button :.func--unshare-profile-card__button)
 
 (def invite-user-link :.func--invite__link)

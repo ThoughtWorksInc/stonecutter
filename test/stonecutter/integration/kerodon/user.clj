@@ -199,6 +199,30 @@
            (kc/selector-includes-content [ks/profile-flash-message] "changed")
            (kc/selector-includes-content [ks/profile-page-profile-card-email] "new_email@somewhere.com")))
 
+(facts "User can change profile details, and fields are pre-filled"
+       (-> (k/session test-app)
+           (steps/sign-in "new_email@somewhere.com" "new-valid-password")
+           (k/visit "/change-profile")
+           (kc/check-page-is :show-change-profile-forms [ks/change-profile-page-body])
+           (kc/selector-has-attribute-with-content [ks/change-profile-first-name-input] :value "dummy first")
+           (kc/selector-has-attribute-with-content [ks/change-profile-last-name-input] :value "dummy last")
+           (kc/check-and-fill-in ks/change-profile-first-name-input "new first")
+           (kc/check-and-fill-in ks/change-profile-last-name-input "")
+           (kc/check-and-press ks/change-name-button)
+           (kc/check-page-is :show-change-profile-forms [ks/change-profile-page-body])
+           (kc/selector-has-attribute-with-content [ks/change-profile-first-name-input] :value "new first")
+           (kc/selector-has-attribute-with-content [ks/change-profile-last-name-input] :value "")
+           (kc/check-and-fill-in ks/change-profile-last-name-input "new last")
+           (kc/check-and-press ks/change-name-button)
+           (kc/check-and-follow-redirect)
+           (kc/check-page-is :show-change-profile-forms [ks/change-profile-page-body])
+           (kc/selector-includes-content [ks/change-profile-flash-message] "name")
+           (kc/selector-includes-content [ks/change-profile-flash-message] "updated")
+           (kc/selector-has-attribute-with-content [ks/change-profile-first-name-input] :value "new first")
+           (kc/selector-has-attribute-with-content [ks/change-profile-last-name-input] :value "new last")
+           (k/follow ks/change-profile-back-button)
+           (kc/check-page-is :show-profile [ks/profile-page-body])))
+
 (facts "Not found page is shown for unknown url"
        (-> (k/session test-app)
            (k/visit "/wrong-url")
@@ -242,3 +266,5 @@
                  (steps/sign-in "csrf@email.com" "valid-password")
                  (kc/replay-last-request)
                  (kc/response-status-is 403)))
+
+(ih/teardown-db)

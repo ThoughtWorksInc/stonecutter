@@ -179,3 +179,5 @@
                     (k/press ks/sign-in-submit)
                     :response
                     :body)) => (contains "Invalid email address or password")))
+
+(ih/teardown-db)

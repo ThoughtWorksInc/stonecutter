@@ -13,6 +13,7 @@
             [stonecutter.view.change-password :as change-password]
             [stonecutter.view.unshare-profile-card :as unshare-profile-card]
             [stonecutter.view.change-email :as change-email]
+            [stonecutter.view.change-profile :as change-profile]
             [stonecutter.util.uuid :as uuid]
             [stonecutter.helper :as sh]
             [stonecutter.config :as config]
@@ -35,6 +36,9 @@
   (if (common/signed-in? request)
     (r/redirect (routes/path :show-profile))
     (sh/enlive-response (index/index request) request)))
+
+(defn change-profile-details [request]
+  (sh/enlive-response (change-profile/change-profile-form request) request))
 
 (defn accept-invite [invitation-store request]
   (if-let [invite-map (has-valid-invite-id? request invitation-store)]
@@ -91,6 +95,29 @@
           (-> (r/redirect (routes/path :show-profile))
               (assoc :flash :password-changed)))
       (show-change-password-form request-with-validation-errors))))
+
+(defn show-change-profile-form [user-store request]
+  (let [email (session/request->user-login request)
+        user (user/retrieve-user user-store email)]
+    (-> request
+        (assoc-in [:context :user-first-name] (:first-name user))
+        (assoc-in [:context :user-last-name] (:last-name user))
+        change-profile/change-profile-form
+        (sh/enlive-response request))))
+
+(defn change-name [user-store request]
+  (let [email (session/request->user-login request)
+        params (:params request)
+        new-first-name (:first-name params)
+        new-last-name (:last-name params)
+        err (v/validate-change-name new-first-name new-last-name)
+        request-with-validation-errors (assoc-in request [:context :errors] err)
+        config-m (get-in request [:context :config-m])]
+    (if (empty? err)
+      (do (user/change-name! user-store email new-first-name new-last-name)
+          (-> (r/redirect (routes/path :show-change-profile-forms))
+              (assoc :flash :name-changed)))
+      (change-profile-details request-with-validation-errors))))
 
 (defn show-change-email-form [request]
   (sh/enlive-response (change-email/change-email-form request) request))
@@ -195,6 +222,13 @@
       (user/update-profile-picture! request profile-picture-store (:uid user)))
     (-> (r/redirect (routes/path :show-profile))
         (assoc :flash image-error))))
+
+(defn change-profile [user-store profile-picture-store request]
+  (let [form-action-type (get-in request [:params :action])]
+    (case form-action-type
+      "update-profile-image" (update-profile-image user-store profile-picture-store request)
+      "change-name" (change-name user-store request)
+      nil)))
 
 (defn show-profile-created [request]
   (let [request (assoc request :params {:from-app (from-app? request)})]

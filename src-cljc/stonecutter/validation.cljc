@@ -66,6 +66,12 @@
        :registration-password   (validate-password-format registration-password)}
       remove-nil-values)))
 
+(defn validate-change-name [first-name last-name]
+  (->
+    {:first-name (validate-registration-name first-name)
+     :last-name  (validate-registration-name last-name)}
+    remove-nil-values))
+
 (defn validate-user-exists [email user-exists?-fn]
   (when-not (user-exists?-fn email)
     :non-existent))

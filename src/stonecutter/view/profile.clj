@@ -46,6 +46,10 @@
   (html/at enlive-m
            [:.clj--change-email__link] (html/set-attr :href (r/path :show-change-email-form))))
 
+(defn set-change-profile-details-link [enlive-m]
+  (html/at enlive-m
+           [:.clj--change-profile-details__link] (html/set-attr :href (r/path :show-change-profile-forms))))
+
 (defn set-update-profile-image-link [enlive-m]
   (html/at enlive-m
            [:.clj--update-profile-profile__link] (html/set-attr :action (r/path :update-profile-image))
@@ -98,10 +102,10 @@
         set-change-password-link
         set-delete-account-link
         set-change-email-link
+        ;set-change-profile-details-link
         set-update-profile-image-link
         set-download-vcard-link
         (hide-admin-span request)
         vh/remove-work-in-progress
         vh/add-anti-forgery
-        (vh/set-form-action [:.clj--card-photo-upload] (r/path :update-profile-image))
         (vh/add-script "js/main.js"))))

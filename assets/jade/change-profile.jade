@@ -1,0 +1,55 @@
+extends layout/layout
+
+block vars
+  - bodyClass = "func--change-profile-details-page"
+  - pageTitle = "!Change your profile details"
+  - pageTitleDataL8n = "content:change-profile-form/title"
+
+block headerScripts
+
+block headerContent
+  a.header-nav__link(href="./profile", data-l8n="content:profile/profile-link") !Profile
+  a.header-nav__link.clj--sign-out__link.func--sign-out__link(href="./sign-out", data-l8n="content:profile/sign-out-link") !Sign out
+
+block content
+  .single-column
+
+    +flashMessageWithCljContainer('clj--flash-message-container','func--flash-message-container', 'success')
+      p.flash-message__title.clj--flash-message-text !Success Flash Message.
+
+    h1.page-title(data-l8n="content:change-profile-form/page-header")
+      | !Change your profile details. Or don't. Whatever, I'm not a cop.
+    form.clj--change-name__form(action="#", method="post", role="form")
+      input(type="hidden", name="action", value="change-name")
+      p.form-row.clj--first-name
+        label.form-row__label(for="first-name")
+          span.form-row__title(data-l8n="content:change-name-form/first-name-label")
+            | !First name
+          span.form-row__validation.clj--change-first-name__validation(data-l8n="content:change-name-form/new-name-blank-validation-message")
+            | !Enter a new name.
+        input.form-row__input.func--change-first-name__input.clj--change-first-name__input(type="text", id="first-name", name="first-name")
+      p.form-row.clj--last-name
+        label.form-row__label(for="last-name")
+          span.form-row__title(data-l8n="content:change-name-form/last-name-label")
+            | !Last name
+          span.form-row__validation.clj--change-last-name__validation(data-l8n="content:change-name-form/new-name-blank-validation-message")
+            | !Enter a new name.
+        input.form-row__input.func--change-last-name__input.clj--change-last-name__input(type="text", id="last-name", name="last-name")
+
+      .button-actions
+        .button-actions__primary
+          button.button.button--full-width.clj--change-name__button.func--change-name__button(type="submit" data-l8n="content:change-name-form/form-button")
+            | !Save changes
+
+    form.button--full-width.clj--update-profile-picture__link(action="./update-profile-image", method="post", role="form" enctype="multipart/form-data" accept="image/*")
+      input(type="hidden", name="action", value="update-profile-image")
+      button.button.settings__link.button--link(type="submit" data-l8n="content:profile/update-profile-picture-button")
+        | !Update profile picture
+      input(type="file" name="profile-photo")
+
+    a.button.button--full-width.button--link.clj--change-profile-back__link.func--change-profile-back__link(href="./profile")
+      span(data-l8n="content:change-profile-form/back-button-1") !Cancel
+      =" "
+      span.visuallyhidden(data-l8n="content:change-profile-form/cancel-button") !changing my name
+
+block footerScripts

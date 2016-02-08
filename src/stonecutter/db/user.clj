@@ -90,8 +90,15 @@
   (fn [user]
     (assoc user :password (cl-user/bcrypt password))))
 
+(defn update-name [new--first-name new--last-name]
+  (fn [user]
+    (assoc user :first-name new--first-name :last-name new--last-name)))
+
 (defn change-password! [user-store email new-password]
   (m/update! user-store email (update-password new-password)))
+
+(defn change-name! [user-store email new-first-name new-last-name]
+  (m/update! user-store email (update-name new-first-name new-last-name)))
 
 (defn has-admin-role? [user-m]
   (= (:role user-m) (:admin config/roles)))

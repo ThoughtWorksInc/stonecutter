@@ -160,5 +160,4 @@
          set-body-class-to-accept-invite
          vh/remove-work-in-progress
          vh/add-anti-forgery
-         (vh/add-script "js/main.js")))
-  )
+         (vh/add-script "js/main.js"))))

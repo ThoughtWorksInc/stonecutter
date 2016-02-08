@@ -19,3 +19,10 @@ change-password-form:
   new-password-too-long-validation-message: New password is too long
   new-password-too-short-validation-message: New password should be at least 8 characters long
   new-password-unchanged-validation-message: New password must be different to current password
+
+change-profile-form:
+  change-first-name-blank-validation-message: First name cannot be blank
+  change-last-name-blank-validation-message: Last name cannot be blank
+  change-first-name-too-long-validation-message: First name must be shorter
+  change-last-name-too-long-validation-message: Last name must be shorter
+  change-name-unknown-error: Whoops! Unknown error

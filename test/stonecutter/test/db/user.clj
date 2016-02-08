@@ -208,6 +208,18 @@
 
                (update-role-fn user) => {:login "email@email.com" :role "trusted"})))
 
+(facts "about updating name"
+       (fact "update-name returns a function that changes name accordionly"
+             (let [user {:login "email@test.com"
+                         :first-name "Signet"
+                         :last-name "Freud"}
+                   new--first-name "Carl"
+                   new--last-name "Swan"
+                   update-name-function (user/update-name new--first-name new--last-name)]
+               (update-name-function user) => {:login "email@test.com"
+                                               :first-name "Carl"
+                                               :last-name "Swan"})))
+
 (facts "about updating user email"
        (fact "update-user-email changes user email accordingly"
              (let [user-store (m/create-memory-store)

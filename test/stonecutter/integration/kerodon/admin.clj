@@ -121,3 +121,5 @@
            (kc/check-and-follow-redirect)
            (kc/check-page-is :show-profile [ks/profile-page-body])
            (kc/selector-exists [ks/profile-flash-message])))
+
+(ih/teardown-db)
