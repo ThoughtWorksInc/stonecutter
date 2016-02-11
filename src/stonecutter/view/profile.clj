@@ -102,7 +102,7 @@
         set-change-password-link
         set-delete-account-link
         set-change-email-link
-        ;set-change-profile-details-link
+        set-change-profile-details-link
         set-update-profile-image-link
         set-download-vcard-link
         (hide-admin-span request)

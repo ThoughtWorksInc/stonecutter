@@ -45,7 +45,6 @@ change-profile-form:
 change-name-form:
   first-name-label: First name
   last-name-label: Last name
-  new-name-blank-validation-message: Enter a new name.
   form-button: Save changes
 
 reset-password-form:
@@ -118,7 +117,7 @@ profile:
   verify-email-intro-2: you should resend the confirmation email.
   verify-button: Resend email confirmation
   change-email-button: Change email address
-  change-profile-details-button: Change profile details
+  change-profile-details-button: Edit name & profile picture
   update-profile-image-button: Update
   update-profile-picture-button: Update profile picture
 

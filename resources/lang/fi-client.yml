@@ -12,6 +12,7 @@ index:
   register-password-blank-validation-message: Password cannot be blank in Finnish
   register-password-too-long-validation-message: Password is too long in Finnish
   register-password-too-short-validation-message: Password should be at least 8 characters long in Finnish
+  change-name-unknown-error: Whoops! Unknown error in Finnish
 
 change-password-form:
   current-password-invalid-validation-message: Current password is incorrect in Finnish
@@ -20,9 +21,3 @@ change-password-form:
   new-password-too-short-validation-message: New password should be at least 8 characters long in Finnish
   new-password-unchanged-validation-message: New password must be different to current password in Finnish
 
-change-profile-form:
-  change-first-name-blank-validation-message: First name cannot be blank
-  change-last-name-blank-validation-message: Last name cannot be blank
-  change-first-name-too-long-validation-message: First name must be shorter
-  change-last-name-too-long-validation-message: Last name must be shorter
-  change-name-unknown-error: Whoops! Unknown error in Finnish

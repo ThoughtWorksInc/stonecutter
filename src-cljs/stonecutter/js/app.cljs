@@ -5,11 +5,14 @@
             [stonecutter.js.controller.change-password :as cpc]
             [stonecutter.js.controller.register-form :as rfc]
             [stonecutter.js.controller.user-list :as ul]
-            [stonecutter.js.dom.upload-photo :as ulp])
+            [stonecutter.js.controller.change-profile-form :as cpfc]
+            [stonecutter.js.dom.upload-photo :as ulp]
+            [stonecutter.js.dom.change-profile-form :as cpfd])
   (:require-macros [dommy.core :as dm]))
 
 (def registration-form-state (atom rfc/default-state))
 (def change-password-form-state (atom cpc/default-state))
+(def change-profile-details-form-state (atom cpfc/default-state))
 
 (defn remove-elem [selector]
   (when-let [elem (dm/sel1 selector)]
@@ -22,6 +25,11 @@
 (defn setup-multi-listeners [selector event function]
   (when-let [elems (dm/sel selector)]
     (doseq [elem elems] (d/listen! elem event function))))
+
+(defn setup-change-name-form-listener [event input-field event-handler]
+  (setup-listener (cpfd/input-selector input-field)
+                  event
+                  #(cpfc/update-state-and-render! change-profile-details-form-state input-field event-handler)))
 
 (defn setup-registration-form-listener [event input-field event-handler]
   (setup-listener (rfd/input-selector input-field)
@@ -57,6 +65,14 @@
 
   (setup-change-password-form-listener :blur :current-password cpc/update-current-password-blur)
   (setup-change-password-form-listener :blur :new-password cpc/update-new-password-blur)
+
+  (setup-change-name-form-listener :input :change-first-name cpfc/update-first-name-input)
+  (setup-change-name-form-listener :input :change-last-name cpfc/update-last-name-input)
+
+  (setup-change-name-form-listener :blur :change-first-name cpfc/update-first-name-blur)
+  (setup-change-name-form-listener :blur :change-last-name cpfc/update-last-name-blur)
+
+  (setup-listener cpfd/change-name-form-element-selector :submit (partial cpfc/block-invalid-submit change-profile-details-form-state))
 
   (setup-listener cpd/change-password-form-element-selector :submit (partial cpc/block-invalid-submit change-password-form-state))
 

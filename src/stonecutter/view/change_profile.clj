@@ -7,10 +7,10 @@
 (def form-row-error-css-class "form-row--invalid")
 
 (def error-translations
-  {:first-name {:blank    "content:change-profile-form/change-first-name-blank-validation-message"
-                :too-long "content:change-profile-form/change-first-name-too-long-validation-message"}
-   :last-name  {:blank    "content:change-profile-form/change-last-name-blank-validation-message"
-                :too-long "content:change-profile-form/change-last-name-too-long-validation-message"}})
+  {:first-name {:blank    "content:index/register-first-name-blank-validation-message"
+                :too-long "content:index/register-first-name-too-long-validation-message"}
+   :last-name  {:blank    "content:index/register-last-name-blank-validation-message"
+                :too-long "content:index/register-last-name-too-long-validation-message"}})
 
 
 (defn add-change-first-name-error [enlive-m err]
@@ -18,7 +18,7 @@
     (let [error-translation (get-in error-translations [:first-name change-first-name-error])]
       (-> enlive-m
           (vh/add-error-class [:.clj--first-name])
-          (html/at [:.clj--change-first-name__validation] (html/set-attr :data-l8n (or error-translation "content:change-profile-form/change-name-unknown-error")))))
+          (html/at [:.clj--change-first-name__validation] (html/set-attr :data-l8n (or error-translation "content:index/change-name-unknown-error")))))
     enlive-m))
 
 (defn add-change-last-name-error [enlive-m err]
@@ -26,7 +26,7 @@
     (let [error-translation (get-in error-translations [:last-name change-last-name-error])]
       (-> enlive-m
           (vh/add-error-class [:.clj--last-name])
-          (html/at [:.clj--change-last-name__validation] (html/set-attr :data-l8n (or error-translation "content:change-profile-form/change-name-unknown-error")))))
+          (html/at [:.clj--change-last-name__validation] (html/set-attr :data-l8n (or error-translation "content:index/change-name-unknown-error")))))
     enlive-m))
 
 (defn set-cancel-link [enlive-m]

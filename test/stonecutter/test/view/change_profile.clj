@@ -87,7 +87,7 @@
                 (let [errors {:first-name ?error}
                       params {:first-name "some-input-to-be-retained"}
                       page (-> (th/create-request {} errors params) change-profile-form)
-                      error-translation (str "content:change-profile-form/" ?translation-key)]
+                      error-translation (str "content:index/" ?translation-key)]
                   (fact "the class for styling errors is added"
                         (html/select page [[:.clj--first-name :.form-row--invalid]]) =not=> empty?)
                   (fact "name validation element is present"
@@ -99,8 +99,8 @@
                   (fact "there are no missing translations"
                         (th/test-translations "change-profile page" (constantly page)))))
          ?error     ?translation-key
-         :blank     "change-first-name-blank-validation-message"
-         :too-long  "change-first-name-too-long-validation-message")
+         :blank     "register-first-name-blank-validation-message"
+         :too-long  "register-first-name-too-long-validation-message")
 
 
        (tabular
@@ -108,7 +108,7 @@
                 (let [errors {:last-name ?error}
                       params {:last-name "some-input-to-be-retained"}
                       page (-> (th/create-request {} errors params) change-profile-form)
-                      error-translation (str "content:change-profile-form/" ?translation-key)]
+                      error-translation (str "content:index/" ?translation-key)]
                   (fact "the class for styling errors is added"
                         (html/select page [[:.clj--last-name :.form-row--invalid]]) =not=> empty?)
                   (fact "last name validation element is present"
@@ -120,8 +120,8 @@
                   (fact "there are no missing translations"
                         (th/test-translations "index page" (constantly page)))))
          ?error     ?translation-key
-         :blank     "change-last-name-blank-validation-message"
-         :too-long  "change-last-name-too-long-validation-message"))
+         :blank     "register-last-name-blank-validation-message"
+         :too-long  "register-last-name-too-long-validation-message"))
 
 (facts "fields are prefilled with relevant information"
        (tabular

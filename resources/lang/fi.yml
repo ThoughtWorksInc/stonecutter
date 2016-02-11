@@ -45,7 +45,6 @@ change-profile-form:
 change-name-form:
   first-name-label: First name in Finnish
   last-name-label: Last name in Finnish
-  new-name-blank-validation-message: Enter a new name. in Finnish
   form-button: Save changes in Finnish
 
 reset-password-form:
@@ -126,7 +125,7 @@ profile:
   verify-email-intro-2: you should resend the confirmation email. in Finnish
   verify-button: Resend email confirmation in Finnish
   change-email-button: Change email address in Finnish
-  change-profile-details-button: Change profile details in Finnish
+  change-profile-details-button: Edit name and profile picture in Finnish
   update-profile-image-button: Update in Finnish
   update-profile-picture-button: Update profile picture in Finnish
 
