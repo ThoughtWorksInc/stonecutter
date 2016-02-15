@@ -46,7 +46,6 @@
 
 (fact "update profile picture should post to correct endpoint"
       (let [page (-> (th/create-request) profile)]
-        (html/select page [:.clj--update-profile-profile__link]) => (th/has-form-action? (r/path :update-profile-image))
         (html/select page [:.clj--card-photo-upload]) => (th/has-form-action? (r/path :update-profile-image))))
 
 (fact
