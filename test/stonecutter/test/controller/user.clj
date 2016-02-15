@@ -423,20 +423,43 @@
                       (config/admin-login anything) => "admin@email.com"
                       (config/app-name anything) => ...app-name...))))
 
-(fact "the user's name is updated if new name is submitted"
-      (let [email "user-who-is@changing-name.com"
-            old--fist-name "Signet"
-            old-last-name "Freud"
-            new--first-name "Carl"
-            new--last-name "Swan"
-            request (th/create-request :post "/change-name" {:first-name new--first-name :last-name new--last-name}
-                                       {:user-login email})
-            user-store (m/create-memory-store)
-            user (th/store-user! user-store old--fist-name old-last-name email "password")]
-        (u/change-name user-store request) => (every-checker (th/check-redirects-to "/change-profile")
-                                                             (contains {:flash :name-changed}))
-        (:first-name (user/retrieve-user user-store email)) => new--first-name
-        (:last-name (user/retrieve-user user-store email)) => new--last-name))
+(facts "about editing profile details"
+       (tabular
+         (fact "the user's name is updated if new name is submitted and the profile picture is nil"
+             (let [email "user-who-is@changing-name.com"
+                   old--first-name "Signet"
+                   old-last-name "Freud"
+                   new--first-name "Carl"
+                   new--last-name "Swan"
+                   request (th/create-request :post "/change-name" {:first-name new--first-name :last-name new--last-name
+                                                                    :profile-photo ?profile-picture}
+                                              {:user-login email})
+                   user-store (m/create-memory-store)
+                   _ (th/store-user! user-store old--first-name old-last-name email "password")]
+               (u/change-profile user-store ...profile-picture-store... request) => (every-checker (th/check-redirects-to "/profile")
+                                                                                                   (contains {:flash :profile-details-changed}))
+               (provided
+                 (user/update-profile-picture! request ...profile-picture-store... anything) => anything :times ?number-of-method-calls)
+               (:first-name (user/retrieve-user user-store email)) => new--first-name
+               (:last-name (user/retrieve-user user-store email)) => new--last-name))
+
+         ?profile-picture                             ?number-of-method-calls
+         nil                                          0
+         {:content-type "image/png"
+          :tempfile     (io/resource "avatar.png")}   1)
+
+       #_(fact "the user's profile picture is updated if any image is submitted"
+             (let [email "user-who-is@changing-name.com"
+                   request (th/create-request :post "/change-name"
+                                              {:first-name ...first-name... :last-name ...last-name...
+                                               :profile-picture {:content-type "image/jpeg"
+                                                                 :tempfile     (io/resource "avatar.png")}}
+                                              {:user-login email})]
+               (u/change-profile ...user-store... ...profile-picture-store... request) => (every-checker (th/check-redirects-to "/change-profile")
+                                                                                                         (contains {:flash :profile-details-updated}))
+               (provided
+                 (v/validate-change-name ...first-name... ...last-name...) => {}
+                 (user/change-name! ...user-store... email ...first-name... ...last-name...) => anything))))
 
 (facts "about changing email"
        (fact "the user's email is updated if new email is valid"

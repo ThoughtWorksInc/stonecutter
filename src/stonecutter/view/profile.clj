@@ -48,7 +48,7 @@
 
 (defn set-change-profile-details-link [enlive-m]
   (html/at enlive-m
-           [:.clj--change-profile-details__link] (html/set-attr :href (r/path :show-change-profile-forms))))
+           [:.clj--change-profile-details__link] (html/set-attr :href (r/path :show-change-profile-form))))
 
 (defn set-update-profile-image-link [enlive-m]
   (html/at enlive-m
@@ -81,6 +81,7 @@
        :email-changed           (set-translation enlive-m :.clj--flash-message-text "content:flash/email-changed")
        :confirmation-email-sent (set-translation enlive-m :.clj--flash-message-text "content:flash/confirmation-email-sent")
        :email-already-confirmed (set-translation enlive-m :.clj--flash-message-text "content:flash/email-already-confirmed")
+       :profile-details-changed (set-translation enlive-m :.clj--flash-message-text "content:flash/profile-details-changed")
        (vh/remove-element enlive-m [:.clj--flash-message-container])))
 
 (defn set-image-error-message [enlive-m request]

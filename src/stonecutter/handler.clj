@@ -86,7 +86,7 @@
        :unshare-profile-card                 (partial user/unshare-profile-card user-store)
        :show-delete-account-confirmation     user/show-delete-account-confirmation
        :delete-account                       (partial user/delete-account user-store confirmation-store)
-       :show-change-profile-forms            (partial user/show-change-profile-form user-store)
+       :show-change-profile-form             (partial user/show-change-profile-form user-store profile-picture-store)
        :change-profile                       (partial user/change-profile user-store profile-picture-store)
        :show-change-password-form            user/show-change-password-form
        :change-password                      (partial user/change-password user-store email-sender)

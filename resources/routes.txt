@@ -43,5 +43,5 @@ GET     /change-email                            show-change-email-form
 POST    /change-email                            change-email
 POST    /update-profile-image                    update-profile-image
 POST    /download-vcard                          download-vcard
-GET     /change-profile                          show-change-profile-forms
+GET     /change-profile                          show-change-profile-form
 POST    /change-profile                          change-profile

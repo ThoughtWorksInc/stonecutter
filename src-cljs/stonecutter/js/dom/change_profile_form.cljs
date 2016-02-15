@@ -3,7 +3,7 @@
 
 (def field-invalid-class :form-row--invalid)
 
-(def change-name-form-element-selector :.clj--change-name__form)
+(def change-profile-details-form-element-selector :.clj--change-profile-details__form)
 
 (def selectors
   {:change-first-name {:input      :.clj--change-first-name__input

@@ -39,12 +39,10 @@ change-password-form:
 change-profile-form:
   title: Change your profile details
   page-header: Change your personal information
-  back-button-1: Return to your profile
   cancel-button: Cancel
-
-change-name-form:
   first-name-label: First name
   last-name-label: Last name
+  profile-picture-label: Profile picture
   form-button: Save changes
 
 reset-password-form:
@@ -117,7 +115,7 @@ profile:
   verify-email-intro-2: you should resend the confirmation email.
   verify-button: Resend email confirmation
   change-email-button: Change email address
-  change-profile-details-button: Edit name & profile picture
+  change-profile-details-button: Edit name and profile picture
   update-profile-image-button: Update
   update-profile-picture-button: Update profile picture
 
@@ -233,7 +231,7 @@ flash:
   expired-password-reset: "This reset password link has already been used, or has expired -  please enter your e-mail below to receive a new email."
   user-trusted: " is now set to trusted"
   user-untrusted: " is now set to untrusted"
-  name-changed: Your name has been updated!
+  profile-details-changed: Your profile has been updated!
 
 admin:
   nav-users: Users

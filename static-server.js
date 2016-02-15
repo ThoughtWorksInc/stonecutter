@@ -53,6 +53,10 @@ app.all('/change-email', function (req, res) {
   customRender(res, 'change-email', pageData);
 });
 
+app.all('/change-profile', function (req, res) {
+  customRender(res, 'change-profile', pageData);
+});
+
 app.all('/confirmation-sign-in', function (req, res) {
   customRender(res, 'confirmation-sign-in', pageData);
 });

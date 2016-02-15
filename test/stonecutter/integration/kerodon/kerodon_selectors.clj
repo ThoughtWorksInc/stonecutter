@@ -33,7 +33,7 @@
 
 (def change-profile-last-name-input :.func--change-last-name__input)
 (def change-profile-first-name-input :.func--change-first-name__input)
-(def change-name-button :.func--change-name__button)
+(def change-details-button :.func--change-details__button)
 (def change-profile-page-body :.func--change-profile-details-page)
 (def change-profile-flash-message :.func--flash-message-container)
 (def change-profile-back-button :.func--change-profile-back__link)

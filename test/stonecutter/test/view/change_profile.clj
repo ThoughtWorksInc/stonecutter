@@ -25,10 +25,6 @@
       (let [page (-> (th/create-request) change-profile-form)]
         (-> page (html/select [:.clj--change-profile-back__link]) first :attrs :href) => (r/path :show-profile)))
 
-(fact "update profile picture should post to correct endpoint"
-      (let [page (-> (th/create-request) change-profile-form)]
-        (html/select page [:.clj--update-profile-picture__link]) => (th/has-form-action? (r/path :change-profile))))
-
 (fact "page has script link to javascript file"
       (let [page (-> (th/create-request) change-profile-form)]
         (html/select page [[:script (html/attr= :src "js/main.js")]]) =not=> empty?))
@@ -52,23 +48,6 @@
                (-> page (html/select [:.clj--user-list__link])) =not=> empty?
                page => (th/has-attr? [:.clj--apps-list__link] :href (r/path :show-apps-list))
                page => (th/has-attr? [:.clj--user-list__link] :href (r/path :show-user-list)))))
-
-(facts "about flash messages"
-       (fact "no flash messages are displayed by default"
-             (let [page (-> (th/create-request)
-                            change-profile-form)]
-               (-> page (html/select [:.clj--flash-message-container])) => empty?))
-
-       (tabular
-         (fact "appropriate flash message is displayed on page when a flash key is included in the request"
-               (let [page (-> (th/create-request) (assoc :flash ?flash-key) change-profile-form)]
-                 (-> page (html/select [:.clj--flash-message-container])) =not=> empty?
-                 (-> page (html/select [:.clj--flash-message-text]) first :attrs :data-l8n)
-                 => ?translation-key))
-
-         ?flash-key                 ?translation-key
-         :name-changed             "content:flash/name-changed"
-         ))
 
 (facts "about removing elements when there are no errors"
        (let [page (-> (th/create-request) change-profile-form)]
@@ -137,5 +116,12 @@
                   (fact "field is prefilled with existing value"
                         page => (th/has-attr? [?selector] :value ?value))))
          ?selector                        ?value
-         :.clj--change-first-name__input   "firsty"
-         :.clj--change-last-name__input  "lasty"))
+         :.clj--change-first-name__input  "firsty"
+         :.clj--change-last-name__input   "lasty"))
+
+(facts "about displaying profile image"
+       (let [page (-> (th/create-request)
+                      (assoc-in [:context :user-profile-picture] "/images/temp-avatar-400x400.png")
+                      change-profile-form)]
+         (fact "it should display profile picture"
+               (-> page (html/select [:.clj--profile-picture :img]) first :attrs :src) => "/images/temp-avatar-400x400.png")))

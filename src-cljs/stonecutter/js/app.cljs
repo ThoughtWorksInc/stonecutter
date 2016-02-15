@@ -72,7 +72,7 @@
   (setup-change-name-form-listener :blur :change-first-name cpfc/update-first-name-blur)
   (setup-change-name-form-listener :blur :change-last-name cpfc/update-last-name-blur)
 
-  (setup-listener cpfd/change-name-form-element-selector :submit (partial cpfc/block-invalid-submit change-profile-details-form-state))
+  (setup-listener cpfd/change-profile-details-form-element-selector :submit (partial cpfc/block-invalid-submit change-profile-details-form-state))
 
   (setup-listener cpd/change-password-form-element-selector :submit (partial cpc/block-invalid-submit change-password-form-state))
 

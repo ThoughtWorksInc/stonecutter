@@ -168,3 +168,17 @@ legend {
 .sign-in {
   margin-top: 1.5rem;
 }
+
+.profile__picture {
+  width: 20%;
+  padding-right: 15px;
+  float: left;
+  img {
+    display: block;
+    width: 100%;
+  }
+}
+
+.upload__picture {
+  overflow: auto;
+}

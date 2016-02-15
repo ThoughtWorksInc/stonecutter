@@ -39,12 +39,10 @@ change-password-form:
 change-profile-form:
   title: Change your profile details in Finnish
   page-header: Change your personal information in Finnish
-  back-button-1: Return to your profile in Finnish
   cancel-button: Cancel in Finnish
-
-change-name-form:
   first-name-label: First name in Finnish
   last-name-label: Last name in Finnish
+  profile-picture-label: Profile picture
   form-button: Save changes in Finnish
 
 reset-password-form:
@@ -241,7 +239,7 @@ flash:
   user-trusted: " is now set to trusted in Finnish"
   user-untrusted: " is now set to untrusted in Finnish"
   email-changed: "Your email has been changed in Finnish!"
-  name-changed: Your name has been updated! in Finnish
+  profile-details-changed: Your profile has been updated! in Finnish
 
 admin:
   nav-users: Users in Finnish
