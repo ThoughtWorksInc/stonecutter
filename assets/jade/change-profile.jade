@@ -38,10 +38,13 @@ block content
         .profile__picture.clj--profile-picture
           +imageIncludeTag("temp-avatar-300x300.png", "", {alt:"Your profile picture"})
         input(type="file" name="profile-photo" id="profile-photo")
-      .button-actions.single-column
-        button.button.button--half-width.func--change-details__button(type="submit" data-l8n="content:change-profile-form/form-button")
-          | !Save changes
-        a.button.button--half-width.button--link.change-profile-back__link.clj--change-profile-back__link.func--change-profile-back__link(href="./profile")
-          span(data-l8n="content:change-profile-form/cancel-button") !Cancel
+
+      .button-actions
+        .button-actions__primary
+          button.button.button--full-width.func--change-details__button(type="submit" data-l8n="content:change-profile-form/form-button")
+            | !Save changes
+        .button-actions__secondary
+          a.button.button--full-width.button--link.change-profile-back__link.clj--change-profile-back__link.func--change-profile-back__link(href="./profile")
+            span(data-l8n="content:change-email-form/cancel-button-1") !Cancel
 
 block footerScripts

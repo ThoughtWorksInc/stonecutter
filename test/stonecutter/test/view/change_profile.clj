@@ -63,7 +63,7 @@
 (facts "about displaying errors"
        (tabular
          (facts "first name validations"
-                (let [errors {:first-name ?error}
+                (let [errors {:change-first-name ?error}
                       params {:first-name "some-input-to-be-retained"}
                       page (-> (th/create-request {} errors params) change-profile-form)
                       error-translation (str "content:index/" ?translation-key)]
@@ -84,7 +84,7 @@
 
        (tabular
          (facts "last name validations"
-                (let [errors {:last-name ?error}
+                (let [errors {:change-last-name ?error}
                       params {:last-name "some-input-to-be-retained"}
                       page (-> (th/create-request {} errors params) change-profile-form)
                       error-translation (str "content:index/" ?translation-key)]

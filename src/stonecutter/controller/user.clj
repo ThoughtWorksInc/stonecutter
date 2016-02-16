@@ -37,9 +37,6 @@
     (r/redirect (routes/path :show-profile))
     (sh/enlive-response (index/index request) request)))
 
-(defn change-profile-details [request]
-  (sh/enlive-response (change-profile/change-profile-form request) request))
-
 (defn accept-invite [invitation-store request]
   (if-let [invite-map (has-valid-invite-id? request invitation-store)]
     (let [request-with-email (assoc-in request [:params :registration-email] (:email invite-map))]
@@ -112,7 +109,7 @@
         change-profile/change-profile-form
         (sh/enlive-response request))))
 
-(defn change-name [user-store request]
+(defn change-name [user-store profile-picture-store request]
   (let [email (session/request->user-login request)
         params (:params request)
         new-first-name (:first-name params)
@@ -123,7 +120,7 @@
       (do (user/change-name! user-store email new-first-name new-last-name)
           (-> (r/redirect (routes/path :show-profile))
               (assoc :flash :profile-details-changed)))
-      (change-profile-details request-with-validation-errors))))
+      (show-change-profile-form user-store profile-picture-store request-with-validation-errors))))
 
 (defn show-change-email-form [request]
   (sh/enlive-response (change-email/change-email-form request) request))
@@ -228,7 +225,7 @@
 (defn change-profile [user-store profile-picture-store request]
   (when (get-in request [:params :profile-photo :tempfile])
     (update-profile-image user-store profile-picture-store request))
-  (change-name user-store request))
+  (change-name user-store profile-picture-store request))
 
 (defn show-profile-created [request]
   (let [request (assoc request :params {:from-app (from-app? request)})]

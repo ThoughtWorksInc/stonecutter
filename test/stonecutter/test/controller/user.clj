@@ -425,7 +425,7 @@
 
 (facts "about editing profile details"
        (tabular
-         (fact "the user's name is updated if new name is submitted and the profile picture is nil"
+         (fact "the user's name is updated and the profile picture is updated if submitted"
              (let [email "user-who-is@changing-name.com"
                    old--first-name "Signet"
                    old-last-name "Freud"
@@ -446,20 +446,7 @@
          ?profile-picture                             ?number-of-method-calls
          nil                                          0
          {:content-type "image/png"
-          :tempfile     (io/resource "avatar.png")}   1)
-
-       #_(fact "the user's profile picture is updated if any image is submitted"
-             (let [email "user-who-is@changing-name.com"
-                   request (th/create-request :post "/change-name"
-                                              {:first-name ...first-name... :last-name ...last-name...
-                                               :profile-picture {:content-type "image/jpeg"
-                                                                 :tempfile     (io/resource "avatar.png")}}
-                                              {:user-login email})]
-               (u/change-profile ...user-store... ...profile-picture-store... request) => (every-checker (th/check-redirects-to "/change-profile")
-                                                                                                         (contains {:flash :profile-details-updated}))
-               (provided
-                 (v/validate-change-name ...first-name... ...last-name...) => {}
-                 (user/change-name! ...user-store... email ...first-name... ...last-name...) => anything))))
+          :tempfile     (io/resource "avatar.png")}   1))
 
 (facts "about changing email"
        (fact "the user's email is updated if new email is valid"
@@ -470,7 +457,7 @@
                    test-email-sender (test-email/create-test-email-sender)
                    user-store (m/create-memory-store)
                    confirmation-store (m/create-memory-store)
-                   user (th/store-user! user-store email "password")]
+                   _ (th/store-user! user-store email "password")]
                (u/update-user-email user-store confirmation-store test-email-sender request) => (every-checker (th/check-redirects-to "/profile")
                                                                                                                (contains {:flash :email-changed}))
                (user/retrieve-user user-store email) => nil

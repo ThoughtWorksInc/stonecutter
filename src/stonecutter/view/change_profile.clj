@@ -14,7 +14,7 @@
 
 
 (defn add-change-first-name-error [enlive-m err]
-  (if-let [change-first-name-error (:first-name err)]
+  (if-let [change-first-name-error (:change-first-name err)]
     (let [error-translation (get-in error-translations [:first-name change-first-name-error])]
       (-> enlive-m
           (vh/add-error-class [:.clj--first-name])
@@ -22,7 +22,7 @@
     enlive-m))
 
 (defn add-change-last-name-error [enlive-m err]
-  (if-let [change-last-name-error (:last-name err)]
+  (if-let [change-last-name-error (:change-last-name err)]
     (let [error-translation (get-in error-translations [:last-name change-last-name-error])]
       (-> enlive-m
           (vh/add-error-class [:.clj--last-name])
