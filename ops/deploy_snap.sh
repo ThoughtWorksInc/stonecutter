@@ -15,5 +15,5 @@ ssh $REMOTE_USER@$SERVER_IP <<EOF
              -v /data/stonecutter/static:/data/stonecutter/static \
              -v /var/stonecutter/email_service:/var/stonecutter/email_service \
              -p 127.0.0.1:5000:3000 \
-             --link mongo:mongo --name stonecutter dcent/stonecutter
+             --link mongo:mongo --name stonecutter dcent/stonecutter:latest
 EOF
