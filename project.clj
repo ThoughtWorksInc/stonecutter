@@ -51,6 +51,7 @@
                                         [org.seleniumhq.selenium/selenium-remote-driver "2.45.0"]
                                         [kerodon "0.6.1"]]
                        :plugins        [[lein-ring "0.9.6"]
+                                        [lein-auto "0.1.2"]
                                         [lein-environ "1.0.0"]
                                         [lein-midje "3.1.3"]
                                         [lein-kibit "0.1.2"]
@@ -72,13 +73,14 @@
                                         "auto-no-browser" ["test-clj" ":autotest" "src/" "src-cljc/"
                                                            "test/stonecutter/test/" "test/stonecutter/integration/"]
                                         "test-cljs"       ["do" "clean," "gulp," "cljsbuild" "test"]
-                                        "auto-cljs"       ["do" "test-cljs," "cljsbuild" "auto" "test"]
+                                        "auto-cljs"       ["auto" "cljsbuild" "test"]
                                         "gencred"         ["run" "-m" "stonecutter.util.gencred"]
                                         "gen-keypair"     ["run" "-m" "stonecutter.util.gen-key-pair"]
                                         "gen-config"      ["run" "-m" "stonecutter.config"]
                                         "lint"            ["eastwood" "{:namespaces [:source-paths]}"]
                                         "gulp"            ["shell" "npm" "run" "gulp" "--" "build"]
                                         "start"           ["do" "gulp," "cljs-build," "run"]}
+                       :auto           {"cljsbuild" {:paths ["src-cljs" "src-cljc" "test-cljs"]}}
                        :env            {:dev                   true
                                         :secure                "false"
                                         :rsa-keypair-file-path "test-resources/test-key.json"
