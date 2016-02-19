@@ -23,3 +23,4 @@ ops/roles/nginx/files/secure**
 .dir-locals.el
 .cljs_rhino_repl
 /data
+test/stonecutter/browser/screenshots/*.png

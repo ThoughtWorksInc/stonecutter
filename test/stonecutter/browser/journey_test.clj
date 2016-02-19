@@ -12,7 +12,9 @@
             [stonecutter.db.invitations :as i]
             [stonecutter.test.util.time :as test-time]
             [stonecutter.email :as email]
-            [monger.core :as monger]))
+            [monger.core :as monger]
+            [clojure.tools.logging :as log]
+            [clojure.java.io :as io]))
 
 (def test-port 5439)
 
@@ -44,10 +46,26 @@
 (defn stop-browser []
   (wd/quit))
 
+(def screenshot-directory "test/stonecutter/browser/screenshots")
+(def screenshot-number (atom 0))
+(defn screenshot [filename]
+  (log/info (str "Screenshot: " filename))
+  (wd/take-screenshot :file (str screenshot-directory "/"
+                                 (format "%02d" (swap! screenshot-number + 1))
+                                 "_" filename ".png")))
+
+(defn clear-screenshots []
+  (doall (->> (io/file screenshot-directory)
+              file-seq
+              (filter #(re-matches #".*\.png$" (.getName %)))
+              (map io/delete-file))))
+
+
 (def server (atom {}))
 
 (against-background
   [(before :contents (do (reset! server (start-server))
+                         (clear-screenshots)
                          (start-browser)))
    (after :contents (do
                       (stop-browser)
@@ -57,24 +75,30 @@
     (facts "Invite registration and user list journey" :browser
            (wd/to (c/accept-invite invited-id))
            (c/wait-for-selector c/stonecutter-accept-invite-page-body)
+           (screenshot "sign_up_page")
            (c/input-register-credentials-and-submit)
+           (screenshot "signed-up-confirmation")
            (wd/to (str c/localhost "/sign-out"))
 
            (c/wait-for-selector c/stonecutter-index-page-body)
            (wd/current-url) => (contains (str c/localhost "/"))
+           (screenshot "index_page")
 
            (wd/input-text c/stonecutter-sign-in-email-input "test@test.com")
            (wd/input-text c/stonecutter-sign-in-password-input "password")
            (wd/click c/stonecutter-sign-in-button)
            (wd/current-url) => (contains "/profile")
+           (screenshot "profile_page")
 
            (fact "invited user is automatically trusted"
                  (wd/to c/user-list-page)
+                 (screenshot "user list")
                  (c/wait-for-selector c/stonecutter-user-list-page-body)
                  (wd/attribute c/stonecutter-trust-toggle :checked) => "checked")
 
            (fact "admin can toggle users"
                  (wd/to c/user-list-page)
+                 (screenshot "user_list_user_toggled")
                  (c/wait-for-selector c/stonecutter-user-list-page-body)
 
                  (wd/attribute c/stonecutter-trust-toggle :checked) => "checked"
