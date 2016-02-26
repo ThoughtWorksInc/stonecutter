@@ -71,7 +71,7 @@
     color: $dark_cyan;
     font-weight: bold;
     line-height: 1.2;
-    word-break: break-word;
+    word-break: break-all;
     @include width-from($smallish_device) {
       @include font-size(20px);
     }
@@ -114,6 +114,7 @@
   &__photo {
     position: relative;
     float: left;
+    margin-right: 5px;
     @include size(75px);
     @include width-from($smallish_device) {
           @include size(150px);
