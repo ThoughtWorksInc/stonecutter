@@ -38,6 +38,8 @@ block content
         .profile__picture.clj--profile-picture
           +imageIncludeTag("temp-avatar-300x300.png", "", {alt:"Your profile picture"})
         input(type="file" name="profile-photo" id="profile-photo")
+        span.form-row__help(data-l8n="content:change-profile-form/profile-picture-size-message")
+            | !Images must be smaller than 5MB
 
       .button-actions
         .button-actions__primary

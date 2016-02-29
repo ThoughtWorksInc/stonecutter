@@ -43,6 +43,7 @@ change-profile-form:
   first-name-label: First name
   last-name-label: Last name
   profile-picture-label: Profile picture
+  profile-picture-size-message: Please use an image of size 5MB or smaller.
   form-button: Save changes
 
 reset-password-form:

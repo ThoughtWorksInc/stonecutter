@@ -42,7 +42,8 @@ change-profile-form:
   cancel-button: Cancel in Finnish
   first-name-label: First name in Finnish
   last-name-label: Last name in Finnish
-  profile-picture-label: Profile picture
+  profile-picture-label: Profile picture in Finnish
+  profile-picture-size-message: Please use an image of size 5MB or smaller. In Finnish
   form-button: Save changes in Finnish
 
 reset-password-form:
