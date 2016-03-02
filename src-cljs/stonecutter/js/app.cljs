@@ -26,10 +26,16 @@
   (when-let [elems (dm/sel selector)]
     (doseq [elem elems] (d/listen! elem event function))))
 
-(defn setup-change-name-form-listener [event input-field event-handler]
+(defn setup-change-profile-form-listener [event input-field event-handler select-fn]
   (setup-listener (cpfd/input-selector input-field)
                   event
-                  #(cpfc/update-state-and-render! change-profile-details-form-state input-field event-handler)))
+                  #(cpfc/update-state-and-render! change-profile-details-form-state input-field event-handler select-fn)))
+
+(defn setup-change-profile-picture-form-listener [event input-field event-handler]
+  (setup-change-profile-form-listener event input-field event-handler cpfd/get-file))
+
+(defn setup-change-name-form-listener [event input-field event-handler]
+  (setup-change-profile-form-listener event input-field event-handler cpfd/get-value))
 
 (defn setup-registration-form-listener [event input-field event-handler]
   (setup-listener (rfd/input-selector input-field)
@@ -71,6 +77,8 @@
 
   (setup-change-name-form-listener :blur :change-first-name cpfc/update-first-name-blur)
   (setup-change-name-form-listener :blur :change-last-name cpfc/update-last-name-blur)
+
+  (setup-change-profile-picture-form-listener :change :change-profile-picture cpfc/update-profile-picture-change)
 
   (setup-listener cpfd/change-profile-details-form-element-selector :submit (partial cpfc/block-invalid-submit change-profile-details-form-state))
 

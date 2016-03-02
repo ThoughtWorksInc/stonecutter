@@ -35,6 +35,9 @@
       (.fireEvent node (str "on" (name event-type))
                   (update-event! (.createEventObject js/document))))))
 
+(defn fire-change-event! [sel]
+  (fire! (sel1 sel) :change))
+
 (defn set-value [sel text]
   (dommy/set-value! (sel1 sel) text))
 

@@ -27,3 +27,5 @@
 (defn get-value [selector]
   (d/value (dm/sel1 selector)))
 
+(defn get-file [selector]
+  (.item (.-files (dm/sel1 selector)) 0))

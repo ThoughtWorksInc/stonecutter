@@ -24,6 +24,13 @@
 (defn is-too-short? [string min-length]
   (< (count string) min-length))
 
+(defn js-image->size [image]
+  (.-size image))
+
+(defn validate-profile-picture [image]
+  (when (and image (> (js-image->size image) 5242880))
+    :too-large))
+
 (defn validate-registration-name [name]
   (cond (s/blank? name) :blank
         (is-too-long? name name-max-length) :too-long
@@ -70,6 +77,11 @@
   (->
     {:change-first-name (validate-registration-name first-name)
      :change-last-name  (validate-registration-name last-name)}
+    remove-nil-values))
+
+(defn validate-change-picture [image]
+  (->
+    {:change-profile-picture (validate-profile-picture image)}
     remove-nil-values))
 
 (defn validate-user-exists [email user-exists?-fn]

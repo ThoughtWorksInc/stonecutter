@@ -31,19 +31,21 @@ block content
           span.form-row__validation.clj--change-last-name__validation(data-l8n="content:index/register-last-name-blank-validation-message")
             | !Enter a new name.
         input.form-row__input.func--change-last-name__input.clj--change-last-name__input(type="text", id="last-name", name="last-name")
-      .form-row.upload__picture
+      .form-row.upload__picture.clj--upload-picture
         label.form-row__label(for="profile-picture")
           span.form-row__title(data-l8n="content:change-profile-form/profile-picture-label")
             | !Profile picture
+          span.form-row__validation.clj--upload-picture__validation(data-l8n="content:upload-profile-picture/picture-too-large-validation-message")
+            | !Select an image smaller than 5MB.
         .profile__picture.clj--profile-picture
           +imageIncludeTag("temp-avatar-300x300.png", "", {alt:"Your profile picture"})
-        input(type="file" name="profile-photo" id="profile-photo")
+        input.clj--upload-picture__input(type="file" name="profile-photo" id="profile-photo")
         span.form-row__help(data-l8n="content:change-profile-form/profile-picture-size-message")
             | !Images must be smaller than 5MB
 
       .button-actions
         .button-actions__primary
-          button.button.button--full-width.func--change-details__button(type="submit" data-l8n="content:change-profile-form/form-button")
+          button.button.button--full-width.clj--change-profile-details__form.func--change-details__button(type="submit" data-l8n="content:change-profile-form/form-button")
             | !Save changes
         .button-actions__secondary
           a.button.button--full-width.button--link.change-profile-back__link.clj--change-profile-back__link.func--change-profile-back__link(href="./profile")

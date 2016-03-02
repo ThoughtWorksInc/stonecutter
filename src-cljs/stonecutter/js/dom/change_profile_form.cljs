@@ -11,7 +11,10 @@
                        :validation :.clj--change-first-name__validation}
    :change-last-name  {:input      :.clj--change-last-name__input
                        :form-row   :.clj--last-name
-                       :validation :.clj--change-last-name__validation}})
+                       :validation :.clj--change-last-name__validation}
+   :change-profile-picture {:input      :.clj--upload-picture__input
+                            :form-row   :.clj--upload-picture
+                            :validation :.clj--upload-picture__validation}})
 
 (defn input-selector [field-key]
   (get-in selectors [field-key :input]))
@@ -21,6 +24,9 @@
 
 (defn get-value [field-key]
   (dom/get-value (input-selector field-key)))
+
+(defn get-file [field-key]
+  (dom/get-file (input-selector field-key)))
 
 (defn validation-selector [field-key]
   (get-in selectors [field-key :validation]))

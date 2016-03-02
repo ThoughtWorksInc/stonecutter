@@ -3,7 +3,8 @@
             [stonecutter.js.controller.change-profile-form :as cpfc]
             [stonecutter.test.test-utils :as tu]
             [stonecutter.js.dom.common :as dom]
-            [stonecutter.js.dom.change-profile-form :as cpfd])
+            [stonecutter.js.dom.change-profile-form :as cpfd]
+            [stonecutter.validation :as v])
   (:require-macros [cemerick.cljs.test :refer [deftest is testing run-tests are]]))
 
 (deftest update-model-on-blur
@@ -33,6 +34,17 @@
                        (tu/string-of-length 70)  nil
                        (tu/string-of-length 71)  :too-long)))
 
+(deftest update-model-on-change
+         (testing "profile picture error is set correctly based on the value"
+                  (let [valid-image-size (constantly 10000)
+                        too-large-image-size (constantly 5300000)]
+                    (with-redefs [v/js-image->size valid-image-size]
+                                 (= {:change-profile-picture {:value "" :error nil}}
+                                    (cpfc/update-profile-picture-change {:change-profile-picture {:value "" :error nil}})))
+                    (with-redefs [v/js-image->size too-large-image-size]
+                                 (= {:change-profile-picture {:value "" :error :too-large}}
+                                    (cpfc/update-profile-picture-change {:change-profile-picture {:value "" :error nil}}))))))
+
 (deftest update-model-on-input
          (testing "first name error is set to nil for any value"
                   (is (= {:change-first-name {:value "Barry" :error nil}}
@@ -45,7 +57,7 @@
          (with-redefs [dom/add-class! tu/mock-add-class!
                        dom/remove-class! tu/mock-remove-class!
                        dom/set-text! tu/mock-set-text!]
-                      (testing "adding and removing invalid class from first name and last name fields"
+                      (testing "adding and removing invalid class from first name, last name and profile picture fields"
                                (are [?field-key ?form-row-selector]
                                     (testing "- tabular"
                                              (testing "- any error, adds invalid class"
@@ -58,9 +70,10 @@
                                                       (cpfc/render! (assoc-in cpfc/default-state [?field-key :error] nil))
                                                       (tu/test-remove-class-was-called-with ?form-row-selector cpfd/field-invalid-class)))
 
-                                    ;?field-key         ?form-row-selector
-                                    :change-first-name  :.clj--first-name
-                                    :change-last-name   :.clj--last-name))
+                                    ;?field-key              ?form-row-selector
+                                    :change-first-name       :.clj--first-name
+                                    :change-last-name        :.clj--last-name
+                                    :change-profile-picture  :.clj--upload-picture))
 
                       (testing "error messages"
                                (testing "- first name"
@@ -94,5 +107,14 @@
                                                  (tu/reset-mock-call-state!)
                                                  (cpfc/render! (assoc-in cpfc/default-state [:change-last-name :error] nil))
                                                  (tu/test-set-text-was-called-with :.clj--change-last-name__validation nil)))
-                               )
-                      ))
+
+                               (testing "- profile picture"
+                                        (testing "- too large"
+                                                 (tu/reset-mock-call-state!)
+                                                 (cpfc/render! (assoc-in cpfc/default-state [:change-profile-picture :error] :too-large))
+                                                 (tu/test-set-text-was-called-with :.clj--upload-picture__validation
+                                                                                   (get-in dom/translations [:upload-profile-picture :picture-too-large-validation-message])))
+                                        (testing "- no error"
+                                                 (tu/reset-mock-call-state!)
+                                                 (cpfc/render! (assoc-in cpfc/default-state [:change-profile-picture :error] nil))
+                                                 (tu/test-set-text-was-called-with :.clj--upload-picture__validation nil))))))
