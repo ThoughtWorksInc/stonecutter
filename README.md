@@ -102,13 +102,7 @@ To start a mongo container, run
     
 #### Starting an Nginx container
 
-To access the application you must run a reverse proxy, for example Nginx, that redirects to it, adding the following to the headers
-    
-    "X-Real-IP: <proxy ip>" 
-    "X-Forwarded-For: <proxy ip>"
-    "X-Forwarded-Proto: https"
-
-To use Nginx for this you need 
+To start an Nginx container you need 
 
 * an SSL certificate and key
 * a dhparam.pem file
