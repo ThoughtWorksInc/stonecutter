@@ -114,7 +114,7 @@
         params (:params request)
         new-first-name (:first-name params)
         new-last-name (:last-name params)
-        err (v/validate-change-name new-first-name new-last-name)
+        err (v/validate-change-profile new-first-name new-last-name)
         request-with-validation-errors (assoc-in request [:context :errors] err)]
     (if (empty? err)
       (do (user/change-name! user-store email new-first-name new-last-name)

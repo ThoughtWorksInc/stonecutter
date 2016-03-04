@@ -36,14 +36,16 @@
 
 (deftest update-model-on-change
          (testing "profile picture error is set correctly based on the value"
-                  (let [valid-image-size (constantly 10000)
-                        too-large-image-size (constantly 5300000)]
-                    (with-redefs [v/js-image->size valid-image-size]
-                                 (= {:change-profile-picture {:value "" :error nil}}
-                                    (cpfc/update-profile-picture-change {:change-profile-picture {:value "" :error nil}})))
-                    (with-redefs [v/js-image->size too-large-image-size]
-                                 (= {:change-profile-picture {:value "" :error :too-large}}
-                                    (cpfc/update-profile-picture-change {:change-profile-picture {:value "" :error nil}}))))))
+                  (are [image-size image-type error]
+                       (with-redefs [v/js-image->size (constantly image-size)
+                                     v/js-image->type (constantly image-type)]
+                                    (is (= {:change-profile-picture {:value "" :error error}}
+                                           (cpfc/update-profile-picture-change {:change-profile-picture {:value "" :error nil}}))))
+
+                       ;image-size  image-type    error
+                       10000        "image/jpeg"  nil
+                       5300000      "image/jpeg"  :too-large
+                       10000        "text/html"   :not-image)))
 
 (deftest update-model-on-input
          (testing "first name error is set to nil for any value"
@@ -114,6 +116,11 @@
                                                  (cpfc/render! (assoc-in cpfc/default-state [:change-profile-picture :error] :too-large))
                                                  (tu/test-set-text-was-called-with :.clj--upload-picture__validation
                                                                                    (get-in dom/translations [:upload-profile-picture :picture-too-large-validation-message])))
+                                        (testing "- not an image"
+                                                 (tu/reset-mock-call-state!)
+                                                 (cpfc/render! (assoc-in cpfc/default-state [:change-profile-picture :error] :not-image))
+                                                 (tu/test-set-text-was-called-with :.clj--upload-picture__validation
+                                                                                   (get-in dom/translations [:upload-profile-picture :picture-not-image-validation-message])))
                                         (testing "- no error"
                                                  (tu/reset-mock-call-state!)
                                                  (cpfc/render! (assoc-in cpfc/default-state [:change-profile-picture :error] nil))

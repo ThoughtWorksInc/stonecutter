@@ -13,7 +13,8 @@
                             :too-long (ct/t (dom/get-lang) :index/register-first-name-too-long-validation-message)}
    :change-last-name       {:blank    (ct/t (dom/get-lang) :index/register-last-name-blank-validation-message)
                             :too-long (ct/t (dom/get-lang) :index/register-last-name-too-long-validation-message)}
-   :change-profile-picture {:too-large (ct/t (dom/get-lang) :upload-profile-picture/picture-too-large-validation-message)}})
+   :change-profile-picture {:too-large (ct/t (dom/get-lang) :upload-profile-picture/picture-too-large-validation-message)
+                            :not-image (ct/t (dom/get-lang) :upload-profile-picture/picture-not-image-validation-message)}})
 
 (defn update-first-name-blur [state]
   (assoc-in state [:change-first-name :error]
@@ -86,8 +87,7 @@
   (let [first-name (cpfd/get-value :change-first-name)
         last-name (cpfd/get-value :change-last-name)
         profile-picture (cpfd/get-file :change-profile-picture)
-        err (merge (v/validate-change-name first-name last-name)
-                   (v/validate-change-picture profile-picture))]
+        err (v/validate-change-profile first-name last-name profile-picture)]
     (when-not (empty? err)
       (dom/prevent-default-submit! submit-event)
       (update-state-and-render! state :change-first-name update-first-name-blur cpfd/get-value)

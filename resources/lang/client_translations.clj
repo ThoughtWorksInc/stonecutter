@@ -15,7 +15,8 @@
                                :new-password-too-long-validation-message    "New password is too long"
                                :new-password-too-short-validation-message   "New password should be at least 8 characters long"
                                :new-password-unchanged-validation-message   "New password must be different to current password"}
-      :upload-profile-picture {:picture-too-large-validation-message "Please select an image with a size smaller than 5MB."}}
+      :upload-profile-picture {:picture-too-large-validation-message "Please select an image with a size smaller than 5MB."
+                               :picture-not-image-validation-message "Please select an image file."}}
 
  :fi {:index                  {:register-first-name-blank-validation-message        "First name cannot be blank in Finnish"
                                :register-first-name-too-long-validation-message     "First name must be shorter in Finnish"
@@ -34,4 +35,5 @@
                                :new-password-too-long-validation-message    "New password is too long in Finnish"
                                :new-password-too-short-validation-message   "New password should be at least 8 characters long in Finnish"
                                :new-password-unchanged-validation-message   "New password must be different to current password in Finnish"}
-      :upload-profile-picture {:picture-too-large-validation-message "Please select an image with a size smaller than 5MB."}}}
+      :upload-profile-picture {:picture-too-large-validation-message "Please select an image with a size smaller than 5MB in Finnish."
+                               :picture-not-image-validation-message "Please select an image file in Finnish."}}}

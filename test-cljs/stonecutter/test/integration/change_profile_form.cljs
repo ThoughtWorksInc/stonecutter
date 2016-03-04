@@ -37,10 +37,10 @@
                              (tu/test-field-doesnt-have-class (cpfd/form-row-selector :change-last-name) cpfd/field-invalid-class))
                     (tu/default-prevented? submit-event false))))
 
-(defn check-upload-photo-has-too-large-validation-errors []
+(defn check-upload-photo-has-validation-errors [validation-key]
   (tu/test-field-has-class (cpfd/form-row-selector :change-profile-picture) cpfd/field-invalid-class)
   (tu/element-has-text (cpfd/validation-selector :change-profile-picture)
-                       (get-in dom/translations [:upload-profile-picture :picture-too-large-validation-message])))
+                       (get-in dom/translations [:upload-profile-picture validation-key])))
 
 (deftest on-input
          (testing "inputing text in first name field will cause field invalid class to disappear"
@@ -58,10 +58,18 @@
                                 v/js-image->size (constantly 5300000)]
                                (clean-setup!)
                                (tu/fire-change-event! (cpfd/input-selector :change-profile-picture))
-                               (check-upload-photo-has-too-large-validation-errors)))
+                               (check-upload-photo-has-validation-errors :picture-too-large-validation-message)))
+         (testing "adding not an image will cause invalid class to appear"
+                  (with-redefs [cpfd/get-file (constantly "not-image")
+                                v/js-image->size (constantly 5300)
+                                v/js-image->type (constantly "text/html")]
+                               (clean-setup!)
+                               (tu/fire-change-event! (cpfd/input-selector :change-profile-picture))
+                               (check-upload-photo-has-validation-errors :picture-not-image-validation-message)))
          (testing "adding acceptable image will cause invalid class to disappear"
                   (with-redefs [cpfd/get-file (constantly "valid")
-                                v/js-image->size (constantly 5300)]
+                                v/js-image->size (constantly 5300)
+                                v/js-image->type (constantly "image/jpeg")]
                                (clean-setup!)
                                (dom/add-class! (cpfd/form-row-selector :change-profile-picture) cpfd/field-invalid-class)
                                (tu/fire-change-event! (cpfd/input-selector :change-profile-picture))

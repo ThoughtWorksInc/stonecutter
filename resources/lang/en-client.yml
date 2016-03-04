@@ -23,3 +23,4 @@ change-password-form:
 
 upload-profile-picture:
   picture-too-large-validation-message: Please select an image with a size smaller than 5MB.
+  picture-not-image-validation-message: Please select an image file.

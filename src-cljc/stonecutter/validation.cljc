@@ -27,9 +27,18 @@
 (defn js-image->size [image]
   (.-size image))
 
+(defn js-image->type [image]
+  (.-type image))
+
+(defn valid-image-type? [image]
+  (let [media-type (js-image->type image)
+        top-level-type ((s/split media-type #"/") 0)]
+    (= top-level-type "image")))
+
 (defn validate-profile-picture [image]
-  (when (and image (> (js-image->size image) 5242880))
-    :too-large))
+  (cond (not image) nil
+        (> (js-image->size image) 5242880) :too-large
+        (not (valid-image-type? image)) :not-image))
 
 (defn validate-registration-name [name]
   (cond (s/blank? name) :blank
@@ -61,7 +70,7 @@
 
 (defn validate-email-change [email user-exists?-fn]
   (->
-    {:new-email      (validate-registration-email email user-exists?-fn)}
+    {:new-email (validate-registration-email email user-exists?-fn)}
     remove-nil-values))
 
 (defn validate-registration [params user-exists?-fn]
@@ -73,16 +82,15 @@
        :registration-password   (validate-password-format registration-password)}
       remove-nil-values)))
 
-(defn validate-change-name [first-name last-name]
-  (->
-    {:change-first-name (validate-registration-name first-name)
-     :change-last-name  (validate-registration-name last-name)}
-    remove-nil-values))
-
-(defn validate-change-picture [image]
-  (->
-    {:change-profile-picture (validate-profile-picture image)}
-    remove-nil-values))
+(defn validate-change-profile
+  ([first-name last-name]
+   (validate-change-profile first-name last-name nil))
+  ([first-name last-name image]
+   (->
+     {:change-first-name      (validate-registration-name first-name)
+      :change-last-name       (validate-registration-name last-name)
+      :change-profile-picture (validate-profile-picture image)}
+     remove-nil-values)))
 
 (defn validate-user-exists [email user-exists?-fn]
   (when-not (user-exists?-fn email)
