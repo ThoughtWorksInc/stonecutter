@@ -14,10 +14,6 @@
 (def change-password-form-state (atom cpc/default-state))
 (def change-profile-details-form-state (atom cpfc/default-state))
 
-(defn remove-elem [selector]
-  (when-let [elem (dm/sel1 selector)]
-    (d/remove! elem)))
-
 (defn setup-listener [selector event function]
   (when-let [e (dm/sel1 selector)]
     (d/listen! e event function)))
@@ -62,9 +58,9 @@
 
   (setup-listener rfd/register-form-element-selector :submit (partial rfc/block-invalid-submit registration-form-state))
 
-  (setup-listener ulp/update-image-input-selector :change ulp/upload-image)
-  (setup-listener ulp/profile-card-image-selector :mouseenter ulp/show-button)
-  (setup-listener ulp/profile-card-image-selector :mouseleave ulp/hide-button)
+  (setup-listener ulp/profile-card-photo__input :change ulp/upload-image)
+  (setup-listener ulp/profile-card-photo__selector :mouseenter ulp/show-button)
+  (setup-listener ulp/profile-card-photo__selector :mouseleave ulp/hide-button)
 
   (setup-change-password-form-listener :input :current-password cpc/update-current-password-input)
   (setup-change-password-form-listener :input :new-password cpc/update-new-password-input)
@@ -82,8 +78,6 @@
 
   (setup-listener cpfd/change-profile-details-form-element-selector :submit (partial cpfc/block-invalid-submit change-profile-details-form-state))
 
-  (setup-listener cpd/change-password-form-element-selector :submit (partial cpc/block-invalid-submit change-password-form-state))
-
-  (remove-elem :.settings__photo-upload))
+  (setup-listener cpd/change-password-form-element-selector :submit (partial cpc/block-invalid-submit change-password-form-state)))
 
 (set! (.-onload js/window) start)

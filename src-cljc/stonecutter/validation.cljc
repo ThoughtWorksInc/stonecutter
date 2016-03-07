@@ -1,6 +1,8 @@
 (ns stonecutter.validation
   (:require [clojure.string :as s]
-            #?(:clj [pantomime.mime :as mime])))
+            #?(:clj [pantomime.mime :as mime])
+            #?(:clj [stonecutter.config :as config]))
+  #?(:cljs (:require-macros [stonecutter.config :as config])))
 
 (def name-max-length 70)
 
@@ -34,7 +36,7 @@
 (defn valid-image-size? [image]
   (< #?(:clj  (url-image->size image)
         :cljs (js-image->size image))
-     5242880))
+     (config/image-upload-size-limit)))
 
 (defn js-image->type [image]
   (.-type image))

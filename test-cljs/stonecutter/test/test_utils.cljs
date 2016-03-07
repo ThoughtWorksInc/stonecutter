@@ -51,6 +51,12 @@
 (defn lose-focus [sel]
   (fire! (sel1 sel) :blur))
 
+(defn move-mouse-over-elem [sel]
+  (fire! (sel1 sel) :mouseover))
+
+(defn move-mouse-out-of-elem [sel]
+  (fire! (sel1 sel) :mouseout))
+
 (defn test-field-class-existance [has-class? selector css-class]
   (is (= has-class? (dommy/has-class? (sel1 selector) css-class))
       (if has-class?
@@ -59,6 +65,15 @@
 
 (def test-field-doesnt-have-class (partial test-field-class-existance false))
 (def test-field-has-class (partial test-field-class-existance true))
+
+(defn test-field-attr-existance [has-attr? selector attr]
+  (is (= has-attr? (some? (dommy/attr (sel1 selector) attr)))
+      (if has-attr?
+        (str "field: " selector " does not contain expected attribute: " attr)
+        (str "field: " selector " contains attribute " attr " when it shouldn't"))))
+
+(def test-field-doesnt-have-attr (partial test-field-attr-existance false))
+(def test-field-has-attr (partial test-field-attr-existance true))
 
 (defn element-has-text [selector expected-text]
   (let [selected-element (sel1 selector)
@@ -105,3 +120,10 @@
 (defn test-set-text-was-called-with [selector message]
   (is (= message (get-in @mock-call-state [:set-text-calls selector]))
       (str "the last call to set-text! with selector: '" selector "' did not have the message: \"" message "\"")))
+
+(defn mock-submit-form! [selector]
+  (swap! mock-call-state assoc :submit-form-calls selector))
+
+(defn test-submit-form-was-called [selector]
+  (is (= selector (:submit-form-calls @mock-call-state))
+      (str "the last call to submit-form! was not with selector: " selector)))

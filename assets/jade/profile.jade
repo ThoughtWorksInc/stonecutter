@@ -38,13 +38,13 @@ block content
         = " "
         span.clj--admin__span(data-l8n="content:profile/admin-span") !Mighty Admin
       p Manage your shared details with allowed applications.
-      .clj--profile-image-error-container.flash-message.flash-message--fail
+      .clj--profile-image-error-container.flash-message.flash-message--fail(hidden="hidden")
         .clj--profile-image-error-text(data-l8n="content:upload-profile-picture/file-too-large-validation-message") !Large
       .wrapper__card
         .card
           .card__row.card__row--bottom-border
-            .card__photo
-              form.card__photo-upload.clj--card-photo-upload(action="./update-profile-image", method="post", role="form" enctype="multipart/form-data" accept="image/*" hidden)
+            .card__photo.clj--card-photo
+              form.card__photo-upload.clj--card-photo-upload(action="./update-profile-image", method="post", role="form" enctype="multipart/form-data" accept="image/*" hidden="hidden")
                 label(for="profile-photo")
                   a.func--card-photo-button.clj--card-photo-button.button.button--full-width(data-l8n="content:profile/update-profile-image-button") !Update
                 input.card__photo-input.clj--card-photo-input(type="file" id="profile-photo" name="profile-photo")
