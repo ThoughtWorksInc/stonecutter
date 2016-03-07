@@ -109,19 +109,6 @@
         change-profile/change-profile-form
         (sh/enlive-response request))))
 
-(defn change-name [user-store profile-picture-store request]
-  (let [email (session/request->user-login request)
-        params (:params request)
-        new-first-name (:first-name params)
-        new-last-name (:last-name params)
-        err (v/validate-change-profile new-first-name new-last-name)
-        request-with-validation-errors (assoc-in request [:context :errors] err)]
-    (if (empty? err)
-      (do (user/change-name! user-store email new-first-name new-last-name)
-          (-> (r/redirect (routes/path :show-profile))
-              (assoc :flash :profile-details-changed)))
-      (show-change-profile-form user-store profile-picture-store request-with-validation-errors))))
-
 (defn show-change-email-form [request]
   (sh/enlive-response (change-email/change-email-form request) request))
 
@@ -207,25 +194,32 @@
 (defn from-app? [request]
   (session/request->return-to request))
 
-(defn get-image-error-key [request]
-  (or
-    (image-util/check-file-type request)
-    (image-util/check-file-extension request)
-    (image-util/check-file-size request)))
-
 (defn update-profile-image [user-store profile-picture-store request]
-  (let [email (get-in request [:session :user-login])
+  (let [email (session/request->user-login request)
         user (user/retrieve-user user-store email)
-        image-error (get-image-error-key request)]
-    (when (not image-error)
+        uploaded-image (session/request->profile-photo request)
+        image-error (v/validate-profile-picture uploaded-image)]
+    (when (and uploaded-image (not image-error))
       (user/update-profile-picture! request profile-picture-store (:uid user)))
     (-> (r/redirect (routes/path :show-profile))
         (assoc :flash image-error))))
 
 (defn change-profile [user-store profile-picture-store request]
-  (when (get-in request [:params :profile-photo :tempfile])
-    (update-profile-image user-store profile-picture-store request))
-  (change-name user-store profile-picture-store request))
+  (let [email (session/request->user-login request)
+        new-first-name (session/request->first-name request)
+        new-last-name (session/request->last-name request)
+        new-profile-picture (session/request->profile-photo request)
+        user (user/retrieve-user user-store email)
+        err (v/validate-change-profile new-first-name new-last-name new-profile-picture)
+        request-with-validation-errors (assoc-in request [:context :errors] err)]
+    (if (empty? err)
+      (do
+        (user/change-name! user-store email new-first-name new-last-name)
+        (when new-profile-picture
+          (user/update-profile-picture! request profile-picture-store (:uid user)))
+        (-> (r/redirect (routes/path :show-profile))
+            (assoc :flash :profile-details-changed)))
+      (show-change-profile-form user-store profile-picture-store request-with-validation-errors))))
 
 (defn show-profile-created [request]
   (let [request (assoc request :params {:from-app (from-app? request)})]

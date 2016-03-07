@@ -12,7 +12,6 @@ index:
   register-password-blank-validation-message: Password cannot be blank
   register-password-too-long-validation-message: Password is too long
   register-password-too-short-validation-message: Password should be at least 8 characters long
-  change-name-unknown-error: Whoops! Unknown error
 
 change-password-form:
   current-password-invalid-validation-message: Current password is incorrect

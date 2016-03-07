@@ -100,7 +100,26 @@
                         (th/test-translations "index page" (constantly page)))))
          ?error     ?translation-key
          :blank     "register-last-name-blank-validation-message"
-         :too-long  "register-last-name-too-long-validation-message"))
+         :too-long  "register-last-name-too-long-validation-message")
+
+       (tabular
+         (facts "profile picture validations"
+                (let [errors {:change-profile-picture ?error}
+                      params {:profile-photo ...image...}
+                      page (-> (th/create-request {} errors params) change-profile-form)
+                      error-translation (str "content:upload-profile-picture/" ?translation-key)]
+                  (fact "the class for styling errors is added"
+                        (html/select page [[:.clj--upload-picture :.form-row--invalid]]) =not=> empty?)
+                  (fact "profile picture validation element is present"
+                        (html/select page [:.clj--upload-picture__validation]) =not=> empty?)
+                  (fact "correct error message is displayed"
+                        (html/select page [[:.clj--upload-picture__validation (html/attr= :data-l8n error-translation)]]) =not=> empty?)
+                  (fact "there are no missing translations"
+                        (th/test-translations "index page" (constantly page)))))
+         ?error                  ?translation-key
+         :too-large              "file-too-large-validation-message"
+         :not-image              "file-not-image-validation-message"
+         :unsupported-extension  "file-type-not-supported-validation-message"))
 
 (facts "fields are prefilled with relevant information"
        (tabular

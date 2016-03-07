@@ -9,6 +9,15 @@
 (defn request->return-to [request]
   (get-in request [:session :return-to]))
 
+(defn request->profile-photo [request]
+  (get-in request [:params :profile-photo]))
+
+(defn request->first-name [request]
+  (get-in request [:params :first-name]))
+
+(defn request->last-name [request]
+  (get-in request [:params :last-name]))
+
 (defn set-user-login [response user-login]
   (assoc-in response [:session :user-login] user-login))
 

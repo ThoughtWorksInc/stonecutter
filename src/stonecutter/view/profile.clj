@@ -86,9 +86,9 @@
 
 (defn set-image-error-message [enlive-m request]
   (case (:flash request)
-       :not-image             (set-translation enlive-m :.clj--profile-image-error-text "content:image-error/not-image")
-       :too-large             (set-translation enlive-m :.clj--profile-image-error-text "content:image-error/too-large")
-       :unsupported-extension (set-translation enlive-m :.clj--profile-image-error-text "content:image-error/unsupported-filetype")
+       :not-image             (set-translation enlive-m :.clj--profile-image-error-text "content:upload-profile-picture/file-not-image-validation-message")
+       :too-large             (set-translation enlive-m :.clj--profile-image-error-text "content:upload-profile-picture/file-too-large-validation-message")
+       :unsupported-extension (set-translation enlive-m :.clj--profile-image-error-text "content:upload-profile-picture/file-type-not-supported-validation-message")
        (html/at enlive-m [:.clj--profile-image-error-container] (html/set-attr :hidden "hidden"))))
 
 (defn profile [request]

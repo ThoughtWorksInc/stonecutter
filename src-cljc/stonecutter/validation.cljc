@@ -1,5 +1,6 @@
 (ns stonecutter.validation
-  (:require [clojure.string :as s]))
+  (:require [clojure.string :as s]
+            #?(:clj [pantomime.mime :as mime])))
 
 (def name-max-length 70)
 
@@ -27,18 +28,35 @@
 (defn js-image->size [image]
   (.-size image))
 
+(defn url-image->size [image]
+  #?(:clj (.length (clojure.java.io/file (:tempfile image)))))
+
+(defn valid-image-size? [image]
+  (< #?(:clj  (url-image->size image)
+        :cljs (js-image->size image))
+     5242880))
+
 (defn js-image->type [image]
   (.-type image))
 
+(defn url-image->type [image]
+  (:content-type image))
+
 (defn valid-image-type? [image]
-  (let [media-type (js-image->type image)
+  (let [media-type #?(:clj (url-image->type image)
+                      :cljs (js-image->type image))
         top-level-type ((s/split media-type #"/") 0)]
     (= top-level-type "image")))
 
+(defn valid-file-type? [image]
+  #?(:clj  (not-empty (mime/extension-for-name (url-image->type image)))
+     :cljs true))
+
 (defn validate-profile-picture [image]
   (cond (not image) nil
-        (> (js-image->size image) 5242880) :too-large
-        (not (valid-image-type? image)) :not-image))
+        (not (valid-image-size? image)) :too-large
+        (not (valid-image-type? image)) :not-image
+        (not (valid-file-type? image)) :unsupported-extension))
 
 (defn validate-registration-name [name]
   (cond (s/blank? name) :blank
@@ -82,15 +100,12 @@
        :registration-password   (validate-password-format registration-password)}
       remove-nil-values)))
 
-(defn validate-change-profile
-  ([first-name last-name]
-   (validate-change-profile first-name last-name nil))
-  ([first-name last-name image]
-   (->
-     {:change-first-name      (validate-registration-name first-name)
-      :change-last-name       (validate-registration-name last-name)
-      :change-profile-picture (validate-profile-picture image)}
-     remove-nil-values)))
+(defn validate-change-profile [first-name last-name image]
+  (->
+    {:change-first-name      (validate-registration-name first-name)
+     :change-last-name       (validate-registration-name last-name)
+     :change-profile-picture (validate-profile-picture image)}
+    remove-nil-values))
 
 (defn validate-user-exists [email user-exists?-fn]
   (when-not (user-exists?-fn email)

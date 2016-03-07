@@ -428,14 +428,15 @@
          (fact "the user's name is updated and the profile picture is updated if submitted"
              (let [email "user-who-is@changing-name.com"
                    old--first-name "Signet"
-                   old-last-name "Freud"
+                   old--last-name "Freud"
                    new--first-name "Carl"
                    new--last-name "Swan"
-                   request (th/create-request :post "/change-name" {:first-name new--first-name :last-name new--last-name
+                   request (th/create-request :post "/change-name" {:first-name    new--first-name
+                                                                    :last-name     new--last-name
                                                                     :profile-photo ?profile-picture}
                                               {:user-login email})
-                   user-store (m/create-memory-store)
-                   _ (th/store-user! user-store old--first-name old-last-name email "password")]
+                   user-store (m/create-memory-store)]
+               (th/store-user! user-store old--first-name old--last-name email "password")
                (u/change-profile user-store ...profile-picture-store... request) => (every-checker (th/check-redirects-to "/profile")
                                                                                                    (contains {:flash :profile-details-changed}))
                (provided
@@ -446,7 +447,73 @@
          ?profile-picture                             ?number-of-method-calls
          nil                                          0
          {:content-type "image/png"
-          :tempfile     (io/resource "avatar.png")}   1))
+          :tempfile     (io/resource "avatar.png")}   1)
+
+       (fact "the user's name is not updated if it is blank"
+             (let [email "user-who-is@changing-name.com"
+                   old--first-name "Signet"
+                   old--last-name "Freud"
+                   request (th/create-request :post "/change-name" {:first-name "" :last-name old--last-name}
+                                              {:user-login email})
+                   user-store (m/create-memory-store)]
+               (th/store-user! user-store old--first-name old--last-name email "password")
+               (-> (u/change-profile user-store ...profile-picture-store... request)
+                   :body
+                   html/html-snippet
+                   (html/select [:.clj--change-first-name__validation])) =not=> empty?
+               (:first-name (user/retrieve-user user-store email)) => old--first-name))
+
+       (fact "the user's profile picture is not updated if it is invalid"
+             (let [email "user-who-is@changing-name.com"
+                   first-name "Signet"
+                   last-name "Freud"
+                   new--profile-picture {:content-type "image/png"
+                                         :tempfile     (io/resource "avatar-large.png")}
+                   request (th/create-request :post "/change-name" {:first-name    first-name
+                                                                    :last-name     last-name
+                                                                    :profile-photo new--profile-picture}
+                                              {:user-login email})
+                   user-store (m/create-memory-store)]
+               (th/store-user! user-store first-name last-name email "password")
+               (-> (u/change-profile user-store ...profile-picture-store... request)
+                   :body
+                   html/html-snippet
+                   (html/select [:.clj--upload-picture__validation])) =not=> empty?
+               (provided
+                 (user/update-profile-picture! request ...profile-picture-store... anything) => anything :times 0)))
+       (facts "about rendering change-profile page with errors"
+              (fact "there are no validation messages by default"
+                    (let [request (th/create-request :get "/change-profile" {} {:user-login ...email...})]
+                      (-> (u/show-change-profile-form ...user-store... ...profile-picture-store... request)
+                          :body
+                          html/html-snippet
+                          (html/select [:.form-row--invalid]))) => empty?
+                    (provided
+                      (user/retrieve-user ...user-store... ...email...) => {:uid ...uid...}
+                      (user/retrieve-profile-picture ...profile-picture-store... ...uid...) => ""))
+
+              (fact "there are validation messages if name is invalid"
+                    (let [confirmation-store (m/create-memory-store)]
+                      (-> (u/change-profile ...user-store... confirmation-store
+                                               (th/create-request :post "/change-profile" {:first-name "" :last-name ""}
+                                                                  {:user-login "user_who_is@changing_name.com"}))
+                          :body
+                          html/html-snippet
+                          (html/select [:.form-row--invalid]))) =not=> empty?)
+              (fact "there are validation messages if profile picture is invalid"
+                    (let [confirmation-store (m/create-memory-store)
+                          first-name "Signet"
+                          last-name "Freud"
+                          profile-picture {:content-type "image/png"
+                                           :tempfile     (io/resource "avatar-large.png")}]
+                      (-> (u/change-profile ...user-store... confirmation-store
+                                            (th/create-request :post "/change-profile" {:first-name first-name
+                                                                                        :last-name last-name
+                                                                                        :profile-photo profile-picture}
+                                                               {:user-login "user_who_is@changing_name.com"}))
+                          :body
+                          html/html-snippet
+                          (html/select [:.form-row--invalid]))) =not=> empty?)))
 
 (facts "about changing email"
        (fact "the user's email is updated if new email is valid"
@@ -456,8 +523,8 @@
                                               {:user-login email})
                    test-email-sender (test-email/create-test-email-sender)
                    user-store (m/create-memory-store)
-                   confirmation-store (m/create-memory-store)
-                   _ (th/store-user! user-store email "password")]
+                   confirmation-store (m/create-memory-store)]
+               (th/store-user! user-store email "password")
                (u/update-user-email user-store confirmation-store test-email-sender request) => (every-checker (th/check-redirects-to "/profile")
                                                                                                                (contains {:flash :email-changed}))
                (user/retrieve-user user-store email) => nil

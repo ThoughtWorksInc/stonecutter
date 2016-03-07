@@ -7,10 +7,13 @@
 (def form-row-error-css-class "form-row--invalid")
 
 (def error-translations
-  {:first-name {:blank    "content:index/register-first-name-blank-validation-message"
-                :too-long "content:index/register-first-name-too-long-validation-message"}
-   :last-name  {:blank    "content:index/register-last-name-blank-validation-message"
-                :too-long "content:index/register-last-name-too-long-validation-message"}})
+  {:first-name      {:blank    "content:index/register-first-name-blank-validation-message"
+                     :too-long "content:index/register-first-name-too-long-validation-message"}
+   :last-name       {:blank    "content:index/register-last-name-blank-validation-message"
+                     :too-long "content:index/register-last-name-too-long-validation-message"}
+   :profile-picture {:too-large             "content:upload-profile-picture/file-too-large-validation-message"
+                     :not-image             "content:upload-profile-picture/file-not-image-validation-message"
+                     :unsupported-extension "content:upload-profile-picture/file-type-not-supported-validation-message"}})
 
 
 (defn add-change-first-name-error [enlive-m err]
@@ -18,7 +21,7 @@
     (let [error-translation (get-in error-translations [:first-name change-first-name-error])]
       (-> enlive-m
           (vh/add-error-class [:.clj--first-name])
-          (html/at [:.clj--change-first-name__validation] (html/set-attr :data-l8n (or error-translation "content:index/change-name-unknown-error")))))
+          (html/at [:.clj--change-first-name__validation] (html/set-attr :data-l8n (or error-translation "content:change-profile-form/unknown-error")))))
     enlive-m))
 
 (defn add-change-last-name-error [enlive-m err]
@@ -26,7 +29,15 @@
     (let [error-translation (get-in error-translations [:last-name change-last-name-error])]
       (-> enlive-m
           (vh/add-error-class [:.clj--last-name])
-          (html/at [:.clj--change-last-name__validation] (html/set-attr :data-l8n (or error-translation "content:index/change-name-unknown-error")))))
+          (html/at [:.clj--change-last-name__validation] (html/set-attr :data-l8n (or error-translation "content:change-profile-form/unknown-error")))))
+    enlive-m))
+
+(defn add-change-profile-picture-error [enlive-m err]
+  (if-let [change-profile-picture-error (:change-profile-picture err)]
+    (let [error-translation (get-in error-translations [:profile-picture change-profile-picture-error])]
+      (-> enlive-m
+          (vh/add-error-class [:.clj--upload-picture])
+          (html/at [:.clj--upload-picture__validation] (html/set-attr :data-l8n (or error-translation "content:change-profile-form/unknown-error")))))
     enlive-m))
 
 (defn set-cancel-link [enlive-m]
@@ -35,12 +46,13 @@
 (defn set-translation [enlive-m text-class translation]
   (html/at enlive-m [text-class] (html/set-attr :data-l8n translation)))
 
-(defn add-change-name-errors [enlive-m err]
+(defn add-change-profile-errors [enlive-m err]
   (if (empty? err)
     enlive-m
     (-> enlive-m
         (add-change-first-name-error err)
-        (add-change-last-name-error err))))
+        (add-change-last-name-error err)
+        (add-change-profile-picture-error err))))
 
 (defn pre-fill-inputs [enlive-m request]
   (let [context (:context request)]
@@ -57,7 +69,7 @@
         library-m (vh/load-template-with-lang "public/library.html" request)]
     (-> (vh/load-template-with-lang "public/change-profile.html" request)
         (vh/display-admin-navigation-links request library-m)
-        (add-change-name-errors err)
+        (add-change-profile-errors err)
         (vh/set-form-action [:.clj--change-profile-details__form] (r/path :change-profile))
         (pre-fill-inputs request)
         set-cancel-link

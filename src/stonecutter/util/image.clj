@@ -1,10 +1,7 @@
 (ns stonecutter.util.image
   (:require [image-resizer.util :as resizer-u]
             [image-resizer.core :as resizer]
-            [pantomime.media :as mt]
             [pantomime.mime :as mime]
-            [stonecutter.config :as config]
-            [clojure.java.io :as io]
             [clojure.string :as str])
   (:import (java.io ByteArrayInputStream ByteArrayOutputStream)
            (javax.imageio ImageIO)
@@ -23,20 +20,6 @@
        (re-find #"/(\w{3,});")
        last
        str/upper-case))
-
-(defn check-file-type [request]
-  (when (not (mt/image? (get-in request [:params :profile-photo :content-type])))
-    :not-image))
-
-(defn check-file-extension [request]
-  (when (empty? (mime/extension-for-name (get-in request [:params :profile-photo :content-type])))
-    :unsupported-extension))
-
-(defn check-file-size [request]
-  (let [file (get-in request [:params :profile-photo :tempfile])
-        file-size (.length (io/file file))]
-    (when (> file-size (config/image-upload-size-limit))
-      :too-large)))
 
 (defn remove-transparency [transparent-image]
   (let [opaque-image (BufferedImage. image-width image-height BufferedImage/TYPE_3BYTE_BGR)

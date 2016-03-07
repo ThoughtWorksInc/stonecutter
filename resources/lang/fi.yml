@@ -35,6 +35,7 @@ change-password-form:
   unknown-error: Whoops! Unknown error in Finnish
   form-button: Save changes in Finnish
   cancel-button: Cancel in Finnish
+  unknown-error: Whoops! Unknown error in Finnish
 
 change-profile-form:
   title: Change your profile details in Finnish
@@ -128,10 +129,10 @@ profile:
   update-profile-image-button: Update in Finnish
   update-profile-picture-button: Update profile picture in Finnish
 
-image-error:
-  not-image: Please select an image file in Finnish.
-  too-large: Please select an image with a size smaller than 5MB in Finnish.
-  unsupported-filetype: We do not support this file type in Finnish.
+upload-profile-picture:
+  file-not-image-validation-message: Please select an image file in Finnish.
+  file-too-large-validation-message: Please select an image with a size smaller than 5MB in Finnish.
+  file-type-not-supported-validation-message: We do not support this file type in Finnish.
 
 applications:
   title: Applications in Finnish

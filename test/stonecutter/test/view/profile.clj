@@ -107,9 +107,9 @@
                  => ?translation-key))
 
          ?error-key                 ?translation-key
-         :not-image                 "content:image-error/not-image"
-         :too-large                 "content:image-error/too-large"
-         :unsupported-extension     "content:image-error/unsupported-filetype"))
+         :not-image                 "content:upload-profile-picture/file-not-image-validation-message"
+         :too-large                 "content:upload-profile-picture/file-too-large-validation-message"
+         :unsupported-extension     "content:upload-profile-picture/file-type-not-supported-validation-message"))
 
 (facts "about displaying email confirmation status"
        (fact "the unconfirmed email message is removed when :confirmed? context is not false"
