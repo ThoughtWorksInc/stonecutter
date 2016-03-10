@@ -56,8 +56,8 @@
 
 (defn validate-profile-picture [image]
   (cond (not image) nil
-        (not (valid-image-size? image)) :too-large
         (not (valid-image-type? image)) :not-image
+        (not (valid-image-size? image)) :too-large
         (not (valid-file-type? image)) :unsupported-extension))
 
 (defn validate-registration-name [name]

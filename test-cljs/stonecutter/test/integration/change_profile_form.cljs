@@ -55,7 +55,8 @@
                   (tu/test-field-doesnt-have-class (cpfd/form-row-selector :change-last-name) cpfd/field-invalid-class))
          (testing "adding too large image will cause invalid class to appear"
                   (with-redefs [cpfd/get-file (constantly "too-large")
-                                v/js-image->size (constantly 5300000)]
+                                v/js-image->size (constantly 5300000)
+                                v/js-image->type (constantly "image/jpeg")]
                                (clean-setup!)
                                (tu/fire-change-event! (cpfd/input-selector :change-profile-picture))
                                (check-upload-photo-has-validation-errors :picture-too-large-validation-message)))
