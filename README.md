@@ -121,7 +121,7 @@ You can create an nginx.conf file by copying the following into a new file and r
     http {
       server {
         listen 80;
-        return 301 $request_uri;
+        return 301 https://<ip address>/$request_uri;
       }
       server {
         listen 443 ssl;
@@ -135,7 +135,7 @@ You can create an nginx.conf file by copying the following into a new file and r
         ssl_protocols TLSv1.2 TLSv1.1 TLSv1;
     
         location / {
-          proxy_pass http://<docker ip>:5000;
+          proxy_pass http://stonecutter:5000;
           proxy_set_header Host $host;
           proxy_set_header X-Real-IP $remote_addr;
           proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -146,7 +146,7 @@ You can create an nginx.conf file by copying the following into a new file and r
 
 Finally, run the following command:
 
-    docker run -v <absolute path to SSL certificates and keys directory>:/etc/nginx/ssl -v <absolute path to conf file>/nginx.conf:/etc/nginx/nginx.conf -v <absolute path to dhparam file>/dhparam.pem:/etc/nginx/cert/dhparam.pem -p 443:443 -d --name nginx-container nginx
+    docker run -v <absolute path to SSL certificates and keys directory>:/etc/nginx/ssl -v <absolute path to conf file>/nginx.conf:/etc/nginx/nginx.conf -v <absolute path to dhparam file>/dhparam.pem:/etc/nginx/cert/dhparam.pem -p 443:443 -p 80:80 --link stonecutter:stonecutter-d --name nginx-container nginx
         
 #### Starting a Stonecutter container
 
