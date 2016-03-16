@@ -121,7 +121,7 @@ You can create an nginx.conf file by copying the following into a new file and r
     http {
       server {
         listen 80;
-        return 301 https://<ip address>/$request_uri;
+        return 301 https://<ip address>$request_uri;
       }
       server {
         listen 443 ssl;
