@@ -24,6 +24,13 @@
       margin-bottom: 0;
     }
   }
+  &__info {
+    margin-top: 0.5rem;
+    padding-left: 2rem;
+    @include font-size(14px);
+    font-weight: 100;
+    color: $dark_cyan;
+  }
   &__icon {
     margin-right: 8px;
     &--allowed {
