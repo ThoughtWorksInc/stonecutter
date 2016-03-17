@@ -92,13 +92,36 @@ The Hosting Architecture is documented [here] (https://docs.google.com/a/thought
 ### Deploying the application using docker
   
 You can deploy the application using Docker. To do so, you will need three containers:
-Mongo, Nginx and Stonecutter.
+Mongo, Stonecutter and Nginx.
 
 #### Starting a mongo container
 
 To start a mongo container, run 
 
     docker run -d --name mongo mongo
+    
+#### Starting a Stonecutter container
+
+To run Stonecutter you need 
+ 
+* a clients.yml file 
+* an rsa-keypair.json 
+* a stonecutter.env file
+
+To make a clients.yml file, copy the default one in this project, under Stonecutter/config. It shows the format used by the application.
+
+To get an rsa keypair, see [below](#adding-public-private-keypair-for-openid-connect).
+
+Store both of these two files in their own directory.
+
+To get a stonecutter.env, copy the template that is found in the config folder.
+ 
+Finally, run this command, replacing <config file path> with the absolute path for the directory storing your config files, and <env file path> with the path to wherever your environment variable file is stored.  
+
+    docker run -v <config file path>:/var/config --env-file=<env file path> -v <favicon and logo absolute path directory>:/data/stonecutter/static -v <email service directory absolute path>:/var/stonecutter/email_service -p 5000:5000 --link mongo:mongo -d --name stonecutter dcent/stonecutter
+    
+An example script for deploying, deploy_snap.sh, is included in the ops directory.
+    
     
 #### Starting an Nginx container
 
@@ -148,28 +171,6 @@ Finally, run the following command:
 
     docker run -v <absolute path to SSL certificates and keys directory>:/etc/nginx/ssl -v <absolute path to conf file>/nginx.conf:/etc/nginx/nginx.conf -v <absolute path to dhparam file>/dhparam.pem:/etc/nginx/cert/dhparam.pem -p 443:443 -p 80:80 --link stonecutter:stonecutter-d --name nginx-container nginx
         
-#### Starting a Stonecutter container
-
-To run Stonecutter you need 
- 
-* a clients.yml file 
-* an rsa-keypair.json 
-* a stonecutter.env file
-
-To make a clients.yml file, copy the default one in this project, under Stonecutter/config. It shows the format used by the application.
-
-To get an rsa keypair, see [below](#adding-public-private-keypair-for-openid-connect).
-
-Store both of these two files in their own directory.
-
-To get a stonecutter.env, copy the template that is found in the config folder.
- 
-Finally, run this command, replacing <config file path> with the absolute path for the directory storing your config files, and <env file path> with the path to wherever your environment variable file is stored.  
-
-    docker run -v <config file path>:/var/config --env-file=<env file path> -v <favicon and logo absolute path directory>:/data/stonecutter/static -v <email service directory absolute path>:/var/stonecutter/email_service -p 5000:5000 --link mongo:mongo -d --name stonecutter dcent/stonecutter
-    
-An example script for deploying, deploy_snap.sh, is included in the ops directory.
-    
 ### Adding public-private keypair for OpenID Connect
 
 To generate a public-private keypair in Json Web-key (JWK) format, enter the following at the command line:
