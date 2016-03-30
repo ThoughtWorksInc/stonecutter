@@ -28,7 +28,6 @@ block content
           i.fa.fa-check.fa-fw.authorise-text__icon.authorise-text__icon--allowed
           = " "
           span(data-l8n="content:authorise/item-view-profile") !View your Profile Card
-          p.authorise-text__info(data-l8n="content:authorise/item-profile-card-notes") !This includes your full name, email address and profile picture.
 
     .authorise-text
       p.authorise-text__description
@@ -40,6 +39,27 @@ block content
           i.fa.fa-times.fa-fw.authorise-text__icon.authorise-text__icon--disallowed
           = " "
           span(data-l8n="content:authorise/item-update-profile") !Update your Profile Card
+
+    .wrapper__card
+      .card
+        .card__row.card__row--bottom-border
+          .card__photo.clj--card-photo
+            .card__image.clj--card-image.func--card-image
+              +imageIncludeTag("", "", {alt:"Your profile picture"})
+          .card__details
+            .card__heading
+              .card__name.clj--card-name.func--card-name !Peter Thomas Cheshire
+              .card__display-name.clj-wip PTC
+            .card__description.clj-wip
+              p Hoodie bespoke Tumblr, Pitchfork Etsy dreamcatcher cronut sartorial flexitarian vinyl synth PBRB Neutra single-origin coffee.
+        .card__row
+          dl.card__items
+            dt.card__items-key Email
+            dd.card__items-value.clj--card-email.func--card-email name@domain.com
+            dt.card__items-key.clj-wip PGP KeyID
+            dd.card__items-value.clj-wip E97A7A5D
+            dt.card__items-key.clj-wip Fingerprint
+            dd.card__items-value.clj-wip 1D42 0588 F6E7 4029 F312  9FAE 8378 C285 E97A 7A5F
 
     form.func--authorise__form.clj--authorise__form(action="./authorisation", method="post", role="form")
       input.clj--authorise-csrf__input(type="hidden" name="csrf-token" value="1234")

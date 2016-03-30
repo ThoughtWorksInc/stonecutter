@@ -2,7 +2,8 @@
   (:require [traduki.core :as t]
             [net.cgrand.enlive-html :as html]
             [stonecutter.routes :as r]
-            [stonecutter.view.view-helpers :as vh]))
+            [stonecutter.view.view-helpers :as vh]
+            [stonecutter.view.profile :as profile]))
 
 (defn set-form-action [enlive-m]
   (html/at enlive-m [:.clj--authorise__form] (html/set-attr :action (r/path :authorise-client))))
@@ -37,6 +38,7 @@
          (set-cancel-link params)
          (set-client-name client-name)
          (set-hidden-params params)
+         (#(profile/add-profile-card % request))
          (set-hidden-clauth-csrf-token csrf-token)
          vh/add-anti-forgery
          vh/remove-work-in-progress)))

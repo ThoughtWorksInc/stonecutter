@@ -98,9 +98,9 @@
        :show-forgotten-password-confirmation forgotten-password/show-forgotten-password-confirmation
        :show-reset-password-form             (partial forgotten-password/show-reset-password-form forgotten-password-store user-store clock)
        :reset-password                       (partial forgotten-password/reset-password-form-post forgotten-password-store user-store token-store clock)
-       :show-authorise-form                  (partial oauth/show-authorise-form client-store)
-       :authorise                            (partial oauth/authorise auth-code-store client-store user-store token-store)
-       :authorise-client                     (partial oauth/authorise-client auth-code-store client-store user-store token-store)
+       :show-authorise-form                  (partial oauth/show-authorise-form client-store user-store profile-picture-store)
+       :authorise                            (partial oauth/authorise auth-code-store client-store user-store token-store profile-picture-store)
+       :authorise-client                     (partial oauth/authorise-client auth-code-store client-store user-store token-store profile-picture-store)
        :show-authorise-failure               (partial oauth/show-authorise-failure client-store)
        :show-user-list                       (partial admin/show-user-list user-store)
        :set-user-trustworthiness             (partial admin/set-user-trustworthiness user-store)

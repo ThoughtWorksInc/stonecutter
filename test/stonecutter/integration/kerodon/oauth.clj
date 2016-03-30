@@ -1,17 +1,14 @@
 (ns stonecutter.integration.kerodon.oauth
   (:require [midje.sweet :refer :all]
             [kerodon.core :as k]
-            [ring.mock.request :as r]
             [clojure.string :as string]
             [clauth.client :as cl-client]
-            [stonecutter.handler :as h]
             [stonecutter.db.storage :as s]
             [stonecutter.integration.kerodon.kerodon-checkers :as kc]
             [stonecutter.integration.kerodon.kerodon-selectors :as ks]
             [stonecutter.integration.integration-helpers :as ih]
-            [stonecutter.db.user :as user]
             [stonecutter.test.test-helpers :as th]
-            [stonecutter.test.email :as test-email]))
+            [stonecutter.config :as config]))
 
 ;; CLIENT => AUTH    /authorisation?client-id=123&response_type=code&redirect_uri=callback-url
 ;;   USER LOGIN (Auth Server)
@@ -93,6 +90,7 @@
 
 (facts "user authorising client-apps"
        (facts "user can sign in through client"
+              (ih/setup-db)
               (let [stores (s/create-in-memory-stores (ih/get-test-db-connection))
                     {:keys [client-id client-secret]} (setup stores)]
                 (-> (k/session (ih/build-app {:stores-m stores}))
@@ -104,6 +102,9 @@
                     ;; check redirect - should have auth_code
                     (kc/check-and-follow-redirect "to authorisation")
                     (kc/page-uri-is "/authorisation")
+                    (kc/selector-includes-content [ks/profile-page-profile-card-email] "email@server.com")
+                    (kc/selector-includes-content [ks/profile-page-profile-card-name] "Frank Lasty")
+                    (kc/selector-has-attribute-with-content [ks/profile-page-profile-card-image :img] :src config/default-profile-picture)
                     (kc/check-and-press ks/authorise-share-profile-button)
                     (kc/location-contains "callback?code=")
                     (client-sends-access-token-request client-id client-secret)
@@ -112,6 +113,7 @@
                     (kc/response-has-user-info))))
 
        (facts "user who has already authorised client does not need to authorise client again"
+              (ih/setup-db)
               (let [stores (s/create-in-memory-stores (ih/get-test-db-connection))
                     {:keys [client-id client-secret client-name]} (setup stores)]
                 (-> (k/session (ih/build-app {:stores-m stores}))
@@ -131,6 +133,7 @@
                     (kc/response-has-user-info))))
 
        (facts "user is redirected to authorisation-failure page when cancelling authorisation"
+              (ih/setup-db)
               (let [stores (s/create-in-memory-stores (ih/get-test-db-connection))
                     {:keys [client-id client-secret]} (setup stores)]
                 (-> (k/session (ih/build-app {:stores-m stores}))
@@ -149,6 +152,7 @@
 
 (facts "no access token will be issued with invalid credentials"
        (facts "user cannot sign in with invalid client secret"
+              (ih/setup-db)
               (let [stores (s/create-in-memory-stores (ih/get-test-db-connection))
                     {:keys [client-id invalid-client-secret]} (setup stores)]
                 (-> (k/session (ih/build-app {:stores-m stores}))
@@ -167,6 +171,7 @@
                     :status)) => 400)
 
        (facts "user cannot sign in with invalid password"
+              (ih/setup-db)
               (let [stores (s/create-in-memory-stores (ih/get-test-db-connection))
                     {:keys [client-id]} (setup stores)]
                 (-> (k/session (ih/build-app {:stores-m stores}))

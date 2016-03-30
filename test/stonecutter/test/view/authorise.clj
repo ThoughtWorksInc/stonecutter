@@ -54,3 +54,18 @@
         page => (th/has-attr? [:.clj--authorise-redirect-uri__input] :value "REDIRECT_URI")
         page => (th/has-attr? [:.clj--authorise-scope__input] :value "SCOPE")))
 
+(facts "about displaying profile card"
+       (let [page (-> (th/create-request)
+                      (assoc-in [:context :user-login] "valid@web.co.uk")
+                      (assoc-in [:context :user-first-name] "Frank")
+                      (assoc-in [:context :user-last-name] "Lasty")
+                      (assoc-in [:context :user-profile-picture] "/images/temp-avatar-300x300.png")
+                      authorise-form)]
+         (fact "it should display email address"
+               (-> page (html/select [:.clj--card-email]) first html/text) => "valid@web.co.uk")
+
+         (fact "it should display full name"
+               (-> page (html/select [:.clj--card-name]) first html/text) => "Frank Lasty")
+
+         (fact "it should display profile picture"
+               (-> page (html/select [:.clj--card-image :img]) first :attrs :src) => "/images/temp-avatar-300x300.png")))

@@ -11,13 +11,21 @@
             [stonecutter.view.authorise :as authorise]
             [stonecutter.view.authorise-failure :as authorise-failure]
             [stonecutter.helper :as sh]
-            [stonecutter.session :as session]))
+            [stonecutter.session :as session]
+            [stonecutter.controller.user :as user-controller]))
 
-(defn show-authorise-form [client-store request]
+(defn show-authorise-form [client-store user-store profile-picture-store request]
   (let [client-id (get-in request [:params :client_id])]
     (when-let [client (client/retrieve-client client-store client-id)]
-      (let [context (assoc (:context request) :client client)]
+      (let [context (assoc (:context request) :client client)
+            email (session/request->user-login request)
+            user (user/retrieve-user user-store email)
+            profile-picture (user-controller/get-profile-picture profile-picture-store (:uid user))]
         (-> (assoc request :context context)
+            (assoc-in [:context :user-login] (:login user))
+            (assoc-in [:context :user-first-name] (:first-name user))
+            (assoc-in [:context :user-last-name] (:last-name user))
+            (assoc-in [:context :user-profile-picture] profile-picture)
             authorise/authorise-form
             (sh/enlive-response request))))))
 
@@ -41,18 +49,18 @@
         user-email (session/request->user-login request)]
     (user/is-authorised-client-for-user? user-store user-email client-id)))
 
-(defn auth-handler [auth-code-store client-store user-store token-store request]
+(defn auth-handler [auth-code-store client-store user-store token-store profile-picture-store request]
   (let [configuration {:auto-approver                  (partial auto-approver user-store)
                        :user-session-required-redirect (routes/path :index)
-                       :authorization-form             (partial show-authorise-form client-store)}
+                       :authorization-form             (partial show-authorise-form client-store user-store profile-picture-store)}
         configured-authorization-handler (cl-ep/authorization-handler client-store token-store
                                                                       auth-code-store configuration)]
     (configured-authorization-handler request)))
 
-(defn authorise-client [auth-code-store client-store user-store token-store request]
+(defn authorise-client [auth-code-store client-store user-store token-store profile-picture-store request]
   (let [client-id (get-in request [:params :client_id])
         user-email (session/request->user-login request)
-        response (auth-handler auth-code-store client-store user-store token-store request)]
+        response (auth-handler auth-code-store client-store user-store token-store profile-picture-store request)]
     (user/add-authorised-client-for-user! user-store user-email client-id)
     response))
 
@@ -67,14 +75,14 @@
 (defn add-html-accept [request]
   (assoc-in request [:headers "accept"] "text/html"))
 
-(defn authorise [auth-code-store client-store user-store token-store request]
+(defn authorise [auth-code-store client-store user-store token-store profile-picture-store request]
   (let [client-id (get-in request [:params :client_id])
         redirect-uri (get-in request [:params :redirect_uri])
         user-login (session/request->user-login request)
         clauth-request (-> request remove-csrf-token add-html-accept)
         access-token (session/request->access-token request)]
     (if (is-redirect-uri-valid? client-store client-id redirect-uri)
-      (-> (auth-handler auth-code-store client-store user-store token-store clauth-request)
+      (-> (auth-handler auth-code-store client-store user-store token-store profile-picture-store clauth-request)
           (session/set-user-login user-login)
           (session/set-access-token access-token))
       (do
@@ -88,26 +96,26 @@
                         auth-code-store) request))
 
 (defn generate-user-info [user]
-  {:email (:login user)
-   :sub (:uid user)
+  {:email          (:login user)
+   :sub            (:uid user)
    :email_verified (:confirmed? user)
-   :role (:role user)})
+   :role           (:role user)})
 
 (defn assoc-in-json [json k v]
-  (-> json 
+  (-> json
       (json/parse-string keyword)
       (assoc k v)
       (json/generate-string)))
 
 (defn token-response-body [config-m id-token-generator clauth-response-body user-info auth-code-record]
-  (case (:scope auth-code-record) 
+  (case (:scope auth-code-record)
     "openid"
     (let [subject (:sub user-info)
           client-id (get-in auth-code-record [:client :client-id])
           id-token-lifetime (c/open-id-connect-id-token-lifetime-minutes config-m)
           additional-claims (dissoc user-info :sub)
           id-token (id-token-generator subject client-id id-token-lifetime additional-claims)]
-      (assoc-in-json clauth-response-body :id_token id-token)) 
+      (assoc-in-json clauth-response-body :id_token id-token))
 
     ;default
     (assoc-in-json clauth-response-body :user-info user-info)))
@@ -118,7 +126,7 @@
         clauth-response (token-handler auth-code-store client-store user-store token-store request)]
     (if (= 200 (:status clauth-response))
       (let [user-info (generate-user-info (:subject auth-code-record))
-            body (token-response-body config-m id-token-generator (:body clauth-response) user-info auth-code-record)] 
+            body (token-response-body config-m id-token-generator (:body clauth-response) user-info auth-code-record)]
         (-> clauth-response (assoc :body body)))
       clauth-response)))
 
