@@ -118,7 +118,7 @@ To get a stonecutter.env, copy the template that is found in the config folder.
  
 Finally, run this command, replacing <config file path> with the absolute path for the directory storing your config files, and <env file path> with the path to wherever your environment variable file is stored.  
 
-    docker run -v <config file path>:/var/config --env-file=<env file path> -v <favicon and logo absolute path directory>:/data/stonecutter/static -v <email service directory absolute path>:/var/stonecutter/email_service -p 5000:5000 --link mongo:mongo -d --name stonecutter dcent/stonecutter
+    docker run -v <config file path>:/var/config --env-file=<env file path> -v <favicon and logo absolute path directory>:/data/stonecutter/static -v <email service directory absolute path>:/var/stonecutter/email_service -p 5000:5000 --link mongo:mongo -d --restart=on-failure --name stonecutter dcent/stonecutter
     
 An example script for deploying, deploy_snap.sh, is included in the ops directory.
     
