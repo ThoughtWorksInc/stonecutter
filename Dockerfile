@@ -9,4 +9,4 @@ RUN lein with-profile production deps && \
 
 WORKDIR /usr/src/app/target
 
-CMD java -jar stonecutter-0.1.0-SNAPSHOT-standalone.jar
+CMD java -Xmx231m -jar stonecutter-0.1.0-SNAPSHOT-standalone.jar
