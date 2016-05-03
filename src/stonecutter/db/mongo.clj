@@ -14,7 +14,6 @@
 (def forgotten-password-collection "forgotten-passwords")
 (def session-collection "sessions")
 (def invitation-collection "invitations")
-(def db-name "stonecutter")
 
 (def user-primary-key :login)
 (def token-primary-key :token)
@@ -117,6 +116,6 @@
 (defn create-session-store [db]
   (mongo-session/session-store db session-collection))
 
-(defn create-profile-picture-store [conn]
+(defn create-profile-picture-store [conn db-name]
   (when conn
     (monger/get-gridfs conn db-name)))

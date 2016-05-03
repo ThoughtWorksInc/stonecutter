@@ -15,7 +15,7 @@
 (l/init-logger!)
 (ih/setup-db)
 
-(def stores-m (storage/create-mongo-stores (ih/get-test-db) (ih/get-test-db-connection)))
+(def stores-m (storage/create-mongo-stores (ih/get-test-db) (ih/get-test-db-connection) "stonecutter"))
 (def email-sender (test-email/create-test-email-sender))
 
 (def base-url "https://myapp.com")

@@ -8,6 +8,7 @@
            :base-url "Base url that app is deployed at"
            :mongo-port-27017-tcp-addr "IP address of mongo container linked on port 27017 (should be supplied by container linking)"
            :mongo-uri "URI of mongo database"
+           :mongo-db-name "name of the mongo database"
            :client-credentials-file-path "Location of file containing client registrations"
            :secure "If set to true will only allow traffic proxied through HTTPS"
            :email-script-path "Location of script used to send e-mails"
@@ -71,6 +72,9 @@
     (get-docker-mongo-uri config-m)
     (get-env config-m :mongo-uri)
     "mongodb://localhost:27017/stonecutter"))
+
+(defn mongo-db-name [config-m]
+  (get-env config-m :mongo-db-name "stonecutter"))
 
 (defn client-credentials-file-path [config-m]
   (get-env config-m :client-credentials-file-path "client-credentials.yml"))

@@ -11,7 +11,7 @@
 (l/init-logger!)
 (ih/setup-db)
 
-(def stores-m (s/create-mongo-stores (ih/get-test-db) (ih/get-test-db-connection)))
+(def stores-m (s/create-mongo-stores (ih/get-test-db) (ih/get-test-db-connection) "stonecutter"))
 
 (def test-app (ih/build-app {:stores-m stores-m
                              :config-m {:secure         "false"

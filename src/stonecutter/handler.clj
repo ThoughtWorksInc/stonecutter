@@ -192,7 +192,7 @@
     (let [db-and-conn-map (mongo/get-mongo-db (config/mongo-uri config-m))
           db (:db db-and-conn-map)
           conn (:conn db-and-conn-map)
-          stores-m (storage/create-mongo-stores db conn)
+          stores-m (storage/create-mongo-stores db conn (config/mongo-db-name config-m))
           clock (time/new-clock)
           email-sender (email/bash-sender-factory (config/email-script-path config-m))
           json-web-key (jwt/load-key-pair (config/rsa-keypair-file-path config-m))

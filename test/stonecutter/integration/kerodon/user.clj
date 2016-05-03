@@ -17,7 +17,7 @@
 (l/init-logger!)
 (ih/setup-db)
 
-(def stores-m (s/create-mongo-stores (ih/get-test-db) (ih/get-test-db-connection)))
+(def stores-m (s/create-mongo-stores (ih/get-test-db) (ih/get-test-db-connection) "stonecutter"))
 
 (defn setup-add-client-to-user! [email client-name]
   (let [client (cl-client/register-client (s/get-client-store stores-m) client-name "myclient.com")
