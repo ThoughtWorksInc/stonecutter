@@ -115,6 +115,10 @@
                              :port         "5000"
                              :mongodb-port "27017"
                              :mongodb-db   "coracle"}}}
+  :cljsbuild   {:builds [{:source-paths ["src-cljs" "src-cljc"]
+                          :compiler     {:output-to     "resources/public/js/main.js"
+                                         :optimizations :advanced
+                                         :pretty-print  false}}]}
   :clean-targets ^{:protect false} [:target-path
                                     [:cljsbuild :builds :app :compiler :output-dir]
                                     [:cljsbuild :builds :app :compiler :output-to]])
