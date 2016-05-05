@@ -1,0 +1,21 @@
+---
+ - name: create config folder
+   file: path="/var/stonecutter/config" state=directory
+
+ - name: copy application config file
+   template: src=stonecutter_config.j2 dest=/var/stonecutter/config/stonecutter.env
+
+ - name: copy rsa keypair file
+   copy: src={{ RSA_KEYPAIR_FILE_PATH }} dest="/var/stonecutter/config/rsa-keypair.json"
+
+ - name: copy client credentials file
+   copy: src={{ CLIENT_CREDENTIALS_FILE_PATH }} dest="/var/stonecutter/config/clients.yml"
+
+ - name: create static folder
+   file: path="/data/stonecutter/static" state=directory
+
+ - name: copy logo
+   copy: src={{ LOGO_FILE_NAME }} dest="/data/stonecutter/static/logo.svg"
+
+ - name: copy favicon
+   copy: src={{ FAVICON_FILE_NAME }} dest="/data/stonecutter/static/favicon.ico"

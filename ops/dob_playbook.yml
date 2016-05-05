@@ -3,9 +3,13 @@
    sudo: true
    remote_user: root
 
+   vars_files:
+    - "{{ CONFIG_FILE_PATH }}"
+
    roles:
     - common
     - nginx
     - ferm
     - mail
     - docker
+    - stonecutter_application_config

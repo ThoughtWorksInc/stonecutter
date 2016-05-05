@@ -4,7 +4,7 @@ The following environment variables can be passed to the application.
 
 ## Required:
 
-- **RSA_KEYPAIR_FILE_PATH** - location of json file containing RSA keypair for Open ID Connect.
+- **RSA_KEYPAIR_FILE_PATH** - location of json file containing RSA private keypair for Open ID Connect.
  
 ## Optional:
 
@@ -33,7 +33,7 @@ The following environment variables can be passed to the application.
 - **ADMIN_FIRST_NAME** - defaults to "Mighty"
 - **ADMIN_LAST_NAME** - defaults to "Admin"
 - **ADMIN_LOGIN** - required for the creation of an admin user
-- **ADMIN_PASSWORD** - required for the creation of an admin user
+- **ADMIN_PASSWORD** - required for the creation of an admin user - **please change this password after starting the application!**
 
 ### Email configuration
 
