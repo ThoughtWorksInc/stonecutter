@@ -91,3 +91,5 @@ The Hosting Architecture is documented [here] (https://docs.google.com/a/thought
 ## Deployment
 
 To deploy using Docker, see [here](docs/DOCKER.md).
+
+To deploy to an Ubuntu server using Ansible, see [here](docs/UBUNTU.md).
