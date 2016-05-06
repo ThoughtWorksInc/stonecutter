@@ -24,11 +24,32 @@ This will generate output similar to the following:
 - The public key needs to be provided to any clients wishing to use OpenID Connect when interacting with Stonecutter
 - The private key should be stored in a file and kept secure.
 
+#### Adding an email provider
+
+Stonecutter can integrate against 3rd party email providers via a shell script interface, which may optionally require
+configuration via environment variables.
+
+Scripts for individual mail service providers should be located in the ```ops/roles/mail/files/providers``` directory.
+These will be copied into a deployment environment by Ansible.  Currently, an implementation has been provided for
+Mailgun, which can be used as a template.
+
+In order to select which email service is used, set the ```EMAIL_SERVICE_PROVIDER``` environment variable.  This should
+match one of the provider scripts under in the ```ops/roles/mail/files/providers``` directory.  For example, to use
+the Mailgun provider:
+
+    EMAIL_SERVICE_PROVIDER=mailgun
+
+For the mailgun example, the following environment variables are also required:
+
+- EMAIL_DOMAIN_NAME --- the domain name that has been linked to mailgun
+- MAILGUN_API_KEY --- the mailgun api username + key (i.e. a string in the form: "api:_api-key_"), provided by Mailgun.
+
 ### Configure with ansible
 - Install Ansible
-- In file *ops/dob.inventory* replace the IP address with the IP address of your ubuntu server machine
+- In file *ops/digital_ocean_box.inventory* replace:
+    - `ansible_ssh_host` with the IP address of your ubuntu server machine
+    - `site_address` with the URL of the server
 - Copy the *config/clients.yml* file and add the details of the clients you want to use Stonecutter with
-- *Optional* - Copy a custom logo and favicon into the *config/files/* directory
 - Use the *stonecutter_ansible.env* found in the */config* directory and replace the empty strings with your credentials and save it for use in the next step. Take note of the file path. You can find more information about the configuration variables [here](./CONFIG.md).
 - Create a *ops/roles/nginx/files/secure/* directory, and copy your SSL certificate and key files there, with the names *stonecutter.key* and *stonecutter.crt*.
 

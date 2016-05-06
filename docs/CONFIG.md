@@ -38,4 +38,4 @@ The following environment variables can be passed to the application.
 ### Email configuration
 
 - **EMAIL_SCRIPT_PATH** - location of script used to send emails.
-- **EMAIL_SERVICE_PROVIDER** - used when deploying using ansible to select the email script. See [here](../README.md#adding-an-email-provider).
+- **EMAIL_SERVICE_PROVIDER** - used when deploying using ansible to select the email script.

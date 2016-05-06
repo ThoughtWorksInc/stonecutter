@@ -15,7 +15,7 @@
    file: path="/data/stonecutter/static" state=directory
 
  - name: copy logo
-   copy: src={{ LOGO_FILE_NAME }} dest="/data/stonecutter/static/logo.svg"
+   copy: src={{ STATIC_RESOURCES_DIR_PATH }}/{{ LOGO_FILE_NAME }} dest="/data/stonecutter/static/logo.svg"
 
  - name: copy favicon
-   copy: src={{ FAVICON_FILE_NAME }} dest="/data/stonecutter/static/favicon.ico"
+   copy: src={{ STATIC_RESOURCES_DIR_PATH }}/{{ FAVICON_FILE_NAME }} dest="/data/stonecutter/static/favicon.ico"

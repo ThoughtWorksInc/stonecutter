@@ -1,9 +1,9 @@
 default ansible_ssh_host=sso.dcentproject.eu
 
-[dob_vm]
+[dob]
 default
 
-[dob_vm:vars]
+[dob:vars]
 site_address="https://sso.dcentproject.eu"
 cert_location="secure/stonecutter.crt"
 cert_key_location="secure/stonecutter.key"
