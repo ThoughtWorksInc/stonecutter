@@ -50,7 +50,8 @@ For the mailgun example, the following environment variables are also required:
     - `ansible_ssh_host` with the IP address of your ubuntu server machine
     - `site_address` with the URL of the server
 - Copy the *config/clients.yml* file and add the details of the clients you want to use Stonecutter with
-- Use the *stonecutter_ansible.env* found in the */config* directory and replace the empty strings with your credentials and save it for use in the next step. Take note of the file path. You can find more information about the configuration variables [here](./CONFIG.md).
+- Use the *stonecutter_ansible.env* found in the */config* directory and either replace the empty strings with your credentials or delete the variable. Take note of the file path. You can find more information about the configuration variables [here](./CONFIG.md).
+- Remove from */ops/roles/stonecutter_application_config/templates/stonecutter_config.j2* the variables that you deleted in the previous step.
 - Create a *ops/roles/nginx/files/secure/* directory, and copy your SSL certificate and key files there, with the names *stonecutter.key* and *stonecutter.crt*.
 
 Run Ansible playbook:

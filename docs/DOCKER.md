@@ -85,7 +85,7 @@ You can create an nginx.conf file by copying the following into a new file and r
 
 Finally, run the following command:
 
-    docker run -v <absolute path to SSL certificates and keys directory>:/etc/nginx/ssl -v <absolute path to conf file>/nginx.conf:/etc/nginx/nginx.conf -v <absolute path to dhparam file>/dhparam.pem:/etc/nginx/cert/dhparam.pem -p 443:443 -p 80:80 --link stonecutter:stonecutter-d --name nginx-container nginx
+    docker run -v <absolute path to SSL certificates and keys directory>:/etc/nginx/ssl -v <absolute path to conf file>/nginx.conf:/etc/nginx/nginx.conf -v <absolute path to dhparam file>/dhparam.pem:/etc/nginx/cert/dhparam.pem -p 443:443 -p 80:80 --link stonecutter:stonecutter -d --name nginx-container nginx
         
 # Adding public-private keypair for OpenID Connect
 
