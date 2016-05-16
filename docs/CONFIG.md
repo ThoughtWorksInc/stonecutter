@@ -32,8 +32,8 @@ The following environment variables can be passed to the application.
 
 - **ADMIN_FIRST_NAME** - defaults to "Mighty"
 - **ADMIN_LAST_NAME** - defaults to "Admin"
-- **ADMIN_LOGIN** - required for the creation of an admin user
-- **ADMIN_PASSWORD** - required for the creation of an admin user - **please change this password after starting the application!**
+- **ADMIN_LOGIN** - required for the creation of an admin user. Must be a valid email, have a length < 254 characters and must not already exist as a user.
+- **ADMIN_PASSWORD** - required for the creation of an admin user. Must have a length between 8 and 254 characters - **please change this password after starting the application!**
 
 ### Email configuration
 

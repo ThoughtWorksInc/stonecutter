@@ -22,7 +22,7 @@ To run Stonecutter you need
 * an rsa-keypair.json 
 * a stonecutter.env file
 
-To make a clients.yml file, copy the default one in this project, under Stonecutter/config. It shows the format used by the application.
+To make a clients.yml file, copy the example in the config directory and add the details of the clients you want to use Stonecutter with. Set the client-id and client-secret to secure alphanumeric strings.
 
 To get an rsa keypair, see [below](#adding-public-private-keypair-for-openid-connect).
 
@@ -89,7 +89,9 @@ Finally, run the following command:
         
 # Adding public-private keypair for OpenID Connect
 
-To generate a public-private keypair in Json Web-key (JWK) format, enter the following at the command line:
+To generate a public-private keypair in Json Web-key (JWK) format, you will first need to install [Leiningen](https://leiningen.org/) or start up the development VM using the instructions [here](https://github.com/d-cent/stonecutter#development-vm).
+
+Next, navigate to the project directory and enter the following at the command line:
 
 ```
 > lein gen-keypair <key-id>

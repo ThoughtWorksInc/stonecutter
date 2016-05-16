@@ -23,9 +23,10 @@ When the VM has started, access the virtual machine by running:
 
 The source folder will be located at `/var/stonecutter`.
 
-After initial setup, navigate to the source directory with:
+After initial setup, navigate to the source directory and build the assets with:
 
     cd /var/stonecutter
+    gulp build
 
 [Vagrant]: https://www.vagrantup.com
 [Ansible]: http://docs.ansible.com/ansible/intro_installation.html
@@ -61,11 +62,12 @@ Simply type:
 gulp server
 ```
 
+
 ## Architecture
 
-The Continuous Delivery build and deployment architecture is documented [here] (https://docs.google.com/a/thoughtworks.com/drawings/d/1FZ35v27_pBym_NqzLbqVP_TwnHVBHNwFQss_Lzbs1bU/edit?usp=sharing).
+The Continuous Delivery build and deployment architecture is documented [here](https://docs.google.com/a/thoughtworks.com/drawings/d/1FZ35v27_pBym_NqzLbqVP_TwnHVBHNwFQss_Lzbs1bU/edit?usp=sharing).
 
-The Hosting Architecture is documented [here] (https://docs.google.com/a/thoughtworks.com/drawings/d/1mgdxe0Q0uYZloZLFLvlwyKRx4iUangEAn4aV2qm-zWs/edit?usp=sharing).
+The Hosting Architecture is documented [here](https://docs.google.com/a/thoughtworks.com/drawings/d/1mgdxe0Q0uYZloZLFLvlwyKRx4iUangEAn4aV2qm-zWs/edit?usp=sharing).
 
 
 ## Deployment

@@ -7,6 +7,7 @@
 
 ### Generate a public-private keypair in Json Web-key (JWK) format for OpenID Connect
 
+- Either install [Leiningen](https://leiningen.org/) or start up the development VM using the instructions [here](https://github.com/d-cent/stonecutter#development-vm).
 - Run the command `lein gen-keypair <key-id>` where the key-id is a custom identifier for the key (for example "20150824-stonecutter").
 
 This will generate output similar to the following:
@@ -46,10 +47,10 @@ For the mailgun example, the following environment variables are also required:
 
 ### Configure with ansible
 - Install Ansible
-- In file *ops/digital_ocean_box.inventory* replace:
+- In file *ops/dob.inventory* replace:
     - `ansible_ssh_host` with the IP address of your ubuntu server machine
     - `site_address` with the URL of the server
-- Copy the *config/clients.yml* file and add the details of the clients you want to use Stonecutter with
+- Copy the *config/clients.yml* file and add the details of the clients you want to use Stonecutter with. Set the client-id and client-secret to secure alphanumeric strings.
 - Use the *stonecutter_ansible.env* found in the */config* directory and either replace the empty strings with your credentials or delete the variable. Take note of the file path. You can find more information about the configuration variables [here](./CONFIG.md).
 - Remove from */ops/roles/stonecutter_application_config/templates/stonecutter_config.j2* the variables that you deleted in the previous step.
 - Create a *ops/roles/nginx/files/secure/* directory, and copy your SSL certificate and key files there, with the names *stonecutter.key* and *stonecutter.crt*.
