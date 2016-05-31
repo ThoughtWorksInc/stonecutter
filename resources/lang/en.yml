@@ -195,9 +195,9 @@ error-default:
   return-to-link-after: ""
 
 error-csrf:
-  title: CSRF invalid
-  page-header: "CSRF invalid"
-  page-intro: "CSRF invalid response."
+  title: "Token timeout"
+  page-header: "Token timeout"
+  page-intro: "You are attempting to access this page with a security token which has timed out. Please try again."
 
 error-forbidden:
   title: Forbidden

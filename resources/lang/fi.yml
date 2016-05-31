@@ -203,9 +203,9 @@ error-default:
   return-to-link-after: "in Finnish"
 
 error-csrf:
-  title: CSRF invalid in Finnish
-  page-header: "CSRF invalid in Finnish"
-  page-intro: "CSRF invalid response. in Finnish"
+  title: "Token timeout in Finnish"
+  page-header: "Token timeout in Finnish"
+  page-intro: "You are attempting to access this page with a security token which has timed out. Please try again. in Finnish"
 
 error-forbidden:
   title: Forbidden in Finnish
